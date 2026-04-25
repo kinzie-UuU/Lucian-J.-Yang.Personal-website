@@ -1,0 +1,410 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kinzie | Packaging Judged In Reality</title>
+  <meta
+    name="description"
+    content="Kinzie portfolio site for OEM, gifting, series packaging, and brand-upgrade projects built under real production constraints."
+  >
+  <link rel="preconnect" href="https://api.fontshare.com">
+  <link
+    href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&f[]=cabinet-grotesk@400,500,700,800&display=swap"
+    rel="stylesheet"
+  >
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Allura&display=swap"
+    rel="stylesheet"
+  >
+  <link rel="stylesheet" href="styles.css">
+  <script src="three.min.js"></script>
+</head>
+<body>
+  <div class="precision-cursor" id="precision-cursor" aria-hidden="true"></div>
+  <div class="precision-guides" id="precision-guides" aria-hidden="true"></div>
+  <header class="top-meta" aria-label="Site meta">
+    <div class="top-meta-inner">
+      <span class="pixel-avatar" aria-hidden="true">
+        <img src="images/kinzie-logo.png.png" alt="" draggable="false">
+      </span>
+      <a class="top-meta-home" href="#top">HOME</a>
+      <div class="top-meta-right">
+        <span class="top-meta-name" data-i18n="meta_name">KINZIE</span>
+        <span class="top-meta-time" id="beijing-time">00:00</span>
+        <span class="top-meta-date" id="beijing-date">DATE 2026.04.19</span>
+        <div class="top-meta-lang" aria-label="Language">
+          <button class="lang-button is-active" type="button" data-lang="zh">&#20013;</button>
+          <button class="lang-button" type="button" data-lang="en">EN</button>
+        </div>
+        <button class="top-meta-toggle top-meta-theme-toggle" id="theme-toggle" type="button" aria-label="Toggle light/dark mode">
+          <svg class="toggle-icon icon-moon" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M17 12.5A7 7 0 0 1 7.5 3a7.002 7.002 0 1 0 9.5 9.5z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <svg class="toggle-icon icon-sun" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="10" cy="10" r="3.5" stroke="currentColor" stroke-width="1.2"/>
+            <path d="M10 2v2M10 16v2M2 10h2M16 10h2M4.22 4.22l1.42 1.42M14.36 14.36l1.42 1.42M4.22 15.78l1.42-1.42M14.36 5.64l1.42-1.42" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+          </svg>
+        </button>
+        <button class="top-meta-toggle top-meta-sound-toggle" id="sound-toggle" type="button" aria-label="Mute interface sounds" aria-pressed="true">
+          <svg class="toggle-icon icon-lines" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M7 6.8V13.2" stroke="currentColor" stroke-width="1.15" stroke-linecap="round"/>
+            <path d="M10 4.8V15.2" stroke="currentColor" stroke-width="1.15" stroke-linecap="round"/>
+            <path d="M13 6.8V13.2" stroke="currentColor" stroke-width="1.15" stroke-linecap="round"/>
+          </svg>
+          <svg class="toggle-icon icon-dots" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M7 6.8V13.2" stroke="currentColor" stroke-width="1.15" stroke-linecap="round"/>
+            <path d="M10 4.8V15.2" stroke="currentColor" stroke-width="1.15" stroke-linecap="round"/>
+            <path d="M13 6.8V13.2" stroke="currentColor" stroke-width="1.15" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="entry-screen" id="entry-screen" aria-label="Site entry">
+      <canvas class="entry-field-canvas" id="entry-field-canvas" aria-hidden="true"></canvas>
+      <div class="entry-grid" aria-hidden="true"></div>
+      <div class="entry-wave-layer" id="entry-wave-layer" aria-hidden="true"></div>
+      <div class="entry-dieline-layer" id="entry-dieline-layer" aria-hidden="true"></div>
+
+      <div class="entry-center">
+        <div class="entry-box-wrap">
+          <button class="entry-box-trigger" id="entry-go" type="button" aria-label="Open Kinzie packaging archive">
+            <span class="entry-orb" aria-hidden="true"></span>
+            <span class="entry-go-word" aria-hidden="true"><span>G</span><span>O</span></span>
+            <span class="entry-go-copy">Enter</span>
+            <span class="entry-pixels" aria-hidden="true">
+              <i></i><i></i><i></i><i></i><i></i><i></i>
+              <i></i><i></i><i></i><i></i><i></i><i></i>
+            </span>
+          </button>
+          <p class="entry-hint">Click / Scroll</p>
+        </div>
+      </div>
+
+      <div class="entry-brand-code" aria-hidden="true">
+        <span class="entry-code-word" id="entry-code-word">KINZIE</span>
+        <span class="entry-code-cuts" aria-hidden="true">
+          <i data-text="KINZIE"></i><i data-text="KINZIE"></i><i data-text="KINZIE"></i>
+        </span>
+        <span class="entry-code-pixels">
+          <i></i><i></i><i></i><i></i><i></i><i></i>
+          <i></i><i></i><i></i><i></i><i></i><i></i>
+          <i></i><i></i><i></i><i></i><i></i><i></i>
+          <i></i><i></i><i></i><i></i><i></i><i></i>
+        </span>
+      </div>
+    </section>
+
+    <section class="hero-section">
+      <div class="hero-stage reveal reveal-delay" id="hero-stage">
+        <canvas class="hero-bamboo-canvas" id="hero-bamboo-canvas" aria-hidden="true"></canvas>
+
+        <svg class="hero-wireframe" id="hero-wireframe" aria-hidden="true"></svg>
+
+        <div class="hero-scroll-progress" aria-hidden="true">
+          <span class="hero-scroll-progress-track"></span>
+          <span class="hero-scroll-progress-fill"></span>
+          <span class="hero-scroll-progress-mark">01</span>
+          <span class="hero-scroll-progress-mark">12</span>
+        </div>
+
+        <div class="hero-grid" id="hero-grid">
+          <button class="hero-card" type="button" data-work="oem" data-tone="light">
+            <span class="hero-card-tag">OEM</span>
+            <span class="hero-card-title">System One</span>
+          </button>
+          <button class="hero-card" type="button" data-work="gift">
+            <span class="hero-card-tag">Gift</span>
+            <span class="hero-card-title">Seasonal Box</span>
+          </button>
+          <button class="hero-card" type="button" data-work="series">
+            <span class="hero-card-tag">Series</span>
+            <span class="hero-card-title">Holiday Edition</span>
+          </button>
+          <button class="hero-card" type="button" data-work="brand">
+            <span class="hero-card-tag">Type</span>
+            <span class="hero-card-title">Looks</span>
+          </button>
+          <button class="hero-card hero-card-dark" type="button" data-work="aigc" data-tone="dark">
+            <span class="hero-card-tag">AIGC</span>
+            <span class="hero-card-title">Prompt Drafts</span>
+          </button>
+          <button class="hero-card" type="button" data-work="gift">
+            <span class="hero-card-tag">Gift</span>
+            <span class="hero-card-title">Tea Moon</span>
+          </button>
+          <button class="hero-card" type="button" data-work="brand">
+            <span class="hero-card-tag">Brand</span>
+            <span class="hero-card-title">Outline N</span>
+          </button>
+          <button class="hero-card" type="button" data-work="series">
+            <span class="hero-card-tag">Series</span>
+            <span class="hero-card-title">Festive Red</span>
+          </button>
+          <button class="hero-card hero-card-dark" type="button" data-work="oem" data-tone="dark">
+            <span class="hero-card-tag">OEM</span>
+            <span class="hero-card-title">Shelf Study</span>
+          </button>
+          <button class="hero-card" type="button" data-work="series">
+            <span class="hero-card-tag">Series</span>
+            <span class="hero-card-title">Series 03</span>
+          </button>
+          <button class="hero-card hero-card-dark" type="button" data-work="aigc" data-tone="dark">
+            <span class="hero-card-tag">AIGC</span>
+            <span class="hero-card-title">Box Lab</span>
+          </button>
+          <button class="hero-card" type="button" data-work="gift">
+            <span class="hero-card-tag">Gift</span>
+            <span class="hero-card-title">Metro Gift</span>
+          </button>
+        </div>
+
+        <div class="hero-order-k" id="hero-order-k" aria-hidden="true">K</div>
+
+        <aside class="hero-focus-panel" id="hero-focus-panel" aria-live="polite">
+          <p class="hero-focus-kicker" id="hero-focus-kicker">ACTIVE PROJECT</p>
+          <h2 class="hero-focus-title" id="hero-focus-title">OEM Packaging</h2>
+          <p class="hero-focus-desc" id="hero-focus-desc">
+            Build clear, scalable packaging systems for multi-SKU lines, defined price bands, and execution-heavy production needs.
+          </p>
+          <div class="hero-focus-meta">
+            <div>
+              <span data-i18n="metric_focus">Focus</span>
+              <strong id="hero-focus-meta-a">Structure / Recognition / Delivery</strong>
+            </div>
+            <div>
+              <span data-i18n="metric_value">Value</span>
+              <strong id="hero-focus-meta-b">Make packaging work under real constraints</strong>
+            </div>
+          </div>
+          <div class="hero-focus-actions">
+            <a class="hero-link hero-link-solid" href="#works" id="hero-focus-enter" data-i18n="hero_action_works">Enter Works</a>
+            <a class="hero-link hero-link-ghost" href="#services" data-i18n="hero_action_about">View Services</a>
+          </div>
+        </aside>
+      </div>
+
+    </section>
+
+    <section class="about-section reveal" id="about">
+      <div class="about-layout">
+        <div class="about-left">
+          <p class="section-kicker" data-i18n="about_kicker" data-reveal data-delay="0">关于</p>
+          <h2 class="about-heading" data-i18n="about_title" data-reveal data-delay="80">我是谁</h2>
+        </div>
+        <div class="about-right">
+          <p class="about-lead" data-i18n="about_text_1" data-reveal data-delay="160">我是一名以包装设计为主的设计师，主要方向是 OEM / 贴牌包装，以及礼品与福利渠道设计。我关注的，不只是包装是否好看，而是它在真实条件下是否成立。</p>
+          <p class="about-detail" data-i18n="about_text_2" data-reveal data-delay="260">对我来说，设计不是先讨论风格，而是先判断什么该做、什么该省、什么最适合当前条件。AIGC 是我提高效率与比较方案的工具，但真正有价值的，仍然是判断本身。</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="services-section reveal" id="services">
+      <div class="section-head section-head-centered">
+        <p class="section-kicker" data-i18n="services_kicker" data-reveal data-delay="0">服务</p>
+        <h2 data-i18n="services_title" data-reveal data-delay="80">为何选择我</h2>
+        <p class="section-intro section-intro-dark" data-i18n="services_intro" data-reveal data-delay="160">我提供的，不只是包装设计本身，而是在价格、工艺、交付与渠道约束下，更合适的方案判断。</p>
+      </div>
+      <div class="services-grid">
+        <article class="service-item" data-reveal data-delay="240">
+          <p class="service-index">01</p>
+          <h3 data-i18n="service_title_1">包装主导</h3>
+          <p data-i18n="service_text_1">以 OEM / 贴牌包装为主，也覆盖礼品、福利渠道、系列包装与礼盒设计。</p>
+        </article>
+        <article class="service-item" data-reveal data-delay="310">
+          <p class="service-index">02</p>
+          <h3 data-i18n="service_title_2">判断力</h3>
+          <p data-i18n="service_text_2">我更关注什么方案真正适合当前价格带、工艺条件与渠道场景，而不只是哪个方案看起来更炫。</p>
+        </article>
+        <article class="service-item" data-reveal data-delay="380">
+          <p class="service-index">03</p>
+          <h3 data-i18n="service_title_3">落地能力</h3>
+          <p data-i18n="service_text_3">从材质、工艺、打样到供应商协同，我会同时考虑设计与执行之间的关系。</p>
+        </article>
+        <article class="service-item" data-reveal data-delay="450">
+          <p class="service-index">04</p>
+          <h3 data-i18n="service_title_4">效率意识</h3>
+          <p data-i18n="service_text_4">AIGC 可以提高前期测试、方案比较与提案效率，但不会替代判断。</p>
+        </article>
+        <article class="service-item" data-reveal data-delay="520">
+          <p class="service-index">05</p>
+          <h3 data-i18n="service_title_5">综合表达</h3>
+          <p data-i18n="service_text_5">在需要时，我也会结合品牌、字体与视觉系统，补强包装识别与整体完成度。</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="works-section reveal" id="works">
+      <div class="works-statement">
+        <p class="works-statement-kicker section-kicker" data-i18n="works_kicker" data-reveal data-delay="0">作品</p>
+        <h2 class="works-statement-title" data-i18n="works_statement_title" data-reveal data-delay="80">不是把包装做漂亮，而是把包装做对。</h2>
+        <p class="works-statement-body" data-i18n="works_statement_body" data-reveal data-delay="180">Kinzie 聚焦 OEM、礼赠渠道、系列礼盒与品牌升级项目。比起单纯制造风格，我更关心包装如何在真实约束中成立。</p>
+      </div>
+      <div class="works-list-header" data-reveal data-delay="260">
+        <span class="works-list-col-project" data-i18n="works_col_project">Project</span>
+        <span class="works-list-col-type" data-i18n="works_col_type">Type</span>
+        <span class="works-list-col-year" data-i18n="works_col_year">Year</span>
+      </div>
+      <ul class="works-list" id="works-list">
+        <li class="works-row" data-category="oem" data-reveal data-delay="320">
+          <span class="works-row-index">01</span>
+          <span class="works-row-name" data-i18n="work_row_1_name">多 SKU 贴牌包装系统</span>
+          <span class="works-row-tags"><span class="works-tag" data-i18n="work_tab_oem">OEM</span></span>
+          <span class="works-row-year">2024</span>
+        </li>
+        <li class="works-row" data-category="gift" data-reveal data-delay="380">
+          <span class="works-row-index">02</span>
+          <span class="works-row-name" data-i18n="work_row_2_name">节日礼品渠道包装</span>
+          <span class="works-row-tags"><span class="works-tag" data-i18n="work_tab_gift">Gift</span></span>
+          <span class="works-row-year">2024</span>
+        </li>
+        <li class="works-row" data-category="series" data-reveal data-delay="440">
+          <span class="works-row-index">03</span>
+          <span class="works-row-name" data-i18n="work_row_3_name">系列礼盒视觉系统</span>
+          <span class="works-row-tags"><span class="works-tag" data-i18n="work_tab_series">Series</span></span>
+          <span class="works-row-year">2023</span>
+        </li>
+        <li class="works-row" data-category="brand" data-reveal data-delay="500">
+          <span class="works-row-index">04</span>
+          <span class="works-row-name" data-i18n="work_row_4_name">品牌字体与识别辅助</span>
+          <span class="works-row-tags"><span class="works-tag" data-i18n="work_tab_brand">Brand</span></span>
+          <span class="works-row-year">2023</span>
+        </li>
+        <li class="works-row" data-category="aigc" data-reveal data-delay="560">
+          <span class="works-row-index">05</span>
+          <span class="works-row-name" data-i18n="work_row_5_name">AIGC 辅助提案流程</span>
+          <span class="works-row-tags"><span class="works-tag" data-i18n="work_tab_aigc">AIGC</span></span>
+          <span class="works-row-year">2024</span>
+        </li>
+      </ul>
+      <div class="works-hover-preview" id="works-hover-preview" aria-hidden="true">
+        <div class="works-preview-img" id="works-preview-img"></div>
+      </div>
+    </section>
+
+    <section class="contact-section reveal" id="contact">
+      <div class="section-head section-head-centered">
+        <p class="section-kicker" data-i18n="contact_kicker" data-reveal data-delay="0">联系</p>
+        <h2 class="contact-headline" data-i18n="contact_text" data-reveal data-delay="80">如果你正在寻找一位既懂包装表达，也重视真实落地与成本约束的设计师，欢迎联系我。</h2>
+        <p class="contact-collab" data-i18n="contact_collab" data-reveal data-delay="160">OEM / 贴牌包装 · 礼品与福利渠道设计 · 系列包装 · 节庆礼盒 · 包装升级 · 包装提案与方向判断支持</p>
+      </div>
+
+      <!-- Social icons -->
+      <div class="contact-social" data-reveal data-delay="240">
+        <a class="contact-social-icon" href="mailto:y1156813759@gmail.com" aria-label="Email">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="3" y="5.5" width="18" height="13" rx="2.4" stroke="currentColor" stroke-width="1.6"/>
+            <path d="M4.2 7.2L12 12.6L19.8 7.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </a>
+
+        <a class="contact-social-icon" href="https://www.instagram.com/dapeng3y/" target="_blank" rel="noopener" aria-label="Instagram">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="2" y="2" width="20" height="20" rx="5.5" stroke="currentColor" stroke-width="1.6"/>
+            <circle cx="12" cy="12" r="4.2" stroke="currentColor" stroke-width="1.6"/>
+            <circle cx="17.5" cy="6.5" r="1" fill="currentColor"/>
+          </svg>
+        </a>
+
+        <!-- X / Twitter -->
+        <a class="contact-social-icon" href="https://x.com/y_jeson993" target="_blank" rel="noopener" aria-label="X (Twitter)">
+          <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L2.25 2.25h6.978l4.259 5.631 4.757-5.631Zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77Z"/>
+          </svg>
+        </a>
+
+        <!-- WeChat QR trigger -->
+        <button class="contact-social-icon contact-wechat-trigger" aria-label="微信二维码" id="wechat-qr-trigger">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M9.35 5.2C5.8 5.2 3 7.45 3 10.25C3 11.85 3.9 13.28 5.32 14.22L4.82 16.05L6.98 15.02C7.7 15.22 8.5 15.33 9.35 15.33C12.9 15.33 15.7 13.08 15.7 10.25C15.7 7.45 12.9 5.2 9.35 5.2Z" stroke="currentColor" stroke-width="1.55" stroke-linejoin="round"/>
+            <path d="M14.75 9.12C18.1 9.28 20.72 11.43 20.72 14.08C20.72 15.55 19.92 16.88 18.65 17.8L19.08 19.38L17.2 18.48C16.55 18.65 15.85 18.75 15.1 18.75C12.18 18.75 9.72 17.18 9.05 15.02" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="7.35" cy="9.95" r="0.58" fill="currentColor"/>
+            <circle cx="11.28" cy="9.95" r="0.58" fill="currentColor"/>
+            <circle cx="13.12" cy="13.9" r="0.5" fill="currentColor"/>
+            <circle cx="16.68" cy="13.9" r="0.5" fill="currentColor"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- WeChat QR modal -->
+      <div class="wechat-qr-modal" id="wechat-qr-modal" aria-hidden="true">
+        <div class="wechat-qr-backdrop" id="wechat-qr-backdrop"></div>
+        <div class="wechat-qr-card">
+          <img src="images/wechat-qr.jpg" alt="微信二维码" class="wechat-qr-img">
+          <p class="wechat-qr-id">LLovingyourself</p>
+          <button class="wechat-qr-close" id="wechat-qr-close" aria-label="关闭">×</button>
+        </div>
+      </div>
+
+      <!-- Copy toast -->
+      <div class="contact-toast" id="contact-toast" aria-live="polite">已复制</div>
+    </section>
+
+    <section class="clients-section reveal">
+      <canvas class="clients-particles" id="clients-particles" aria-hidden="true"></canvas>
+      <div class="clients-content">
+        <div class="section-head section-head-centered section-head-light">
+          <p class="section-kicker accent" data-i18n="clients_kicker">合作客户</p>
+        </div>
+        <div class="clients-marquee">
+          <div class="clients-track">
+            <span>顺丰</span>
+            <span>追觅科技</span>
+            <span>信维通信</span>
+            <span>顾家家居</span>
+            <span>本来生活</span>
+            <span>熊小夕</span>
+            <span>糕上有点</span>
+            <span>功能粥</span>
+            <span>吉利</span>
+            <span>中兴</span>
+            <span>鞍钢</span>
+            <span>爱情地产</span>
+            <span>安吉尔</span>
+            <span>固德威</span>
+            <span>心中甜</span>
+            <span>瓷和居</span>
+            <span>熙图</span>
+            <span>85°C</span>
+          </div>
+          <div class="clients-track" aria-hidden="true">
+            <span>顺丰</span>
+            <span>追觅科技</span>
+            <span>信维通信</span>
+            <span>顾家家居</span>
+            <span>本来生活</span>
+            <span>熊小夕</span>
+            <span>糕上有点</span>
+            <span>功能粥</span>
+            <span>吉利</span>
+            <span>中兴</span>
+            <span>鞍钢</span>
+            <span>爱情地产</span>
+            <span>安吉尔</span>
+            <span>固德威</span>
+            <span>心中甜</span>
+            <span>瓷和居</span>
+            <span>熙图</span>
+            <span>85°C</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <nav class="bottom-nav" aria-label="Main navigation">
+    <span class="bottom-nav-indicator" aria-hidden="true"></span>
+    <a class="bottom-nav-item" href="#about" data-i18n="nav_about">About</a>
+    <a class="bottom-nav-item" href="#services" data-i18n="nav_services">Services</a>
+    <a class="bottom-nav-item" href="#works" data-i18n="nav_works">Works</a>
+    <a class="bottom-nav-item" href="#contact" data-i18n="nav_contact">Contact</a>
+  </nav>
+
+  <script src="script.js"></script>
+</body>
+</html>
