@@ -1316,6 +1316,8 @@ const updateBeijingMeta = () => {
   }
 };
 
+const entryWaves = []; // canvas-drawn waves, no DOM nodes
+
 const initEntryField = (canvas) => {
   if (!canvas || reducedMotion) return;
   const context = canvas.getContext("2d");
@@ -1397,6 +1399,34 @@ const initEntryField = (canvas) => {
     drawOrganicRing(pulseR2, pulseAlpha2, "200, 220, 210", 2.1);
 
     context.restore();
+
+    // canvas wave particles — irregular scatter matching original DOM effect
+    const now = performance.now();
+    for (let wi = entryWaves.length - 1; wi >= 0; wi--) {
+      const w = entryWaves[wi];
+      const age = (now - w.startedAt) / w.duration;
+      if (age >= 1) { entryWaves.splice(wi, 1); continue; }
+      context.save();
+      context.globalCompositeOperation = "lighter";
+      for (let pi = 0; pi < w.particles.length; pi++) {
+        const p = w.particles[pi];
+        const pAge = Math.max(0, (now - p.startedAt) / p.duration);
+        if (pAge >= 1) continue;
+        const eased = 1 - (1 - pAge) ** 2.2;
+        const travel = p.travel * eased;
+        const px = w.cx + p.dx * travel;
+        const py = w.cy + p.dy * travel;
+        const alpha = (1 - pAge) ** 1.5 * 0.48 * w.strength;
+        const sz = p.size * (0.5 + eased * 0.8);
+        context.globalAlpha = alpha;
+        context.fillStyle = p.warm ? "rgba(210, 235, 220, 1)" : "rgba(73, 196, 176, 1)";
+        context.beginPath();
+        context.rect(px - sz * 0.5, py - sz * 0.5, sz, sz);
+        context.fill();
+      }
+      context.restore();
+    }
+
     window.requestAnimationFrame(render);
   };
 
@@ -1700,10 +1730,142 @@ const initHeroBamboo = (canvas) => {
   window.addEventListener("pagehide", cleanup, { once: true });
 };
 
+const initHeroKineticMark = (canvas) => {
+  if (!canvas || reducedMotion || typeof THREE === "undefined") return;
+
+  const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setClearColor(0x000000, 0);
+  renderer.outputEncoding = THREE.sRGBEncoding;
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(34, 1, 0.1, 100);
+  camera.position.set(0, 0, 8.4);
+
+  const group = new THREE.Group();
+  group.rotation.x = Math.PI * 0.5;
+  scene.add(group);
+
+  const darkMat = new THREE.MeshStandardMaterial({
+    color: 0x050505,
+    metalness: 0.92,
+    roughness: 0.16,
+    emissive: 0x010101,
+  });
+  const highlightMat = new THREE.MeshStandardMaterial({
+    color: 0xf4f0e8,
+    metalness: 0.62,
+    roughness: 0.12,
+    emissive: 0x090909,
+  });
+
+  const majorRadius = 1.52;
+  const minorRadius = 0.84;
+  const ribCount = 54;
+  const tubeSegments = 140;
+  const twist = 1.05;
+
+  const createRibCurve = (offset = 0, phase = 0) => {
+    const points = [];
+    for (let i = 0; i <= tubeSegments; i += 1) {
+      const u = (i / tubeSegments) * Math.PI * 2;
+      const v = offset + u * twist + phase;
+      const breathing = 1 + Math.sin(u * 3 + offset) * 0.018;
+      const localMinor = minorRadius * breathing;
+      const x = (majorRadius + localMinor * Math.cos(v)) * Math.cos(u);
+      const y = localMinor * Math.sin(v) * 0.98;
+      const z = (majorRadius + localMinor * Math.cos(v)) * Math.sin(u);
+      points.push(new THREE.Vector3(x, y, z));
+    }
+    return new THREE.CatmullRomCurve3(points, true, "catmullrom", 0.42);
+  };
+
+  for (let i = 0; i < ribCount; i += 1) {
+    const offset = (i / ribCount) * Math.PI * 2;
+    const ribGeo = new THREE.TubeGeometry(createRibCurve(offset), 140, 0.028 + (i % 3) * 0.002, 10, true);
+    const rib = new THREE.Mesh(ribGeo, darkMat);
+    rib.rotation.x = 0.18;
+    rib.rotation.y = -0.32;
+    rib.rotation.z = 0.08;
+    group.add(rib);
+
+    if (i % 3 === 0) {
+      const glintGeo = new THREE.TubeGeometry(createRibCurve(offset + 0.018, 0.02), 90, 0.008, 8, true);
+      const glint = new THREE.Mesh(glintGeo, highlightMat);
+      glint.rotation.copy(rib.rotation);
+      glint.scale.set(1.006, 1.006, 1.006);
+      group.add(glint);
+    }
+  }
+
+  const innerShadowGeo = new THREE.TorusGeometry(1.15, 0.045, 12, 128);
+  const innerShadowMat = new THREE.MeshStandardMaterial({
+    color: 0x020202,
+    metalness: 0.8,
+    roughness: 0.22,
+  });
+  const innerShadow = new THREE.Mesh(innerShadowGeo, innerShadowMat);
+  innerShadow.rotation.x = Math.PI * 0.5 + 0.18;
+  innerShadow.rotation.z = -0.2;
+  group.add(innerShadow);
+
+  group.scale.setScalar(0.86);
+
+  const fillLight = new THREE.PointLight(0xffffff, 1.8, 10);
+  fillLight.position.set(-2.8, 2.4, 3.6);
+  scene.add(fillLight);
+  const rimLight = new THREE.PointLight(0xffffff, 1.85, 10);
+  rimLight.position.set(2.8, -1.6, 4.2);
+  scene.add(rimLight);
+  const topLight = new THREE.DirectionalLight(0xffffff, 1.65);
+  topLight.position.set(-1.4, 4, 5);
+  scene.add(topLight);
+  const lowStrip = new THREE.PointLight(0x909090, 0.8, 8);
+  lowStrip.position.set(-3.2, -2.4, 2.2);
+  scene.add(lowStrip);
+  scene.add(new THREE.AmbientLight(0x080808, 1.1));
+
+  let mx = 0;
+  const onPointer = (event) => {
+    const rect = canvas.getBoundingClientRect();
+    mx = ((event.clientX - rect.left) / rect.width - 0.5) * 2;
+  };
+  window.addEventListener("pointermove", onPointer);
+
+  const resize = () => {
+    const w = canvas.clientWidth;
+    const h = canvas.clientHeight;
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+  };
+  window.addEventListener("resize", resize);
+  resize();
+
+  let raf = 0;
+  const animate = (time = 0) => {
+    raf = requestAnimationFrame(animate);
+    const sp = parseFloat(heroStage?.style.getPropertyValue("--hero-scroll-progress") || "0");
+    group.rotation.x += (Math.PI * 0.5 - group.rotation.x) * 0.035;
+    group.rotation.z += (0 - group.rotation.z) * 0.035;
+    group.rotation.y += ((mx * 0.22 + sp * Math.PI * 0.42) - group.rotation.y) * 0.035;
+    renderer.render(scene, camera);
+  };
+  animate();
+
+  const cleanup = () => {
+    cancelAnimationFrame(raf);
+    window.removeEventListener("pointermove", onPointer);
+    window.removeEventListener("resize", resize);
+    renderer.dispose();
+  };
+  window.addEventListener("pagehide", cleanup, { once: true });
+};
+
 const playEntryCodeReveal = () => {
   if (!entryCodeWord) return;
 
-  const target = "KINZIE";
+  const target = "KINZIEDESIGN";
   const glyphSets = ["KXH#", "I1L|", "NMW/", "Z2E=", "I1L|", "E3F_"];
   const duration = 760;
   entryCodeWord.dataset.ghost = target;
@@ -1744,34 +1906,38 @@ const playEntryCodeReveal = () => {
 };
 
 const createEntryWave = (strength = 1) => {
-  if (!entryWaveLayer || !entryScreen || hasEntered || reducedMotion) return;
-  const rect = entryScreen.getBoundingClientRect();
+  if (hasEntered || reducedMotion) return;
+  const rect = entryScreen?.getBoundingClientRect();
+  if (!rect) return;
+  const cx = rect.width * 0.5;
+  const cy = rect.height * 0.5;
+  const maxDist = Math.hypot(rect.width, rect.height) * 0.52;
   const gridX = rect.width <= 760 ? 46 : 54;
   const gridY = rect.width <= 760 ? 40 : 48;
-  const maxDistance = Math.hypot(rect.width, rect.height) * 0.5;
-  const wave = document.createElement("div");
+  const startedAt = performance.now();
+  const particles = [];
 
-  wave.className = "entry-wave";
-  if (strength > 1.1) wave.classList.add("is-strong");
   for (let x = -rect.width * 0.5; x <= rect.width * 0.5; x += gridX) {
     for (let y = -rect.height * 0.5; y <= rect.height * 0.5; y += gridY) {
-      const distance = Math.hypot(x, y);
-      if (distance < 72 || distance > maxDistance || Math.random() > 0.56) continue;
-      const cell = document.createElement("i");
-      const delay = distance * (0.82 - strength * 0.12) + Math.random() * 46;
-      cell.className = "entry-wave-cell";
-      cell.style.setProperty("--wave-x", x.toFixed(2));
-      cell.style.setProperty("--wave-y", y.toFixed(2));
-      cell.style.setProperty("--wave-dir-x", (x / (distance || 1)).toFixed(3));
-      cell.style.setProperty("--wave-dir-y", (y / (distance || 1)).toFixed(3));
-      cell.style.setProperty("--wave-delay", delay.toFixed(0));
-      wave.appendChild(cell);
+      const dist = Math.hypot(x, y);
+      if (dist < 72 || dist > maxDist || Math.random() > 0.56) continue;
+      const nx = x / dist;
+      const ny = y / dist;
+      const delay = dist * (0.82 - strength * 0.12) + Math.random() * 46;
+      particles.push({
+        dx: nx,
+        dy: ny,
+        travel: dist + Math.random() * gridX * 0.6,
+        size: 1.8 + Math.random() * 2.2,
+        warm: Math.random() < 0.28,
+        startedAt: startedAt + delay,
+        duration: 900 + Math.random() * 600,
+      });
     }
   }
 
-  entryWaveLayer.appendChild(wave);
-  while (entryWaveLayer.children.length > 4) entryWaveLayer.firstElementChild?.remove();
-  window.setTimeout(() => wave.remove(), 2200);
+  entryWaves.push({ cx, cy, strength, startedAt, duration: 2200, particles });
+  if (entryWaves.length > 4) entryWaves.splice(0, entryWaves.length - 4);
 };
 
 const isInsideEntryCore = (event) => {
@@ -1934,7 +2100,7 @@ updateFocusPanel("oem");
 updateWorksPanel("oem");
 heroWireframeController = initHeroWireframe(heroWireframe);
 initEntryField(entryFieldCanvas);
-initHeroBamboo(document.getElementById("hero-bamboo-canvas"));
+initHeroKineticMark(document.getElementById("hero-kinetic-canvas"));
 initParticleCanvas(heroCopyCanvas, "dark");
 // initParticleCanvas(particleCanvas, "light");
 updateBeijingMeta();
