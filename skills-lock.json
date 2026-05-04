@@ -1,0 +1,295 @@
+{
+  "version": 1,
+  "skills": {
+    "aesthetic-guide": {
+      "source": "petekp/agent-skills",
+      "sourceType": "github",
+      "computedHash": "30c836f1e225eb104f8ff3a3d372ef1c30fcfdaa612f10f45865ca1eab66c037"
+    },
+    "agent-changelog": {
+      "source": "petekp/agent-skills",
+      "sourceType": "github",
+      "computedHash": "6cc339a175d4da0ee382190bf1853b7dd4ec9d23968da2471cd0c7423f150b7f"
+    },
+    "agent-telemetry": {
+      "source": "petekp/agent-skills",
+      "sourceType": "github",
+      "computedHash": "bcb332d60b5257793af7ffe5a7870643c8464b11fa78a9c1e9d58e851ceff711"
+    },
+    "agentic-docs": {
+      "source": "petekp/agent-skills",
+      "sourceType": "github",
+      "computedHash": "78d51599fd7eff1940247e25e26b84a268e7057df5b847945fefbb05ac938228"
+    },
+    "architectural-refactor": {
+      "source": "petekp/agent-skills",
+      "sourceType": "github",
+      "computedHash": "417819555b3b89e26c6df795402f7c9f8774c0bffb1f0ca111fd2d846b956947"
+    },
+    "architecture-scaffold": {
+      "source": "petekp/agent-skills",
+      "sourceType": "github",
+      "computedHash": "3b9e73a1f93009471c204cdd2cf1a5223089024402de95b03ac1b3373c78c0e9"
+    },
+    "autonomous-agent-readiness": {
+      "source": "petekp/agent-skills",
+      "sourceType": "github",
+      "computedHash": "538f93718873834ce6eff99bb6f0235e37e780f0cc4fb37b7737b44676fea311"
+    },
+    "baseline-ui": {
+      "source": "ibelick/ui-skills",
+      "sourceType": "github",
+      "computedHash": "e6340729e5db277987e5a8deb7f2e8e282bbd07f84ed6b98bb2dfb2a4b05b55f"
+    },
+    "blog-drafter": {
+      "source": "petekp/agent-skills",
+      "sourceType": "github",
+      "computedHash": "510fe2b10b005c8c57d82a6b49fd3360aed733ff24ca964df3a5132de1a7a5ed"
+    },
+    "capture-learning": {
+      "source": "petekp/agent-skills",
+      "sourceType": "github",
+      "computedHash": "d337bd797e9ad24d9c8372f06b70d1222abfaa4128648aa1617ce14a67aa3e98"
+    },
+    "checkpoint": {
+      "source": "petekp/agent-skills",
+      "sourceType": "github",
+      "computedHash": "af3b45316fc76ed015b7a89f3b5fa1b567a749b3c5b0a810371de5e36d2390ff"
+    },
+    "codebase-study-guide": {
+      "source": "petekp/agent-skills",
+      "sourceType": "github",
+      "computedHash": "d2e58192ed5926a54c5a0fbe75ff8b9fc75568d82e7c3fd277cb710f1a0d957f"
+    },
+    "data-sleuth": {
+      "source": "petekp/agent-skills",
+      "sourceType": "github",
+      "computedHash": "181dea6c220c84548e67c13fb27771d1ec827ee5a6ce20316a0802b058fd1d13"
+    },
+    "de-slop": {
+      "source": "petekp/agent-skills",
+      "sourceType": "github",
+      "computedHash": "a9d8f9160a1590c9927deb76481028e0ed8e3d83f8996643a18974f030aad9c2"
+    },
+    "dead-code-sweep": {
+      "source": "petekp/agent-skills",
+      "sourceType": "github",
+      "computedHash": "cc7bbeaeb7bec26df202df5c64591edd46c7dcc32569e1a76e04f6ef20957a55"
+    },
+    "deep-research": {
+      "source": "petekp/agent-skills",
+      "sourceType": "github",
+      "computedHash": "b0daa1c2ccabe0877abe42099672cca7838fad10f633e4923d32548be28ac360"
+    },
+    "deep-work": {
+      "source": "petekp/agent-skills",
+      "sourceType": "github",
+      "computedHash": "94a3ffee4383c44dcc672b191e69cd453a8dbeb59f0af4b97ec80301c0e92501"
+    },
+    "design-taste-frontend": {
+      "source": "Leonxlnx/taste-skill",
+      "sourceType": "github",
+      "computedHash": "d823593e24d7493ab740db8f082cbe3b148ed29af9e804d11f5302ad79e4b96d"
+    },
+    "docs-changelog": {
+      "source": "petekp/agent-skills",
+      "sourceType": "github",
+      "computedHash": "ee14a7ee23a0a2a59284df8343ed9b8b321ff27f4e9afeba6427c9e5edeede25"
+    },
+    "exhaustive-systems-analysis": {
+      "source": "petekp/agent-skills",
+      "sourceType": "github",
+      "computedHash": "67d13c8154641fbf886ddb1d2927bace58e23a92a6894cce070e98a2b338af8f"
+    },
+    "explainer-visuals": {
+      "source": "petekp/agent-skills",
+      "sourceType": "github",
+      "computedHash": "8b62c226cf1dfa996b431ed533453f8cc9d92409d9db6293f15582fad8865cd3"
+    },
+    "explanatory-playground": {
+      "source": "petekp/agent-skills",
+      "sourceType": "github",
+      "computedHash": "eabf0b6c48457c8658062d8387e66a8c0b65056fe5a1c138ad6de4709972a745"
+    },
+    "fixer": {
+      "source": "petekp/agent-skills",
+      "sourceType": "github",
+      "computedHash": "f68621c08a9d2df4ce4b5c897230bf42ad0e1afd6c8cdcca848506375d28ee1c"
+    },
+    "fixing-accessibility": {
+      "source": "ibelick/ui-skills",
+      "sourceType": "github",
+      "computedHash": "f8ddcb0a8c7b8728105eab18e17223e41d74fb8649becba58a6deb90c6a5ce8d"
+    },
+    "fixing-metadata": {
+      "source": "ibelick/ui-skills",
+      "sourceType": "github",
+      "computedHash": "10047222b01c2c9b6e904ef90079880d9dbc09de3241df7f311b238dbcb7869a"
+    },
+    "fixing-motion-performance": {
+      "source": "ibelick/ui-skills",
+      "sourceType": "github",
+      "computedHash": "c1aca76fe18e8594f401cf78e5e76be24f182ce63167a398bdd4458f2a07639f"
+    },
+    "formal-verify": {
+      "source": "petekp/agent-skills",
+      "sourceType": "github",
+      "computedHash": "98e342525b2f94591fbd405291df942e104062439ec1867049e524ae55c90a67"
+    },
+    "frontend-design": {
+      "source": "anthropics/skills",
+      "sourceType": "github",
+      "computedHash": "516bd2154eb843a8240e43d5b285229129853114ad7075a5e141e1c08e408c84"
+    },
+    "full-output-enforcement": {
+      "source": "Leonxlnx/taste-skill",
+      "sourceType": "github",
+      "computedHash": "524f7c7950c3fde726101613f630140411c7d080e63be718687f4b38f919be81"
+    },
+    "gpt-taste": {
+      "source": "Leonxlnx/taste-skill",
+      "sourceType": "github",
+      "computedHash": "7bd1bfdda0e51016ca222693401a65fc0dd9bf9487e0bd5b1740ba510f6f963a"
+    },
+    "handoff": {
+      "source": "petekp/agent-skills",
+      "sourceType": "github",
+      "computedHash": "3333422578963053dc1c483e20faf28ea109bca820d2472b12a2973f9b11fc80"
+    },
+    "hierarchical-matching-systems": {
+      "source": "petekp/agent-skills",
+      "sourceType": "github",
+      "computedHash": "e9cc117d3e4994c4aaaa018fb35d84fb030135820207a763a7ff1d86dcc59b11"
+    },
+    "high-end-visual-design": {
+      "source": "Leonxlnx/taste-skill",
+      "sourceType": "github",
+      "computedHash": "f730e4132775f13eea19e3dc39afc6bb453cfc0498872b127ad8f0d47cfd802d"
+    },
+    "industrial-brutalist-ui": {
+      "source": "Leonxlnx/taste-skill",
+      "sourceType": "github",
+      "computedHash": "e66e5a2a8b73cef79ab6546459c665e8b983645689c5f3772f7eed8b9f1e8e0e"
+    },
+    "interaction-design": {
+      "source": "petekp/agent-skills",
+      "sourceType": "github",
+      "computedHash": "fe6891cebea67400940613b0e6890ff3ce11baa5c41d5b3f8b50a038f5316b3f"
+    },
+    "interactive-study-guide": {
+      "source": "petekp/agent-skills",
+      "sourceType": "github",
+      "computedHash": "ca76026224915ec761e363ddbb40dbad6bdead663f6e1e10523cc7b217b8a219"
+    },
+    "literate-guide": {
+      "source": "petekp/agent-skills",
+      "sourceType": "github",
+      "computedHash": "24c86d5898c56858d31b85b3345a888a1c8dadb8668b00802db69d98217f331a"
+    },
+    "macos-app-design": {
+      "source": "petekp/agent-skills",
+      "sourceType": "github",
+      "computedHash": "0d00b18ae4cc39f879ef0ed201173d088683b23082692169d11924d9f1a5a28e"
+    },
+    "manual-testing": {
+      "source": "petekp/agent-skills",
+      "sourceType": "github",
+      "computedHash": "74d2f28aa82897875cae52a2740f8c940e966d1727fb7200fdf251833fcac482"
+    },
+    "minimalist-ui": {
+      "source": "Leonxlnx/taste-skill",
+      "sourceType": "github",
+      "computedHash": "7e88897e0371184e97a82b8d9ef080323c13f21eb067b58ef71eb05173a08ac2"
+    },
+    "model-first-reasoning": {
+      "source": "petekp/agent-skills",
+      "sourceType": "github",
+      "computedHash": "c179defff95f75a0ab70bb59f3e62386540b89294bd2aca623f4a9cc3e0cdb70"
+    },
+    "multi-model-meta-analysis": {
+      "source": "petekp/agent-skills",
+      "sourceType": "github",
+      "computedHash": "c565b3821af1755a264c7e92c1a61a58036a4555d3d368b792b19ee73c022f77"
+    },
+    "openclaw-customizer": {
+      "source": "petekp/agent-skills",
+      "sourceType": "github",
+      "computedHash": "5eb3e06a6ac17a1322728cbb8f4144a9f425367147c884f29f986d7a091943d0"
+    },
+    "optimize-agent-docs": {
+      "source": "petekp/agent-skills",
+      "sourceType": "github",
+      "computedHash": "9f8feec9f69e02dccd81488346792823c62dc1f364eaa2c095731831d16e1059"
+    },
+    "posthog-analytics": {
+      "source": "petekp/agent-skills",
+      "sourceType": "github",
+      "computedHash": "5e210e64633a0384ffad2ba5ea285ac50576662306119333611468567615e3bb"
+    },
+    "process-hunter": {
+      "source": "petekp/agent-skills",
+      "sourceType": "github",
+      "computedHash": "d9b2297cf14d9cd661b2a0784449a94452a6a713220d6f673da8f96b996b2de7"
+    },
+    "proposal-review": {
+      "source": "petekp/agent-skills",
+      "sourceType": "github",
+      "computedHash": "bc00373983daeed5f456f0216766e0e65416087d2bdb60427416b3d840e308d5"
+    },
+    "record-todos": {
+      "source": "petekp/agent-skills",
+      "sourceType": "github",
+      "computedHash": "2219fbf377bfcb961e787d09c0392c70efbdaa1e4f2a147ae8612bef4583f95a"
+    },
+    "redesign-existing-projects": {
+      "source": "Leonxlnx/taste-skill",
+      "sourceType": "github",
+      "computedHash": "47eced3e960a2c961d3cbee11fa1216264f589344b586a5cbd03967cd6b9c54b"
+    },
+    "research-prompt": {
+      "source": "petekp/agent-skills",
+      "sourceType": "github",
+      "computedHash": "da7bc8f4ccbb0e6a4b8ade1414624f0c602c660d46610ce0ed2444c2abe2ef7d"
+    },
+    "review-package": {
+      "source": "petekp/agent-skills",
+      "sourceType": "github",
+      "computedHash": "3cab87605c65a5f8982d53abee68c1b0ff0df11a872dcf88d59ed4af0ae5e071"
+    },
+    "rust": {
+      "source": "petekp/agent-skills",
+      "sourceType": "github",
+      "computedHash": "918e2c7c30fedbc96a01a12d892ba3e6117f92fcf154dea4e75684445899cf3a"
+    },
+    "seam-ripper": {
+      "source": "petekp/agent-skills",
+      "sourceType": "github",
+      "computedHash": "c428a3d776e72c49519a56765a69638292130c3ed36db54b666d7e5fd9161c36"
+    },
+    "simplicity-audit": {
+      "source": "petekp/agent-skills",
+      "sourceType": "github",
+      "computedHash": "00cf7abdba6d818cadbff2f3c4e1293c91480cc26f101d82923e5093bcb9a8cb"
+    },
+    "stitch-design-taste": {
+      "source": "Leonxlnx/taste-skill",
+      "sourceType": "github",
+      "computedHash": "acf2921a7e50c06e637f072ba52e36a994cbb44ecbe6e31435bc113b894f5499"
+    },
+    "tuning-panel": {
+      "source": "petekp/agent-skills",
+      "sourceType": "github",
+      "computedHash": "134f59d29bab2378fef3d2a6234af63436a93daef2f752e1665f50700f903331"
+    },
+    "typography": {
+      "source": "petekp/agent-skills",
+      "sourceType": "github",
+      "computedHash": "3292d34592e7224b7fe1e47c4aa7bc6ff3ca7fdcc62d6c493e1a23c903779879"
+    },
+    "unix-macos-engineer": {
+      "source": "petekp/agent-skills",
+      "sourceType": "github",
+      "computedHash": "753cf2e9267c32413933e27ff4679a86e4f26299a48eea00667c347323e21416"
+    }
+  }
+}

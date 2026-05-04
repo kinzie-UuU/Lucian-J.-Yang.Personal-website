@@ -323,15 +323,13 @@ soundToggle?.addEventListener("click", async () => {
   applySoundState();
   writeStoredBoolean(SOUND_STORAGE_KEY, soundEnabled);
 
-  if (!audioContext) return;
-
   if (soundEnabled) {
-    await audioContext.resume().catch(() => null);
+    await getAudioContext().catch(() => null);
     playUiTone("click");
     return;
   }
 
-  if (audioContext.state === "running") {
+  if (audioContext?.state === "running") {
     await audioContext.suspend().catch(() => null);
   }
 });
@@ -3087,48 +3085,53 @@ const stepHeroSequence = (isForward) => {
 window.addEventListener(
   "wheel",
   (event) => {
-    if (!document.body.classList.contains("has-entered")) return;
-    if (orderedMode) return;
-
-    // Only hijack when hero is visible (sticky stage covers viewport)
-    const rect = heroSection?.getBoundingClientRect();
-    if (!rect) return;
-    const heroVisible = rect.top <= 0 && rect.bottom >= window.innerHeight * 0.5;
-    if (!heroVisible) return;
-
-    // After all cards done, let browser scroll naturally to next section
-    if (heroStep >= HERO_CARD_COUNT) return;
-
+    if (!isHeroStepControlActive()) return;
     event.preventDefault();
+    stepHeroSequence(event.deltaY > 0);
+  },
+  { passive: false }
+);
 
-    if (heroWheelLocked) return;
+let heroTouchStart = null;
 
-    const isDown = event.deltaY > 0;
-    if (isDown) {
-      if (heroIntroBudget > 0) {
-        // Still in water intro phase
-        heroIntroBudget -= 1;
-        // brief lock so one wheel tick = one intro tick
-        heroWheelLocked = true;
-        setTimeout(() => { heroWheelLocked = false; }, 320);
-      } else {
-        // Advance to next card
-        heroStep = Math.min(HERO_CARD_COUNT, heroStep + 1);
-        heroWheelLocked = true;
-        setTimeout(() => { heroWheelLocked = false; }, 480);
-      }
-    } else {
-      // Scroll up: go back
-      if (heroStep > 0) {
-        heroStep = Math.max(0, heroStep - 1);
-      } else {
-        heroIntroBudget = Math.min(HERO_INTRO_TICKS, heroIntroBudget + 1);
-      }
-      heroWheelLocked = true;
-      setTimeout(() => { heroWheelLocked = false; }, 380);
+heroStage?.addEventListener(
+  "touchstart",
+  (event) => {
+    const touch = event.touches[0];
+    if (!touch) return;
+    heroTouchStart = {
+      x: touch.clientX,
+      y: touch.clientY,
+    };
+  },
+  { passive: true }
+);
+
+heroStage?.addEventListener(
+  "touchmove",
+  (event) => {
+    if (isHeroStepControlActive()) {
+      event.preventDefault();
     }
   },
   { passive: false }
+);
+
+heroStage?.addEventListener(
+  "touchend",
+  (event) => {
+    if (!heroTouchStart) return;
+    const touch = event.changedTouches[0];
+    if (!touch) return;
+
+    const dx = touch.clientX - heroTouchStart.x;
+    const dy = touch.clientY - heroTouchStart.y;
+    heroTouchStart = null;
+
+    if (Math.abs(dy) < 36 || Math.abs(dy) < Math.abs(dx)) return;
+    stepHeroSequence(dy < 0);
+  },
+  { passive: true }
 );
 
 // Hero stage click ripple effect

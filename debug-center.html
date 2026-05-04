@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Debug Center</title>
+<style>
+body { margin: 0; padding: 0; font-family: monospace; }
+.debug-overlay {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  background: rgba(0,0,0,0.8);
+  color: #0f0;
+  padding: 12px;
+  font-size: 12px;
+  z-index: 9999;
+  line-height: 1.6;
+}
+.crosshair {
+  position: fixed;
+  pointer-events: none;
+  z-index: 9998;
+}
+.crosshair-h {
+  position: fixed;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: rgba(255,0,0,0.8);
+  top: 50vh;
+}
+.crosshair-v {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: rgba(255,0,0,0.8);
+  left: 50vw;
+}
+</style>
+</head>
+<body>
+<div class="debug-overlay" id="debug"></div>
+<div class="crosshair">
+  <div class="crosshair-h"></div>
+  <div class="crosshair-v"></div>
+</div>
+<script>
+const debug = document.getElementById('debug');
+function update() {
+  const vh = window.innerHeight;
+  const vw = window.innerWidth;
+  const centerY = vh * 0.5;
+  const centerX = vw * 0.5;
+  
+  debug.innerHTML = `
+Window: ${vw} x ${vh}<br>
+Center: (${centerX.toFixed(1)}, ${centerY.toFixed(1)})<br>
+<br>
+Red crosshair = 50vh / 50vw<br>
+<br>
+Open index.html and check if focal card<br>
+aligns with this red crosshair center.
+  `;
+}
+update();
+window.addEventListener('resize', update);
+</script>
+</body>
+</html>
