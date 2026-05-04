@@ -18,6 +18,43 @@
 
 ---
 
+## 2026-04-26 Contact / Clients Layout Refinement
+
+### Completed
+- Services story progress indicator moved from bottom center to the right side as a vertical progress line.
+- Contact social icons were moved lower and simplified into a quieter bare-icon row:
+  - larger vertical breathing room under the contact copy
+  - wider icon spacing
+  - lighter default opacity
+  - subtle hover lift only
+- The previous `DESIGN.DESIGN.` sliced scroll visual was moved out of Contact, then replaced entirely in the Clients section.
+- Clients section now uses a simple title band above the client list:
+  - text: `PACKAGING BRAND DESIGN`
+  - no cut/slice mask
+  - no vertical separator
+  - centered single-line layout on desktop
+  - mobile can wrap naturally
+- Removed the obsolete `contact-kinzie` sliced-scroll HTML/CSS/JS hooks so the clients area no longer has a large empty sticky-scroll gap.
+
+### Main Files Changed
+- `index.html`
+- `styles.css`
+- `script.js`
+- `PROGRESS.md`
+
+### Current State
+- Clients section structure is now:
+  - `clients-title-band`
+  - `合作客户` kicker
+  - clients marquee
+- The old client-top cutline/large DESIGN animation is gone.
+- The title band may still need final visual tuning in-browser for exact font scale and vertical placement.
+
+### Suggested Next Checks
+- Review the clients title band at desktop width around 1440px and ultrawide widths to confirm the text is fully visible.
+- Review mobile behavior to decide whether `PACKAGING BRAND DESIGN` should wrap into two lines or use a smaller single line.
+- If the title still feels heavy, reduce `.clients-title-band span` max font size slightly.
+
 ## 2026-04-19 本轮收尾（最新状态）
 
 ### 顶栏 `.top-meta` 胶囊
@@ -540,3 +577,122 @@ Location: `.agents/skills/` (symlinked to `.claude/skills/`)
 - 继续看真实浏览器里的入口页细节：GO 周围是否还残留不需要的圆弧/遮罩边缘。
 - 顶部 meta 在真实分辨率下再检查一次中文名、时间、日期、语言按钮和两个图标的视觉重量。
 - 如果螺旋卡片仍像半透明盒子，下一轮应继续弱化伪 3D 盒面，强化“图片卡片/宣传页”质感。
+---
+
+## 2026-04-25 Hero Kinetic Mark Backup
+
+### Saved State
+- Preserved the current upright glossy black metal Three.js hero object before trying new directions.
+- Backup folder: `hero-kinetic-mark-backup/`
+- Saved full-file snapshots:
+  - `hero-kinetic-mark-backup/index.current-metal-mark.html`
+  - `hero-kinetic-mark-backup/styles.current-metal-mark.css`
+  - `hero-kinetic-mark-backup/script.current-metal-mark.js`
+  - `hero-kinetic-mark-backup/README.md`
+
+### Current Hero Object Hooks
+- HTML: `.hero-kinetic-mark` and `#hero-kinetic-canvas`
+- CSS: `.hero-kinetic-mark`, `.hero-kinetic-canvas`
+- JS: `initHeroKineticMark(canvas)`
+
+### Interaction State
+- The object is meant to stand upright.
+- Animation should only rotate left/right, not tumble vertically or roll continuously.
+- User wants this version saved so the center subject can be changed freely and restored later.
+
+### Verification
+- `node --check script.js`
+## 2026-04-26 作品画廊与项目详情页进度
+
+### 已完成
+- 在作品列表中补齐第 06 项：`包装升级与打样协同`，对应类别 key 为 `delivery`。
+- 创建作品图片目录：`images/works/oem/`、`images/works/gift/`、`images/works/series/`、`images/works/brand/`、`images/works/aigc/`、`images/works/delivery/`。
+- `Gift` 类别已接入用户放入的 6 张图片：`0000.png`、`000000.png`、`1-1.png`、`1.png`、`3.png`、`333.png`。
+- 点击作品分类后打开全屏浅色作品层，保留“眨眼睁开”开场动画。
+- 作品层第一层为横向项目带：滚轮按项目逐张前进/后退。
+- 修复作品层打开后看不到鼠标的问题：打开作品层时恢复系统鼠标并隐藏自定义准星光标。
+- 修复横向画廊反向滚动不稳定的问题：滚轮监听提升到 `window` 捕获层，并锁住 `html/body` 滚动。
+- 新增项目详情页状态：点击单个项目图进入详情页；左侧展示项目名、简洁说明、标签与设计内容介绍；右侧展示圆角大图；继续向下滚动进入全屏圆角效果图页面。
+- 顶部提供 `BACK` 返回横向项目带，`CLOSE` 关闭整个作品层。
+- 调整从 About 到 Contact 的滚动手感：全局 scroll snap 从 `mandatory` 改为 `proximity`，内容区取消强制 `scroll-snap-stop: always`。
+- Contact 区新增 `KINZIE` 切片滚动合成字标，并移除多余青绿色装饰线。
+- Contact 字标区最新方向已调整为 `DESIGN.DESIGN.` 横向重复大字，左右铺满并溢出全屏。
+- `BRAND / PACKAGING / 1994 / TYPOGRAPHY / DESIGN` 小字改为压在黑色切割条内部，黑条覆盖在大字上形成真正的遮罩切割关系。
+- 小字排版已进一步细化：重复散排、上下错落、字号更小、字重更细，且限制在黑条内部不外漏。
+
+### 主要改动文件
+- `index.html`
+- `styles.css`
+- `script.js`
+- `images/works/`
+
+### 当前验证
+- `node --check personal-website/script.js` 已通过。
+
+### 下一步建议
+- 将真实项目图分别放入 6 个类别目录后，把 `script.js` 中 `workGalleryImages` 的其他类别也替换为真实图片路径。
+- 为每个项目补充更准确的 `summary`、`body`、`tags` 字段，让详情页文案不再使用默认占位说明。
+- 检查 Gift 6 张大图在详情页中的裁切位置，必要时逐项调整 `position`。
+
+---
+## 2026-04-26 Services Scroll Diagnosis
+
+### Completed
+- Removed the leftover `.services-split-piece` corner fragments from the Services scroll sequence:
+  - deleted the 4 empty HTML spans
+  - deleted the matching CSS block
+  - this fixes the faint four-corner boxes visible around service text pages
+- Diagnosed why the Services scroll pages feel choppy:
+  - each title/body is split into many `.service-glyph` spans
+  - every frame writes opacity, transform, and `filter: blur()` to many glyphs
+  - `filter: blur()` is especially expensive on large Chinese typography
+  - `currentProgress += (targetProgress - currentProgress) * 0.075` creates a lagging catch-up feel
+  - each panel has a short scroll window, so mouse-wheel steps can jump too much state at once
+
+### Suggested Next Optimization
+- Replace per-character animation with whole-panel or line-level animation.
+- Avoid animating `filter: blur()` continuously; use opacity/transform as the main motion.
+- Increase progress interpolation from `0.075` to roughly `0.16-0.22`.
+- Lengthen each service panel's scroll window so transitions feel less stepped.
+- Keep the right-side progress indicator, but make the content animation lighter.
+
+### Main Files Changed
+- `index.html`
+- `styles.css`
+- `PROGRESS.md`
+
+---
+
+## 2026-04-26 Contact Form / Services Photo Refinement
+
+### Completed
+- Added a minimalist contact form below the Contact headline:
+  - fields: name, company, email/phone, project needs
+  - small send button using `mailto:` with the filled content
+  - social icons moved below the form
+  - form labels support zh/en i18n
+- Refined the contact form styling:
+  - removed the unnecessary top guide line
+  - reduced send button scale to a quieter small pill
+  - kept the input treatment as simple underline fields
+- Added `images/为何选择我.jpg` into the Services entry card.
+- Adjusted the Services entry card proportion:
+  - desktop uses a wider cinematic ratio
+  - mobile uses a more stable 4:3 ratio
+  - photo visibility restored after testing a more muted treatment
+- Smoothed the work detail blink opening animation by increasing duration and adding intermediate keyframes.
+- Fixed gallery/detail language behavior so Chinese is default and English follows the global language switch.
+- Kept the custom precision cursor visible on gallery and detail pages.
+
+### Main Files Changed
+- `index.html`
+- `styles.css`
+- `script.js`
+- `PROGRESS.md`
+
+### Current State
+- Contact section now flows: headline -> contact form -> social icons.
+- Services entry card now uses the provided photo while preserving the scroll-open motion.
+- Work gallery/detail overlays now follow the site language state and keep the cursor effect.
+
+---

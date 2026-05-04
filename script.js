@@ -8,14 +8,14 @@ const i18n = {
     nav_contact: "联系",
     hero_kicker: "Packaging Direction / Visual Judgment / OEM System",
     hero_title: "不是把包装做漂亮，而是把包装做对。",
-    hero_text: "Kinzie 聚焦 OEM、礼赠渠道、系列礼盒与品牌升级项目。比起单纯制造风格，我更关心包装如何在真实约束中成立。",
+    hero_text: "Lucian J. Yang 聚焦 OEM、礼赠渠道、系列礼盒与品牌升级项目。比起单纯制造风格，我更关心包装如何在真实约束中成立。",
     hero_script: "quietly, precisely.",
     hero_action_works: "进入作品选集",
     hero_action_about: "查看服务",
     hero_note: "首页不是说明文档，而是进入作品现场的入口。先浏览，再判断，再进入项目。",
     works_kicker: "作品",
     works_statement_title: "不是把包装做漂亮，而是把包装做对。",
-    works_statement_body: "Kinzie 聚焦 OEM、礼赠渠道、系列礼盒与品牌升级项目。比起单纯制造风格，我更关心包装如何在真实约束中成立。",
+    works_statement_body: "Lucian J. Yang 聚焦 OEM、礼赠渠道、系列礼盒与品牌升级项目。比起单纯制造风格，我更关心包装如何在真实约束中成立。",
     works_title: "点击作品，进入更集中、更明确的判断现场。",
     works_text: "这里不是把项目平铺成截图，而是把真实合作中最常见的场景，整理成可浏览、可比较、可进入的作品入口。",
     work_tab_oem: "OEM / 贴牌包装",
@@ -50,6 +50,8 @@ const i18n = {
     service_text_4: "AIGC 可以提高前期测试、方案比较与提案效率，但不会替代判断。",
     service_title_5: "综合表达",
     service_text_5: "在需要时，我也会结合品牌、字体与视觉系统，补强包装识别与整体完成度。",
+    service_title_6: "交付协同",
+    service_text_6: "我会把设计文件、打样反馈与供应商沟通整理清楚，让方案更顺畅地进入执行。",
     clients_kicker: "合作客户",
     clients_title: "合作客户",
     contact_kicker: "联系",
@@ -66,14 +68,14 @@ const i18n = {
     nav_contact: "Contact",
     hero_kicker: "Packaging Direction / Visual Judgment / OEM System",
     hero_title: "Not just making packaging beautiful, but making it right.",
-    hero_text: "Kinzie focuses on OEM, gifting channels, series boxes, and brand-upgrade packaging. The priority is not style alone, but whether a package truly works under real constraints.",
+    hero_text: "Lucian J. Yang focuses on OEM, gifting channels, series boxes, and brand-upgrade packaging. The priority is not style alone, but whether a package truly works under real constraints.",
     hero_script: "quietly, precisely.",
     hero_action_works: "Enter Works",
     hero_action_about: "View Services",
     hero_note: "The homepage is not a document. It is an entrance into the work itself: browse first, judge second, then enter the project.",
     works_kicker: "Works",
     works_statement_title: "Not just making packaging beautiful, but making it right.",
-    works_statement_body: "Kinzie focuses on OEM, gifting channels, series boxes, and brand-upgrade packaging. The priority is not style alone, but whether a package truly works under real constraints.",
+    works_statement_body: "Lucian J. Yang focuses on OEM, gifting channels, series boxes, and brand-upgrade packaging. The priority is not style alone, but whether a package truly works under real constraints.",
     works_title: "Click a project and enter a more focused field of judgment.",
     works_text: "These works show not just results, but the judgment behind them. What matters is whether they hold up in real price bands, channel conditions, process constraints, and production realities.",
     work_tab_oem: "OEM Packaging",
@@ -81,6 +83,7 @@ const i18n = {
     work_tab_series: "Series Packaging",
     work_tab_brand: "Brand Support",
     work_tab_aigc: "AIGC Workflow",
+    work_tab_delivery: "Delivery Support",
     works_col_project: "Project",
     works_col_type: "Type",
     works_col_year: "Year",
@@ -89,6 +92,7 @@ const i18n = {
     work_row_3_name: "Series Gift Box Visual System",
     work_row_4_name: "Brand Typography & Identity Support",
     work_row_5_name: "AIGC-Assisted Proposal Workflow",
+    work_row_6_name: "Packaging Upgrade & Sampling",
     metric_focus: "Focus",
     metric_value: "Value",
     about_kicker: "About",
@@ -108,6 +112,8 @@ const i18n = {
     service_text_4: "AIGC improves early-stage testing, option comparison, and proposal speed — but does not replace judgment.",
     service_title_5: "Integrated Expression",
     service_text_5: "When needed, I bring in brand, type, and visual systems to strengthen packaging recognition and overall completeness.",
+    service_title_6: "Delivery Alignment",
+    service_text_6: "I keep files, sampling feedback, and supplier communication clear so the direction can move smoothly into production.",
     clients_kicker: "Clients",
     clients_title: "Clients",
     contact_kicker: "Contact",
@@ -115,9 +121,25 @@ const i18n = {
     contact_text: "If you are looking for a designer who understands packaging expression and takes real-world execution and cost constraints seriously, get in touch.",
     contact_collab: "OEM / Private Label · Gifting & Welfare Channels · Series Packaging · Seasonal Gift Boxes · Packaging Upgrade · Proposal & Direction Support",
     focus_kicker: "Active Project",
-    meta_name: "KINZIE",
+    meta_name: "Lucian J. Yang",
   },
 };
+
+Object.assign(i18n.zh, {
+  contact_form_name: "\u59d3\u540d",
+  contact_form_company: "\u516c\u53f8",
+  contact_form_contact: "\u90ae\u7bb1/\u7535\u8bdd",
+  contact_form_message: "\u9700\u6c42\u4fe1\u606f",
+  contact_form_send: "\u53d1\u9001",
+});
+
+Object.assign(i18n.en, {
+  contact_form_name: "Name",
+  contact_form_company: "Company",
+  contact_form_contact: "Email / Phone",
+  contact_form_message: "Project Needs",
+  contact_form_send: "Send",
+});
 
 const worksData = {
   oem: {
@@ -199,23 +221,32 @@ let selectedWorkKey = "oem";
 let hasEntered = false;
 let selectionStartedAt = 0;
 let selectedCardIndex = -1;
+
+// Hero wheel-step system
+// step 0 = water intro (2 wheel ticks held here)
+// step 1-6 = card focus steps
+const HERO_CARD_COUNT = 6;
+const HERO_INTRO_TICKS = 2;
+let heroStep = 0;           // 0..HERO_CARD_COUNT
+let heroStepTarget = 0;     // lerp target (float)
+let heroWheelLocked = false;// debounce between steps
 const heroCardStates = [];
 const fieldPointer = { x: 0.5, y: 0.5, active: false };
 const precisionCursor = document.querySelector("#precision-cursor");
 const precisionGuides = document.querySelector("#precision-guides");
 const heroClusterLayout = [
-  { ox: -0.52, oy: -0.22, scale: 0.88, rot: -12, depth: -24, phase: 0.1 },
-  { ox: -0.32, oy: -0.30, scale: 0.86, rot: -6, depth: -8,  phase: 0.6 },
-  { ox: -0.10, oy: -0.28, scale: 0.84, rot:  5, depth:  8,  phase: 1.1 },
-  { ox:  0.14, oy: -0.22, scale: 0.86, rot:  9, depth: 22,  phase: 1.7 },
-  { ox:  0.38, oy: -0.14, scale: 0.92, rot:  7, depth: 52,  phase: 2.1 },
-  { ox:  0.52, oy:  0.08, scale: 0.84, rot: -8, depth: 18,  phase: 2.6 },
-  { ox:  0.36, oy:  0.28, scale: 0.86, rot:  4, depth: -2,  phase: 3.1 },
-  { ox:  0.12, oy:  0.36, scale: 0.90, rot: -9, depth: -18, phase: 3.7 },
-  { ox: -0.16, oy:  0.32, scale: 0.82, rot:  8, depth: -34, phase: 4.2 },
-  { ox: -0.40, oy:  0.18, scale: 1.04, rot:  0, depth: 66,  phase: 4.8 },
-  { ox: -0.24, oy: -0.06, scale: 0.82, rot: -4, depth: 28,  phase: 5.4 },
-  { ox:  0.22, oy:  0.10, scale: 0.78, rot: 11, depth: -12, phase: 5.9 },
+  { ox: -0.52, oy: -0.23, scale: 0.88, rot: -12, depth: -24, phase: 0.1 },
+  { ox: -0.32, oy: -0.31, scale: 0.86, rot: -6, depth: -8,  phase: 0.6 },
+  { ox: -0.10, oy: -0.29, scale: 0.84, rot:  5, depth:  8,  phase: 1.1 },
+  { ox:  0.14, oy: -0.23, scale: 0.86, rot:  9, depth: 22,  phase: 1.7 },
+  { ox:  0.38, oy: -0.15, scale: 0.92, rot:  7, depth: 52,  phase: 2.1 },
+  { ox:  0.52, oy:  0.07, scale: 0.84, rot: -8, depth: 18,  phase: 2.6 },
+  { ox:  0.36, oy:  0.27, scale: 0.86, rot:  4, depth: -2,  phase: 3.1 },
+  { ox:  0.12, oy:  0.35, scale: 0.90, rot: -9, depth: -18, phase: 3.7 },
+  { ox: -0.16, oy:  0.31, scale: 0.82, rot:  8, depth: -34, phase: 4.2 },
+  { ox: -0.40, oy:  0.17, scale: 1.04, rot:  0, depth: 66,  phase: 4.8 },
+  { ox: -0.24, oy: -0.07, scale: 0.82, rot: -4, depth: 28,  phase: 5.4 },
+  { ox:  0.22, oy:  0.09, scale: 0.78, rot: 11, depth: -12, phase: 5.9 },
 ];
 
 const revealNodes = document.querySelectorAll(".reveal");
@@ -252,7 +283,7 @@ const entryWaveLayer = document.querySelector("#entry-wave-layer");
 const homeLinks = Array.from(document.querySelectorAll('a[href="#top"]'));
 const themeToggle = document.querySelector("#theme-toggle");
 const soundToggle = document.querySelector("#sound-toggle");
-const SOUND_STORAGE_KEY = "kinzieSoundEnabled";
+const SOUND_STORAGE_KEY = "lucianYangSoundEnabled";
 
 const readStoredBoolean = (key, fallback) => {
   try {
@@ -309,6 +340,7 @@ applySoundState();
 
 // Contact: hover-to-copy
 const copyItems = document.querySelectorAll(".contact-copy-item");
+const contactForm = document.querySelector("#contact-form");
 
 copyItems.forEach((item) => {
   let hoverTimer = null;
@@ -324,6 +356,28 @@ copyItems.forEach((item) => {
   item.addEventListener("mouseleave", () => {
     clearTimeout(hoverTimer);
   });
+});
+
+contactForm?.addEventListener("submit", (event) => {
+  event.preventDefault();
+
+  const formData = new FormData(contactForm);
+  const name = String(formData.get("name") || "").trim();
+  const company = String(formData.get("company") || "").trim();
+  const contact = String(formData.get("contact") || "").trim();
+  const message = String(formData.get("message") || "").trim();
+  const subject = currentLang === "zh" ? "\u5305\u88c5\u8bbe\u8ba1\u9700\u6c42\u54a8\u8be2" : "Packaging Design Inquiry";
+  const body = [
+    `${i18n[currentLang].contact_form_name}: ${name}`,
+    `${i18n[currentLang].contact_form_company}: ${company || "-"}`,
+    `${i18n[currentLang].contact_form_contact}: ${contact}`,
+    "",
+    `${i18n[currentLang].contact_form_message}:`,
+    message,
+  ].join("\n");
+
+  window.location.href = `mailto:y1156813759@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  playUiTone("click");
 });
 
 // WeChat QR modal
@@ -344,12 +398,13 @@ const stageMotion = {
 
 const getAudioContext = async () => {
   if (!soundEnabled) return null;
-  if (audioContext) return audioContext;
   const AudioCtx = window.AudioContext || window.webkitAudioContext;
   if (!AudioCtx) return null;
-  audioContext = new AudioCtx();
+  if (!audioContext) {
+    audioContext = new AudioCtx();
+  }
   if (audioContext.state === "suspended") {
-    await audioContext.resume();
+    await audioContext.resume().catch(() => null);
   }
   return audioContext;
 };
@@ -453,6 +508,43 @@ const playPackagingSnap = async (pitch = 1, gainBoost = 1, delayMs = 0) => {
   burstSource.start(now);
 };
 
+const playWaterDrop = async () => {
+  if (!soundEnabled) return;
+  const context = await getAudioContext().catch(() => null);
+  if (!context) return;
+
+  if (context.state === "suspended") {
+    await context.resume().catch(() => null);
+  }
+
+  if (context.state !== "running") return;
+
+  const now = context.currentTime;
+  const gain = context.createGain();
+  const filter = context.createBiquadFilter();
+  const osc = context.createOscillator();
+
+  // Water drop: sine wave, 1100 Hz → 420 Hz, 80ms
+  filter.type = "lowpass";
+  filter.frequency.setValueAtTime(2400, now);
+  filter.Q.setValueAtTime(1.2, now);
+
+  osc.type = "sine";
+  osc.frequency.setValueAtTime(1100, now);
+  osc.frequency.exponentialRampToValueAtTime(420, now + 0.08);
+
+  gain.gain.setValueAtTime(0.0001, now);
+  gain.gain.exponentialRampToValueAtTime(0.035, now + 0.008);
+  gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.08);
+
+  osc.connect(filter);
+  filter.connect(gain);
+  gain.connect(context.destination);
+
+  osc.start(now);
+  osc.stop(now + 0.09);
+};
+
 const playBoxOpenTone = () => {
   playPackagingSnap(1, 1.1, 0);
   playPackagingSnap(1.18, 0.82, 44);
@@ -513,9 +605,9 @@ const initCards = () => {
       width,
       height,
       x: stageMotion.width * 0.5,
-      y: stageMotion.height * 0.48,
+      y: stageMotion.height * 0.5,
       targetX: stageMotion.width * 0.5,
-      targetY: stageMotion.height * 0.48,
+      targetY: stageMotion.height * 0.5,
       rotation: layout.rot,
       scale: layout.scale,
       opacity: 0.76,
@@ -523,7 +615,7 @@ const initCards = () => {
       layout,
       phase: layout.phase,
       captureX: stageMotion.width * 0.5,
-      captureY: stageMotion.height * 0.48,
+      captureY: stageMotion.height * 0.5,
     };
     heroCardStates.push(state);
     card.dataset.index = String(index);
@@ -608,20 +700,55 @@ const releaseOrderedLayout = () => {
 };
 
 const enterProject = (card) => {
-  const workKey = card.dataset.work;
-  flowPaused = true;
-  setActiveHeroCard(card);
-  updateFocusPanel(workKey);
-  updateWorksPanel(workKey);
-  applyOrderedLayout(card);
+  const projectKey = card.dataset.projectKey || card.dataset.work;
+  const projectIndex = parseInt(card.dataset.projectIndex || "0", 10);
+  const cardName = card.querySelector(".hero-card-name")?.textContent.trim() || "Project";
+
+  if (!workGallery || !workGalleryTrack) return;
+
+  galleryCategory = projectKey;
+  const items = workGalleryImages[projectKey] || workGalleryImages.oem;
+
+  buildGalleryItems(items);
+  galleryTargetX = 0;
+  galleryCurrentX = 0;
+  galleryStep = projectIndex;
+  galleryWheelLocked = false;
+
+  // Open in detail mode directly
+  galleryMode = "detail";
+  renderWorkDetail(items[projectIndex] || items[0], projectIndex);
+  workGallery.classList.add("is-detail");
+
+  updateGalleryChromeText();
+  if (workGalleryTitle) workGalleryTitle.textContent = getGalleryItemTitle(items[projectIndex] || items[0], projectIndex) || cardName;
+  if (workGalleryIndex) workGalleryIndex.textContent = String(projectIndex + 1).padStart(2, "0");
+  if (worksPreview) worksPreview.classList.remove("is-visible");
+
+  document.body.classList.add("work-gallery-open");
+  document.documentElement.classList.add("work-gallery-open");
+  workGallery.setAttribute("aria-hidden", "false");
+  workGallery.classList.remove("is-open");
+  void workGallery.offsetWidth;
+  workGallery.classList.add("is-open");
+  workGallery.scrollTo({ top: 0, behavior: "auto" });
+
+  window.setTimeout(() => {
+    measureGallery();
+    queueGalleryRender();
+  }, 40);
+
+  galleryOpen = true;
   playUiTone("click");
 };
 
 const switchLanguage = (lang) => {
   currentLang = lang;
   updateStaticText();
+  window.rebuildServicesStoryText?.();
   updateFocusPanel(selectedWorkKey);
   updateWorksPanel(selectedWorkKey);
+  refreshOpenGalleryLanguage();
 };
 
 langButtons.forEach((button) => {
@@ -633,17 +760,22 @@ langButtons.forEach((button) => {
 
 heroCards.forEach((card) => {
   card.addEventListener("pointerenter", () => {
-    if (orderedMode) return;
+    if (heroStep === 0 || orderedMode) return;
     setActiveHeroCard(card);
     playUiTone("hover");
   });
 
   card.addEventListener("focus", () => {
-    if (orderedMode) return;
+    if (heroStep === 0 || orderedMode) return;
     setActiveHeroCard(card);
   });
 
-  card.addEventListener("click", () => {
+  card.addEventListener("click", (event) => {
+    if (heroStep === 0) {
+      event.preventDefault();
+      event.stopPropagation();
+      return;
+    }
     enterProject(card);
   });
 });
@@ -704,6 +836,7 @@ const categoryColors = {
   series: ["#1e2430", "#242c3a", "#2a3448", "#1a2030"],
   brand:  ["#222820", "#2c3228", "#343c2e", "#1e2418"],
   aigc:   ["#1a1c22", "#20222c", "#242830", "#1c1e26"],
+  delivery: ["#24211c", "#312b22", "#40362a", "#221f1a"],
 };
 
 const categoryPatterns = {
@@ -712,6 +845,7 @@ const categoryPatterns = {
   series: "repeating-linear-gradient(90deg, rgba(100,160,220,0.05) 0px, rgba(100,160,220,0.05) 1px, transparent 1px, transparent 14px)",
   brand:  "repeating-linear-gradient(0deg, rgba(180,200,120,0.05) 0px, rgba(180,200,120,0.05) 1px, transparent 1px, transparent 11px)",
   aigc:   "repeating-linear-gradient(135deg, rgba(140,160,220,0.06) 0px, rgba(140,160,220,0.06) 1px, transparent 1px, transparent 9px)",
+  delivery: "repeating-linear-gradient(45deg, rgba(230,210,170,0.06) 0px, rgba(230,210,170,0.06) 1px, transparent 1px, transparent 10px)",
 };
 
 let previewRaf = null;
@@ -732,11 +866,29 @@ worksRows.forEach((row) => {
   const cat = row.dataset.category;
   const colors = categoryColors[cat] || categoryColors.oem;
   const pattern = categoryPatterns[cat] || categoryPatterns.oem;
+  row.setAttribute("role", "button");
+  row.setAttribute("tabindex", "0");
 
   row.addEventListener("mouseenter", (e) => {
-    const bg = colors[Math.floor(Math.random() * colors.length)];
     if (worksPreviewImg) {
-      worksPreviewImg.style.background = `${pattern}, ${bg}`;
+      const imagePool = workGalleryImages?.[cat] || [];
+      const imageItem = imagePool[Math.floor(Math.random() * imagePool.length)];
+      worksPreviewImg.classList.remove("is-image-preview", "is-waving");
+      if (imageItem?.src) {
+        worksPreviewImg.style.setProperty("--preview-image", `url("${imageItem.src}")`);
+        worksPreviewImg.style.setProperty("--preview-position", imageItem.position || "center");
+        worksPreviewImg.style.removeProperty("--preview-fallback");
+        worksPreviewImg.classList.add("is-image-preview");
+        if (!reducedMotion) {
+          void worksPreviewImg.offsetWidth;
+          worksPreviewImg.classList.add("is-waving");
+        }
+      } else {
+        const bg = colors[Math.floor(Math.random() * colors.length)];
+        worksPreviewImg.style.setProperty("--preview-image", "none");
+        worksPreviewImg.style.setProperty("--preview-position", "center");
+        worksPreviewImg.style.setProperty("--preview-fallback", `${pattern}, ${bg}`);
+      }
     }
     if (worksPreview) {
       worksPreview.classList.add("is-visible");
@@ -751,8 +903,375 @@ worksRows.forEach((row) => {
 
   row.addEventListener("mouseleave", () => {
     if (worksPreview) worksPreview.classList.remove("is-visible");
+    if (worksPreviewImg) worksPreviewImg.classList.remove("is-waving");
     if (previewRaf) { cancelAnimationFrame(previewRaf); previewRaf = null; }
   });
+});
+
+// Click-through horizontal project gallery
+const workGallery = document.querySelector("#work-gallery");
+const workGalleryTrack = document.querySelector("#work-gallery-track");
+const workGalleryTitle = document.querySelector("#work-gallery-title");
+const workGalleryIndex = document.querySelector("#work-gallery-index");
+const workGalleryClose = document.querySelector("#work-gallery-close");
+const workGalleryBack = document.querySelector("#work-gallery-back");
+const workGalleryProgressFill = document.querySelector("#work-gallery-progress-fill");
+const workDetail = document.querySelector("#work-detail");
+
+const workGalleryImages = {
+  oem: [
+    { title: "STRUCTURE STUDY", src: "images/666.png", position: "center", size: "wide" },
+    { title: "SHELF SYSTEM", src: "images/居居.png", position: "center", size: "small", bg: "#d8d0c0" },
+    { title: "SURFACE DIRECTION", src: "images/lucian-j-yang-logo.png.png", position: "center", size: "small", bg: "#cfc5b4" },
+  ],
+  gift: [
+    { title: "GIFT PROJECT 01", src: "images/works/gift/0000.png", position: "center", size: "wide" },
+    { title: "GIFT PROJECT 02", src: "images/works/gift/000000.png", position: "center", size: "wide" },
+    { title: "GIFT PROJECT 03", src: "images/works/gift/1-1.png", position: "center", size: "wide" },
+    { title: "GIFT PROJECT 04", src: "images/works/gift/1.png", position: "center", size: "wide" },
+    { title: "GIFT PROJECT 05", src: "images/works/gift/3.png", position: "center", size: "wide" },
+    { title: "GIFT PROJECT 06", src: "images/works/gift/333.png", position: "center", size: "wide" },
+  ],
+  series: [
+    { title: "SERIES RHYTHM", src: "images/666.png", position: "65% center", size: "wide" },
+    { title: "BOX LANGUAGE", src: "images/居居.png", position: "center", size: "small", bg: "#c6ccd6" },
+    { title: "SYSTEM MARK", src: "images/lucian-j-yang-logo.png.png", position: "center", size: "small", bg: "#d5d8dc" },
+  ],
+  brand: [
+    { title: "TYPE FIELD", src: "images/lucian-j-yang-logo.png.png", position: "center", size: "wide", bg: "#e5e1d6" },
+    { title: "IDENTITY CROP", src: "images/666.png", position: "center", size: "wide" },
+    { title: "MARK DETAIL", src: "images/居居.png", position: "center", size: "small", bg: "#ccd4c3" },
+  ],
+  aigc: [
+    { title: "PROMPT BOARD", src: "images/666.png", position: "center", size: "wide" },
+    { title: "OPTION COMPARE", src: "images/lucian-j-yang-logo.png.png", position: "center", size: "small", bg: "#cbcbd2" },
+    { title: "DRAFT FILTER", src: "images/居居.png", position: "center", size: "small", bg: "#d7d5ce" },
+  ],
+  delivery: [
+    { title: "SAMPLING ROUND", src: "images/666.png", position: "44% center", size: "wide" },
+    { title: "MATERIAL CHECK", src: "images/居居.png", position: "center", size: "small", bg: "#d8ceb8" },
+    { title: "FINAL HANDOFF", src: "images/lucian-j-yang-logo.png.png", position: "center", size: "small", bg: "#e0d8ca" },
+  ],
+};
+
+const galleryText = {
+  zh: {
+    back: "\u8fd4\u56de",
+    close: "\u5173\u95ed",
+    project: "\u9879\u76ee",
+    giftTitle: "\u793c\u54c1\u9879\u76ee",
+    categoryTitles: {
+      oem: "OEM \u5305\u88c5\u9879\u76ee",
+      gift: "\u793c\u54c1\u9879\u76ee",
+      series: "\u7cfb\u5217\u5305\u88c5\u9879\u76ee",
+      brand: "\u54c1\u724c\u8f85\u52a9\u9879\u76ee",
+      aigc: "AIGC \u6d41\u7a0b\u9879\u76ee",
+      delivery: "\u4ea4\u4ed8\u534f\u540c\u9879\u76ee",
+    },
+    tags: ["\u5305\u88c5", "\u89c6\u89c9\u65b9\u5411", "\u4ea4\u4ed8"],
+    summary: "\u4ee5\u6e20\u9053\u6e05\u6670\u5ea6\u3001\u751f\u4ea7\u53ef\u884c\u6027\u548c\u7a33\u5b9a\u89c6\u89c9\u7cfb\u7edf\u4e3a\u6838\u5fc3\u7684\u5305\u88c5\u65b9\u5411\u3002",
+    body: [
+      "\u8bbe\u8ba1\u8303\u56f4\u5305\u62ec\u5305\u88c5\u7ed3\u6784\u3001\u753b\u9762\u8282\u594f\u3001\u8bc6\u522b\u5c42\u7ea7\u4e0e\u63d0\u6848\u8f93\u51fa\u3002",
+      "\u65b9\u6848\u9700\u8981\u5728\u89c6\u89c9\u8868\u8fbe\u3001\u6750\u6599\u3001\u6210\u672c\u3001\u5de5\u827a\u4e0e\u4ea4\u4ed8\u7ea6\u675f\u4e4b\u95f4\u4fdd\u6301\u5e73\u8861\u3002",
+    ],
+  },
+  en: {
+    back: "Back",
+    close: "Close",
+    project: "Project",
+    giftTitle: "Gift Project",
+    tags: ["PACKAGING", "ART DIRECTION", "DELIVERY"],
+    summary: "A focused packaging direction built around channel clarity, production feasibility, and a calm visual system that can hold up in real use.",
+    body: [
+      "Design scope includes packaging structure, surface rhythm, recognition hierarchy, and presentation-ready visual output.",
+      "The work balances visual expression with material, cost, process, and delivery constraints.",
+    ],
+  },
+};
+
+let galleryTargetX = 0;
+let galleryCurrentX = 0;
+let galleryMaxX = 0;
+let galleryRaf = 0;
+let galleryOpen = false;
+let galleryMode = "index";
+let galleryCategory = "oem";
+let galleryStep = 0;
+let galleryWheelLocked = false;
+let galleryPositions = [0];
+
+const localizedValue = (value) => {
+  if (value && typeof value === "object" && !Array.isArray(value)) {
+    return value[currentLang] || value.en || value.zh || "";
+  }
+  return value || "";
+};
+
+const getGalleryItemTitle = (item, index) => {
+  const rawTitle = localizedValue(item?.title);
+  if (currentLang === "zh") {
+    if (item?.title && typeof item.title === "object" && item.title.zh) return rawTitle;
+    const giftMatch = rawTitle.match(/^GIFT PROJECT\s+(\d+)/i);
+    if (giftMatch) return `${galleryText.zh.giftTitle} ${giftMatch[1]}`;
+    const categoryTitle = galleryText.zh.categoryTitles[galleryCategory] || galleryText.zh.project;
+    return `${categoryTitle} ${String(index + 1).padStart(2, "0")}`;
+  }
+  return rawTitle || `${galleryText[currentLang].project} ${String(index + 1).padStart(2, "0")}`;
+};
+
+const updateGalleryChromeText = () => {
+  if (workGalleryBack) workGalleryBack.textContent = galleryText[currentLang].back;
+  if (workGalleryClose) {
+    workGalleryClose.textContent = galleryText[currentLang].close;
+    workGalleryClose.setAttribute("aria-label", galleryText[currentLang].close);
+  }
+};
+
+const clampGalleryX = (value) => Math.max(0, Math.min(galleryMaxX, value));
+
+const measureGallery = () => {
+  if (!workGalleryTrack || !workGallery) return;
+  galleryMaxX = Math.max(0, workGalleryTrack.scrollWidth - workGallery.clientWidth);
+  const items = Array.from(workGalleryTrack.children);
+  const firstLeft = items[0]?.offsetLeft || 0;
+  galleryPositions = items.map((item) => clampGalleryX(item.offsetLeft - firstLeft));
+  if (!galleryPositions.length) galleryPositions = [0];
+  galleryStep = Math.max(0, Math.min(galleryPositions.length - 1, galleryStep));
+  galleryTargetX = clampGalleryX(galleryTargetX);
+  galleryCurrentX = clampGalleryX(galleryCurrentX);
+};
+
+const renderGallery = () => {
+  galleryRaf = 0;
+  galleryCurrentX += (galleryTargetX - galleryCurrentX) * 0.16;
+  if (Math.abs(galleryTargetX - galleryCurrentX) < 0.12) galleryCurrentX = galleryTargetX;
+  if (workGalleryTrack) {
+    workGalleryTrack.style.transform = `translate3d(${-galleryCurrentX}px, 0, 0)`;
+  }
+  if (workGalleryProgressFill) {
+    const progress = galleryMaxX ? galleryCurrentX / galleryMaxX : 0;
+    workGalleryProgressFill.style.transform = `scaleX(${Math.max(0.04, progress).toFixed(4)})`;
+  }
+  if (galleryCurrentX !== galleryTargetX) {
+    galleryRaf = window.requestAnimationFrame(renderGallery);
+  }
+};
+
+const queueGalleryRender = () => {
+  if (!galleryRaf) galleryRaf = window.requestAnimationFrame(renderGallery);
+};
+
+const buildGalleryItems = (items) => {
+  if (!workGalleryTrack) return;
+  workGalleryTrack.innerHTML = items.map((item, index) => `
+    <article class="work-gallery-item ${item.size === "small" ? "is-small" : ""}" role="button" tabindex="0" data-project-index="${index}">
+      <p class="work-gallery-caption">${getGalleryItemTitle(item, index)}</p>
+      <div class="work-gallery-frame" style="--gallery-bg: ${item.bg || "#d8d0c0"}; --gallery-position: ${item.position || "center"};">
+        <img src="${item.src}" alt="">
+      </div>
+    </article>
+  `).join("");
+};
+
+const renderWorkDetail = (item, index) => {
+  if (!workDetail) return;
+  const title = getGalleryItemTitle(item, index);
+  const copy = galleryText[currentLang];
+  const summary = localizedValue(item.summary) || copy.summary;
+  const body = item.body ? item.body.map(localizedValue) : copy.body;
+  const tags = item.tags ? item.tags.map(localizedValue) : copy.tags;
+  workDetail.innerHTML = `
+    <section class="work-detail-intro">
+      <aside class="work-detail-side">
+        <div>
+          <p class="work-detail-kicker">${copy.project} ${String(index + 1).padStart(2, "0")}</p>
+          <h4 class="work-detail-name">${title}</h4>
+          <div class="work-detail-tags">
+            ${tags.map((tag) => `<span class="work-detail-tag">${tag}</span>`).join("")}
+          </div>
+        </div>
+        <div class="work-detail-body">
+          <p class="work-detail-copy">${summary}</p>
+          ${body.map((line) => `<p>${line}</p>`).join("")}
+        </div>
+      </aside>
+      <figure class="work-detail-hero" style="--gallery-position: ${item.position || "center"};">
+        <img src="${item.src}" alt="">
+      </figure>
+    </section>
+    <section class="work-detail-full">
+      <figure class="work-detail-full-figure" style="--gallery-position: ${item.position || "center"};">
+        <img src="${item.src}" alt="">
+      </figure>
+    </section>
+  `;
+};
+
+const openWorkDetail = (index) => {
+  if (!workGallery) return;
+  const items = workGalleryImages[galleryCategory] || workGalleryImages.oem;
+  const item = items[index] || items[0];
+  galleryStep = Math.max(0, Math.min(items.length - 1, index));
+  galleryMode = "detail";
+  renderWorkDetail(item, galleryStep);
+  workGallery.classList.add("is-detail");
+  updateGalleryChromeText();
+  if (workGalleryTitle) workGalleryTitle.textContent = getGalleryItemTitle(item, galleryStep);
+  if (workGalleryIndex) workGalleryIndex.textContent = String(galleryStep + 1).padStart(2, "0");
+  workGallery.scrollTo({ top: 0, behavior: "auto" });
+  playUiTone("click");
+};
+
+const returnToGalleryIndex = () => {
+  if (!workGallery) return;
+  galleryMode = "index";
+  workGallery.classList.remove("is-detail");
+  if (workDetail) workDetail.innerHTML = "";
+  const activeItem = workGalleryTrack?.children[galleryStep];
+  if (workGalleryTitle) workGalleryTitle.textContent = activeItem?.querySelector(".work-gallery-caption")?.textContent || galleryText[currentLang].project;
+  queueGalleryRender();
+};
+
+const refreshOpenGalleryLanguage = () => {
+  updateGalleryChromeText();
+  if (!workGallery || !galleryOpen) return;
+
+  const items = workGalleryImages[galleryCategory] || workGalleryImages.oem;
+
+  if (galleryMode === "detail") {
+    const item = items[galleryStep] || items[0];
+    renderWorkDetail(item, galleryStep);
+    if (workGalleryTitle) workGalleryTitle.textContent = getGalleryItemTitle(item, galleryStep);
+    if (workGalleryIndex) workGalleryIndex.textContent = String(galleryStep + 1).padStart(2, "0");
+    return;
+  }
+
+  buildGalleryItems(items);
+  const activeItem = workGalleryTrack?.children[galleryStep];
+  if (workGalleryTitle) {
+    workGalleryTitle.textContent = activeItem?.querySelector(".work-gallery-caption")?.textContent || galleryText[currentLang].project;
+  }
+  measureGallery();
+  queueGalleryRender();
+};
+
+const openWorkGallery = (row) => {
+  if (!workGallery || !workGalleryTrack) return;
+  const category = row.dataset.category || "oem";
+  const index = row.querySelector(".works-row-index")?.textContent.trim() || "";
+  const title = row.querySelector(".works-row-name")?.textContent.trim() || "Project";
+  galleryCategory = category;
+  galleryMode = "index";
+  buildGalleryItems(workGalleryImages[category] || workGalleryImages.oem);
+  galleryTargetX = 0;
+  galleryCurrentX = 0;
+  galleryStep = 0;
+  galleryWheelLocked = false;
+  workGallery.classList.remove("is-detail");
+  if (workDetail) workDetail.innerHTML = "";
+  updateGalleryChromeText();
+  if (workGalleryTitle) workGalleryTitle.textContent = title;
+  if (workGalleryIndex) workGalleryIndex.textContent = index;
+  if (worksPreview) worksPreview.classList.remove("is-visible");
+  document.body.classList.add("work-gallery-open");
+  document.documentElement.classList.add("work-gallery-open");
+  workGallery.setAttribute("aria-hidden", "false");
+  workGallery.classList.remove("is-open");
+  void workGallery.offsetWidth;
+  workGallery.classList.add("is-open");
+  window.setTimeout(() => {
+    measureGallery();
+    queueGalleryRender();
+  }, 40);
+  galleryOpen = true;
+  playUiTone("click");
+};
+
+const closeWorkGallery = () => {
+  if (!workGallery || !galleryOpen) return;
+  galleryOpen = false;
+  galleryMode = "index";
+  workGallery.classList.remove("is-open");
+  workGallery.classList.remove("is-detail");
+  workGallery.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("work-gallery-open");
+  document.documentElement.classList.remove("work-gallery-open");
+  if (workDetail) workDetail.innerHTML = "";
+};
+
+document.querySelectorAll(".bottom-nav-item").forEach((item) => {
+  item.addEventListener("click", (event) => {
+    if (!galleryOpen) return;
+    const targetId = item.getAttribute("href");
+    if (!targetId || !targetId.startsWith("#")) return;
+    event.preventDefault();
+    closeWorkGallery();
+    window.requestAnimationFrame(() => {
+      document.querySelector(targetId)?.scrollIntoView({
+        behavior: reducedMotion ? "auto" : "smooth",
+        block: "start",
+      });
+    });
+  });
+});
+
+worksRows.forEach((row) => {
+  row.addEventListener("click", () => openWorkGallery(row));
+  row.addEventListener("keydown", (event) => {
+    if (event.key !== "Enter" && event.key !== " ") return;
+    event.preventDefault();
+    openWorkGallery(row);
+  });
+});
+
+const handleWorkGalleryWheel = (event) => {
+  if (!galleryOpen) return;
+  if (galleryMode === "detail") return;
+  event.preventDefault();
+  event.stopPropagation();
+  measureGallery();
+  const delta = Math.abs(event.deltaX) > Math.abs(event.deltaY) ? event.deltaX : event.deltaY;
+  if (Math.abs(delta) < 8 || galleryWheelLocked) return;
+  galleryWheelLocked = true;
+  galleryStep += delta > 0 ? 1 : -1;
+  galleryStep = Math.max(0, Math.min(galleryPositions.length - 1, galleryStep));
+  galleryTargetX = galleryPositions[galleryStep] || 0;
+  const activeItem = workGalleryTrack?.children[galleryStep];
+  if (workGalleryTitle && activeItem) {
+    workGalleryTitle.textContent = activeItem.querySelector(".work-gallery-caption")?.textContent || workGalleryTitle.textContent;
+  }
+  if (workGalleryIndex) workGalleryIndex.textContent = String(galleryStep + 1).padStart(2, "0");
+  queueGalleryRender();
+  window.setTimeout(() => {
+    galleryWheelLocked = false;
+  }, 260);
+};
+
+window.addEventListener("wheel", handleWorkGalleryWheel, { passive: false, capture: true });
+
+workGalleryTrack?.addEventListener("click", (event) => {
+  const item = event.target.closest(".work-gallery-item");
+  if (!item) return;
+  openWorkDetail(Number(item.dataset.projectIndex || 0));
+});
+
+workGalleryTrack?.addEventListener("keydown", (event) => {
+  if (event.key !== "Enter" && event.key !== " ") return;
+  const item = event.target.closest(".work-gallery-item");
+  if (!item) return;
+  event.preventDefault();
+  openWorkDetail(Number(item.dataset.projectIndex || 0));
+});
+
+workGalleryBack?.addEventListener("click", returnToGalleryIndex);
+workGalleryClose?.addEventListener("click", closeWorkGallery);
+window.addEventListener("resize", () => {
+  if (!galleryOpen) return;
+  measureGallery();
+  queueGalleryRender();
+});
+window.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") closeWorkGallery();
 });
 
 homeLinks.forEach((link) => {
@@ -818,7 +1337,141 @@ if (reducedMotion) {
   document.querySelectorAll("[data-reveal]").forEach((el) => el.classList.add("is-revealed"));
 }
 
-const hoverCodeGlyphs = "KINZIE0123456789#/_包装判断结构";
+const initServicesScrollStory = () => {
+  const section = document.querySelector(".services-scroll-story");
+  if (!section) return;
+
+  const stage = section.querySelector(".services-sticky");
+  const entryTitle = section.querySelector(".services-entry-title");
+  const panels = Array.from(section.querySelectorAll(".service-text-panel"));
+  if (!stage || !entryTitle || !panels.length) return;
+
+  const clamp01 = (value) => Math.min(1, Math.max(0, value));
+  const smooth = (value) => value * value * (3 - 2 * value);
+  let targetProgress = 0;
+  let currentProgress = 0;
+  let panelGlyphs = [];
+
+  const splitGlyphs = (node, text) => {
+    node.textContent = "";
+    return Array.from(text).map((char) => {
+      const span = document.createElement("span");
+      span.className = "service-glyph";
+      span.textContent = char;
+      node.appendChild(span);
+      return span;
+    });
+  };
+
+  const updateEntryTitle = () => {
+    const title = i18n[currentLang]?.services_title || entryTitle.getAttribute("aria-label") || "";
+    const parts = currentLang === "zh" ? ["\u4e3a\u4f55", "\u9009\u62e9\u6211"] : ["Why Work", "With Me"];
+    entryTitle.setAttribute("aria-label", title);
+    entryTitle.textContent = "";
+    parts.forEach((part) => {
+      const span = document.createElement("span");
+      span.textContent = part;
+      entryTitle.appendChild(span);
+    });
+  };
+
+  const rebuildText = () => {
+    updateEntryTitle();
+    panelGlyphs = panels.map((panel) => {
+      const titleNode = panel.querySelector(".service-text-title");
+      const bodyNode = panel.querySelector(".service-text-body");
+      const title = i18n[currentLang]?.[panel.dataset.serviceTitle] || titleNode.textContent;
+      const body = i18n[currentLang]?.[panel.dataset.serviceText] || bodyNode.textContent;
+      return {
+        title: splitGlyphs(titleNode, title),
+        body: splitGlyphs(bodyNode, body),
+      };
+    });
+  };
+
+  const renderGlyphs = (glyphs, phase, stagger, travel) => {
+    glyphs.forEach((glyph, index) => {
+      if (phase <= -0.02 || phase >= 1.02) {
+        glyph.style.opacity = "0";
+        glyph.style.filter = "blur(22px)";
+        glyph.style.transform = `translate3d(0, ${travel}px, 0)`;
+        return;
+      }
+
+      const enter = smooth(clamp01((phase - index * stagger) / 0.28));
+      const exit = smooth(clamp01((phase - 0.74 - index * stagger * 0.12) / 0.18));
+      const amount = enter * (1 - exit);
+      const blur = 22 * (1 - amount) + exit * 12;
+      const y = (1 - enter) * travel - exit * travel * 0.72;
+      glyph.style.opacity = amount.toFixed(3);
+      glyph.style.filter = `blur(${blur.toFixed(2)}px)`;
+      glyph.style.transform = `translate3d(0, ${y.toFixed(2)}px, 0)`;
+    });
+  };
+
+  const setPanel = (panel, local, index) => {
+    const enter = smooth(clamp01(local / 0.26));
+    const exit = smooth(clamp01((local - 0.72) / 0.22));
+    const arch = Math.sin(clamp01(local) * Math.PI);
+    const inRange = local >= -0.02 && local <= 1.02 ? 1 : 0;
+    const y = 50 - enter * 50 - arch * 5 - exit * 48;
+    const z = -160 + enter * 190 - exit * 40;
+    const scale = 0.97 + enter * 0.035 - exit * 0.025;
+    const opacity = Math.min(enter * 1.15, 1) * (1 - exit) * inRange;
+
+    panel.style.setProperty("--service-panel-y", `${y.toFixed(2)}vh`);
+    panel.style.setProperty("--service-panel-z", `${z.toFixed(2)}px`);
+    panel.style.setProperty("--service-panel-scale", scale.toFixed(4));
+    panel.style.setProperty("--service-panel-opacity", opacity.toFixed(3));
+
+    if (panelGlyphs[index]) {
+      renderGlyphs(panelGlyphs[index].title, local, 0.018, 18);
+      renderGlyphs(panelGlyphs[index].body, local - 0.08, 0.006, 16);
+    }
+  };
+
+  const readProgress = () => {
+    const rect = section.getBoundingClientRect();
+    const travel = Math.max(1, rect.height - window.innerHeight);
+    targetProgress = reducedMotion ? 1 : clamp01(-rect.top / travel);
+  };
+
+  const render = () => {
+    currentProgress += (targetProgress - currentProgress) * 0.075;
+    if (Math.abs(targetProgress - currentProgress) < 0.00008) currentProgress = targetProgress;
+
+    const progress = currentProgress;
+    const open = smooth(clamp01(progress / 0.22));
+    const inside = smooth(clamp01((progress - 0.13) / 0.22));
+
+    section.style.setProperty("--services-progress", progress.toFixed(4));
+    section.style.setProperty("--services-open", open.toFixed(4));
+    section.style.setProperty("--services-inside", inside.toFixed(4));
+
+    panels.forEach((panel, index) => {
+      const start = 0.28 + index * 0.105;
+      const step = 0.105;
+      setPanel(panel, (progress - start) / step, index);
+    });
+
+    requestAnimationFrame(render);
+  };
+
+  rebuildText();
+  window.rebuildServicesStoryText = () => {
+    rebuildText();
+    readProgress();
+  };
+
+  readProgress();
+  render();
+  window.addEventListener("scroll", readProgress, { passive: true });
+  window.addEventListener("resize", readProgress);
+};
+
+initServicesScrollStory();
+
+const hoverCodeGlyphs = "LUCIANJYANG0123456789#/_包装判断结构";
 const hoverCodeTargets = Array.from(
   document.querySelectorAll(
     ".about-heading, .about-lead, .about-detail, .section-head h2, .section-intro, .service-item h3, .service-item p, .works-statement-title, .works-statement-body"
@@ -883,22 +1536,49 @@ const animateCards = (timestamp) => {
   const height = stageMotion.height;
   const minSide = Math.min(width, height);
   const centerX = width * 0.5;
-  const centerY = height * 0.47;
+  const centerY = height * 0.50;
   const pointerX = fieldPointer.x * width;
   const pointerY = fieldPointer.y * height;
   const swayX = Math.sin(elapsed * 0.22) * width * 0.014;
   const swayY = Math.cos(elapsed * 0.18) * height * 0.012;
   const heroRect = heroSection?.getBoundingClientRect();
   const hasEntered = document.body.classList.contains("has-entered");
-  // scrollable height = hero total height minus one viewport
-  const heroScrollable = heroSection ? Math.max(window.innerHeight * 2, heroSection.offsetHeight - window.innerHeight) : 1;
-  const scrollProgress = (hasEntered && heroRect)
-    ? Math.min(1, Math.max(0, -heroRect.top / heroScrollable))
-    : 0;
   const scrollDriven = hasEntered && !orderedMode;
+
+  // Lerp heroStepTarget toward heroStep for smooth card transitions
+  heroStepTarget += (heroStep - heroStepTarget) * 0.072;
+
+  // scrollProgress: 0 = card 0 front, 1 = card 5 front
+  const scrollProgress = HERO_CARD_COUNT > 1
+    ? Math.max(0, Math.min(1, (heroStepTarget - 1) / (HERO_CARD_COUNT - 1)))
+    : 0;
+
+  // Water intro fade: 0 = full water, 1 = cards active
+  const introProgress = Math.min(1, heroStepTarget);
+
+  // Enable scroll-snap to next section only after last card
+  if (hasEntered) {
+    const heroComplete = heroStep >= HERO_CARD_COUNT;
+    if (document.documentElement.classList.contains("snap-active") !== heroComplete) {
+      document.documentElement.classList.toggle("snap-active", heroComplete);
+    }
+  }
+
+  // Tail fade: hero-section is 180vh; sticky stage = 100vh, tail = 80vh
+  // heroRect.bottom starts at ~180vh, drops to 0 as user scrolls out
+  // fade cards over the last ~80vh of hero-section (heroRect.bottom: 100vh → 0)
+  const tailFade = heroRect
+    ? Math.min(1, Math.max(0, (heroRect.bottom - stageMotion.height) / (stageMotion.height * 0.7)))
+    : 1;
 
   if (heroStage) {
     heroStage.style.setProperty("--hero-scroll-progress", scrollProgress.toFixed(4));
+    heroStage.style.setProperty("--hero-intro-progress", introProgress.toFixed(4));
+  }
+
+  if (hasEntered && heroRect && heroRect.bottom < -stageMotion.height * 0.25 && !orderedMode) {
+    window.requestAnimationFrame(animateCards);
+    return;
   }
 
   const targets = heroCardStates.map((state, index) => {
@@ -925,46 +1605,60 @@ const animateCards = (timestamp) => {
     }
 
     if (scrollDriven) {
-      const cardCount = heroCardStates.length;
-      // travel: 0 → card 0 is front, 1 → card 1 is front, etc.
+      const cardCount = HERO_CARD_COUNT;
+      // Only show first 6 cards; hide the rest
+      if (index >= HERO_CARD_COUNT) {
+        return { x: centerX, y: centerY + height, rotation: 0, ry: 0, rx: 0, scale: 0, depth: 0, opacity: 0, current: false };
+      }
+      // travel: 0→card 0 front, 5→card 5 front
       const travel = scrollProgress * (cardCount - 1);
-      const delta = index - travel; // 0 = currently front
+      const delta = index - travel; // 0 = currently active card
 
-      // Cards orbit a central axis (bamboo). delta=0 → front center.
-      // Full circle spread: each card is PI/2 apart when at rest,
-      // narrows as scroll brings each one to front.
-      const orbitAngle = delta * (Math.PI * 0.55);
+      // Arc track: cards travel from bottom-left → center → top-right
+      // delta = 0 → focal card at viewport center
+      // delta > 0 → upcoming, sits bottom-right; delta < 0 → passed, drifts top-left
 
-      // Horizontal radius around center, slight vertical arc
-      const radiusX = minSide * 0.20;
-      const radiusY = minSide * 0.04;
-      const axisX = centerX;
-      const axisY = height * 0.50;
-
-      // depth: cos(0)=1 → front, cos(PI)=-1 → back
-      const depthWave = Math.cos(orbitAngle);
-      const depthFront = (depthWave + 1) * 0.5;
-      const focus = Math.max(0, 1 - Math.abs(delta) / 1.6);
-
-      const pointerShiftX = fieldPointer.active ? (fieldPointer.x - 0.5) * minSide * 0.05 : 0;
+      const pointerShiftX = fieldPointer.active ? (fieldPointer.x - 0.5) * minSide * 0.04 : 0;
       const pointerShiftY = fieldPointer.active ? (fieldPointer.y - 0.5) * minSide * 0.03 : 0;
 
-      const x = axisX + Math.sin(orbitAngle) * radiusX + pointerShiftX * (0.3 + depthFront * 0.2);
-      const y = axisY + Math.sin(orbitAngle * 0.5) * radiusY + pointerShiftY * (0.2 + depthFront * 0.1);
-
-      // cards more than 5 slots away are invisible
-      const visibleBand = Math.max(0, 1 - Math.max(0, Math.abs(delta) - 4.0) / 1.5);
+      // Activation: 1 at front, 0 when ±2 cards away
+      const activationProgress = Math.max(0, 1 - Math.abs(delta) / 2.0);
       const isCurrent = Math.abs(delta) < 0.5;
+
+      // Track spread: how far cards fan out horizontally/vertically per unit delta
+      const spreadX = width  * 0.26; // horizontal spacing between adjacent cards
+      const spreadY = height * 0.18; // vertical drop per adjacent card
+
+      // Base position: linear arc offset from center
+      // positive delta → right and down (upcoming), negative → left and up (passed)
+      const rawX = centerX + delta * spreadX;
+      const rawY = centerY + delta * spreadY;
+
+      // Clamp visible band so cards far off-track fade out
+      const visibleBand = Math.max(0, 1 - Math.max(0, Math.abs(delta) - 2.5) / 1.5);
+
+      // Scale: focal card is large (fills most of viewport), neighbors shrink
+      const scale = 0.32 + activationProgress * 1.08;
+
+      // Perspective tilt: cards tilt as they travel the arc
+      // upcoming (delta>0): lean left (negative ry); passed (delta<0): lean right
+      const ryTilt = -delta * 14;
+      const rotTilt = delta * 2.5;
+
+      // Pointer parallax (reduced for focal card to keep it centered)
+      const parallaxStrength = 1 - activationProgress * 0.7; // focal card gets 30% parallax, neighbors get 100%
+      const x = rawX + pointerShiftX * (0.2 + activationProgress * 0.3) * parallaxStrength;
+      const y = rawY + pointerShiftY * (0.2 + activationProgress * 0.2) * parallaxStrength;
 
       return {
         x,
         y,
-        rotation: Math.sin(orbitAngle) * 4 + pointerShiftX * 0.012,
-        ry: Math.sin(orbitAngle) * 55 + pointerShiftX * 0.025,
-        rx: -3 + depthWave * 3 - pointerShiftY * 0.012,
-        scale: 0.68 + focus * 0.34 + depthFront * 0.05,
-        depth: 10 + depthFront * 140 + focus * 50,
-        opacity: Math.min(0.96, Math.max(0, visibleBand * (0.22 + depthFront * 0.42 + focus * 0.32))),
+        rotation: rotTilt + pointerShiftX * 0.010,
+        ry: Math.max(-55, Math.min(55, ryTilt)) + pointerShiftX * 0.018,
+        rx: -2 + activationProgress * 2 - pointerShiftY * 0.008,
+        scale,
+        depth: 10 + activationProgress * 180,
+        opacity: Math.min(0.97, Math.max(0, tailFade * introProgress * visibleBand * (0.15 + activationProgress * 0.55 + (isCurrent ? 0.27 : 0)))),
         current: isCurrent,
       };
     }
@@ -991,7 +1685,6 @@ const animateCards = (timestamp) => {
     if (orderedMode) {
       const spread = index < selectedCardIndex ? -1 : 1;
       x += spread * minSide * 0.16;
-      y += index % 2 === 0 ? -minSide * 0.02 : minSide * 0.02;
     }
 
     return {
@@ -1002,7 +1695,7 @@ const animateCards = (timestamp) => {
       rx: Math.cos(elapsed * 0.28 + layout.phase) * 4,
       scale: orderedMode ? layout.scale * 0.92 : layout.scale,
       depth: orderedMode ? layout.depth - 24 : layout.depth,
-      opacity: orderedMode ? 0.14 : 0.76,
+      opacity: heroStep === 0 ? 0 : (orderedMode ? 0 : 0.76),
     };
   });
 
@@ -1730,134 +2423,399 @@ const initHeroBamboo = (canvas) => {
   window.addEventListener("pagehide", cleanup, { once: true });
 };
 
-const initHeroKineticMark = (canvas) => {
-  if (!canvas || reducedMotion || typeof THREE === "undefined") return;
+const initWaterSurface = (canvas) => {
+  if (!canvas || reducedMotion) return;
 
-  const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-  renderer.setClearColor(0x000000, 0);
-  renderer.outputEncoding = THREE.sRGBEncoding;
+  const gl = canvas.getContext("webgl", { alpha: true, antialias: false, premultipliedAlpha: false });
+  if (!gl) return;
 
-  const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(34, 1, 0.1, 100);
-  camera.position.set(0, 0, 8.4);
+  const vert = `
+    attribute vec2 a_pos;
+    void main() { gl_Position = vec4(a_pos, 0.0, 1.0); }
+  `;
 
-  const group = new THREE.Group();
-  group.rotation.x = Math.PI * 0.5;
-  scene.add(group);
+  const frag = `
+    precision highp float;
+    uniform float u_time;
+    uniform vec2  u_res;
+    uniform vec2  u_mouse;
+    uniform float u_scroll;
+    // ripples: xy=position(0-1), z=startTime, w=unused
+    uniform vec3  u_ripples[3];
 
-  const darkMat = new THREE.MeshStandardMaterial({
-    color: 0x050505,
-    metalness: 0.92,
-    roughness: 0.16,
-    emissive: 0x010101,
-  });
-  const highlightMat = new THREE.MeshStandardMaterial({
-    color: 0xf4f0e8,
-    metalness: 0.62,
-    roughness: 0.12,
-    emissive: 0x090909,
-  });
-
-  const majorRadius = 1.52;
-  const minorRadius = 0.84;
-  const ribCount = 54;
-  const tubeSegments = 140;
-  const twist = 1.05;
-
-  const createRibCurve = (offset = 0, phase = 0) => {
-    const points = [];
-    for (let i = 0; i <= tubeSegments; i += 1) {
-      const u = (i / tubeSegments) * Math.PI * 2;
-      const v = offset + u * twist + phase;
-      const breathing = 1 + Math.sin(u * 3 + offset) * 0.018;
-      const localMinor = minorRadius * breathing;
-      const x = (majorRadius + localMinor * Math.cos(v)) * Math.cos(u);
-      const y = localMinor * Math.sin(v) * 0.98;
-      const z = (majorRadius + localMinor * Math.cos(v)) * Math.sin(u);
-      points.push(new THREE.Vector3(x, y, z));
+    // gradient noise (Perlin-style)
+    vec2 hash2(vec2 p) {
+      p = vec2(dot(p, vec2(127.1, 311.7)), dot(p, vec2(269.5, 183.3)));
+      return fract(sin(p) * 43758.5453);
     }
-    return new THREE.CatmullRomCurve3(points, true, "catmullrom", 0.42);
+    float noise(vec2 p) {
+      vec2 i = floor(p), f = fract(p);
+      vec2 u = f * f * (3.0 - 2.0 * f);
+      vec2 ga = hash2(i)             * 2.0 - 1.0;
+      vec2 gb = hash2(i + vec2(1,0)) * 2.0 - 1.0;
+      vec2 gc = hash2(i + vec2(0,1)) * 2.0 - 1.0;
+      vec2 gd = hash2(i + vec2(1,1)) * 2.0 - 1.0;
+      float va = dot(ga, f);
+      float vb = dot(gb, f - vec2(1,0));
+      float vc = dot(gc, f - vec2(0,1));
+      float vd = dot(gd, f - vec2(1,1));
+      return 0.5 + 0.5 * (va + u.x*(vb-va) + u.y*(vc-va) + u.x*u.y*(va-vb-vc+vd));
+    }
+
+    // fractal Brownian motion — 5 octaves
+    float fbm(vec2 p) {
+      float v = 0.0, a = 0.5;
+      mat2 rot = mat2(0.8, -0.6, 0.6, 0.8);
+      for (int i = 0; i < 5; i++) {
+        v += a * noise(p);
+        p  = rot * p * 2.02;
+        a *= 0.5;
+      }
+      return v;
+    }
+
+    // water caustic: bright veins from interference of fbm layers
+    float caustic(vec2 p, float t) {
+      vec2 q = vec2(fbm(p + t * 0.18), fbm(p + vec2(5.2, 1.3)));
+      vec2 r = vec2(fbm(p + 2.0 * q + vec2(1.7, 9.2) + t * 0.14),
+                    fbm(p + 2.0 * q + vec2(8.3, 2.8) + t * 0.10));
+      float f = fbm(p + 2.8 * r);
+      // create sharp bright veins
+      float vein = 1.0 - abs(sin(f * 6.28318 * 1.5 + t * 0.22));
+      vein = pow(vein, 3.8);
+      return vein;
+    }
+
+    void main() {
+      vec2 uv = gl_FragCoord.xy / u_res;
+      // aspect-correct UV, centered
+      vec2 p = (uv - 0.5) * vec2(u_res.x / u_res.y, 1.0);
+
+      // mouse tilt: stronger UV warp based on pointer position
+      vec2 m = (u_mouse - 0.5) * 0.28;
+      p += m;
+
+      float t = u_time * 0.38;
+      p *= 2.4;
+
+      // two caustic layers at slight offset for depth
+      float c1 = caustic(p,           t);
+      float c2 = caustic(p * 0.74 + vec2(3.1, 1.7), t * 0.82);
+      float c  = c1 * 0.62 + c2 * 0.48;
+
+      // click ripples: radial wave distortion
+      float rippleWarp = 0.0;
+      for (int i = 0; i < 3; i++) {
+        vec2  rpos  = u_ripples[i].xy;
+        float rtime = u_ripples[i].z;
+        if (rtime < 0.0) continue;
+        float age     = u_time - rtime;
+        float dur     = 2.2;
+        if (age > dur) continue;
+        float progress = age / dur;
+        float decay    = (1.0 - progress) * (1.0 - progress) * (1.0 - progress);
+        // aspect-correct distance from ripple center
+        vec2  diff = uv - rpos;
+        diff.x    *= u_res.x / u_res.y;
+        float dist = length(diff);
+        float front = progress * 0.9; // wave front radius
+        // softer ring with noise-like variation
+        float ring  = exp(-pow((dist - front) * 28.0, 2.0)); // sharper falloff (14 → 28)
+        // add subtle noise variation to ring edge
+        float noiseVar = sin(dist * 80.0 + u_time * 2.0) * 0.15 + sin(dist * 120.0 - u_time * 1.5) * 0.1;
+        ring *= (1.0 + noiseVar * decay);
+        rippleWarp += ring * decay * 0.22;
+      }
+      c = clamp(c + rippleWarp, 0.0, 1.0);
+
+      // primary color: #00ccbd (0, 204, 189) = (0.0, 0.8, 0.741)
+      // palette: dark teal → bright cyan-teal
+      vec3 deepCol  = vec3(0.0, 0.24,  0.22);      // deep #003d38
+      vec3 midCol   = vec3(0.0, 0.60,  0.56);      // mid #00998f
+      vec3 brightCol = vec3(0.0, 0.80, 0.741);     // primary #00ccbd
+      vec3 peakCol  = vec3(0.60, 0.95, 0.90);      // peak bright #99f2e6
+
+      vec3 col = mix(deepCol, midCol, smoothstep(0.0, 0.42, c));
+      col      = mix(col, brightCol, smoothstep(0.38, 0.72, c));
+      col      = mix(col, peakCol,   smoothstep(0.65, 1.00, c));
+
+      // vignette: darken edges so cards/UI read clearly
+      float vign = 1.0 - smoothstep(0.35, 1.1, length(uv - 0.5) * 1.6);
+      col *= vign * 0.88 + 0.12;
+
+      // fade with scroll
+      float alpha = (1.0 - u_scroll * 0.82) * 0.88;
+      gl_FragColor = vec4(col * alpha, alpha);
+    }
+  `;
+
+  const compile = (type, src) => {
+    const sh = gl.createShader(type);
+    gl.shaderSource(sh, src);
+    gl.compileShader(sh);
+    return sh;
   };
 
-  for (let i = 0; i < ribCount; i += 1) {
-    const offset = (i / ribCount) * Math.PI * 2;
-    const ribGeo = new THREE.TubeGeometry(createRibCurve(offset), 140, 0.028 + (i % 3) * 0.002, 10, true);
-    const rib = new THREE.Mesh(ribGeo, darkMat);
-    rib.rotation.x = 0.18;
-    rib.rotation.y = -0.32;
-    rib.rotation.z = 0.08;
-    group.add(rib);
+  const prog = gl.createProgram();
+  gl.attachShader(prog, compile(gl.VERTEX_SHADER, vert));
+  gl.attachShader(prog, compile(gl.FRAGMENT_SHADER, frag));
+  gl.linkProgram(prog);
+  gl.useProgram(prog);
 
-    if (i % 3 === 0) {
-      const glintGeo = new THREE.TubeGeometry(createRibCurve(offset + 0.018, 0.02), 90, 0.008, 8, true);
-      const glint = new THREE.Mesh(glintGeo, highlightMat);
-      glint.rotation.copy(rib.rotation);
-      glint.scale.set(1.006, 1.006, 1.006);
-      group.add(glint);
-    }
-  }
+  const buf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, 1,1]), gl.STATIC_DRAW);
+  const loc = gl.getAttribLocation(prog, "a_pos");
+  gl.enableVertexAttribArray(loc);
+  gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
 
-  const innerShadowGeo = new THREE.TorusGeometry(1.15, 0.045, 12, 128);
-  const innerShadowMat = new THREE.MeshStandardMaterial({
-    color: 0x020202,
-    metalness: 0.8,
-    roughness: 0.22,
-  });
-  const innerShadow = new THREE.Mesh(innerShadowGeo, innerShadowMat);
-  innerShadow.rotation.x = Math.PI * 0.5 + 0.18;
-  innerShadow.rotation.z = -0.2;
-  group.add(innerShadow);
+  const uTime    = gl.getUniformLocation(prog, "u_time");
+  const uRes     = gl.getUniformLocation(prog, "u_res");
+  const uMouse   = gl.getUniformLocation(prog, "u_mouse");
+  const uScroll  = gl.getUniformLocation(prog, "u_scroll");
+  const uRipples = [0,1,2].map(i => gl.getUniformLocation(prog, `u_ripples[${i}]`));
 
-  group.scale.setScalar(0.86);
-
-  const fillLight = new THREE.PointLight(0xffffff, 1.8, 10);
-  fillLight.position.set(-2.8, 2.4, 3.6);
-  scene.add(fillLight);
-  const rimLight = new THREE.PointLight(0xffffff, 1.85, 10);
-  rimLight.position.set(2.8, -1.6, 4.2);
-  scene.add(rimLight);
-  const topLight = new THREE.DirectionalLight(0xffffff, 1.65);
-  topLight.position.set(-1.4, 4, 5);
-  scene.add(topLight);
-  const lowStrip = new THREE.PointLight(0x909090, 0.8, 8);
-  lowStrip.position.set(-3.2, -2.4, 2.2);
-  scene.add(lowStrip);
-  scene.add(new THREE.AmbientLight(0x080808, 1.1));
-
-  let mx = 0;
-  const onPointer = (event) => {
-    const rect = canvas.getBoundingClientRect();
-    mx = ((event.clientX - rect.left) / rect.width - 0.5) * 2;
+  // ripple state: {x, y, startTime} in normalised coords + shader time
+  const waterRipples = [{x:0,y:0,t:-99},{x:0,y:0,t:-99},{x:0,y:0,t:-99}];
+  let waterRippleIdx = 0;
+  const addWaterRipple = (clientX, clientY) => {
+    const r = waterRipples[waterRippleIdx % 3];
+    r.x = clientX / window.innerWidth;
+    r.y = 1.0 - clientY / window.innerHeight;
+    r.pending = true; // will be stamped with shader time on next frame
+    waterRippleIdx++;
   };
-  window.addEventListener("pointermove", onPointer);
+  window.addEventListener("pointerdown", (e) => {
+    if (heroStep !== 0) return;
+    addWaterRipple(e.clientX, e.clientY);
+  });
+
+  gl.enable(gl.BLEND);
+  gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+  gl.clearColor(0, 0, 0, 0);
 
   const resize = () => {
-    const w = canvas.clientWidth;
-    const h = canvas.clientHeight;
-    renderer.setSize(w, h, false);
-    camera.aspect = w / h;
-    camera.updateProjectionMatrix();
+    const pr = Math.min(window.devicePixelRatio, 2);
+    canvas.width  = Math.round(canvas.clientWidth  * pr);
+    canvas.height = Math.round(canvas.clientHeight * pr);
+    gl.viewport(0, 0, canvas.width, canvas.height);
   };
   window.addEventListener("resize", resize);
   resize();
 
-  let raf = 0;
-  const animate = (time = 0) => {
-    raf = requestAnimationFrame(animate);
-    const sp = parseFloat(heroStage?.style.getPropertyValue("--hero-scroll-progress") || "0");
-    group.rotation.x += (Math.PI * 0.5 - group.rotation.x) * 0.035;
-    group.rotation.z += (0 - group.rotation.z) * 0.035;
-    group.rotation.y += ((mx * 0.22 + sp * Math.PI * 0.42) - group.rotation.y) * 0.035;
-    renderer.render(scene, camera);
+  let mx = 0.5, my = 0.5, tmx = 0.5, tmy = 0.5;
+  const onPointer = (e) => {
+    tmx = e.clientX / window.innerWidth;
+    tmy = 1.0 - e.clientY / window.innerHeight;
   };
-  animate();
+  window.addEventListener("pointermove", onPointer);
+
+  let raf;
+  const animate = (t) => {
+    raf = requestAnimationFrame(animate);
+    mx += (tmx - mx) * 0.08;
+    my += (tmy - my) * 0.08;
+    const shaderTime = t * 0.001;
+    const sp = parseFloat(heroStage?.style.getPropertyValue("--hero-scroll-progress") || "0");
+    // stamp pending ripples with current shader time
+    for (const r of waterRipples) {
+      if (r.pending) { r.t = shaderTime; r.pending = false; }
+    }
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.uniform1f(uTime,   shaderTime);
+    gl.uniform2f(uRes,    canvas.width, canvas.height);
+    gl.uniform2f(uMouse,  mx, my);
+    gl.uniform1f(uScroll, sp);
+    for (let i = 0; i < 3; i++) {
+      gl.uniform3f(uRipples[i], waterRipples[i].x, waterRipples[i].y, waterRipples[i].t);
+    }
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+  };
+  animate(0);
 
   const cleanup = () => {
     cancelAnimationFrame(raf);
     window.removeEventListener("pointermove", onPointer);
     window.removeEventListener("resize", resize);
-    renderer.dispose();
+    gl.deleteProgram(prog);
+    gl.deleteBuffer(buf);
+  };
+  window.addEventListener("pagehide", cleanup, { once: true });
+};
+
+// ── Floating Particle Orbs (mouse-flee interaction) ───────────────────────
+const initFloatingOrbs = (canvas) => {
+  if (!canvas || reducedMotion) return;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return;
+
+  const PR = Math.min(window.devicePixelRatio, 2);
+  const resize = () => {
+    canvas.width  = Math.round(canvas.clientWidth  * PR);
+    canvas.height = Math.round(canvas.clientHeight * PR);
+  };
+  window.addEventListener("resize", resize);
+  resize();
+
+  // orb config
+  const ORB_COUNT  = 3;
+  const ORB_RADIUS = 52; // logical px (before PR)
+  const FLEE_DIST  = 160;
+  const FLEE_FORCE = 0.38;
+  const DRIFT_SPD  = 0.18;
+  const DAMP       = 0.88;
+
+  // seed positions spread across canvas
+  const seeds = [
+    { nx: 0.22, ny: 0.38 },
+    { nx: 0.68, ny: 0.28 },
+    { nx: 0.50, ny: 0.68 },
+  ];
+
+  const orbs = seeds.map((s, i) => ({
+    x:  s.nx * canvas.clientWidth,
+    y:  s.ny * canvas.clientHeight,
+    vx: (Math.random() - 0.5) * 0.4,
+    vy: (Math.random() - 0.5) * 0.4,
+    phase: i * 2.1,          // drift phase offset
+    // per-orb particle cloud
+    pts: Array.from({ length: 420 }, () => {
+      const theta = Math.random() * Math.PI * 2;
+      const phi   = Math.acos(2 * Math.random() - 1);
+      const r     = ORB_RADIUS * Math.cbrt(Math.random()); // volume-uniform
+      return {
+        ox: r * Math.sin(phi) * Math.cos(theta),
+        oy: r * Math.sin(phi) * Math.sin(theta),
+        oz: r * Math.cos(phi),
+        // flow lines: a subset of pts that form arcs
+        isLine: Math.random() < 0.06,
+        lineAngle: Math.random() * Math.PI * 2,
+      };
+    }),
+  }));
+
+  let mx = -9999, my = -9999;
+  const onMove = (e) => {
+    mx = e.clientX;
+    my = e.clientY;
+  };
+  window.addEventListener("pointermove", onMove);
+
+  let raf;
+  const animate = (ts) => {
+    raf = requestAnimationFrame(animate);
+    const t = ts * 0.001;
+    const W = canvas.clientWidth;
+    const H = canvas.clientHeight;
+    const sp = parseFloat(heroStage?.style.getPropertyValue("--hero-scroll-progress") || "0");
+    const globalAlpha = Math.max(0, 1 - sp * 2.5);
+    if (globalAlpha <= 0) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      return;
+    }
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.save();
+    ctx.scale(PR, PR);
+
+    for (const orb of orbs) {
+      // gentle drift
+      orb.x += Math.sin(t * DRIFT_SPD + orb.phase)       * 0.22;
+      orb.y += Math.cos(t * DRIFT_SPD * 0.7 + orb.phase) * 0.18;
+
+      // flee from mouse
+      const dx = orb.x - mx;
+      const dy = orb.y - my;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < FLEE_DIST && dist > 0.1) {
+        const force = (1 - dist / FLEE_DIST) * FLEE_FORCE;
+        orb.vx += (dx / dist) * force;
+        orb.vy += (dy / dist) * force;
+      }
+
+      // damping + apply velocity
+      orb.vx *= DAMP;
+      orb.vy *= DAMP;
+      orb.x  += orb.vx;
+      orb.y  += orb.vy;
+
+      // soft boundary bounce
+      const pad = ORB_RADIUS + 20;
+      if (orb.x < pad)     { orb.x = pad;     orb.vx =  Math.abs(orb.vx) * 0.5; }
+      if (orb.x > W - pad) { orb.x = W - pad; orb.vx = -Math.abs(orb.vx) * 0.5; }
+      if (orb.y < pad)     { orb.y = pad;      orb.vy =  Math.abs(orb.vy) * 0.5; }
+      if (orb.y > H - pad) { orb.y = H - pad;  orb.vy = -Math.abs(orb.vy) * 0.5; }
+
+      // draw particle cloud
+      const rotY = t * 0.18 + orb.phase;
+      const cosY = Math.cos(rotY), sinY = Math.sin(rotY);
+      const rotX = t * 0.11 + orb.phase * 0.5;
+      const cosX = Math.cos(rotX), sinX = Math.sin(rotX);
+
+      for (const pt of orb.pts) {
+        // rotate point around Y then X
+        const rx = pt.ox * cosY - pt.oz * sinY;
+        const rz = pt.ox * sinY + pt.oz * cosY;
+        const ry = pt.oy * cosX - rz   * sinX;
+
+        const px = orb.x + rx;
+        const py = orb.y + ry;
+
+        // depth-based brightness: front = bright, back = dim
+        const depth = (rz + ORB_RADIUS) / (ORB_RADIUS * 2); // 0..1
+        const bright = 0.18 + depth * 0.82;
+
+        // distance from sphere surface → fade outer particles
+        const r2d = Math.sqrt(rx * rx + ry * ry);
+        const edgeFade = Math.max(0, 1 - r2d / (ORB_RADIUS * 1.05));
+
+        const alpha = globalAlpha * bright * edgeFade * (pt.isLine ? 0.55 : 0.28);
+        if (alpha < 0.01) continue;
+
+        // teal-white palette matching water surface
+        const g = Math.round(200 + depth * 55);
+        const b = Math.round(189 + depth * 66);
+        ctx.fillStyle = `rgba(${Math.round(depth * 180)},${g},${b},${alpha.toFixed(3)})`;
+        ctx.fillRect(px - 0.6, py - 0.6, 1.2, 1.2);
+      }
+
+      // organic flow waves: soft undulating curves around orb
+      ctx.save();
+      ctx.translate(orb.x, orb.y);
+      for (let li = 0; li < 3; li++) {
+        const baseR = ORB_RADIUS * (0.65 + li * 0.18);
+        const wavePhase = t * (0.15 + li * 0.05) + orb.phase + li * 2.1;
+        const lineAlpha = globalAlpha * (0.06 + li * 0.02);
+
+        // draw wave as smooth closed path with subtle deformation
+        ctx.strokeStyle = `rgba(180,245,235,${lineAlpha.toFixed(3)})`;
+        ctx.lineWidth = 0.6;
+        ctx.beginPath();
+
+        const segments = 32; // more segments = smoother
+        for (let s = 0; s <= segments; s++) {
+          const angle = (s / segments) * Math.PI * 2;
+          // very subtle radial wave: keep it close to circular
+          const wave = Math.sin(angle * 4 + wavePhase) * ORB_RADIUS * 0.025;
+          const r = baseR + wave;
+          const px = Math.cos(angle) * r;
+          const py = Math.sin(angle) * r;
+          s === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+        }
+        ctx.closePath();
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    ctx.restore();
+  };
+  animate(0);
+
+  const cleanup = () => {
+    cancelAnimationFrame(raf);
+    window.removeEventListener("pointermove", onMove);
+    window.removeEventListener("resize", resize);
   };
   window.addEventListener("pagehide", cleanup, { once: true });
 };
@@ -1865,8 +2823,8 @@ const initHeroKineticMark = (canvas) => {
 const playEntryCodeReveal = () => {
   if (!entryCodeWord) return;
 
-  const target = "KINZIEDESIGN";
-  const glyphSets = ["KXH#", "I1L|", "NMW/", "Z2E=", "I1L|", "E3F_"];
+  const target = "LUCIANJYANG";
+  const glyphSets = ["L1|", "UVY", "C<(", "I1L|", "A4@", "NMW/", "J7]", "YV/", "A4@", "NMW/", "G6&"];
   const duration = 760;
   entryCodeWord.dataset.ghost = target;
   entryCodeWord.textContent = target;
@@ -2033,7 +2991,10 @@ const enterSite = () => {
 
   if (reducedMotion) {
     document.body.classList.add("has-entered");
-    document.documentElement.classList.add("snap-active");
+    requestAnimationFrame(() => {
+      resizeStage();
+      initCards();
+    });
     return;
   }
 
@@ -2051,7 +3012,11 @@ const enterSite = () => {
   window.setTimeout(() => {
     document.body.classList.remove("is-entering");
     document.body.classList.add("has-entered");
-    document.documentElement.classList.add("snap-active");
+    // Re-measure stage after CSS switches to sticky/100vh
+    requestAnimationFrame(() => {
+      resizeStage();
+      initCards();
+    });
     document.dispatchEvent(new CustomEvent("siteEntered"));
   }, 2680);
 };
@@ -2075,6 +3040,258 @@ entryScreen?.addEventListener(
   },
   { passive: false }
 );
+
+// Hero section wheel hijack: discrete step-through of intro + 6 cards
+// 2 intro ticks (water only) → 6 card steps → release to normal scroll
+let heroIntroBudget = HERO_INTRO_TICKS; // ticks remaining in water-only intro
+
+const isHeroStepControlActive = () => {
+  if (!document.body.classList.contains("has-entered")) return false;
+  if (orderedMode) return false;
+
+  const rect = heroSection?.getBoundingClientRect();
+  if (!rect) return false;
+
+  return rect.top <= 0 && rect.bottom >= window.innerHeight * 0.5 && heroStep < HERO_CARD_COUNT;
+};
+
+const lockHeroStep = (duration) => {
+  heroWheelLocked = true;
+  window.setTimeout(() => { heroWheelLocked = false; }, duration);
+};
+
+const stepHeroSequence = (isForward) => {
+  if (!isHeroStepControlActive()) return false;
+  if (heroWheelLocked) return true;
+
+  if (isForward) {
+    if (heroIntroBudget > 0) {
+      heroIntroBudget -= 1;
+      lockHeroStep(320);
+    } else {
+      heroStep = Math.min(HERO_CARD_COUNT, heroStep + 1);
+      lockHeroStep(480);
+    }
+  } else {
+    if (heroStep > 0) {
+      heroStep = Math.max(0, heroStep - 1);
+    } else {
+      heroIntroBudget = Math.min(HERO_INTRO_TICKS, heroIntroBudget + 1);
+    }
+    lockHeroStep(380);
+  }
+
+  return true;
+};
+
+window.addEventListener(
+  "wheel",
+  (event) => {
+    if (!document.body.classList.contains("has-entered")) return;
+    if (orderedMode) return;
+
+    // Only hijack when hero is visible (sticky stage covers viewport)
+    const rect = heroSection?.getBoundingClientRect();
+    if (!rect) return;
+    const heroVisible = rect.top <= 0 && rect.bottom >= window.innerHeight * 0.5;
+    if (!heroVisible) return;
+
+    // After all cards done, let browser scroll naturally to next section
+    if (heroStep >= HERO_CARD_COUNT) return;
+
+    event.preventDefault();
+
+    if (heroWheelLocked) return;
+
+    const isDown = event.deltaY > 0;
+    if (isDown) {
+      if (heroIntroBudget > 0) {
+        // Still in water intro phase
+        heroIntroBudget -= 1;
+        // brief lock so one wheel tick = one intro tick
+        heroWheelLocked = true;
+        setTimeout(() => { heroWheelLocked = false; }, 320);
+      } else {
+        // Advance to next card
+        heroStep = Math.min(HERO_CARD_COUNT, heroStep + 1);
+        heroWheelLocked = true;
+        setTimeout(() => { heroWheelLocked = false; }, 480);
+      }
+    } else {
+      // Scroll up: go back
+      if (heroStep > 0) {
+        heroStep = Math.max(0, heroStep - 1);
+      } else {
+        heroIntroBudget = Math.min(HERO_INTRO_TICKS, heroIntroBudget + 1);
+      }
+      heroWheelLocked = true;
+      setTimeout(() => { heroWheelLocked = false; }, 380);
+    }
+  },
+  { passive: false }
+);
+
+// Hero stage click ripple effect
+const heroRipples = [];
+
+const createHeroRipple = (clientX, clientY, isClick = false) => {
+  if (!heroStage || reducedMotion) return;
+  const rect = heroStage.getBoundingClientRect();
+  const x = clientX - rect.left;
+  const y = clientY - rect.top;
+  const startedAt = performance.now();
+
+  heroRipples.push({
+    x,
+    y,
+    startedAt,
+    duration: isClick ? 1800 : 900,
+    maxRadius: Math.min(rect.width, rect.height) * (isClick ? 0.18 : 0.06),
+    isClick,
+    // organic variation seed per ripple
+    seed: Math.random() * Math.PI * 2,
+  });
+
+  if (heroRipples.length > 3) heroRipples.shift();
+  playWaterDrop();
+};
+
+heroStage?.addEventListener("click", (event) => {
+  if (!document.body.classList.contains("has-entered")) return;
+  if (event.target.closest(".hero-card")) return;
+  createHeroRipple(event.clientX, event.clientY, true);
+});
+
+// Mouse movement ripple effect (throttled)
+let lastRippleTime = 0;
+const RIPPLE_THROTTLE = 300;
+
+heroStage?.addEventListener("pointermove", (event) => {
+  if (!document.body.classList.contains("has-entered")) return;
+  if (event.target.closest(".hero-card")) return;
+
+  const now = performance.now();
+  if (now - lastRippleTime < RIPPLE_THROTTLE) return;
+
+  lastRippleTime = now;
+  createHeroRipple(event.clientX, event.clientY);
+});
+
+// Ripple rendering on hero-kinetic-canvas overlay
+const renderHeroRipples = () => {
+  const canvas = document.getElementById("hero-ripple-canvas");
+  if (!canvas || !heroStage) return;
+
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return;
+
+  const rect = heroStage.getBoundingClientRect();
+  const pr = Math.min(window.devicePixelRatio, 2);
+
+  if (canvas.width !== rect.width * pr || canvas.height !== rect.height * pr) {
+    canvas.width = rect.width * pr;
+    canvas.height = rect.height * pr;
+    canvas.style.width = `${rect.width}px`;
+    canvas.style.height = `${rect.height}px`;
+    ctx.scale(pr, pr);
+  }
+
+  ctx.clearRect(0, 0, rect.width, rect.height);
+
+  const now = performance.now();
+  for (let i = heroRipples.length - 1; i >= 0; i--) {
+    const ripple = heroRipples[i];
+    const elapsed = now - ripple.startedAt;
+    const progress = Math.min(elapsed / ripple.duration, 1);
+
+    if (progress >= 1) {
+      heroRipples.splice(i, 1);
+      continue;
+    }
+
+    const eased = 1 - (1 - progress) ** 2;
+    const radius = ripple.maxRadius * eased;
+    const opacity = (1 - progress) * (ripple.isClick ? 0.5 : 0.35);
+
+    // Ultra-soft organic ripple: draw as continuous wavy path
+    ctx.save();
+    ctx.shadowBlur = 16;
+    ctx.shadowColor = `rgba(153, 242, 230, ${opacity * 0.4})`;
+
+    const segments = 24; // more segments = smoother wave
+    const angleStep = (Math.PI * 2) / segments;
+
+    // outer wave ring
+    ctx.beginPath();
+    for (let j = 0; j <= segments; j++) {
+      const angle = j * angleStep + ripple.seed;
+      // layered wave: multiple frequencies for natural irregularity
+      const wave1 = Math.sin(angle * 3 + ripple.seed * 2) * 0.06;
+      const wave2 = Math.sin(angle * 5 - ripple.seed) * 0.03;
+      const wave3 = Math.sin(angle * 7 + progress * Math.PI * 2) * 0.02;
+      const r = radius * (1 + wave1 + wave2 + wave3);
+      const px = ripple.x + Math.cos(angle) * r;
+      const py = ripple.y + Math.sin(angle) * r;
+      j === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+    }
+    ctx.closePath();
+
+    // gradient stroke: fade from center to edge
+    const grad = ctx.createRadialGradient(ripple.x, ripple.y, radius * 0.8, ripple.x, ripple.y, radius * 1.1);
+    grad.addColorStop(0, `rgba(200, 245, 237, 0)`);
+    grad.addColorStop(0.5, `rgba(200, 245, 237, ${opacity * 0.7})`);
+    grad.addColorStop(1, `rgba(200, 245, 237, 0)`);
+    ctx.strokeStyle = grad;
+    ctx.lineWidth = ripple.isClick ? 1.8 : 1.0;
+    ctx.stroke();
+
+    ctx.restore();
+
+    // Inner ring (only for click ripples, softer)
+    if (ripple.isClick && progress < 0.6) {
+      const innerRadius = radius * 0.5;
+      const innerOpacity = (1 - progress / 0.6) * 0.25;
+
+      ctx.save();
+      ctx.shadowBlur = 10;
+      ctx.shadowColor = `rgba(153, 242, 230, ${innerOpacity * 0.4})`;
+
+      // inner wave ring (same organic style as outer)
+      ctx.beginPath();
+      const innerSegs = 20;
+      const innerStep = (Math.PI * 2) / innerSegs;
+      for (let k = 0; k <= innerSegs; k++) {
+        const angle = k * innerStep + ripple.seed * 1.5;
+        const wave1 = Math.sin(angle * 4 - ripple.seed) * 0.05;
+        const wave2 = Math.sin(angle * 6 + progress * Math.PI) * 0.025;
+        const r = innerRadius * (1 + wave1 + wave2);
+        const px = ripple.x + Math.cos(angle) * r;
+        const py = ripple.y + Math.sin(angle) * r;
+        k === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+      }
+      ctx.closePath();
+
+      const innerGrad = ctx.createRadialGradient(
+        ripple.x, ripple.y, innerRadius * 0.75,
+        ripple.x, ripple.y, innerRadius * 1.1
+      );
+      innerGrad.addColorStop(0, `rgba(173, 235, 224, 0)`);
+      innerGrad.addColorStop(0.5, `rgba(173, 235, 224, ${innerOpacity * 0.9})`);
+      innerGrad.addColorStop(1, `rgba(173, 235, 224, 0)`);
+      ctx.strokeStyle = innerGrad;
+      ctx.lineWidth = 0.8;
+      ctx.stroke();
+      ctx.restore();
+    }
+  }
+
+  requestAnimationFrame(renderHeroRipples);
+};
+
+if (heroStage && !reducedMotion) {
+  requestAnimationFrame(renderHeroRipples);
+}
+
 
 window.addEventListener(
   "pointerdown",
@@ -2100,7 +3317,8 @@ updateFocusPanel("oem");
 updateWorksPanel("oem");
 heroWireframeController = initHeroWireframe(heroWireframe);
 initEntryField(entryFieldCanvas);
-initHeroKineticMark(document.getElementById("hero-kinetic-canvas"));
+initWaterSurface(document.getElementById("hero-kinetic-canvas"));
+initFloatingOrbs(document.getElementById("hero-orbs-canvas"));
 initParticleCanvas(heroCopyCanvas, "dark");
 // initParticleCanvas(particleCanvas, "light");
 updateBeijingMeta();
