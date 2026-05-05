@@ -228,9 +228,12 @@ body.has-entered .precision-guides {
 }
 
 .precision-guides::before,
-.precision-guides::before {
+.precision-guides::after {
   content: "";
   position: absolute;
+}
+
+.precision-guides::before {
   left: 0;
   right: 0;
   top: var(--cursor-y);
@@ -240,15 +243,12 @@ body.has-entered .precision-guides {
 }
 
 .precision-guides::after {
-  content: "";
-  position: absolute;
   top: 0;
   bottom: 0;
   left: var(--cursor-x);
   width: 1px;
   transform: translateX(-0.5px);
-  background: rgba(242, 240, 236, 0.0);
-}
+  background: rgba(242, 240, 236, 0.18);
 }
 
 .precision-guides.is-visible {
@@ -6358,12 +6358,13 @@ body.services-white-stage .top-meta-home {
   animation: none;
 }
 
-body.services-white-stage .top-meta-name {
-  color: rgba(18, 18, 18, 0.78);
-}
-
+body.services-white-stage .top-meta-name,
 body.services-white-stage .top-meta-time,
 body.services-white-stage .top-meta-date,
+body.services-white-stage .top-meta-toggle {
+  color: rgba(18, 18, 18, 0.58);
+}
+
 body.services-white-stage .top-meta-lang .lang-button {
   color: rgba(18, 18, 18, 0.46);
 }
@@ -6372,8 +6373,7 @@ body.services-white-stage .top-meta-lang {
   border-left-color: rgba(18, 18, 18, 0.1);
 }
 
-body.services-white-stage .top-meta-lang .lang-button.is-active,
-body.services-white-stage .top-meta-toggle {
+body.services-white-stage .top-meta-lang .lang-button.is-active {
   color: rgba(18, 18, 18, 0.76);
 }
 
