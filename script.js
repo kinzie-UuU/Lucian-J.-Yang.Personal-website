@@ -656,6 +656,13 @@ if (!reducedMotion) {
 const copyItems = document.querySelectorAll(".contact-copy-item");
 const contactForm = document.querySelector("#contact-form");
 
+const showContactToast = () => {
+  const toast = document.getElementById("contact-toast");
+  if (!toast) return;
+  toast.classList.add("is-visible");
+  setTimeout(() => toast.classList.remove("is-visible"), 2400);
+};
+
 copyItems.forEach((item) => {
   let hoverTimer = null;
   item.addEventListener("mouseenter", () => {
@@ -692,6 +699,8 @@ contactForm?.addEventListener("submit", (event) => {
 
   window.location.href = `mailto:y1156813759@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   playUiTone("click");
+  contactForm.reset();
+  showContactToast();
 });
 
 // WeChat QR modal
@@ -2238,12 +2247,14 @@ const initServicesScrollStory = () => {
     const progress = currentProgress;
     const open = smooth(clamp01(progress / 0.22));
     const inside = smooth(clamp01((progress - 0.13) / 0.22));
+    const outro = smooth(clamp01((progress - 0.82) / 0.18));
 
     section.style.setProperty("--services-progress", progress.toFixed(4));
     section.style.setProperty("--services-open", open.toFixed(4));
     section.style.setProperty("--services-inside", inside.toFixed(4));
+    section.style.setProperty("--services-outro", outro.toFixed(4));
     section.style.setProperty("--services-slab-opacity", (inside * 0.96).toFixed(3));
-    document.body.classList.toggle("services-white-stage", servicesInView && inside > 0.58);
+    document.body.classList.toggle("services-white-stage", servicesInView && inside > 0.58 && outro < 0.55);
     if (entryGridScan) entryGridScan.setProgress(open, inside, progress);
 
     panels.forEach((panel, index) => {
@@ -2372,6 +2383,7 @@ const animateCards = (timestamp) => {
   if (heroStage) {
     heroStage.style.setProperty("--hero-scroll-progress", scrollProgress.toFixed(4));
     heroStage.style.setProperty("--hero-intro-progress", introProgress.toFixed(4));
+    heroStage.style.setProperty("--hero-tail-fade", tailFade.toFixed(4));
   }
 
   if (hasEntered && heroRect && heroRect.bottom < -stageMotion.height * 0.25 && !orderedMode) {
@@ -4380,12 +4392,16 @@ window.requestAnimationFrame(animateCards);
     const scrollable = rect.height - window.innerHeight;
     if (scrollable <= 0) return;
 
+    // enter: starts before the sticky portrait locks, so the scene can drift in.
+    const enter = Math.max(0, Math.min(1, (window.innerHeight - rect.top) / (window.innerHeight * 0.9)));
+
     // progress: 0 = section just entered, 1 = section fully scrolled through
     const progress = Math.max(0, Math.min(1, -rect.top / scrollable));
 
     // exit: starts at 0.7 progress, reaches 1 at end — drives blur/fade
     const exit = Math.max(0, Math.min(1, (progress - 0.7) / 0.3));
 
+    section.style.setProperty("--portrait-enter", smootherStep(enter).toFixed(4));
     section.style.setProperty("--portrait-progress", progress.toFixed(4));
     section.style.setProperty("--portrait-exit", exit.toFixed(4));
 

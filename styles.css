@@ -1,4 +1,53 @@
 @font-face {
+  font-family: "Satoshi";
+  src: url("fonts/Satoshi/Satoshi-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Satoshi";
+  src: url("fonts/Satoshi/Satoshi-Medium.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Satoshi";
+  src: url("fonts/Satoshi/Satoshi-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Cabinet Grotesk";
+  src: url("fonts/CabinetGrotesk/CabinetGrotesk-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Cabinet Grotesk";
+  src: url("fonts/CabinetGrotesk/CabinetGrotesk-Medium.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Cabinet Grotesk";
+  src: url("fonts/CabinetGrotesk/CabinetGrotesk-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Cabinet Grotesk";
+  src: url("fonts/CabinetGrotesk/CabinetGrotesk-Extrabold.woff2") format("woff2");
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
   font-family: "MiSans";
   src: url("fonts/MiSans/woff2/MiSans-Regular.woff2") format("woff2");
   font-weight: 400;
@@ -281,7 +330,7 @@ main > section {
 .works-copy h3,
 .hero-focus-title,
 .service-item h3 {
-  font-family: "Satoshi", "Cabinet Grotesk", "MiSans", "Cormorant Garamond", Georgia, serif;
+  font-family: "Satoshi", "Cabinet Grotesk", "MiSans", Georgia, serif;
   font-weight: 800;
 }
 
@@ -1602,9 +1651,25 @@ html[lang="zh-CN"] .statement-title {
 /* ── Portrait + About wrapper (nuageboi pattern) ── */
 .portrait-about-wrapper {
   position: relative;
+  z-index: 2;
+  margin-top: -18svh;
   background: #000;
+  --portrait-enter: 0;
   --portrait-progress: 0;
   --portrait-exit: 0;
+}
+
+.portrait-about-wrapper::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -30svh;
+  z-index: 3;
+  height: 44svh;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.46) 48%, #000 100%);
 }
 
 .portrait-canvas {
@@ -1642,28 +1707,32 @@ html[lang="zh-CN"] .statement-title {
   height: min(94vh, 960px);
   object-fit: contain;
   object-position: center;
-  opacity: 0.94;
-  filter: saturate(0.94) contrast(1.12) brightness(0.82);
+  opacity: calc(0.08 + var(--portrait-enter) * 0.86);
+  filter:
+    saturate(0.94)
+    contrast(1.12)
+    brightness(calc(0.62 + var(--portrait-enter) * 0.2))
+    blur(calc((1 - var(--portrait-enter)) * 10px));
   transform:
-    translate3d(calc(-50% + (0.5 - var(--portrait-progress)) * 2.5vw), calc(-50% + var(--portrait-progress) * -2vh), 0)
-    scale(calc(0.98 + var(--portrait-progress) * 0.08));
+    translate3d(calc(-50% + (0.5 - var(--portrait-progress)) * 2.5vw), calc(-50% + (1 - var(--portrait-enter)) * 9vh + var(--portrait-progress) * -2vh), 0)
+    scale(calc(0.965 + var(--portrait-enter) * 0.015 + var(--portrait-progress) * 0.08));
   transform-origin: 50% 50%;
   will-change: transform;
 }
 
 .portrait-video {
   z-index: 0;
-  opacity: calc(0.96 - var(--portrait-exit) * 0.82);
+  opacity: calc(0.08 + var(--portrait-enter) * 0.88 - var(--portrait-exit) * 0.82);
   filter:
     saturate(0.96)
     contrast(1.12)
-    brightness(calc(0.82 - var(--portrait-exit) * 0.18))
-    blur(calc(var(--portrait-exit) * 14px));
+    brightness(calc(0.62 + var(--portrait-enter) * 0.2 - var(--portrait-exit) * 0.18))
+    blur(calc((1 - var(--portrait-enter)) * 10px + var(--portrait-exit) * 14px));
 }
 
 .portrait-image {
   z-index: 0;
-  opacity: 0.94;
+  opacity: calc(0.08 + var(--portrait-enter) * 0.86);
 }
 
 .portrait-about-wrapper.is-portrait-video-ready .portrait-image {
@@ -1745,9 +1814,9 @@ html[lang="zh-CN"] .statement-title {
   inset: 0;
   z-index: 2;
   display: grid;
-  align-items: end;
+  align-items: center;
   margin: 0;
-  padding: clamp(72px, 10vh, 118px) clamp(28px, 5vw, 80px) clamp(76px, 10vh, 118px);
+  padding: clamp(86px, 10vh, 126px) clamp(42px, 6vw, 116px) clamp(92px, 12vh, 138px);
   background: transparent;
   border-radius: 0;
   box-shadow: none;
@@ -1756,23 +1825,27 @@ html[lang="zh-CN"] .statement-title {
 
 .about-layout {
   display: grid;
-  grid-template-columns: minmax(280px, 0.72fr) minmax(320px, 0.88fr);
-  gap: 0 clamp(64px, 12vw, 220px);
-  align-items: end;
+  grid-template-columns: minmax(360px, 0.82fr) minmax(420px, 0.58fr);
+  gap: clamp(72px, 10vw, 180px);
+  align-items: center;
   width: 100%;
+  max-width: 1720px;
+  margin-inline: auto;
   padding-inline: 0;
   transform:
-    translate3d(0, calc(24vh - var(--portrait-progress) * 44vh), 0)
-    scale(calc(0.96 + var(--portrait-progress) * 0.04));
-  opacity: min(1, calc(0.24 + var(--portrait-progress) * 1.35 - var(--portrait-exit) * 0.24));
+    translate3d(0, calc(28vh - var(--portrait-enter) * 4vh - var(--portrait-progress) * 44vh), 0)
+    scale(calc(0.955 + var(--portrait-enter) * 0.005 + var(--portrait-progress) * 0.04));
+  opacity: min(1, calc(-0.12 + var(--portrait-enter) * 0.36 + var(--portrait-progress) * 1.35 - var(--portrait-exit) * 0.24));
   transform-origin: left bottom;
   will-change: transform, opacity;
 }
 
 .about-left {
   display: grid;
-  gap: 20px;
-  padding-top: 8px;
+  gap: clamp(20px, 3vh, 34px);
+  align-content: center;
+  max-width: 46ch;
+  padding-top: 0;
 }
 
 .about-heading {
@@ -1787,24 +1860,24 @@ html[lang="zh-CN"] .statement-title {
 
 html[lang="zh-CN"] .about-heading {
   font-family: "MiSans", "PingFang SC", "Microsoft YaHei", sans-serif;
-  font-size: clamp(2.25rem, 4.2vw, 4.9rem);
-  line-height: 1.08;
+  font-size: clamp(2.1rem, 3.2vw, 3.8rem);
+  line-height: 1.16;
   letter-spacing: 0;
-  font-weight: 600;
-  max-width: 10ch;
+  font-weight: 560;
+  max-width: 8ch;
   word-break: keep-all;
 }
 
 .about-role {
   display: flex;
   flex-direction: column;
-  gap: 0;
-  margin: clamp(18px, 2.4vh, 30px) 0 0;
+  gap: 0.02em;
+  margin: clamp(8px, 1.4vh, 18px) 0 0;
   color: rgba(246, 242, 234, 0.96);
   font-family: "MiSans", "PingFang SC", "Microsoft YaHei", sans-serif;
-  font-size: clamp(4.2rem, 9vw, 10.2rem);
-  font-weight: 720;
-  line-height: 0.92;
+  font-size: clamp(4.8rem, 7.4vw, 8.8rem);
+  font-weight: 680;
+  line-height: 0.98;
   letter-spacing: 0;
   text-shadow:
     0 1px 0 rgba(255, 255, 255, 0.16),
@@ -1814,14 +1887,14 @@ html[lang="zh-CN"] .about-heading {
 }
 
 .about-role span:last-child {
-  margin-left: clamp(0px, 3.2vw, 58px);
+  margin-left: clamp(22px, 3.8vw, 76px);
 }
 
 .about-right {
   display: grid;
-  gap: clamp(22px, 3vh, 34px);
-  max-width: 42ch;
-  padding: 0 0 clamp(12px, 3vh, 34px);
+  gap: clamp(24px, 3.2vh, 38px);
+  max-width: min(46ch, 100%);
+  padding: clamp(10px, 2vh, 22px) 0 0;
   justify-self: end;
 }
 
@@ -1933,11 +2006,11 @@ html[lang="zh-CN"] .contact-section .section-intro {
 
 html[lang="zh-CN"] .about-lead {
   font-family: "MiSans", "PingFang SC", "Microsoft YaHei", sans-serif;
-  font-weight: 400;
-  font-size: clamp(1rem, 1.2vw, 1.12rem);
-  line-height: 1.9;
-  letter-spacing: 0.02em;
-  max-width: 26ch;
+  font-weight: 460;
+  font-size: clamp(1.02rem, 1.05vw, 1.16rem);
+  line-height: 1.86;
+  letter-spacing: 0.01em;
+  max-width: 34ch;
   word-break: keep-all;
   text-align: left;
 }
@@ -1945,16 +2018,16 @@ html[lang="zh-CN"] .about-lead {
 html[lang="zh-CN"] .about-detail {
   font-family: "MiSans", "PingFang SC", "Microsoft YaHei", sans-serif;
   font-weight: 400;
-  font-size: 0.9rem;
-  line-height: 1.92;
-  letter-spacing: 0.025em;
-  max-width: 30ch;
+  font-size: 0.88rem;
+  line-height: 1.88;
+  letter-spacing: 0.01em;
+  max-width: 36ch;
   word-break: keep-all;
   text-align: left;
 }
 
 .about-skills {
-  margin-top: 8px;
+  margin-top: clamp(2px, 1vh, 10px);
 }
 
 .about-skills-label {
@@ -1968,16 +2041,17 @@ html[lang="zh-CN"] .about-detail {
 .about-skills-list {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 8px 10px;
+  max-width: 40ch;
 }
 
 .about-skills-list span {
   display: inline-block;
-  padding: 5px 14px;
+  padding: 5px 12px;
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 999px;
-  font-size: 0.72rem;
-  letter-spacing: 0.06em;
+  font-size: 0.68rem;
+  letter-spacing: 0.03em;
   color: rgba(235, 231, 224, 0.56);
   background: rgba(255, 255, 255, 0.03);
   transition: border-color 200ms ease, color 200ms ease;
@@ -1991,7 +2065,7 @@ html[lang="zh-CN"] .about-detail {
 .services-section {
   position: relative;
   min-height: 340svh;
-  background: #09090d;
+  background: #000;
   scroll-snap-align: start;
   scroll-snap-stop: always;
   --services-progress: 0;
@@ -2115,12 +2189,35 @@ html[lang="zh-CN"] .service-index {
 
 .works-section {
   position: relative;
+  z-index: 3;
   width: 100%;
   min-height: 100svh;
-  background: #07080b;
+  margin-top: -24svh;
+  padding-top: 24svh;
+  background:
+    radial-gradient(circle at 50% 6%, rgba(73, 196, 176, 0.055), transparent 32%),
+    #07080b;
   padding-bottom: 120px;
   scroll-snap-align: start;
   scroll-snap-stop: always;
+}
+
+.works-section::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -34svh;
+  z-index: 0;
+  height: 42svh;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, transparent 0%, rgba(7, 8, 11, 0.38) 44%, #07080b 100%);
+}
+
+.works-section > * {
+  position: relative;
+  z-index: 1;
 }
 
 .works-statement {
@@ -3257,6 +3354,23 @@ body.work-gallery-open .precision-guides {
     grid-template-columns: 1fr;
   }
 
+  .about-rows {
+    padding-inline: clamp(30px, 5vw, 64px);
+  }
+
+  .about-layout {
+    grid-template-columns: minmax(300px, 0.78fr) minmax(340px, 0.62fr);
+    gap: clamp(42px, 6vw, 86px);
+  }
+
+  .about-role {
+    font-size: clamp(4.2rem, 8.4vw, 6.6rem);
+  }
+
+  .about-right {
+    max-width: 40ch;
+  }
+
   .hero-focus-panel {
     width: min(420px, calc(100vw - 48px));
   }
@@ -3281,7 +3395,7 @@ body.work-gallery-open .precision-guides {
     gap: 34px 0;
     align-items: end;
     transform:
-      translate3d(0, calc(18vh - var(--portrait-progress) * 38vh), 0)
+      translate3d(0, calc(22vh - var(--portrait-enter) * 4vh - var(--portrait-progress) * 38vh), 0)
       scale(1);
   }
 
@@ -3295,7 +3409,7 @@ body.work-gallery-open .precision-guides {
 
   .about-right {
     justify-self: start;
-    max-width: min(30ch, 100%);
+    max-width: min(34ch, 100%);
   }
 
   .services-section {
@@ -4987,7 +5101,7 @@ body .contact-section {
   min-height: 680svh;
   padding: 0;
   overflow: visible;
-  background: #07080b;
+  background: #000;
   scroll-snap-align: start;
   scroll-snap-stop: normal;
 }
@@ -5004,8 +5118,8 @@ body .contact-section {
   perspective: 1800px;
   isolation: isolate;
   background:
-    radial-gradient(circle at 50% 46%, rgba(238, 233, 223, 0.11), transparent 28%),
-    #07080b;
+    radial-gradient(circle at 50% 46%, rgba(73, 196, 176, 0.045), transparent 30%),
+    #000;
 }
 
 .services-scroll-story .services-sticky::before {
@@ -5033,7 +5147,7 @@ body .contact-section {
   pointer-events: none;
   background:
     radial-gradient(circle at 50% 50%, rgba(238, 233, 223, 0.045), transparent 32%),
-    #07080b;
+    #000;
   opacity: calc(var(--services-inside) * 0.72);
 }
 
@@ -5484,6 +5598,13 @@ body.has-entered .hero-stage {
   top: 0;
   min-height: 100vh;
   height: 100vh;
+  opacity: calc(0.18 + var(--hero-tail-fade, 1) * 0.82);
+  filter:
+    blur(calc((1 - var(--hero-tail-fade, 1)) * 10px))
+    brightness(calc(0.72 + var(--hero-tail-fade, 1) * 0.28));
+  transform:
+    translate3d(0, calc((1 - var(--hero-tail-fade, 1)) * -5vh), 0)
+    scale(calc(1 + (1 - var(--hero-tail-fade, 1)) * 0.025));
 }
 
 body.has-entered .hero-material-showcase {
@@ -5858,11 +5979,14 @@ body.services-white-stage .top-meta-fullscreen:focus-visible {
 /* Services option sequence: dark entry opens into a clean white editorial stage. */
 .services-scroll-story {
   --services-slab-opacity: 0;
+  --services-outro: 0;
   background: #f7f7f3;
 }
 
 .services-scroll-story .services-sticky {
-  background: #f7f7f3;
+  background:
+    linear-gradient(180deg, #f7f7f3 0%, #f7f7f3 62%, rgba(7, 8, 11, calc(var(--services-outro) * 0.18)) 100%),
+    #f7f7f3;
 }
 
 .services-scroll-story .services-sticky::before {
@@ -5875,9 +5999,10 @@ body.services-white-stage .top-meta-fullscreen:focus-visible {
 
 .services-scroll-story .services-sticky::after {
   background:
+    linear-gradient(180deg, rgba(7, 8, 11, 0) 0%, rgba(7, 8, 11, calc(var(--services-outro) * 0.54)) 58%, rgba(7, 8, 11, calc(var(--services-outro) * 0.98)) 100%),
     radial-gradient(circle at 50% 50%, rgba(238, 233, 223, 0.045), transparent 32%),
     #07080b;
-  opacity: calc(1 - var(--services-inside));
+  opacity: calc((1 - var(--services-inside)) + var(--services-outro));
 }
 
 .services-slant-stack {
@@ -6007,6 +6132,9 @@ body.services-white-stage .top-meta-fullscreen:focus-visible {
     0 2px 18px rgba(0, 0, 0, 0.44),
     0 1px 2px rgba(0, 0, 0, 0.32);
   overflow: visible;
+  filter:
+    blur(calc(var(--services-outro) * 10px))
+    brightness(calc(1 - var(--services-outro) * 0.28));
   transform:
     translate3d(-50%, calc(-50% + var(--service-panel-y)), var(--service-panel-z))
     rotate(var(--service-card-rotate))
