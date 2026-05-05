@@ -1,4 +1,20 @@
 @font-face {
+  font-family: "Trench Slab";
+  src: url("fonts/TrenchSlab_Complete/Fonts/WEB/fonts/TrenchSlab-Variable.woff2") format("woff2-variations"),
+       url("fonts/TrenchSlab_Complete/Fonts/WEB/fonts/TrenchSlab-Variable.woff2") format("woff2");
+  font-weight: 300 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Outfit";
+  src: url("fonts/Outfit_Complete/Fonts/WEB/fonts/Outfit-Variable.woff2") format("woff2-variations"),
+       url("fonts/Outfit_Complete/Fonts/WEB/fonts/Outfit-Variable.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
   font-family: "Satoshi";
   src: url("fonts/Satoshi/Satoshi-Regular.woff2") format("woff2");
   font-weight: 400;
@@ -193,13 +209,12 @@ body.has-entered .precision-guides {
   left: 0;
   top: 0;
   z-index: 260;
-  width: 33px;
-  height: 33px;
+  width: 52px;
+  height: 52px;
   pointer-events: none;
   opacity: 0;
   transform: translate(-50%, -50%);
-  transition: opacity 180ms ease;
-  mix-blend-mode: difference;
+  transition: opacity 180ms ease, width 220ms ease, height 220ms ease;
   will-change: transform;
 }
 
@@ -209,7 +224,6 @@ body.has-entered .precision-guides {
   z-index: 250;
   pointer-events: none;
   opacity: 0;
-  mix-blend-mode: difference;
   transition: opacity 180ms ease;
 }
 
@@ -217,8 +231,7 @@ body.has-entered .precision-guides {
 .precision-guides::after {
   content: "";
   position: absolute;
-  background: rgba(242, 240, 236, 0.2);
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.04);
+  background: rgba(242, 240, 236, 0.12);
 }
 
 .precision-guides::before {
@@ -241,33 +254,43 @@ body.has-entered .precision-guides {
   opacity: 1;
 }
 
-.precision-cursor::before,
+/* viewfinder: four corner L-brackets */
+.precision-cursor::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  /* top-left H, top-left V, top-right H, top-right V,
+     bottom-left H, bottom-left V, bottom-right H, bottom-right V */
+  background:
+    linear-gradient(90deg, rgba(242,240,236,0.9), rgba(242,240,236,0.9))
+      0 0 / 14px 1px no-repeat,
+    linear-gradient(rgba(242,240,236,0.9), rgba(242,240,236,0.9))
+      0 0 / 1px 14px no-repeat,
+    linear-gradient(90deg, rgba(242,240,236,0.9), rgba(242,240,236,0.9))
+      100% 0 / 14px 1px no-repeat,
+    linear-gradient(rgba(242,240,236,0.9), rgba(242,240,236,0.9))
+      100% 0 / 1px 14px no-repeat,
+    linear-gradient(90deg, rgba(242,240,236,0.9), rgba(242,240,236,0.9))
+      0 100% / 14px 1px no-repeat,
+    linear-gradient(rgba(242,240,236,0.9), rgba(242,240,236,0.9))
+      0 100% / 1px 14px no-repeat,
+    linear-gradient(90deg, rgba(242,240,236,0.9), rgba(242,240,236,0.9))
+      100% 100% / 14px 1px no-repeat,
+    linear-gradient(rgba(242,240,236,0.9), rgba(242,240,236,0.9))
+      100% 100% / 1px 14px no-repeat;
+}
+
+/* center dot */
 .precision-cursor::after {
   content: "";
   position: absolute;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-}
-
-.precision-cursor::before {
-  width: 33px;
-  height: 33px;
-  background:
-    linear-gradient(rgba(242, 240, 236, 0.84), rgba(242, 240, 236, 0.84)) center top / 1px 12px no-repeat,
-    linear-gradient(rgba(242, 240, 236, 0.84), rgba(242, 240, 236, 0.84)) center bottom / 1px 12px no-repeat,
-    linear-gradient(90deg, rgba(242, 240, 236, 0.84), rgba(242, 240, 236, 0.84)) left center / 12px 1px no-repeat,
-    linear-gradient(90deg, rgba(242, 240, 236, 0.84), rgba(242, 240, 236, 0.84)) right center / 12px 1px no-repeat;
-  filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.04));
-}
-
-.precision-cursor::after {
-  width: 2px;
-  height: 2px;
-  border: 1px solid rgba(242, 240, 236, 0.4);
+  width: 3px;
+  height: 3px;
+  background: rgba(242,240,236,0.6);
   border-radius: 50%;
-  background: transparent;
-  opacity: 0.86;
 }
 
 .precision-cursor.is-visible {
@@ -1010,10 +1033,10 @@ body.has-entered .entry-screen {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: "Trench Slab", "Cabinet Grotesk", "Satoshi", system-ui, sans-serif;
   font-size: clamp(3.2rem, 8vw, 8rem);
   font-weight: 700;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.045em;
   color: rgba(255, 255, 255, 0.92);
   mix-blend-mode: overlay;
   pointer-events: none;
@@ -1053,13 +1076,13 @@ body.has-entered .entry-screen {
 }
 
 .hero-lucian-main {
-  font-family: "Cabinet Grotesk", "Satoshi", system-ui, sans-serif;
+  font-family: "Trench Slab", "Cabinet Grotesk", "Satoshi", system-ui, sans-serif;
   font-size: clamp(2.6rem, 7.4vw, 7rem);
-  font-weight: 800;
+  font-weight: 700;
   line-height: 0.78;
-  letter-spacing: -0.08em;
+  letter-spacing: -0.025em;
   text-transform: uppercase;
-  transform: scaleX(0.74) skewY(-5deg);
+  transform: scaleX(0.84) skewY(-5deg);
 }
 
 .hero-lucian-sub {
@@ -1655,6 +1678,7 @@ html[lang="zh-CN"] .statement-title {
   margin-top: -18svh;
   background: #000;
   --portrait-enter: 0;
+  --portrait-text-enter: 0;
   --portrait-progress: 0;
   --portrait-exit: 0;
 }
@@ -1707,32 +1731,32 @@ html[lang="zh-CN"] .statement-title {
   height: min(94vh, 960px);
   object-fit: contain;
   object-position: center;
-  opacity: calc(0.08 + var(--portrait-enter) * 0.86);
+  opacity: max(0, calc(0.02 + var(--portrait-enter) * 0.98 - var(--portrait-exit) * 0.98));
   filter:
     saturate(0.94)
     contrast(1.12)
-    brightness(calc(0.62 + var(--portrait-enter) * 0.2))
-    blur(calc((1 - var(--portrait-enter)) * 10px));
+    brightness(calc(0.52 + var(--portrait-enter) * 0.31 - var(--portrait-exit) * 0.22))
+    blur(calc((1 - var(--portrait-enter)) * 4px + var(--portrait-exit) * 12px));
   transform:
-    translate3d(calc(-50% + (0.5 - var(--portrait-progress)) * 2.5vw), calc(-50% + (1 - var(--portrait-enter)) * 9vh + var(--portrait-progress) * -2vh), 0)
-    scale(calc(0.965 + var(--portrait-enter) * 0.015 + var(--portrait-progress) * 0.08));
+    translate3d(calc(-50% + (0.5 - var(--portrait-progress)) * 0.5vw), calc(-50% + (1 - var(--portrait-enter)) * 3vh - var(--portrait-exit) * 6vh), 0)
+    scale(calc(0.982 + var(--portrait-enter) * 0.014 - var(--portrait-exit) * 0.02));
   transform-origin: 50% 50%;
   will-change: transform;
 }
 
 .portrait-video {
   z-index: 0;
-  opacity: calc(0.08 + var(--portrait-enter) * 0.88 - var(--portrait-exit) * 0.82);
+  opacity: max(0, calc(0.02 + var(--portrait-enter) * 0.98 - var(--portrait-exit) * 1));
   filter:
     saturate(0.96)
     contrast(1.12)
-    brightness(calc(0.62 + var(--portrait-enter) * 0.2 - var(--portrait-exit) * 0.18))
-    blur(calc((1 - var(--portrait-enter)) * 10px + var(--portrait-exit) * 14px));
+    brightness(calc(0.52 + var(--portrait-enter) * 0.31 - var(--portrait-exit) * 0.25))
+    blur(calc((1 - var(--portrait-enter)) * 4px + var(--portrait-exit) * 16px));
 }
 
 .portrait-image {
   z-index: 0;
-  opacity: calc(0.08 + var(--portrait-enter) * 0.86);
+  opacity: max(0, calc(0.04 + var(--portrait-enter) * 0.94 - var(--portrait-exit) * 0.98));
 }
 
 .portrait-about-wrapper.is-portrait-video-ready .portrait-image {
@@ -1747,6 +1771,7 @@ html[lang="zh-CN"] .statement-title {
     radial-gradient(circle at 62% 42%, rgba(0, 148, 54, 0.12), transparent 30%),
     linear-gradient(90deg, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.48) 34%, rgba(0, 0, 0, 0.12) 62%, rgba(0, 0, 0, 0.42) 100%),
     linear-gradient(180deg, rgba(0, 0, 0, 0.38) 0%, transparent 40%, rgba(0, 0, 0, 0.84) 100%);
+  opacity: calc(1 - var(--portrait-exit) * 0.34);
   pointer-events: none;
 }
 
@@ -1806,7 +1831,7 @@ html[lang="zh-CN"] .statement-title {
 
 /* ── About rows (scrolls over portrait video) ── */
 .portrait-spacer {
-  height: 190vh;
+  height: 260vh;
 }
 
 .about-rows {
@@ -1833,11 +1858,23 @@ html[lang="zh-CN"] .statement-title {
   margin-inline: auto;
   padding-inline: 0;
   transform:
-    translate3d(0, calc(28vh - var(--portrait-enter) * 4vh - var(--portrait-progress) * 44vh), 0)
-    scale(calc(0.955 + var(--portrait-enter) * 0.005 + var(--portrait-progress) * 0.04));
-  opacity: min(1, calc(-0.12 + var(--portrait-enter) * 0.36 + var(--portrait-progress) * 1.35 - var(--portrait-exit) * 0.24));
+    translate3d(0, calc((1 - var(--portrait-text-enter)) * 10vh - var(--portrait-exit) * 10vh), 0)
+    scale(calc(0.988 + var(--portrait-text-enter) * 0.012 - var(--portrait-exit) * 0.015));
+  opacity: max(0, min(1, calc(var(--portrait-text-enter) * 1.12 - var(--portrait-exit) * 1.08)));
   transform-origin: left bottom;
   will-change: transform, opacity;
+}
+
+.about-rows [data-reveal],
+.about-rows [data-reveal].is-revealed {
+  opacity: 1;
+  transform: none;
+  transition: none;
+}
+
+.about-rows .scroll-type-glyph {
+  opacity: 1 !important;
+  transform: none !important;
 }
 
 .about-left {
@@ -2188,18 +2225,17 @@ html[lang="zh-CN"] .service-index {
 }
 
 .works-section {
+  --works-enter: 0;
   position: relative;
   z-index: 3;
   width: 100%;
   min-height: 100svh;
   margin-top: -24svh;
-  padding-top: 24svh;
-  background:
-    radial-gradient(circle at 50% 6%, rgba(73, 196, 176, 0.055), transparent 32%),
-    #07080b;
+  padding-top: 8svh;
+  background: #000;
   padding-bottom: 120px;
   scroll-snap-align: start;
-  scroll-snap-stop: always;
+  scroll-snap-stop: normal;
 }
 
 .works-section::before {
@@ -2207,12 +2243,12 @@ html[lang="zh-CN"] .service-index {
   position: absolute;
   left: 0;
   right: 0;
-  top: -34svh;
+  top: -42svh;
   z-index: 0;
-  height: 42svh;
+  height: 58svh;
   pointer-events: none;
   background:
-    linear-gradient(180deg, transparent 0%, rgba(7, 8, 11, 0.38) 44%, #07080b 100%);
+    linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.28) 34%, rgba(0, 0, 0, 0.82) 72%, #000 100%);
 }
 
 .works-section > * {
@@ -2221,10 +2257,16 @@ html[lang="zh-CN"] .service-index {
 }
 
 .works-statement {
-  padding: clamp(80px, 12vh, 140px) clamp(40px, 5vw, 80px) clamp(48px, 6vh, 80px);
+  padding: clamp(28px, 5vh, 68px) clamp(40px, 5vw, 80px) clamp(48px, 6vh, 80px);
   width: min(720px, 100%);
   margin: 0 auto;
   text-align: center;
+  opacity: var(--works-enter);
+  transform:
+    translate3d(0, calc((1 - var(--works-enter)) * 20px), 0)
+    scale(calc(0.992 + var(--works-enter) * 0.008));
+  transform-origin: center top;
+  will-change: opacity, transform;
 }
 
 .works-statement-kicker {
@@ -2905,9 +2947,12 @@ body.work-gallery-open .precision-guides {
 .clients-section {
   position: relative;
   width: 100%;
-  background: #07080b;
+  margin-top: -8svh;
+  background:
+    linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, #000 16%, #000 100%),
+    #000;
   overflow: hidden;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  border-top: 0;
   scroll-snap-align: start;
   scroll-snap-stop: always;
 }
@@ -3395,8 +3440,8 @@ body.work-gallery-open .precision-guides {
     gap: 34px 0;
     align-items: end;
     transform:
-      translate3d(0, calc(22vh - var(--portrait-enter) * 4vh - var(--portrait-progress) * 38vh), 0)
-      scale(1);
+      translate3d(0, calc((1 - var(--portrait-text-enter)) * 10vh - var(--portrait-exit) * 10vh), 0)
+      scale(calc(0.99 + var(--portrait-text-enter) * 0.01 - var(--portrait-exit) * 0.014));
   }
 
   .about-heading {
@@ -4878,13 +4923,29 @@ body .contact-wechat-trigger svg {
 /* Top meta icon buttons are bare icons, no circular hover shell. */
 body .top-meta-toggle,
 body .top-meta-toggle:hover,
-body .top-meta-toggle:focus-visible,
+body .top-meta-toggle:focus-visible {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
 
 /* Contact icons should be bare glyphs, no circular button shell. */
-body .contact-social-icon,
+body .contact-social-icon {
+  width: 34px;
+  height: 34px;
+  min-width: 34px;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
 
 body .contact-social-icon:hover,
-body .contact-social-icon:focus-visible,
+body .contact-social-icon:focus-visible {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
 
 body .contact-social-icon svg {
   width: 21px;
@@ -5015,7 +5076,12 @@ body .contact-form + .contact-social {
 /* Client-section title band. */
 body .contact-section {
   min-height: 128svh;
+  margin-top: -10svh;
+  padding-top: clamp(110px, 18vh, 190px);
   padding-bottom: clamp(160px, 18vh, 240px);
+  background:
+    linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, #000 14%, #000 100%),
+    #000;
 }
 
 .clients-title-band {
@@ -5025,8 +5091,10 @@ body .contact-section {
   min-height: clamp(180px, 28vh, 320px);
   padding: clamp(36px, 5vh, 70px) clamp(28px, 4.4vw, 86px) clamp(28px, 4vh, 54px);
   overflow: hidden;
-  border-bottom: 1px solid rgba(247, 244, 238, 0.12);
-  background: #08090b;
+  border-bottom: 1px solid rgba(247, 244, 238, 0.08);
+  background:
+    linear-gradient(180deg, #000 0%, rgba(73, 196, 176, 0.026) 48%, #000 100%),
+    #000;
 }
 
 .clients-title-band span {
@@ -5098,8 +5166,9 @@ body .contact-section {
   --services-open: 0;
   --services-inside: 0;
   position: relative;
-  min-height: 680svh;
-  padding: 0;
+  margin-top: -16svh;
+  min-height: 600svh;
+  padding: 16svh 0 0;
   overflow: visible;
   background: #000;
   scroll-snap-align: start;
@@ -5191,8 +5260,8 @@ body .contact-section {
   height: 100%;
   opacity: calc(0.98 + var(--services-open) * 0.02);
   background:
-    radial-gradient(circle at 50% 50%, rgba(255, 159, 252, 0.12), transparent 28%),
-    #09070d;
+    radial-gradient(circle at 50% 50%, rgba(73, 196, 176, 0.13), transparent 30%),
+    #020908;
   transform: scale(calc(1 + var(--services-open) * 0.28));
   transform-origin: center;
   pointer-events: none;
@@ -5569,15 +5638,19 @@ html[lang="zh-CN"] .service-text-body {
 }
 
 .works-statement {
-  transform: none;
-  opacity: 1;
+  opacity: var(--works-enter);
+  transform:
+    translate3d(0, calc((1 - var(--works-enter)) * 20px), 0)
+    scale(calc(0.992 + var(--works-enter) * 0.008));
+  transform-origin: center top;
   will-change: opacity, transform;
 }
 
-.works-statement .scroll-type-glyph {
-  transition:
-    opacity 260ms linear,
-    transform 520ms cubic-bezier(0.19, 1, 0.22, 1);
+.works-statement [data-reveal],
+.works-statement [data-reveal].is-revealed {
+  opacity: 1;
+  transform: none;
+  transition: none;
 }
 
 .works-list-header,
@@ -5860,6 +5933,15 @@ body .top-meta-date {
   color: rgba(232, 228, 222, 0.5);
 }
 
+body .top-meta-time,
+body .top-meta-date,
+body .top-meta-lang .lang-button[data-lang="en"],
+html[lang="en"] body .top-meta-name {
+  font-family: "Outfit", "Satoshi", "MiSans", system-ui, sans-serif;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+}
+
 body .top-meta-lang {
   height: 30px;
   margin-left: 8px;
@@ -5980,13 +6062,13 @@ body.services-white-stage .top-meta-fullscreen:focus-visible {
 .services-scroll-story {
   --services-slab-opacity: 0;
   --services-outro: 0;
-  background: #f7f7f3;
+  background: #000;
 }
 
 .services-scroll-story .services-sticky {
   background:
-    linear-gradient(180deg, #f7f7f3 0%, #f7f7f3 62%, rgba(7, 8, 11, calc(var(--services-outro) * 0.18)) 100%),
-    #f7f7f3;
+    linear-gradient(180deg, rgba(247, 247, 243, var(--services-inside)) 0%, rgba(247, 247, 243, var(--services-inside)) 62%, rgba(0, 0, 0, calc(var(--services-outro) * 0.18)) 100%),
+    #000;
 }
 
 .services-scroll-story .services-sticky::before {
@@ -5994,14 +6076,13 @@ body.services-white-stage .top-meta-fullscreen:focus-visible {
     linear-gradient(rgba(18, 18, 18, 0.035) 1px, transparent 1px),
     linear-gradient(90deg, rgba(18, 18, 18, 0.028) 1px, transparent 1px);
   background-size: 156px 118px;
-  opacity: calc(0.1 * var(--services-inside));
+  opacity: calc(0.08 * var(--services-inside) * var(--services-inside));
 }
 
 .services-scroll-story .services-sticky::after {
   background:
-    linear-gradient(180deg, rgba(7, 8, 11, 0) 0%, rgba(7, 8, 11, calc(var(--services-outro) * 0.54)) 58%, rgba(7, 8, 11, calc(var(--services-outro) * 0.98)) 100%),
-    radial-gradient(circle at 50% 50%, rgba(238, 233, 223, 0.045), transparent 32%),
-    #07080b;
+    linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, calc(var(--services-outro) * 0.54)) 58%, rgba(0, 0, 0, calc(var(--services-outro) * 0.98)) 100%),
+    #000;
   opacity: calc((1 - var(--services-inside)) + var(--services-outro));
 }
 
