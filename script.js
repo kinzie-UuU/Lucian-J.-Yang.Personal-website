@@ -141,6 +141,36 @@ Object.assign(i18n.en, {
   contact_form_send: "Send",
 });
 
+Object.assign(i18n.zh, {
+  works_col_project: "\u7c7b\u522b",
+  works_col_type: "\u65b9\u5411",
+  work_tab_oem: "OEM / \u54c1\u724c\u5305\u88c5",
+  work_tab_gift: "\u793c\u54c1\u798f\u5229\u6e20\u9053",
+  work_tab_brand: "\u54c1\u724c\u5b57\u4f53\u8f85\u52a9",
+  work_tab_aigc: "AIGC \u6d41\u7a0b / SOP",
+  work_tab_aigc_video: "\u77ed\u89c6\u9891 / \u5546\u4e1a\u7247\u521b\u4f5c",
+  work_row_1_name: "\u5305\u88c5\u8bbe\u8ba1",
+  work_row_2_name: "\u8282\u793c\u5305\u88c5\u8bbe\u8ba1",
+  work_row_3_name: "\u54c1\u724c\u4e0e\u5b57\u4f53\u8bbe\u8ba1",
+  work_row_4_name: "AIGC\u5de5\u4f5c\u6d41",
+  work_row_5_name: "AIGC\u89c6\u9891",
+});
+
+Object.assign(i18n.en, {
+  works_col_project: "Category",
+  works_col_type: "Direction",
+  work_tab_oem: "OEM / Brand Packaging",
+  work_tab_gift: "Gifting / Welfare Channel",
+  work_tab_brand: "Brand & Type Support",
+  work_tab_aigc: "AIGC Workflow / SOP",
+  work_tab_aigc_video: "Short Video / Commercial Film",
+  work_row_1_name: "Packaging Design",
+  work_row_2_name: "Gift Packaging Design",
+  work_row_3_name: "Brand & Typography Design",
+  work_row_4_name: "AIGC Workflow",
+  work_row_5_name: "AIGC Video",
+});
+
 const worksData = {
   oem: {
     label: { zh: "OEM Packaging", en: "OEM Packaging" },
@@ -193,6 +223,19 @@ const worksData = {
     value: { zh: "提效，不替代判断", en: "Accelerate the process without replacing judgment" },
   },
 };
+
+Object.assign(worksData, {
+  "aigc-video": {
+    label: { zh: "AIGC Video", en: "AIGC Video" },
+    title: { zh: "AIGC\u89c6\u9891", en: "AIGC Video" },
+    description: {
+      zh: "\u4ee5 AIGC \u5de5\u5177\u8f85\u52a9\u77ed\u89c6\u9891\u3001\u5546\u4e1a\u7247\u548c\u63d0\u6848\u52a8\u6001\u5185\u5bb9\u521b\u4f5c\u3002",
+      en: "AIGC-assisted short video, commercial film, and motion content for proposals.",
+    },
+    focus: { zh: "\u77ed\u89c6\u9891 / \u5546\u4e1a\u7247 / \u52a8\u6001\u63d0\u6848", en: "Short Video / Commercial Film / Motion Pitch" },
+    value: { zh: "\u628a\u6982\u5ff5\u66f4\u5feb\u53d8\u6210\u53ef\u89c2\u770b\u7684\u52a8\u6001\u8868\u8fbe", en: "Turn concepts into watchable motion faster" },
+  },
+});
 
 const cardPresets = [
   { x: -0.46, y: -0.12, w: 200, h: 268, r: -9, d: -120 },
@@ -335,6 +378,255 @@ soundToggle?.addEventListener("click", async () => {
 });
 
 applySoundState();
+
+const SCROLL_TYPE_SELECTOR = [
+  ".works-statement-title",
+  ".works-statement-body",
+  ".contact-headline",
+].join(",");
+
+const SCROLL_TYPE_SCOPE_SELECTOR = [
+  "#services",
+  "#works",
+  "#contact",
+  ".clients-section",
+  ".work-gallery",
+].join(",");
+
+const shouldUseScrollTypeEffect = (node) => {
+  if (!(node instanceof HTMLElement)) return false;
+  if (!node.closest(SCROLL_TYPE_SCOPE_SELECTOR)) return false;
+  if (node.closest("svg, canvas, input, textarea, select, option, script, style")) return false;
+  if (node.matches(".toggle-icon, .site-svg-filters *, .entry-code-pixels *, .entry-dieline *")) return false;
+
+  const text = node.textContent?.replace(/\s+/g, " ").trim() || "";
+  return text.length > 0;
+};
+
+const splitScrollTypeText = (node) => {
+  const text = node.textContent.replace(/\s+/g, " ").trim();
+  if (!text) return;
+  if (node.dataset.typeSource === text && node.querySelector(".scroll-type-glyph")) return;
+
+  const fragment = document.createDocumentFragment();
+  let glyphIndex = 0;
+
+  Array.from(text).forEach((char) => {
+    if (/\s/.test(char)) {
+      fragment.appendChild(document.createTextNode(" "));
+      return;
+    }
+
+    const glyph = document.createElement("span");
+    glyph.className = "scroll-type-glyph";
+    glyph.textContent = char;
+    glyph.style.setProperty("--glyph-index", String(glyphIndex));
+    fragment.appendChild(glyph);
+    glyphIndex += 1;
+  });
+
+  node.textContent = "";
+  node.appendChild(fragment);
+  node.dataset.typeSource = text;
+  node.style.setProperty("--glyph-count", String(Math.max(glyphIndex, 1)));
+};
+
+const syncScrollTypeText = (root = document) => {
+  root.querySelectorAll?.(SCROLL_TYPE_SELECTOR).forEach((node) => {
+    if (!shouldUseScrollTypeEffect(node)) {
+      node.classList.remove("scroll-type-text");
+      delete node.dataset.typeSource;
+      return;
+    }
+    node.classList.add("scroll-type-text");
+    splitScrollTypeText(node);
+  });
+  collectScrollTypeItems();
+};
+
+let scrollTypeLastY = window.scrollY;
+let scrollTypeDirection = 1;
+let scrollTypeRaf = 0;
+let scrollTypeItems = [];
+let scrollSceneItems = [];
+
+const collectScrollTypeItems = () => {
+  scrollTypeItems = Array.from(document.querySelectorAll(".scroll-type-glyph")).map((glyph) => ({
+    glyph,
+    parent: glyph.closest(".scroll-type-text"),
+    index: Number(glyph.style.getPropertyValue("--glyph-index") || 0),
+  }));
+};
+
+const collectScrollScenes = () => {
+  scrollSceneItems = Array.from(document.querySelectorAll("#about, #works, #contact, .clients-section"));
+};
+
+const updateScrollScenes = () => {
+  const vh = window.innerHeight || 1;
+
+  scrollSceneItems.forEach((section) => {
+    const rect = section.getBoundingClientRect();
+    const center = rect.top + rect.height * 0.5;
+    const distance = Math.abs(center - vh * 0.5);
+    const range = Math.max(vh * 0.62, rect.height * 0.42);
+    const rawActive = 1 - Math.min(1, distance / range);
+    const active = rawActive * rawActive * (3 - 2 * rawActive);
+    const direction = center > vh * 0.5 ? 1 : -1;
+    const y = (1 - active) * 28 * direction;
+    const blur = 0;
+    const scale = 0.992 + active * 0.008;
+
+    section.style.setProperty("--scene-active", active.toFixed(4));
+    section.style.setProperty("--scene-y", `${y.toFixed(2)}px`);
+    section.style.setProperty("--scene-blur", `${blur.toFixed(2)}px`);
+    section.style.setProperty("--scene-scale", scale.toFixed(4));
+  });
+};
+
+const updateScrollTypeItems = () => {
+  scrollTypeRaf = 0;
+  updateScrollScenes();
+  const vh = window.innerHeight || 1;
+  const focusLine = vh * 0.48;
+  const focusRange = Math.max(260, vh * 0.42);
+  const measured = scrollTypeItems.map((item) => ({
+    ...item,
+    rect: item.glyph.getBoundingClientRect(),
+    parentRect: item.parent?.getBoundingClientRect(),
+  }));
+
+  measured.forEach(({ glyph, parent, index, rect, parentRect }) => {
+    if (!parent) return;
+    const isHeroDisplay = parent.matches(".about-heading, .contact-headline");
+    const isWorksStatementTitle = parent.matches(".works-statement-title");
+    const isParagraph = parent.matches(".about-lead, .about-detail, .works-statement-body");
+    const localFocusRange = isWorksStatementTitle || parent.matches(".works-statement-body")
+      ? Math.max(420, vh * 0.7)
+      : focusRange;
+    const center = rect.top + rect.height * 0.5;
+    const distance = Math.abs(center - focusLine);
+    const raw = 1 - Math.min(1, distance / localFocusRange);
+    const viewportFocus = raw * raw * (3 - 2 * raw);
+    const count = Number(parent.style.getPropertyValue("--glyph-count") || 1);
+    const glyphOrder = count <= 1 ? 0 : index / (count - 1);
+    const parentPhase = Math.max(-0.2, Math.min(1.2, (focusLine - parentRect.top) / Math.max(parentRect.height, 1)));
+    const directionBias = scrollTypeDirection < 0 ? -0.035 : 0.035;
+    const scanPhase = parentPhase + directionBias;
+    const smooth = (value) => value * value * (3 - 2 * value);
+    const enterWindow = isWorksStatementTitle ? 0.34 : isParagraph ? 0.32 : 0.26;
+    const exitStart = isWorksStatementTitle ? 0.92 : isParagraph ? 0.9 : 0.82;
+    const exitWindow = isWorksStatementTitle ? 0.3 : isParagraph ? 0.28 : 0.22;
+    const enter = smooth(Math.max(0, Math.min(1, (scanPhase - glyphOrder * 0.38) / enterWindow)));
+    const exit = smooth(Math.max(0, Math.min(1, (scanPhase - exitStart - glyphOrder * 0.12) / exitWindow)));
+    const amount = Math.max(0, Math.min(1, enter * (1 - exit)));
+    const focus = Math.max(viewportFocus * 0.58, amount);
+    const baseMaxBlur = isHeroDisplay ? 11 : isWorksStatementTitle ? 3.6 : isParagraph ? 2.6 : 6;
+    const exitBlur = isHeroDisplay ? 7 : isWorksStatementTitle ? 1.8 : isParagraph ? 1.4 : 4;
+    const maxY = isHeroDisplay ? 14 : isWorksStatementTitle ? 5 : isParagraph ? 3.5 : 7;
+    const enteringFromBelow = center > focusLine ? 1 : -1;
+    const y = ((1 - enter) * maxY - exit * maxY * 0.7) * enteringFromBelow * scrollTypeDirection;
+    const blur = 0;
+    const minOpacity = isHeroDisplay ? 0.08 : isWorksStatementTitle ? 0.34 : isParagraph ? 0.22 : 0.06;
+    const opacity = Math.max(minOpacity, 0.12 + amount * 0.82 + viewportFocus * 0.12 - exit * 0.16);
+
+    glyph.style.setProperty("--type-focus", focus.toFixed(4));
+    glyph.style.setProperty("--type-blur", `${blur.toFixed(2)}px`);
+    glyph.style.setProperty("--type-y", `${y.toFixed(2)}px`);
+    glyph.style.setProperty("--type-opacity", opacity.toFixed(3));
+  });
+};
+
+const requestScrollTypeUpdate = (direction = 0) => {
+  if (direction) {
+    scrollTypeDirection = direction > 0 ? 1 : -1;
+    document.body.classList.toggle("scrolling-up", direction < 0);
+    document.body.classList.toggle("scrolling-down", direction >= 0);
+  }
+  if (!scrollTypeRaf) scrollTypeRaf = window.requestAnimationFrame(updateScrollTypeItems);
+};
+
+const pulseScrollType = (direction) => {
+  requestScrollTypeUpdate(direction);
+};
+
+if (!reducedMotion) {
+  syncScrollTypeText();
+  collectScrollScenes();
+  requestScrollTypeUpdate(1);
+
+  window.addEventListener(
+    "scroll",
+    () => {
+      const y = window.scrollY;
+      const delta = y - scrollTypeLastY;
+      scrollTypeLastY = y;
+      if (Math.abs(delta) < 2) return;
+      pulseScrollType(delta);
+    },
+    { passive: true }
+  );
+
+  window.addEventListener("resize", () => {
+    collectScrollTypeItems();
+    collectScrollScenes();
+    requestScrollTypeUpdate();
+  }, { passive: true });
+
+  window.addEventListener(
+    "wheel",
+    (event) => {
+      if (Math.abs(event.deltaY) < 1) return;
+      pulseScrollType(event.deltaY);
+    },
+    { passive: true }
+  );
+
+  let scrollTypeTouchY = 0;
+  window.addEventListener(
+    "touchstart",
+    (event) => {
+      scrollTypeTouchY = event.touches[0]?.clientY || 0;
+    },
+    { passive: true }
+  );
+  window.addEventListener(
+    "touchmove",
+    (event) => {
+      const y = event.touches[0]?.clientY || scrollTypeTouchY;
+      const delta = scrollTypeTouchY - y;
+      scrollTypeTouchY = y;
+      if (Math.abs(delta) < 2) return;
+      pulseScrollType(delta);
+    },
+    { passive: true }
+  );
+
+  const scrollTypeObserver = new MutationObserver((mutations) => {
+    let shouldSync = false;
+    mutations.forEach((mutation) => {
+      if (mutation.type === "characterData") {
+        return;
+      }
+      shouldSync = shouldSync || Array.from(mutation.addedNodes).some((node) => (
+        node.nodeType === Node.ELEMENT_NODE || node.nodeType === Node.TEXT_NODE
+      ));
+    });
+
+    if (shouldSync) {
+      window.requestAnimationFrame(() => {
+        syncScrollTypeText();
+        requestScrollTypeUpdate();
+      });
+    }
+  });
+
+  scrollTypeObserver.observe(document.body, {
+    childList: true,
+    characterData: true,
+    subtree: true,
+  });
+}
 
 // Contact: hover-to-copy
 const copyItems = document.querySelectorAll(".contact-copy-item");
@@ -622,9 +914,10 @@ const initCards = () => {
 
 const setCursorVisible = (visible) => {
   if (!precisionCursor) return;
-  precisionCursor.classList.toggle("is-visible", visible);
-  precisionGuides?.classList.toggle("is-visible", visible);
-  document.body.classList.toggle("cursor-active", visible);
+  const allowed = visible && entryScreen && !document.body.classList.contains("has-entered");
+  precisionCursor.classList.toggle("is-visible", allowed);
+  precisionGuides?.classList.toggle("is-visible", allowed);
+  document.body.classList.toggle("cursor-active", allowed);
 };
 
 const updatePrecisionCursor = (clientX, clientY) => {
@@ -786,7 +1079,14 @@ window.addEventListener("pointermove", (event) => {
   }
 
   updatePrecisionCursor(event.clientX, event.clientY);
-  setCursorVisible(true);
+  const entryRect = entryScreen?.getBoundingClientRect();
+  const insideEntry = !!entryRect &&
+    entryRect.bottom > 0 &&
+    event.clientX >= entryRect.left &&
+    event.clientX <= entryRect.right &&
+    event.clientY >= entryRect.top &&
+    event.clientY <= entryRect.bottom;
+  setCursorVisible(insideEntry);
 
   if (heroStage) {
     const rect = heroStage.getBoundingClientRect();
@@ -834,6 +1134,7 @@ const categoryColors = {
   series: ["#1e2430", "#242c3a", "#2a3448", "#1a2030"],
   brand:  ["#222820", "#2c3228", "#343c2e", "#1e2418"],
   aigc:   ["#1a1c22", "#20222c", "#242830", "#1c1e26"],
+  "aigc-video": ["#161820", "#202436", "#283048", "#12141d"],
   delivery: ["#24211c", "#312b22", "#40362a", "#221f1a"],
 };
 
@@ -843,6 +1144,7 @@ const categoryPatterns = {
   series: "repeating-linear-gradient(90deg, rgba(100,160,220,0.05) 0px, rgba(100,160,220,0.05) 1px, transparent 1px, transparent 14px)",
   brand:  "repeating-linear-gradient(0deg, rgba(180,200,120,0.05) 0px, rgba(180,200,120,0.05) 1px, transparent 1px, transparent 11px)",
   aigc:   "repeating-linear-gradient(135deg, rgba(140,160,220,0.06) 0px, rgba(140,160,220,0.06) 1px, transparent 1px, transparent 9px)",
+  "aigc-video": "repeating-linear-gradient(120deg, rgba(150,180,255,0.07) 0px, rgba(150,180,255,0.07) 1px, transparent 1px, transparent 8px)",
   delivery: "repeating-linear-gradient(45deg, rgba(230,210,170,0.06) 0px, rgba(230,210,170,0.06) 1px, transparent 1px, transparent 10px)",
 };
 
@@ -952,6 +1254,12 @@ const workGalleryImages = {
   ],
 };
 
+workGalleryImages["aigc-video"] = [
+  { title: "AIGC VIDEO 01", src: "images/666.png", position: "center", size: "wide" },
+  { title: "SHORT VIDEO FLOW", src: "images/lucian-j-yang-logo.png.png", position: "center", size: "small", bg: "#cbcbd2" },
+  { title: "COMMERCIAL FILM STUDY", src: "images/666.png", position: "center", size: "wide" },
+];
+
 const galleryText = {
   zh: {
     back: "\u8fd4\u56de",
@@ -986,6 +1294,8 @@ const galleryText = {
     ],
   },
 };
+
+galleryText.zh.categoryTitles["aigc-video"] = "AIGC\u89c6\u9891";
 
 let galleryTargetX = 0;
 let galleryCurrentX = 0;
@@ -1327,7 +1637,7 @@ const revealChildObserver = new IntersectionObserver(
   { threshold: 0.08 }
 );
 
-document.querySelectorAll("#about, #services, #works, #contact").forEach((sec) => {
+document.querySelectorAll(".about-rows, #services, #works, #contact").forEach((sec) => {
   revealChildObserver.observe(sec);
 });
 
@@ -1348,6 +1658,7 @@ const initServicesScrollStory = () => {
   const smooth = (value) => value * value * (3 - 2 * value);
   let targetProgress = 0;
   let currentProgress = 0;
+  let servicesInView = false;
   let panelGlyphs = [];
 
   const splitGlyphs = (node, text) => {
@@ -1408,18 +1719,21 @@ const initServicesScrollStory = () => {
   };
 
   const setPanel = (panel, local, index) => {
-    const enter = smooth(clamp01(local / 0.26));
-    const exit = smooth(clamp01((local - 0.72) / 0.22));
-    const arch = Math.sin(clamp01(local) * Math.PI);
-    const inRange = local >= -0.02 && local <= 1.02 ? 1 : 0;
-    const y = 50 - enter * 50 - arch * 5 - exit * 48;
-    const z = -160 + enter * 190 - exit * 40;
-    const scale = 0.97 + enter * 0.035 - exit * 0.025;
-    const opacity = Math.min(enter * 1.15, 1) * (1 - exit) * inRange;
+    const path = smooth(clamp01((local + 0.08) / 1.16));
+    const enter = smooth(clamp01((local + 0.08) / 0.34));
+    const exit = smooth(clamp01((local - 0.8) / 0.3));
+    const inRange = local >= -0.1 && local <= 1.16 ? 1 : 0;
+    const y = 84 - path * 168;
+    const z = -120 + Math.sin(path * Math.PI) * 190 - exit * 48;
+    const scale = 0.96 + Math.sin(path * Math.PI) * 0.16 - exit * 0.045;
+    const direction = index % 2 === 0 ? 1 : -1;
+    const rotate = direction * (-4.2 + path * 7.8 - exit * 1.4);
+    const opacity = Math.min(enter * 1.08, 1) * (1 - exit * 0.18) * inRange;
 
     panel.style.setProperty("--service-panel-y", `${y.toFixed(2)}vh`);
     panel.style.setProperty("--service-panel-z", `${z.toFixed(2)}px`);
     panel.style.setProperty("--service-panel-scale", scale.toFixed(4));
+    panel.style.setProperty("--service-card-rotate", `${rotate.toFixed(3)}deg`);
     panel.style.setProperty("--service-panel-opacity", opacity.toFixed(3));
 
     if (panelGlyphs[index]) {
@@ -1431,6 +1745,7 @@ const initServicesScrollStory = () => {
   const readProgress = () => {
     const rect = section.getBoundingClientRect();
     const travel = Math.max(1, rect.height - window.innerHeight);
+    servicesInView = rect.top < window.innerHeight && rect.bottom > 0;
     targetProgress = reducedMotion ? 1 : clamp01(-rect.top / travel);
   };
 
@@ -1445,11 +1760,14 @@ const initServicesScrollStory = () => {
     section.style.setProperty("--services-progress", progress.toFixed(4));
     section.style.setProperty("--services-open", open.toFixed(4));
     section.style.setProperty("--services-inside", inside.toFixed(4));
+    section.style.setProperty("--services-slab-opacity", (inside * 0.96).toFixed(3));
+    document.body.classList.toggle("services-white-stage", servicesInView && inside > 0.58);
 
     panels.forEach((panel, index) => {
-      const start = 0.28 + index * 0.105;
-      const step = 0.105;
-      setPanel(panel, (progress - start) / step, index);
+      const start = 0.24 + index * 0.1;
+      const step = 0.14;
+      const local = (progress - start) / step;
+      setPanel(panel, local, index);
     });
 
     requestAnimationFrame(render);
@@ -1474,7 +1792,7 @@ const hoverCodeTargets = Array.from(
   document.querySelectorAll(
     ".about-heading, .about-lead, .about-detail, .section-head h2, .section-intro, .service-item h3, .service-item p, .works-statement-title, .works-statement-body"
   )
-);
+).filter((node) => !node.classList.contains("scroll-type-text") && !node.closest(".services-scroll-story"));
 
 hoverCodeTargets.forEach((node) => {
   if (!node.textContent.trim()) return;
@@ -2777,33 +3095,6 @@ const initFloatingOrbs = (canvas) => {
         ctx.fillRect(px - 0.6, py - 0.6, 1.2, 1.2);
       }
 
-      // organic flow waves: soft undulating curves around orb
-      ctx.save();
-      ctx.translate(orb.x, orb.y);
-      for (let li = 0; li < 3; li++) {
-        const baseR = ORB_RADIUS * (0.65 + li * 0.18);
-        const wavePhase = t * (0.15 + li * 0.05) + orb.phase + li * 2.1;
-        const lineAlpha = globalAlpha * (0.06 + li * 0.02);
-
-        // draw wave as smooth closed path with subtle deformation
-        ctx.strokeStyle = `rgba(180,245,235,${lineAlpha.toFixed(3)})`;
-        ctx.lineWidth = 0.6;
-        ctx.beginPath();
-
-        const segments = 32; // more segments = smoother
-        for (let s = 0; s <= segments; s++) {
-          const angle = (s / segments) * Math.PI * 2;
-          // very subtle radial wave: keep it close to circular
-          const wave = Math.sin(angle * 4 + wavePhase) * ORB_RADIUS * 0.025;
-          const r = baseR + wave;
-          const px = Math.cos(angle) * r;
-          const py = Math.sin(angle) * r;
-          s === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
-        }
-        ctx.closePath();
-        ctx.stroke();
-      }
-      ctx.restore();
     }
 
     ctx.restore();
@@ -3336,6 +3627,37 @@ window.requestAnimationFrame(animateCards);
   const clone = track.cloneNode(true);
   clone.setAttribute("aria-hidden", "true");
   marquee.appendChild(clone);
+})();
+
+// Portrait section — scroll-driven via CSS variables
+(function () {
+  const section = document.querySelector(".portrait-about-wrapper");
+  if (!section) return;
+
+  let ticking = false;
+  const update = () => {
+    ticking = false;
+    const rect = section.getBoundingClientRect();
+    const scrollable = rect.height - window.innerHeight;
+    if (scrollable <= 0) return;
+
+    // progress: 0 = section just entered, 1 = section fully scrolled through
+    const progress = Math.max(0, Math.min(1, -rect.top / scrollable));
+
+    // exit: starts at 0.7 progress, reaches 1 at end — drives blur/fade
+    const exit = Math.max(0, Math.min(1, (progress - 0.7) / 0.3));
+
+    section.style.setProperty("--portrait-progress", progress.toFixed(4));
+    section.style.setProperty("--portrait-exit", exit.toFixed(4));
+  };
+
+  window.addEventListener("scroll", () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(update);
+  }, { passive: true });
+
+  update();
 })();
 
 // Bottom nav scroll spy
