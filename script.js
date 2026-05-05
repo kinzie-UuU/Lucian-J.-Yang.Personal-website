@@ -404,9 +404,7 @@ applySoundState();
 updateFullscreenState();
 
 const SCROLL_TYPE_SELECTOR = [
-  ".works-statement-title",
-  ".works-statement-body",
-  ".contact-headline",
+  ".js-scroll-type-disabled",
 ].join(",");
 
 const SCROLL_TYPE_SCOPE_SELECTOR = [
@@ -1643,7 +1641,7 @@ if (!reducedMotion && revealNodes.length) {
         currentObserver.unobserve(entry.target);
       });
     },
-    { threshold: 0.12, rootMargin: "0px 0px -10% 0px" }
+    { threshold: 0.04, rootMargin: "0px 0px -4% 0px" }
   );
 
   revealNodes.forEach((node) => observer.observe(node));
@@ -1670,7 +1668,7 @@ const revealChildObserver = new IntersectionObserver(
       obs.unobserve(section);
     });
   },
-  { threshold: 0.08 }
+  { threshold: 0.02, rootMargin: "0px 0px -6% 0px" }
 );
 
 document.querySelectorAll(".about-rows, #services, #works, #contact").forEach((sec) => {
@@ -1745,8 +1743,8 @@ const initServicesEntryGridScan = (canvas) => {
         float open = smoothstep(0.0, 1.0, uOpen);
         float inside = smoothstep(0.0, 1.0, uInside);
 
-        vec3 ro = vec3(0.0, 0.0, -0.16 - open * 0.2);
-        vec3 rd = normalize(vec3(p, 1.72 + open * 0.38));
+        vec3 ro = vec3(0.0, 0.0, -0.54 - open * 0.24);
+        vec3 rd = normalize(vec3(p * 0.86, 2.18 + open * 0.44));
 
         float tilt = uPointer.y * mix(0.12, 0.26, open);
         float yaw = uPointer.x * mix(0.1, 0.24, open);
@@ -1768,10 +1766,10 @@ const initServicesEntryGridScan = (canvas) => {
           float den = isY * rd.y + (1.0 - isY) * rd.x;
           float t = num / den;
           vec3 h = ro + rd * t;
-          bool use = t > 0.0 && t < minT && h.z > 0.0 && h.z < 4.4;
+          bool use = t > 0.0 && t < minT && h.z > 0.0 && h.z < 6.4;
           minT = use ? t : minT;
           hit = use ? h : hit;
-          gridUV = use ? mix(h.xz, h.yz, 1.0 - isY) / mix(0.118, 0.09, open) : gridUV;
+          gridUV = use ? mix(h.xz, h.yz, 1.0 - isY) / mix(0.105, 0.082, open) : gridUV;
           hitSide = use ? isY : hitSide;
         }
 
@@ -1785,22 +1783,22 @@ const initServicesEntryGridScan = (canvas) => {
 
         float lines = gridMask(gridUV, 1.0);
         float redBlue = gridMask(gridUV + vec2(0.035, -0.018), 0.92);
-        float fade = exp(-dist * 0.92) * smoothstep(4.4, 0.1, hit.z);
+        float fade = exp(-dist * 0.74) * smoothstep(6.4, 0.1, hit.z);
         float centerVoid = smoothstep(0.18, 1.8, hit.z);
 
         float cycle = mod(iTime + uProgress * 1.35, 3.8);
         float phase = cycle < 1.9 ? cycle / 1.9 : 1.0 - (cycle - 1.9) / 1.9;
         phase = mix(phase, fract(iTime * 0.52 + uProgress * 1.4), open * 0.55);
-        float scanZ = phase * 4.2;
+        float scanZ = phase * 5.8;
         float dz = abs(hit.z - scanZ);
         float scan = exp(-0.5 * dz * dz / (0.22 * 0.22));
         float aura = exp(-0.5 * dz * dz / (0.62 * 0.62)) * 0.32;
         float taper = smoother01(0.02, 0.22, phase) * (1.0 - smoother01(0.82, 1.0, phase));
 
-        vec3 base = vec3(0.13, 0.09, 0.18);
-        vec3 lineCol = vec3(0.42, 0.20, 0.58) * lines;
-        vec3 fringe = vec3(0.11, 0.03, 1.0) * redBlue * 0.52 + vec3(0.95, 0.03, 0.12) * lines * 0.28;
-        vec3 scanCol = vec3(1.0, 0.48, 0.94) * (scan * 0.82 + aura * 1.08) * taper;
+        vec3 base = vec3(0.02, 0.075, 0.068);
+        vec3 lineCol = vec3(0.286, 0.768, 0.690) * lines;
+        vec3 fringe = vec3(0.15, 0.86, 0.76) * redBlue * 0.42 + vec3(0.72, 1.0, 0.92) * lines * 0.16;
+        vec3 scanCol = vec3(0.286, 0.768, 0.690) * (scan * 0.72 + aura * 0.96) * taper;
         vec3 color = base * centerVoid + (lineCol + fringe + scanCol) * fade;
         color += vec3(hash(fragCoord + iTime * 96.0) - 0.5) * 0.018;
 
@@ -2190,11 +2188,12 @@ const initServicesScrollStory = () => {
         return;
       }
 
-      const enter = smooth(clamp01((phase - index * stagger) / 0.28));
-      const exit = smooth(clamp01((phase - 0.74 - index * stagger * 0.12) / 0.18));
+      const glyphDelay = Math.min(index * stagger, 0.14);
+      const enter = smooth(clamp01((phase - glyphDelay) / 0.38));
+      const exit = smooth(clamp01((phase - 0.8 - glyphDelay * 0.08) / 0.24));
       const amount = enter * (1 - exit);
-      const blur = 22 * (1 - amount) + exit * 12;
-      const y = (1 - enter) * travel - exit * travel * 0.72;
+      const blur = 14 * (1 - amount) + exit * 8;
+      const y = (1 - enter) * travel * 0.72 - exit * travel * 0.55;
       glyph.style.opacity = amount.toFixed(3);
       glyph.style.filter = `blur(${blur.toFixed(2)}px)`;
       glyph.style.transform = `translate3d(0, ${y.toFixed(2)}px, 0)`;
@@ -2202,13 +2201,13 @@ const initServicesScrollStory = () => {
   };
 
   const setPanel = (panel, local, index) => {
-    const enter = smooth(clamp01((local + 0.08) / 0.7));
-    const exit = smooth(clamp01((local - 0.58) / 0.42));
-    const inRange = local >= -0.1 && local <= 1.04 ? 1 : 0;
+    const enter = smooth(clamp01((local + 0.12) / 0.78));
+    const exit = smooth(clamp01((local - 0.66) / 0.46));
+    const inRange = local >= -0.14 && local <= 1.08 ? 1 : 0;
     const y = local < 0.62
       ? 104 - enter * 104
       : -exit * 132;
-    const clarity = smooth(clamp01((local - 0.42) / 0.18)) * (1 - smooth(clamp01((local - 0.72) / 0.2)));
+    const clarity = smooth(clamp01((local - 0.34) / 0.24)) * (1 - smooth(clamp01((local - 0.76) / 0.24)));
     const z = -130 + clarity * 230 - exit * 52;
     const scale = local < 0.62
       ? 0.52 + enter * 0.44 + clarity * 0.34
@@ -2218,7 +2217,7 @@ const initServicesScrollStory = () => {
       ? direction * (-5.2 + enter * 4.8)
       : direction * (-0.4 + exit * 4.8);
     const opacity = Math.min(enter * 1.12, 1) * (1 - exit) * inRange;
-    const contentOpacity = smooth(clamp01((local - 0.38) / 0.18)) * (1 - smooth(clamp01((local - 0.68) / 0.14)));
+    const contentOpacity = smooth(clamp01((local - 0.3) / 0.26)) * (1 - smooth(clamp01((local - 0.76) / 0.22)));
 
     panel.style.setProperty("--service-panel-y", `${y.toFixed(2)}vh`);
     panel.style.setProperty("--service-panel-z", `${z.toFixed(2)}px`);
@@ -2228,8 +2227,8 @@ const initServicesScrollStory = () => {
     panel.style.setProperty("--service-content-opacity", contentOpacity.toFixed(3));
 
     if (panelGlyphs[index]) {
-      renderGlyphs(panelGlyphs[index].title, local, 0.018, 18);
-      renderGlyphs(panelGlyphs[index].body, local - 0.08, 0.006, 16);
+      renderGlyphs(panelGlyphs[index].title, local + 0.04, 0.004, 14);
+      renderGlyphs(panelGlyphs[index].body, local - 0.02, 0.0012, 12);
     }
   };
 
@@ -2258,8 +2257,8 @@ const initServicesScrollStory = () => {
     if (entryGridScan) entryGridScan.setProgress(open, inside, progress);
 
     panels.forEach((panel, index) => {
-      const start = 0.24 + index * 0.1;
-      const step = 0.14;
+      const start = 0.19 + index * 0.085;
+      const step = 0.19;
       const local = (progress - start) / step;
       setPanel(panel, local, index);
     });
@@ -2293,7 +2292,7 @@ initServicesScrollStory();
   const update = () => {
     ticking = false;
     const rect = section.getBoundingClientRect();
-    const raw = (window.innerHeight - rect.top) / (window.innerHeight * 0.95);
+    const raw = (window.innerHeight * 1.42 - rect.top) / (window.innerHeight * 0.92);
     section.style.setProperty("--works-enter", smooth(clamp01(raw)).toFixed(4));
   };
 
@@ -3559,7 +3558,7 @@ const initWaterSurface = (canvas) => {
     const ctx2d = titleCanvas2d.getContext("2d");
     ctx2d.clearRect(0, 0, w, h);
     const fontSize = Math.round(w * 0.088);
-    ctx2d.font = `700 ${fontSize}px "Helvetica Neue", Helvetica, Arial, sans-serif`;
+    ctx2d.font = `700 ${fontSize}px "Trench Slab", "Cabinet Grotesk", "Satoshi", system-ui, sans-serif`;
     ctx2d.fillStyle = "rgba(255,255,255,0.95)";
     ctx2d.textAlign = "center";
     ctx2d.textBaseline = "middle";
@@ -3586,6 +3585,10 @@ const initWaterSurface = (canvas) => {
   };
   window.addEventListener("resize", resize);
   resize();
+
+  document.fonts?.load?.('700 160px "Trench Slab"').then(() => {
+    updateTitleTexture();
+  }).catch(() => {});
 
   // ── cache uniform locations ───────────────────────────────────────────────
   const uSim = {

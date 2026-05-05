@@ -209,8 +209,8 @@ body.has-entered .precision-guides {
   left: 0;
   top: 0;
   z-index: 260;
-  width: 52px;
-  height: 52px;
+  width: 36px;
+  height: 36px;
   pointer-events: none;
   opacity: 0;
   transform: translate(-50%, -50%);
@@ -264,21 +264,21 @@ body.has-entered .precision-guides {
      bottom-left H, bottom-left V, bottom-right H, bottom-right V */
   background:
     linear-gradient(90deg, rgba(242,240,236,0.9), rgba(242,240,236,0.9))
-      0 0 / 14px 1px no-repeat,
+      0 0 / 10px 1px no-repeat,
     linear-gradient(rgba(242,240,236,0.9), rgba(242,240,236,0.9))
-      0 0 / 1px 14px no-repeat,
+      0 0 / 1px 10px no-repeat,
     linear-gradient(90deg, rgba(242,240,236,0.9), rgba(242,240,236,0.9))
-      100% 0 / 14px 1px no-repeat,
+      100% 0 / 10px 1px no-repeat,
     linear-gradient(rgba(242,240,236,0.9), rgba(242,240,236,0.9))
-      100% 0 / 1px 14px no-repeat,
+      100% 0 / 1px 10px no-repeat,
     linear-gradient(90deg, rgba(242,240,236,0.9), rgba(242,240,236,0.9))
-      0 100% / 14px 1px no-repeat,
+      0 100% / 10px 1px no-repeat,
     linear-gradient(rgba(242,240,236,0.9), rgba(242,240,236,0.9))
-      0 100% / 1px 14px no-repeat,
+      0 100% / 1px 10px no-repeat,
     linear-gradient(90deg, rgba(242,240,236,0.9), rgba(242,240,236,0.9))
-      100% 100% / 14px 1px no-repeat,
+      100% 100% / 10px 1px no-repeat,
     linear-gradient(rgba(242,240,236,0.9), rgba(242,240,236,0.9))
-      100% 100% / 1px 14px no-repeat;
+      100% 100% / 1px 10px no-repeat;
 }
 
 /* center dot */
@@ -4829,37 +4829,28 @@ body .top-meta-toggle svg {
   height: 14px;
 }
 
-body:not(.sound-muted) .top-meta-sound-toggle .icon-lines path {
+body:not(.sound-muted) .top-meta-sound-toggle .icon-lines rect:nth-child(1) {
+  animation: barPulse 1200ms ease-in-out infinite;
   transform-box: fill-box;
-  transform-origin: center;
-  animation: soundBarWave 980ms ease-in-out infinite;
+  transform-origin: bottom;
 }
 
-body:not(.sound-muted) .top-meta-sound-toggle .icon-lines path:nth-child(2) {
-  animation-delay: 120ms;
+body:not(.sound-muted) .top-meta-sound-toggle .icon-lines rect:nth-child(2) {
+  animation: barPulse 1200ms ease-in-out infinite 200ms;
+  transform-box: fill-box;
+  transform-origin: bottom;
 }
 
-body:not(.sound-muted) .top-meta-sound-toggle .icon-lines path:nth-child(3) {
-  animation-delay: 240ms;
+body:not(.sound-muted) .top-meta-sound-toggle .icon-lines rect:nth-child(3) {
+  animation: barPulse 1200ms ease-in-out infinite 80ms;
+  transform-box: fill-box;
+  transform-origin: bottom;
 }
 
-body.sound-muted .top-meta-sound-toggle .icon-dots path {
-  animation: none;
+@keyframes barPulse {
+  0%, 100% { transform: scaleY(0.55); opacity: 0.6; }
+  50%       { transform: scaleY(1);    opacity: 1;   }
 }
-
-@keyframes soundBarWave {
-  0%,
-  100% {
-    transform: scaleY(0.68);
-    opacity: 0.48;
-  }
-
-  45% {
-    transform: scaleY(1);
-    opacity: 0.9;
-  }
-}
-
 
 
 
@@ -5855,18 +5846,50 @@ body.has-entered .hero-card.is-scroll-current {
   --nav-indicator-x: 6px;
   --nav-indicator-w: 0px;
   bottom: 34px;
+  gap: 2px;
+  padding: 7px;
+  background: rgba(10, 12, 14, 0.68);
+  border-color: rgba(235, 231, 224, 0.1);
+  box-shadow:
+    0 12px 38px rgba(0, 0, 0, 0.34),
+    inset 0 1px 0 rgba(255, 255, 255, 0.045);
+}
+
+.bottom-nav-item {
+  min-width: clamp(68px, 4.8vw, 86px);
+  height: 38px;
+  padding: 0 clamp(18px, 1.4vw, 26px);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "MiSans", "PingFang SC", "Microsoft YaHei", sans-serif;
+  font-size: clamp(0.82rem, 0.72vw, 0.96rem);
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: 0.08em;
+  color: rgba(232, 228, 222, 0.62);
+  text-transform: none;
+}
+
+html[lang="en"] .bottom-nav-item {
+  font-family: "Outfit", "Satoshi", "MiSans", system-ui, sans-serif;
+  font-size: clamp(0.78rem, 0.68vw, 0.9rem);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
 }
 
 .bottom-nav-indicator {
   position: absolute;
   left: 0;
-  top: 6px;
+  top: 7px;
   z-index: 0;
   width: var(--nav-indicator-w);
-  height: calc(100% - 12px);
+  height: calc(100% - 14px);
   border-radius: 999px;
-  background: rgba(73, 196, 176, 0.085);
-  border: 1px solid rgba(73, 196, 176, 0.16);
+  background:
+    linear-gradient(180deg, rgba(73, 196, 176, 0.18), rgba(73, 196, 176, 0.075));
+  border: 1px solid rgba(73, 196, 176, 0.2);
   transform: translateX(var(--nav-indicator-x));
   transition:
     width 260ms cubic-bezier(0.19, 1, 0.22, 1),
@@ -5877,6 +5900,22 @@ body.has-entered .hero-card.is-scroll-current {
 
 .bottom-nav.has-indicator .bottom-nav-indicator {
   opacity: 1;
+}
+
+.bottom-nav-item:hover,
+.bottom-nav-item:focus-visible,
+.bottom-nav-item.is-active {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+  color: rgba(122, 235, 217, 0.94);
+}
+
+.bottom-nav:hover .bottom-nav-item.is-active:not(:hover) {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+  color: rgba(232, 228, 222, 0.62);
 }
 
 .bottom-nav-item,
@@ -5908,7 +5947,7 @@ body .top-meta-lang .lang-button {
   padding: 0 clamp(12px, 0.9vw, 18px);
   font-family: "Satoshi", "MiSans", system-ui, sans-serif;
   font-size: clamp(0.8rem, 0.72vw, 0.94rem);
-  font-weight: 640;
+  font-weight: 400;
   line-height: 1;
   letter-spacing: 0.1em;
   font-variant-numeric: tabular-nums;
@@ -5973,22 +6012,24 @@ body .top-meta-lang .lang-button.is-active {
 }
 
 body .top-meta-toggle {
-  width: 30px;
-  height: 30px;
-  margin-left: 4px;
+  width: 34px;
+  height: 34px;
+  margin-left: 6px;
   display: inline-grid;
   place-items: center;
   color: rgba(232, 228, 222, 0.62);
 }
 
 body .top-meta-toggle svg {
-  width: 14px;
-  height: 14px;
+  width: 18px;
+  height: 18px;
 }
 
 body .top-meta-sound-toggle svg {
-  width: 15px;
-  height: 15px;
+  width: 22px;
+  height: 22px;
+  stroke-width: 1.7;
+  overflow: visible;
 }
 
 
