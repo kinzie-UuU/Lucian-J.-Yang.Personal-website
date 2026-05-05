@@ -1247,44 +1247,44 @@ const workDetail = document.querySelector("#work-detail");
 
 const workGalleryImages = {
   oem: [
-    { title: "STRUCTURE STUDY", src: "images/666.png", position: "center", size: "wide" },
-    { title: "SHELF SYSTEM", src: "images/居居.png", position: "center", size: "small", bg: "#d8d0c0" },
-    { title: "SURFACE DIRECTION", src: "images/lucian-j-yang-logo.png.png", position: "center", size: "small", bg: "#cfc5b4" },
+    { title: "STRUCTURE STUDY",   src: "images/works/oem/01.jpg", position: "center", size: "wide" },
+    { title: "SHELF SYSTEM",      src: "images/works/oem/02.jpg", position: "center", size: "small", bg: "#d8d0c0" },
+    { title: "SURFACE DIRECTION", src: "images/works/oem/03.jpg", position: "center", size: "small", bg: "#cfc5b4" },
   ],
   gift: [
-    { title: "GIFT PROJECT 01", src: "images/works/gift/0000.png", position: "center", size: "wide" },
-    { title: "GIFT PROJECT 02", src: "images/works/gift/000000.png", position: "center", size: "wide" },
-    { title: "GIFT PROJECT 03", src: "images/works/gift/1-1.png", position: "center", size: "wide" },
-    { title: "GIFT PROJECT 04", src: "images/works/gift/1.png", position: "center", size: "wide" },
-    { title: "GIFT PROJECT 05", src: "images/works/gift/3.png", position: "center", size: "wide" },
-    { title: "GIFT PROJECT 06", src: "images/works/gift/333.png", position: "center", size: "wide" },
+    { title: "GIFT PROJECT 01", src: "images/works/gift/01.jpg", position: "center", size: "wide" },
+    { title: "GIFT PROJECT 02", src: "images/works/gift/02.jpg", position: "center", size: "wide" },
+    { title: "GIFT PROJECT 03", src: "images/works/gift/03.jpg", position: "center", size: "wide" },
+    { title: "GIFT PROJECT 04", src: "images/works/gift/04.jpg", position: "center", size: "wide" },
+    { title: "GIFT PROJECT 05", src: "images/works/gift/05.jpg", position: "center", size: "wide" },
+    { title: "GIFT PROJECT 06", src: "images/works/gift/06.jpg", position: "center", size: "wide" },
   ],
   series: [
-    { title: "SERIES RHYTHM", src: "images/666.png", position: "65% center", size: "wide" },
-    { title: "BOX LANGUAGE", src: "images/居居.png", position: "center", size: "small", bg: "#c6ccd6" },
-    { title: "SYSTEM MARK", src: "images/lucian-j-yang-logo.png.png", position: "center", size: "small", bg: "#d5d8dc" },
+    { title: "SERIES RHYTHM", src: "images/works/series/01.jpg", position: "center", size: "wide" },
+    { title: "BOX LANGUAGE",  src: "images/works/series/02.jpg", position: "center", size: "small", bg: "#c6ccd6" },
+    { title: "SYSTEM MARK",   src: "images/works/series/03.jpg", position: "center", size: "small", bg: "#d5d8dc" },
   ],
   brand: [
-    { title: "TYPE FIELD", src: "images/lucian-j-yang-logo.png.png", position: "center", size: "wide", bg: "#e5e1d6" },
-    { title: "IDENTITY CROP", src: "images/666.png", position: "center", size: "wide" },
-    { title: "MARK DETAIL", src: "images/居居.png", position: "center", size: "small", bg: "#ccd4c3" },
+    { title: "TYPE FIELD",     src: "images/works/brand/01.jpg", position: "center", size: "wide", bg: "#e5e1d6" },
+    { title: "IDENTITY CROP",  src: "images/works/brand/02.jpg", position: "center", size: "wide" },
+    { title: "MARK DETAIL",    src: "images/works/brand/03.jpg", position: "center", size: "small", bg: "#ccd4c3" },
   ],
   aigc: [
-    { title: "PROMPT BOARD", src: "images/666.png", position: "center", size: "wide" },
-    { title: "OPTION COMPARE", src: "images/lucian-j-yang-logo.png.png", position: "center", size: "small", bg: "#cbcbd2" },
-    { title: "DRAFT FILTER", src: "images/居居.png", position: "center", size: "small", bg: "#d7d5ce" },
+    { title: "PROMPT BOARD",   src: "images/works/aigc/01.jpg", position: "center", size: "wide" },
+    { title: "OPTION COMPARE", src: "images/works/aigc/02.jpg", position: "center", size: "small", bg: "#cbcbd2" },
+    { title: "DRAFT FILTER",   src: "images/works/aigc/03.jpg", position: "center", size: "small", bg: "#d7d5ce" },
   ],
   delivery: [
-    { title: "SAMPLING ROUND", src: "images/666.png", position: "44% center", size: "wide" },
-    { title: "MATERIAL CHECK", src: "images/居居.png", position: "center", size: "small", bg: "#d8ceb8" },
-    { title: "FINAL HANDOFF", src: "images/lucian-j-yang-logo.png.png", position: "center", size: "small", bg: "#e0d8ca" },
+    { title: "SAMPLING ROUND", src: "images/works/delivery/01.jpg", position: "center", size: "wide" },
+    { title: "MATERIAL CHECK", src: "images/works/delivery/02.jpg", position: "center", size: "small", bg: "#d8ceb8" },
+    { title: "FINAL HANDOFF",  src: "images/works/delivery/03.jpg", position: "center", size: "small", bg: "#e0d8ca" },
   ],
 };
 
 workGalleryImages["aigc-video"] = [
-  { title: "AIGC VIDEO 01", src: "images/666.png", position: "center", size: "wide" },
-  { title: "SHORT VIDEO FLOW", src: "images/lucian-j-yang-logo.png.png", position: "center", size: "small", bg: "#cbcbd2" },
-  { title: "COMMERCIAL FILM STUDY", src: "images/666.png", position: "center", size: "wide" },
+  { title: "AIGC VIDEO 01",        src: "images/works/aigc-video/01.jpg", position: "center", size: "wide" },
+  { title: "SHORT VIDEO FLOW",     src: "images/works/aigc-video/02.jpg", position: "center", size: "small", bg: "#cbcbd2" },
+  { title: "COMMERCIAL FILM STUDY",src: "images/works/aigc-video/03.jpg", position: "center", size: "wide" },
 ];
 
 const galleryText = {
