@@ -2281,6 +2281,33 @@ const initServicesScrollStory = () => {
 
 initServicesScrollStory();
 
+// Works statement enters as a scroll-linked fade instead of an intersection pop.
+(function initWorksStatementMotion() {
+  const section = document.querySelector(".works-section");
+  if (!section) return;
+
+  const clamp01 = (value) => Math.min(1, Math.max(0, value));
+  const smooth = (value) => value * value * value * (value * (value * 6 - 15) + 10);
+  let ticking = false;
+
+  const update = () => {
+    ticking = false;
+    const rect = section.getBoundingClientRect();
+    const raw = (window.innerHeight - rect.top) / (window.innerHeight * 0.95);
+    section.style.setProperty("--works-enter", smooth(clamp01(raw)).toFixed(4));
+  };
+
+  const requestUpdate = () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(update);
+  };
+
+  update();
+  window.addEventListener("scroll", requestUpdate, { passive: true });
+  window.addEventListener("resize", requestUpdate);
+})();
+
 const hoverCodeGlyphs = "LUCIANJYANG0123456789#/_包装判断结构";
 const hoverCodeTargets = Array.from(
   document.querySelectorAll(
@@ -3690,26 +3717,152 @@ const initWaterSurface = (canvas) => {
 // ── Floating Particle Orbs (mouse-flee interaction) ───────────────────────
 const initFloatingOrbs = (canvas) => {
   if (!canvas || reducedMotion) return;
-  const ctx = canvas.getContext("2d");
-  if (!ctx) return;
 
+  // WebGL liquid-glass metaball renderer
+  const gl = canvas.getContext("webgl", { alpha: true, premultipliedAlpha: false });
+  if (!gl) return;
+
+  const MAX_DROPS = 6; // 3 main + 3 ghost trails
+
+  // ── Shader sources ───────────────────────────────────────
+  const VERT = `
+    attribute vec2 aPos;
+    void main(){ gl_Position = vec4(aPos, 0.0, 1.0); }
+  `;
+
+  const FRAG = `
+    precision highp float;
+    #define MAX_N 6
+    uniform vec2  uRes;
+    uniform vec4  uDrops[MAX_N];
+    uniform int   uCount;
+
+    void main(){
+      vec2 uv = gl_FragCoord.xy / uRes;
+      float asp = uRes.x / uRes.y;
+      vec2 p = (uv - 0.5) * vec2(asp, 1.0);
+
+      float field = 0.0;
+      vec2  grad  = vec2(0.0);
+      vec2  lens  = vec2(0.0);
+      float lensW = 0.0;
+
+      for(int i = 0; i < MAX_N; i++){
+        if(i >= uCount) break;
+        vec2  c = uDrops[i].xy;
+        float r = uDrops[i].z;
+        if(r < 0.001) continue;
+        vec2  delta = p - c;
+        float dSq   = dot(delta,delta) + 1e-5;
+        float contrib = r * r / dSq;
+        field += contrib;
+        grad  += -2.0 * contrib / dSq * delta;
+        float w = r * r / (dSq + r * r);
+        lens  += (c - p) * w;
+        lensW += w;
+      }
+
+      lens /= (lensW + 0.001);
+      float lensLen = length(lens);
+
+      float thr  = 1.0;
+      float edge = smoothstep(thr - 0.08, thr + 0.03, field);
+      if(edge < 0.002){ gl_FragColor = vec4(0.0); return; }
+
+      // refraction UV (sample the canvas background is not available,
+      // so we tint a teal/cyan glass colour matching the water surface)
+      vec2 refDir = (lensLen > 1e-5) ? lens / lensLen : vec2(0.0);
+      float refMask = smoothstep(thr - 0.2, thr + 1.5, field);
+
+      // glass normal
+      float gradLen = length(grad);
+      float nScale  = atan(gradLen * 0.5) * 0.3;
+      vec2  nGrad   = (gradLen > 1e-4) ? (grad / gradLen) * nScale : vec2(0.0);
+      vec3  N = normalize(vec3(-nGrad, 1.0));
+      vec3  L = normalize(vec3(0.3, 0.6, 1.0));
+      vec3  V = vec3(0.0, 0.0, 1.0);
+      vec3  H = normalize(L + V);
+      float spec = pow(max(dot(N, H), 0.0), 180.0);
+
+      // Fresnel
+      float cosT   = max(dot(N, V), 0.0);
+      float fresnel = 0.04 + 0.96 * pow(1.0 - cosT, 4.0);
+
+      // rim
+      float rim = smoothstep(thr + 0.6, thr, field) * edge;
+
+      // teal glass base colour matching hero water (#00ccbd family)
+      vec3 baseGlass = vec3(0.0, 0.80, 0.74);
+      float depth = smoothstep(thr, thr + 3.0, field);
+      vec3  tint  = mix(vec3(0.6,0.95,0.92), baseGlass, depth * 0.5);
+
+      // chromatic aberration hint (colour shift at edges)
+      float ca = 0.12 * (1.0 - depth);
+      vec3 glassCol = tint * (0.18 + ca)
+                    + vec3(1.0) * spec * 0.9
+                    + vec3(0.85,1.0,0.97) * rim * 0.28
+                    + vec3(1.0) * fresnel * 0.12;
+
+      // thin bright border
+      float bOuter = smoothstep(thr - 0.10, thr - 0.01, field);
+      float bInner = smoothstep(thr + 0.00, thr + 0.06, field);
+      float border = bOuter * (1.0 - bInner) * 0.38;
+
+      vec3  col  = glassCol + vec3(1.0) * border;
+      float alpha = edge * 0.82 + fresnel * 0.12 + spec * 0.06;
+
+      gl_FragColor = vec4(col * alpha, alpha);
+    }
+  `;
+
+  // ── Compile helpers ──────────────────────────────────────
+  const compileShader = (src, type) => {
+    const sh = gl.createShader(type);
+    gl.shaderSource(sh, src);
+    gl.compileShader(sh);
+    return sh;
+  };
+
+  const prog = gl.createProgram();
+  gl.attachShader(prog, compileShader(VERT, gl.VERTEX_SHADER));
+  gl.attachShader(prog, compileShader(FRAG, gl.FRAGMENT_SHADER));
+  gl.linkProgram(prog);
+  gl.useProgram(prog);
+
+  // full-screen quad
+  const buf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, 1,1]), gl.STATIC_DRAW);
+  const aPosLoc = gl.getAttribLocation(prog, "aPos");
+  gl.enableVertexAttribArray(aPosLoc);
+  gl.vertexAttribPointer(aPosLoc, 2, gl.FLOAT, false, 0, 0);
+
+  const uRes   = gl.getUniformLocation(prog, "uRes");
+  const uCount = gl.getUniformLocation(prog, "uCount");
+  const uDrops = [];
+  for (let i = 0; i < MAX_DROPS; i++) {
+    uDrops.push(gl.getUniformLocation(prog, `uDrops[${i}]`));
+  }
+
+  gl.enable(gl.BLEND);
+  gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+
+  // ── Resize ───────────────────────────────────────────────
   const PR = Math.min(window.devicePixelRatio, 2);
   const resize = () => {
     canvas.width  = Math.round(canvas.clientWidth  * PR);
     canvas.height = Math.round(canvas.clientHeight * PR);
+    gl.viewport(0, 0, canvas.width, canvas.height);
   };
   window.addEventListener("resize", resize);
   resize();
 
-  // orb config
-  const ORB_COUNT  = 3;
-  const ORB_RADIUS = 52; // logical px (before PR)
+  // ── Orb physics state (3 orbs, screen-space) ─────────────
   const FLEE_DIST  = 160;
   const FLEE_FORCE = 0.38;
   const DRIFT_SPD  = 0.18;
-  const DAMP       = 0.88;
+  const ORB_DAMP   = 0.88;
 
-  // seed positions spread across canvas
   const seeds = [
     { nx: 0.22, ny: 0.38 },
     { nx: 0.68, ny: 0.28 },
@@ -3721,29 +3874,29 @@ const initFloatingOrbs = (canvas) => {
     y:  s.ny * canvas.clientHeight,
     vx: (Math.random() - 0.5) * 0.4,
     vy: (Math.random() - 0.5) * 0.4,
-    phase: i * 2.1,          // drift phase offset
-    // per-orb particle cloud
-    pts: Array.from({ length: 420 }, () => {
-      const theta = Math.random() * Math.PI * 2;
-      const phi   = Math.acos(2 * Math.random() - 1);
-      const r     = ORB_RADIUS * Math.cbrt(Math.random()); // volume-uniform
-      return {
-        ox: r * Math.sin(phi) * Math.cos(theta),
-        oy: r * Math.sin(phi) * Math.sin(theta),
-        oz: r * Math.cos(phi),
-        // flow lines: a subset of pts that form arcs
-        isLine: Math.random() < 0.06,
-        lineAngle: Math.random() * Math.PI * 2,
-      };
-    }),
+    phase: i * 2.1,
+    softOffX: 0, softOffY: 0,
+    softVelX: 0, softVelY: 0,
+    prevX: s.nx * canvas.clientWidth,
+    prevY: s.ny * canvas.clientHeight,
   }));
 
   let mx = -9999, my = -9999;
-  const onMove = (e) => {
-    mx = e.clientX;
-    my = e.clientY;
-  };
+  const onMove = (e) => { mx = e.clientX; my = e.clientY; };
   window.addEventListener("pointermove", onMove);
+
+  // ── Pixel → NDC conversion ───────────────────────────────
+  // In the shader p = (uv - 0.5) * vec2(asp, 1.0)
+  // so we need x in [-asp/2, asp/2], y in [-0.5, 0.5]
+  const toNDC = (px, py) => {
+    const W = canvas.clientWidth;
+    const H = canvas.clientHeight;
+    const asp = W / H;
+    return {
+      x: (px / W - 0.5) * asp,
+      y: -(py / H - 0.5),           // flip Y (canvas Y down, shader Y up)
+    };
+  };
 
   let raf;
   const animate = (ts) => {
@@ -3751,23 +3904,26 @@ const initFloatingOrbs = (canvas) => {
     const t = ts * 0.001;
     const W = canvas.clientWidth;
     const H = canvas.clientHeight;
+
+    // fade out on hero scroll
     const sp = parseFloat(heroStage?.style.getPropertyValue("--hero-scroll-progress") || "0");
     const globalAlpha = Math.max(0, 1 - sp * 2.5);
-    if (globalAlpha <= 0) {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      return;
-    }
 
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.save();
-    ctx.scale(PR, PR);
+    gl.clearColor(0, 0, 0, 0);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+
+    if (globalAlpha <= 0) return;
+
+    // physics + NDC positions
+    const pad = 60;
+    const drops = []; // {x, y, r} in NDC
 
     for (const orb of orbs) {
-      // gentle drift
+      // drift
       orb.x += Math.sin(t * DRIFT_SPD + orb.phase)       * 0.22;
       orb.y += Math.cos(t * DRIFT_SPD * 0.7 + orb.phase) * 0.18;
 
-      // flee from mouse
+      // flee
       const dx = orb.x - mx;
       const dy = orb.y - my;
       const dist = Math.sqrt(dx * dx + dy * dy);
@@ -3777,55 +3933,48 @@ const initFloatingOrbs = (canvas) => {
         orb.vy += (dy / dist) * force;
       }
 
-      // damping + apply velocity
-      orb.vx *= DAMP;
-      orb.vy *= DAMP;
+      orb.vx *= ORB_DAMP;
+      orb.vy *= ORB_DAMP;
       orb.x  += orb.vx;
       orb.y  += orb.vy;
 
-      // soft boundary bounce
-      const pad = ORB_RADIUS + 20;
       if (orb.x < pad)     { orb.x = pad;     orb.vx =  Math.abs(orb.vx) * 0.5; }
       if (orb.x > W - pad) { orb.x = W - pad; orb.vx = -Math.abs(orb.vx) * 0.5; }
       if (orb.y < pad)     { orb.y = pad;      orb.vy =  Math.abs(orb.vy) * 0.5; }
       if (orb.y > H - pad) { orb.y = H - pad;  orb.vy = -Math.abs(orb.vy) * 0.5; }
 
-      // draw particle cloud
-      const rotY = t * 0.18 + orb.phase;
-      const cosY = Math.cos(rotY), sinY = Math.sin(rotY);
-      const rotX = t * 0.11 + orb.phase * 0.5;
-      const cosX = Math.cos(rotX), sinX = Math.sin(rotX);
+      // soft-body trailing ghost
+      const softK = 0.22, softD = 0.6;
+      const ddx = orb.x - orb.prevX;
+      const ddy = orb.y - orb.prevY;
+      orb.softVelX += (ddx - orb.softOffX) * softK;
+      orb.softVelY += (ddy - orb.softOffY) * softK;
+      orb.softVelX *= softD;
+      orb.softVelY *= softD;
+      orb.softOffX += orb.softVelX;
+      orb.softOffY += orb.softVelY;
+      orb.prevX = orb.x;
+      orb.prevY = orb.y;
 
-      for (const pt of orb.pts) {
-        // rotate point around Y then X
-        const rx = pt.ox * cosY - pt.oz * sinY;
-        const rz = pt.ox * sinY + pt.oz * cosY;
-        const ry = pt.oy * cosX - rz   * sinX;
+      // radius in NDC space: 52px logical → fraction of height
+      const r = 52 / H * 0.5;
 
-        const px = orb.x + rx;
-        const py = orb.y + ry;
+      const main  = toNDC(orb.x, orb.y);
+      const ghost = toNDC(orb.x - orb.softOffX * 3.5, orb.y - orb.softOffY * 3.5);
 
-        // depth-based brightness: front = bright, back = dim
-        const depth = (rz + ORB_RADIUS) / (ORB_RADIUS * 2); // 0..1
-        const bright = 0.18 + depth * 0.82;
-
-        // distance from sphere surface → fade outer particles
-        const r2d = Math.sqrt(rx * rx + ry * ry);
-        const edgeFade = Math.max(0, 1 - r2d / (ORB_RADIUS * 1.05));
-
-        const alpha = globalAlpha * bright * edgeFade * (pt.isLine ? 0.55 : 0.28);
-        if (alpha < 0.01) continue;
-
-        // teal-white palette matching water surface
-        const g = Math.round(200 + depth * 55);
-        const b = Math.round(189 + depth * 66);
-        ctx.fillStyle = `rgba(${Math.round(depth * 180)},${g},${b},${alpha.toFixed(3)})`;
-        ctx.fillRect(px - 0.6, py - 0.6, 1.2, 1.2);
-      }
-
+      drops.push({ x: main.x,  y: main.y,  r });
+      drops.push({ x: ghost.x, y: ghost.y, r: r * 0.7 });
     }
 
-    ctx.restore();
+    // upload uniforms
+    gl.useProgram(prog);
+    gl.uniform2f(uRes, canvas.width, canvas.height);
+    gl.uniform1i(uCount, drops.length);
+    drops.forEach((d, i) => {
+      if (i < MAX_DROPS) gl.uniform4f(uDrops[i], d.x, d.y, d.r, 1.0);
+    });
+
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
   };
   animate(0);
 
@@ -4374,8 +4523,17 @@ window.requestAnimationFrame(animateCards);
 
   let ticking = false;
   let targetVideoTime = 0;
+  let targetEnter = 0;
+  let targetTextEnter = 0;
+  let targetProgressValue = 0;
+  let targetExit = 0;
+  let currentEnter = 0;
+  let currentTextEnter = 0;
+  let currentProgressValue = 0;
+  let currentExit = 0;
   let scrubRaf = null;
   const smootherStep = (t) => t * t * t * (t * (t * 6 - 15) + 10);
+  const clamp01 = (value) => Math.max(0, Math.min(1, value));
 
   const scrubVideo = () => {
     scrubRaf = requestAnimationFrame(scrubVideo);
@@ -4386,6 +4544,20 @@ window.requestAnimationFrame(animateCards);
     video.currentTime += step;
   };
 
+  const renderMotion = () => {
+    currentEnter += (targetEnter - currentEnter) * 0.085;
+    currentTextEnter += (targetTextEnter - currentTextEnter) * 0.075;
+    currentProgressValue += (targetProgressValue - currentProgressValue) * 0.07;
+    currentExit += (targetExit - currentExit) * 0.085;
+
+    section.style.setProperty("--portrait-enter", currentEnter.toFixed(4));
+    section.style.setProperty("--portrait-text-enter", currentTextEnter.toFixed(4));
+    section.style.setProperty("--portrait-progress", currentProgressValue.toFixed(4));
+    section.style.setProperty("--portrait-exit", currentExit.toFixed(4));
+
+    requestAnimationFrame(renderMotion);
+  };
+
   const update = () => {
     ticking = false;
     const rect = section.getBoundingClientRect();
@@ -4393,17 +4565,18 @@ window.requestAnimationFrame(animateCards);
     if (scrollable <= 0) return;
 
     // enter: starts before the sticky portrait locks, so the scene can drift in.
-    const enter = Math.max(0, Math.min(1, (window.innerHeight - rect.top) / (window.innerHeight * 0.9)));
+    const enter = clamp01((window.innerHeight - rect.top) / (window.innerHeight * 1.22));
 
     // progress: 0 = section just entered, 1 = section fully scrolled through
-    const progress = Math.max(0, Math.min(1, -rect.top / scrollable));
+    const progress = clamp01(-rect.top / scrollable);
 
-    // exit: starts at 0.7 progress, reaches 1 at end — drives blur/fade
-    const exit = Math.max(0, Math.min(1, (progress - 0.7) / 0.3));
+    // exit starts before the sticky stage releases, so the next scene can catch it.
+    const exit = smootherStep(clamp01((progress - 0.64) / 0.26));
 
-    section.style.setProperty("--portrait-enter", smootherStep(enter).toFixed(4));
-    section.style.setProperty("--portrait-progress", progress.toFixed(4));
-    section.style.setProperty("--portrait-exit", exit.toFixed(4));
+    targetEnter = smootherStep(enter);
+    targetTextEnter = smootherStep(clamp01((progress + 0.06) / 0.34));
+    targetProgressValue = progress;
+    targetExit = exit;
 
     if (video && Number.isFinite(video.duration) && video.duration > 0) {
       const rawVideoProgress = Math.max(0, Math.min(1, progress / 0.9));
@@ -4423,6 +4596,8 @@ window.requestAnimationFrame(animateCards);
     }, { once: true });
     scrubVideo();
   }
+
+  renderMotion();
 
   window.addEventListener("scroll", () => {
     if (ticking) return;
