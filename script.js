@@ -255,6 +255,7 @@ const cardPresets = [
 let currentLang = "zh";
 let audioContext = null;
 let lastToneAt = 0;
+let lastSnapAt = 0;
 let heroWireframeController = null;
 let currentHeroCard = null;
 let flowPaused = false;
@@ -324,8 +325,8 @@ const entryCodeWord = document.querySelector("#entry-code-word");
 const entryDielineLayer = document.querySelector("#entry-dieline-layer");
 const entryWaveLayer = document.querySelector("#entry-wave-layer");
 const homeLinks = Array.from(document.querySelectorAll('a[href="#top"]'));
-const themeToggle = document.querySelector("#theme-toggle");
 const soundToggle = document.querySelector("#sound-toggle");
+const fullscreenToggle = document.querySelector("#fullscreen-toggle");
 const SOUND_STORAGE_KEY = "lucianYangSoundEnabled";
 
 const readStoredBoolean = (key, fallback) => {
@@ -357,9 +358,6 @@ const applySoundState = () => {
   );
 };
 
-themeToggle?.addEventListener("click", () => {
-  document.body.classList.toggle("light-mode");
-});
 
 soundToggle?.addEventListener("click", async () => {
   soundEnabled = !soundEnabled;
@@ -377,7 +375,33 @@ soundToggle?.addEventListener("click", async () => {
   }
 });
 
+const isFullscreenActive = () => Boolean(document.fullscreenElement);
+
+const updateFullscreenState = () => {
+  const active = isFullscreenActive();
+  document.body.classList.toggle("is-fullscreen", active);
+  fullscreenToggle?.setAttribute("aria-pressed", String(active));
+  fullscreenToggle?.setAttribute("aria-label", active ? "Exit fullscreen" : "Enter fullscreen");
+};
+
+fullscreenToggle?.addEventListener("click", async () => {
+  try {
+    if (isFullscreenActive()) {
+      await document.exitFullscreen();
+    } else {
+      await document.documentElement.requestFullscreen({ navigationUI: "hide" });
+    }
+  } catch {
+    // Fullscreen can be blocked by browser policy; keep the UI in the current state.
+  } finally {
+    updateFullscreenState();
+  }
+});
+
+document.addEventListener("fullscreenchange", updateFullscreenState);
+
 applySoundState();
+updateFullscreenState();
 
 const SCROLL_TYPE_SELECTOR = [
   ".works-statement-title",
@@ -743,6 +767,9 @@ const playUiTone = async (type = "hover") => {
 
 const playPackagingSnap = async (pitch = 1, gainBoost = 1, delayMs = 0) => {
   if (!soundEnabled) return;
+  const nowMs = performance.now();
+  if (nowMs - lastSnapAt < 200) return;
+  lastSnapAt = nowMs;
   const context = await getAudioContext().catch(() => null);
   if (!context || context.state !== "running") return;
 
@@ -1761,14 +1788,14 @@ const initServicesEntryGridScan = (canvas) => {
         float aura = exp(-0.5 * dz * dz / (0.62 * 0.62)) * 0.32;
         float taper = smoother01(0.02, 0.22, phase) * (1.0 - smoother01(0.82, 1.0, phase));
 
-        vec3 base = vec3(0.11, 0.08, 0.16);
-        vec3 lineCol = vec3(0.30, 0.16, 0.42) * lines;
-        vec3 fringe = vec3(0.08, 0.02, 0.9) * redBlue * 0.45 + vec3(0.85, 0.02, 0.08) * lines * 0.24;
-        vec3 scanCol = vec3(1.0, 0.45, 0.92) * (scan * 0.74 + aura) * taper;
+        vec3 base = vec3(0.13, 0.09, 0.18);
+        vec3 lineCol = vec3(0.42, 0.20, 0.58) * lines;
+        vec3 fringe = vec3(0.11, 0.03, 1.0) * redBlue * 0.52 + vec3(0.95, 0.03, 0.12) * lines * 0.28;
+        vec3 scanCol = vec3(1.0, 0.48, 0.94) * (scan * 0.82 + aura * 1.08) * taper;
         vec3 color = base * centerVoid + (lineCol + fringe + scanCol) * fade;
         color += vec3(hash(fragCoord + iTime * 96.0) - 0.5) * 0.018;
 
-        float alpha = clamp((0.38 + lines * 0.6 + scan * 0.42 + aura * 0.24) * fade + 0.12 * centerVoid, 0.0, 0.98);
+        float alpha = clamp((0.44 + lines * 0.74 + scan * 0.48 + aura * 0.3) * fade + 0.14 * centerVoid, 0.0, 0.98);
         gl_FragColor = vec4(clamp(color, 0.0, 1.0), alpha);
       }
     `,
@@ -1896,6 +1923,199 @@ const initServicesEntryGridScan = (canvas) => {
   };
 };
 
+const initServicePanelShaders = (panels) => {
+  if (!panels?.length || reducedMotion) return null;
+
+  const palettes = [
+    [[0.18, 0.18, 0.2], [0.92, 0.34, 0.18], [1.0, 0.78, 0.32]],
+    [[0.22, 0.08, 0.08], [0.95, 0.22, 0.18], [1.0, 0.64, 0.42]],
+    [[0.28, 0.24, 0.2], [0.72, 0.48, 0.22], [0.9, 0.76, 0.46]],
+    [[0.08, 0.16, 0.14], [0.2, 0.62, 0.45], [0.74, 1.0, 0.7]],
+    [[0.48, 0.32, 0.16], [1.0, 0.62, 0.24], [1.0, 0.88, 0.52]],
+    [[0.1, 0.1, 0.16], [0.42, 0.24, 0.95], [0.9, 0.58, 1.0]],
+  ];
+
+  const vertexSource = `#version 300 es
+    precision highp float;
+    in vec2 position;
+    void main() {
+      gl_Position = vec4(position, 0.0, 1.0);
+    }
+  `;
+
+  const fragmentSource = `#version 300 es
+    precision highp float;
+    out vec4 O;
+    uniform float time;
+    uniform vec2 resolution;
+    uniform vec3 colorLow;
+    uniform vec3 colorMid;
+    uniform vec3 colorHigh;
+    #define FC gl_FragCoord.xy
+    #define R resolution
+    #define T time
+    #define S smoothstep
+
+    float rnd(vec2 p) {
+      p = fract(p * vec2(12.9898, 78.233));
+      p += dot(p, p + 34.56);
+      return fract(p.x * p.y);
+    }
+
+    float noise(vec2 p) {
+      vec2 i = floor(p);
+      vec2 u = S(i, i + 1.0, p);
+      vec2 k = vec2(1.0, 0.0);
+      float a = rnd(i);
+      float b = rnd(i + k);
+      float c = rnd(i + k.yx);
+      float d = rnd(i + k.xx);
+      return mix(mix(a, b, u.x), mix(c, d, u.x), u.y);
+    }
+
+    float snoise(vec3 p) {
+      float t = T * 0.5;
+      for (int i = 0; i < 3; i++) {
+        p += cos(p.zyx * 3.0 + vec3(0.0, t, 1.6)) / 3.0;
+        p += sin(p.zyx + t + vec3(t, 1.6, 0.0)) / 2.0;
+        p += sin(p.zyx + t * 2.0 + vec3(0.0, 1.6, t)) / 6.0;
+        p *= 1.75;
+      }
+      p += fract(sin(p + vec3(13.0, 7.0, 3.0)) * 5e5) * 0.04;
+      return fract(noise(p.xy) * noise(p.yz));
+    }
+
+    vec2 layeredNoise(vec3 p) {
+      return vec2(snoise(p - sin(T * 0.1)), snoise(p * 4.0));
+    }
+
+    void main() {
+      vec2 uv = FC / R;
+      vec2 flowUv = vec2(uv.x * 1.16, uv.y * 0.92);
+      vec2 cn = layeredNoise(flowUv.xyx + vec3(T * 0.015, -T * 0.018, T * 0.01));
+      vec3 col = vec3(0.0);
+      col = mix(col, colorLow, cn.x);
+      col = mix(col, mix(colorMid, colorHigh, cn.y), cn.y);
+      col = S(0.0, 1.0, col);
+      col = tanh(col * col * col);
+      col = sqrt(max(col, vec3(0.0)));
+
+      vec2 c = FC / R;
+      c *= 1.0 - c.yx;
+      float vig = c.x * c.y * 25.0;
+      vig = pow(max(vig, 0.0), 0.42);
+      float grain = rnd(FC + T * 92.0) - 0.5;
+      col = col * vig * 0.74 + grain * 0.014;
+      O = vec4(clamp(col, 0.0, 1.0), 1.0);
+    }
+  `;
+
+  const compile = (gl, type, source) => {
+    const shader = gl.createShader(type);
+    gl.shaderSource(shader, source);
+    gl.compileShader(shader);
+    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+      console.warn(gl.getShaderInfoLog(shader));
+      gl.deleteShader(shader);
+      return null;
+    }
+    return shader;
+  };
+
+  const renderers = panels.map((panel, index) => {
+    const canvas = document.createElement("canvas");
+    canvas.className = "service-panel-shader";
+    canvas.setAttribute("aria-hidden", "true");
+    panel.prepend(canvas);
+
+    const gl = canvas.getContext("webgl2", { antialias: false, alpha: false });
+    if (!gl) return null;
+
+    const vertex = compile(gl, gl.VERTEX_SHADER, vertexSource);
+    const fragment = compile(gl, gl.FRAGMENT_SHADER, fragmentSource);
+    if (!vertex || !fragment) return null;
+
+    const program = gl.createProgram();
+    gl.attachShader(program, vertex);
+    gl.attachShader(program, fragment);
+    gl.linkProgram(program);
+    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+      console.warn(gl.getProgramInfoLog(program));
+      return null;
+    }
+
+    const buffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, 1, -1, -1, 1, 1, 1, -1]), gl.STATIC_DRAW);
+    const position = gl.getAttribLocation(program, "position");
+    gl.enableVertexAttribArray(position);
+    gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0);
+
+    const palette = palettes[index % palettes.length];
+    return {
+      canvas,
+      gl,
+      program,
+      buffer,
+      resolution: gl.getUniformLocation(program, "resolution"),
+      time: gl.getUniformLocation(program, "time"),
+      colorLow: gl.getUniformLocation(program, "colorLow"),
+      colorMid: gl.getUniformLocation(program, "colorMid"),
+      colorHigh: gl.getUniformLocation(program, "colorHigh"),
+      palette,
+    };
+  }).filter(Boolean);
+
+  if (!renderers.length) return null;
+
+  const resize = () => {
+    renderers.forEach(({ canvas, gl }) => {
+      const rect = canvas.getBoundingClientRect();
+      const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+      const width = Math.max(1, Math.round(rect.width * dpr));
+      const height = Math.max(1, Math.round(rect.height * dpr));
+      if (canvas.width !== width || canvas.height !== height) {
+        canvas.width = width;
+        canvas.height = height;
+        gl.viewport(0, 0, width, height);
+      }
+    });
+  };
+
+  let raf = 0;
+  const render = (now) => {
+    resize();
+    renderers.forEach((item, index) => {
+      const { canvas, gl, program, resolution, time, colorLow, colorMid, colorHigh, palette } = item;
+      gl.useProgram(program);
+      gl.bindBuffer(gl.ARRAY_BUFFER, item.buffer);
+      gl.uniform2f(resolution, canvas.width, canvas.height);
+      gl.uniform1f(time, now * 0.001 + index * 12.5);
+      gl.uniform3fv(colorLow, palette[0]);
+      gl.uniform3fv(colorMid, palette[1]);
+      gl.uniform3fv(colorHigh, palette[2]);
+      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    });
+    raf = requestAnimationFrame(render);
+  };
+
+  resize();
+  raf = requestAnimationFrame(render);
+  window.addEventListener("resize", resize);
+
+  return {
+    destroy() {
+      if (raf) cancelAnimationFrame(raf);
+      window.removeEventListener("resize", resize);
+      renderers.forEach(({ canvas, gl, program, buffer }) => {
+        gl.deleteBuffer(buffer);
+        gl.deleteProgram(program);
+        canvas.remove();
+      });
+    },
+  };
+};
+
 const initServicesScrollStory = () => {
   const section = document.querySelector(".services-scroll-story");
   if (!section) return;
@@ -1906,6 +2126,7 @@ const initServicesScrollStory = () => {
   const panels = Array.from(section.querySelectorAll(".service-text-panel"));
   if (!stage || !entryTitle || !panels.length) return;
   const entryGridScan = initServicesEntryGridScan(entryGrid);
+  const panelShaders = initServicePanelShaders(panels);
 
   const clamp01 = (value) => Math.min(1, Math.max(0, value));
   const smooth = (value) => value * value * (3 - 2 * value);
@@ -2074,7 +2295,6 @@ hoverCodeTargets.forEach((node) => {
   node.addEventListener("pointerenter", () => {
     source = node.textContent;
     node.classList.add("is-coding");
-    playUiTone("hover");
 
     const run = () => {
       frame += 1;
@@ -2724,6 +2944,34 @@ const initEntryField = (canvas) => {
     pointer.hover = false;
   });
 
+  const updateCreepyEyes = (event) => {
+    const eyes = entryGo.querySelector(".entry-creepy-eyes");
+    if (!eyes) return;
+    const rect = eyes.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    const dx = event.clientX - centerX;
+    const dy = event.clientY - centerY;
+    const distance = Math.hypot(dx, dy);
+    const angle = Math.atan2(-dy, dx) + Math.PI / 2;
+    const x = Math.max(-0.58, Math.min(0.58, (Math.sin(angle) * distance) / 180));
+    const y = Math.max(-0.58, Math.min(0.58, (Math.cos(angle) * distance) / 75));
+    entryGo.style.setProperty("--entry-eye-x", `${-50 + x * 50}%`);
+    entryGo.style.setProperty("--entry-eye-y", `${-50 + y * 50}%`);
+  };
+
+  const resetCreepyEyes = () => {
+    entryGo.style.setProperty("--entry-eye-x", "-50%");
+    entryGo.style.setProperty("--entry-eye-y", "-50%");
+  };
+
+  entryGo?.addEventListener("pointermove", updateCreepyEyes);
+  entryGo?.addEventListener("touchmove", (event) => {
+    const touch = event.touches?.[0];
+    if (touch) updateCreepyEyes(touch);
+  }, { passive: true });
+  entryGo?.addEventListener("pointerleave", resetCreepyEyes);
+
   window.addEventListener("resize", resize);
   resize();
   window.requestAnimationFrame(render);
@@ -3007,216 +3255,422 @@ const initWaterSurface = (canvas) => {
   const gl = canvas.getContext("webgl", { alpha: true, antialias: false, premultipliedAlpha: false });
   if (!gl) return;
 
-  const vert = `
+  // ── shared quad ──────────────────────────────────────────────────────────
+  const quadVert = `
     attribute vec2 a_pos;
-    void main() { gl_Position = vec4(a_pos, 0.0, 1.0); }
+    varying vec2 v_uv;
+    void main() { v_uv = a_pos * 0.5 + 0.5; gl_Position = vec4(a_pos, 0.0, 1.0); }
   `;
 
-  const frag = `
+  // ── Pass 1: wave-equation simulation (ping-pong FBO) ─────────────────────
+  const simFrag = `
     precision highp float;
-    uniform float u_time;
+    uniform sampler2D u_prev;
     uniform vec2  u_res;
     uniform vec2  u_mouse;
-    uniform float u_scroll;
-    // ripples: xy=position(0-1), z=startTime, w=unused
-    uniform vec3  u_ripples[3];
+    uniform vec2  u_last_mouse;
+    uniform vec2  u_velocity;
+    uniform float u_viscosity;
+    uniform float u_speed;
+    uniform float u_size;
+    uniform int   u_frame;
+    varying vec2 v_uv;
 
-    // gradient noise (Perlin-style)
-    vec2 hash2(vec2 p) {
-      p = vec2(dot(p, vec2(127.1, 311.7)), dot(p, vec2(269.5, 183.3)));
-      return fract(sin(p) * 43758.5453);
-    }
-    float noise(vec2 p) {
-      vec2 i = floor(p), f = fract(p);
-      vec2 u = f * f * (3.0 - 2.0 * f);
-      vec2 ga = hash2(i)             * 2.0 - 1.0;
-      vec2 gb = hash2(i + vec2(1,0)) * 2.0 - 1.0;
-      vec2 gc = hash2(i + vec2(0,1)) * 2.0 - 1.0;
-      vec2 gd = hash2(i + vec2(1,1)) * 2.0 - 1.0;
-      float va = dot(ga, f);
-      float vb = dot(gb, f - vec2(1,0));
-      float vc = dot(gc, f - vec2(0,1));
-      float vd = dot(gd, f - vec2(1,1));
-      return 0.5 + 0.5 * (va + u.x*(vb-va) + u.y*(vc-va) + u.x*u.y*(va-vb-vc+vd));
-    }
-
-    // fractal Brownian motion — 5 octaves
-    float fbm(vec2 p) {
-      float v = 0.0, a = 0.5;
-      mat2 rot = mat2(0.8, -0.6, 0.6, 0.8);
-      for (int i = 0; i < 5; i++) {
-        v += a * noise(p);
-        p  = rot * p * 2.02;
-        a *= 0.5;
-      }
-      return v;
-    }
-
-    // water caustic: bright veins from interference of fbm layers
-    float caustic(vec2 p, float t) {
-      vec2 q = vec2(fbm(p + t * 0.18), fbm(p + vec2(5.2, 1.3)));
-      vec2 r = vec2(fbm(p + 2.0 * q + vec2(1.7, 9.2) + t * 0.14),
-                    fbm(p + 2.0 * q + vec2(8.3, 2.8) + t * 0.10));
-      float f = fbm(p + 2.8 * r);
-      // create sharp bright veins
-      float vein = 1.0 - abs(sin(f * 6.28318 * 1.5 + t * 0.22));
-      vein = pow(vein, 3.8);
-      return vein;
+    float sdLine(vec2 p, vec2 a, vec2 b) {
+      float vel = clamp(length(u_velocity), 0.5, 1.5);
+      vec2 pa = p - a, ba = b - a;
+      float len2 = dot(ba, ba);
+      if (len2 < 0.000001) return length(pa) / vel;
+      float h = clamp(dot(pa,ba)/len2, 0.0, 1.0);
+      return length(pa - ba*h) / vel;
     }
 
     void main() {
-      vec2 uv = gl_FragCoord.xy / u_res;
-      // aspect-correct UV, centered
-      vec2 p = (uv - 0.5) * vec2(u_res.x / u_res.y, 1.0);
+      vec2 spd = vec2(u_speed) / u_res;
+      vec4 self = texture2D(u_prev, v_uv);
 
-      // mouse tilt: stronger UV warp based on pointer position
-      vec2 m = (u_mouse - 0.5) * 0.28;
-      p += m;
+      float top    = texture2D(u_prev, v_uv - spd.yx).r;
+      float right  = texture2D(u_prev, v_uv + spd.xy).r;
+      float bottom = texture2D(u_prev, v_uv + spd.yx).r;
+      float left   = texture2D(u_prev, v_uv - spd.xy).r;
 
-      float t = u_time * 0.38;
-      p *= 2.4;
+      float velocity = clamp(length(u_velocity), 0.1, 1.0);
+      float shade = smoothstep(0.02 * u_size * velocity, 0.0,
+                               sdLine(v_uv, u_last_mouse, u_mouse));
+      float d = shade * u_viscosity;
+      d += -(self.g - 0.5) * 2.0 + (top + right + bottom + left - 2.0);
+      d *= 0.99;
+      d *= float(u_frame > 5);
+      d = d * 0.5 + 0.5;
 
-      // two caustic layers at slight offset for depth
-      float c1 = caustic(p,           t);
-      float c2 = caustic(p * 0.74 + vec2(3.1, 1.7), t * 0.82);
-      float c  = c1 * 0.62 + c2 * 0.48;
-
-      // click ripples: radial wave distortion
-      float rippleWarp = 0.0;
-      for (int i = 0; i < 3; i++) {
-        vec2  rpos  = u_ripples[i].xy;
-        float rtime = u_ripples[i].z;
-        if (rtime < 0.0) continue;
-        float age     = u_time - rtime;
-        float dur     = 2.2;
-        if (age > dur) continue;
-        float progress = age / dur;
-        float decay    = (1.0 - progress) * (1.0 - progress) * (1.0 - progress);
-        // aspect-correct distance from ripple center
-        vec2  diff = uv - rpos;
-        diff.x    *= u_res.x / u_res.y;
-        float dist = length(diff);
-        float front = progress * 0.9; // wave front radius
-        // softer ring with noise-like variation
-        float ring  = exp(-pow((dist - front) * 28.0, 2.0)); // sharper falloff (14 → 28)
-        // add subtle noise variation to ring edge
-        float noiseVar = sin(dist * 80.0 + u_time * 2.0) * 0.15 + sin(dist * 120.0 - u_time * 1.5) * 0.1;
-        ring *= (1.0 + noiseVar * decay);
-        rippleWarp += ring * decay * 0.22;
-      }
-      c = clamp(c + rippleWarp, 0.0, 1.0);
-
-      // primary color: #00ccbd (0, 204, 189) = (0.0, 0.8, 0.741)
-      // palette: dark teal → bright cyan-teal
-      vec3 deepCol  = vec3(0.0, 0.24,  0.22);      // deep #003d38
-      vec3 midCol   = vec3(0.0, 0.60,  0.56);      // mid #00998f
-      vec3 brightCol = vec3(0.0, 0.80, 0.741);     // primary #00ccbd
-      vec3 peakCol  = vec3(0.60, 0.95, 0.90);      // peak bright #99f2e6
-
-      vec3 col = mix(deepCol, midCol, smoothstep(0.0, 0.42, c));
-      col      = mix(col, brightCol, smoothstep(0.38, 0.72, c));
-      col      = mix(col, peakCol,   smoothstep(0.65, 1.00, c));
-
-      // vignette: darken edges so cards/UI read clearly
-      float vign = 1.0 - smoothstep(0.35, 1.1, length(uv - 0.5) * 1.6);
-      col *= vign * 0.88 + 0.12;
-
-      // fade with scroll
-      float alpha = (1.0 - u_scroll * 0.82) * 0.88;
-      gl_FragColor = vec4(col * alpha, alpha);
+      gl_FragColor = vec4(d, self.r, 0.0, 1.0);
     }
   `;
 
+  // ── Pass 2: render water surface — black base, teal from ripple energy, unified displacement ──
+  const renderFrag = `
+    precision highp float;
+    uniform sampler2D u_ripple;
+    uniform sampler2D u_title;
+    uniform vec2  u_sim_res;
+    uniform float u_scroll;
+    uniform float u_disp;
+    uniform float u_light;
+    uniform float u_shadow;
+    varying vec2 v_uv;
+
+    const float bias  = 0.2;
+    const float scale = 10.0;
+    const float power = 10.1;
+
+    vec4 blurRipple(vec2 uv) {
+      vec2 off = vec2(1.333) / u_sim_res;
+      vec4 c = vec4(0.0);
+      c += texture2D(u_ripple, uv) * 0.294;
+      c += texture2D(u_ripple, uv + off) * 0.353;
+      c += texture2D(u_ripple, uv - off) * 0.353;
+      return c;
+    }
+
+    float bumpMap(vec2 uv, float h) {
+      return 1.0 - blurRipple(uv).r * h;
+    }
+
+    vec4 renderPass(vec2 uv, inout float distortion) {
+      vec3 surfacePos = vec3(uv, 0.0);
+      vec3 ray = normalize(vec3(uv, 1.0));
+      vec3 lightPos = vec3(2.0, 3.0, -3.0);
+      vec3 normal = vec3(0.0, 0.0, -1.0);
+      vec2 sd = vec2(0.005, 0.0);
+
+      float fx = bumpMap(uv + sd.xy, 0.2);
+      float fy = bumpMap(uv + sd.yx, 0.2);
+      float f  = bumpMap(uv, 0.2);
+      distortion = f;
+
+      fx = (fx - f) / sd.x;
+      fy = (fy - f) / sd.x;
+      normal = normalize(normal + vec3(fx, fy, 0.0) * 0.2);
+
+      float shade = bias + scale * pow(1.0 + dot(normalize(surfacePos - vec3(uv, -3.0)), normal), power);
+      vec3 lightV = lightPos - surfacePos;
+      float lightDist = max(length(lightV), 0.001);
+      lightV /= lightDist;
+
+      vec3 lightColor = vec3(1.0 - u_light / 20.0);
+      float brightness = 1.0 - u_light / 40.0;
+      float falloff = 0.1;
+      float attenuation = (0.75 + u_light / 40.0) / (1.0 + lightDist * lightDist * falloff);
+      float diffuse  = max(dot(normal, lightV), 0.0);
+      float specular = pow(max(dot(reflect(-lightV, normal), -ray), 0.0), 15.0) * 0.1;
+
+      float metalness = 1.0 - blurRipple(uv).r;
+      metalness *= metalness;
+
+      vec3 texCol = vec3(0.5) * brightness;
+      vec3 color = (texCol * (diffuse * vec3(0.9) * 2.0 + 0.5)
+                  + lightColor * specular * f * 2.0 * metalness) * attenuation * 2.0;
+      return vec4(color, 1.0);
+    }
+
+    void main() {
+      float distortion;
+      vec4 reflections = renderPass(v_uv, distortion);
+
+      float rippleVal = blurRipple(v_uv).r;
+      // wave energy: deviation from neutral 0.5 → 0 at rest, 1 at peak
+      float energy = clamp(abs(rippleVal - 0.5) * 3.2, 0.0, 1.0);
+
+      float ripple = 0.16 + distortion * 0.1 - 0.1 + reflections.r * 0.7;
+
+      // base: near-black with imperceptible teal tint
+      vec3 base = vec3(0.014, 0.022, 0.020);
+
+      // teal palette — only emerges when there is wave energy
+      vec3 tealDim    = vec3(0.0,   0.18,  0.17);
+      vec3 tealMid    = vec3(0.0,   0.48,  0.44);
+      vec3 tealBright = vec3(0.20,  0.82,  0.74);
+      vec3 tealPeak   = vec3(0.55,  0.96,  0.88);
+
+      vec3 tealCol = mix(tealDim,    tealMid,    smoothstep(0.0,  0.35, energy));
+      tealCol      = mix(tealCol,    tealBright, smoothstep(0.35, 0.72, energy));
+      tealCol      = mix(tealCol,    tealPeak,   smoothstep(0.72, 1.00, energy));
+
+      // blend black → teal driven by energy
+      vec3 col = mix(base, tealCol, energy * 0.90);
+
+      // specular reflection contributes a teal-tinted highlight
+      col += reflections.rgb * vec3(0.22, 0.68, 0.62) * energy;
+
+      float lights = max(0.0, ripple - 0.5);
+      col += lights * (u_light / 10.0) * vec3(0.30, 1.0, 0.90);
+      float shadow = max(0.0, 1.0 - (ripple + 0.5));
+      col -= shadow * (u_shadow / 10.0);
+
+      // title: wide-kernel blur of ripple height → smooth 2D displacement
+      // height deviation from 0.5 is unipolar (no sign flip) → text floats with waves, no oscillation
+      vec2 px = vec2(1.0) / u_sim_res;
+      float h00 = texture2D(u_ripple, v_uv).r;
+      float h10 = texture2D(u_ripple, v_uv + vec2( px.x * 8.0, 0.0)).r;
+      float hm1 = texture2D(u_ripple, v_uv + vec2(-px.x * 8.0, 0.0)).r;
+      float h01 = texture2D(u_ripple, v_uv + vec2(0.0,  px.y * 8.0)).r;
+      float h0m = texture2D(u_ripple, v_uv + vec2(0.0, -px.y * 8.0)).r;
+      // wide gaussian: smooth height avoids high-freq oscillation
+      float hSmooth = h00 * 0.36 + (h10 + hm1 + h01 + h0m) * 0.16;
+      // deviation from neutral 0.5 drives displacement magnitude and direction
+      float hDev = hSmooth - 0.5;
+      // direction: tilt toward the wave — use local gradient of the smooth field
+      float gx = h10 - hm1;
+      float gy = h01 - h0m;
+      vec2 titleUv = clamp(v_uv + vec2(gx, gy) * hDev * (u_disp * 0.4), 0.001, 0.999);
+      vec4 title = texture2D(u_title, titleUv);
+      col = mix(col, title.rgb, title.a * 0.92);
+
+      float vign = 1.0 - smoothstep(0.35, 1.1, length(v_uv - 0.5) * 1.6);
+      col *= vign * 0.88 + 0.12;
+
+      float alpha = (1.0 - u_scroll * 0.82) * 0.92;
+      gl_FragColor = vec4(clamp(col, 0.0, 1.0) * alpha, alpha);
+    }
+  `;
+
+  // ── compile helper ────────────────────────────────────────────────────────
   const compile = (type, src) => {
     const sh = gl.createShader(type);
     gl.shaderSource(sh, src);
     gl.compileShader(sh);
+    if (!gl.getShaderParameter(sh, gl.COMPILE_STATUS)) {
+      console.error("Shader compile error:", gl.getShaderInfoLog(sh));
+    }
     return sh;
   };
+  const makeProgram = (fSrc) => {
+    const p = gl.createProgram();
+    gl.attachShader(p, compile(gl.VERTEX_SHADER, quadVert));
+    gl.attachShader(p, compile(gl.FRAGMENT_SHADER, fSrc));
+    gl.linkProgram(p);
+    if (!gl.getProgramParameter(p, gl.LINK_STATUS)) {
+      console.error("Program link error:", gl.getProgramInfoLog(p));
+    }
+    return p;
+  };
 
-  const prog = gl.createProgram();
-  gl.attachShader(prog, compile(gl.VERTEX_SHADER, vert));
-  gl.attachShader(prog, compile(gl.FRAGMENT_SHADER, frag));
-  gl.linkProgram(prog);
-  gl.useProgram(prog);
+  const simProg    = makeProgram(simFrag);
+  const renderProg = makeProgram(renderFrag);
 
   const buf = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, buf);
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, 1,1]), gl.STATIC_DRAW);
-  const loc = gl.getAttribLocation(prog, "a_pos");
-  gl.enableVertexAttribArray(loc);
-  gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
 
-  const uTime    = gl.getUniformLocation(prog, "u_time");
-  const uRes     = gl.getUniformLocation(prog, "u_res");
-  const uMouse   = gl.getUniformLocation(prog, "u_mouse");
-  const uScroll  = gl.getUniformLocation(prog, "u_scroll");
-  const uRipples = [0,1,2].map(i => gl.getUniformLocation(prog, `u_ripples[${i}]`));
+  const simAPos    = gl.getAttribLocation(simProg,    "a_pos");
+  const renderAPos = gl.getAttribLocation(renderProg, "a_pos");
 
-  // ripple state: {x, y, startTime} in normalised coords + shader time
-  const waterRipples = [{x:0,y:0,t:-99},{x:0,y:0,t:-99},{x:0,y:0,t:-99}];
-  let waterRippleIdx = 0;
-  const addWaterRipple = (clientX, clientY) => {
-    const r = waterRipples[waterRippleIdx % 3];
-    r.x = clientX / window.innerWidth;
-    r.y = 1.0 - clientY / window.innerHeight;
-    r.pending = true; // will be stamped with shader time on next frame
-    waterRippleIdx++;
+  const bindQuad = (loc) => {
+    gl.enableVertexAttribArray(loc);
+    gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
   };
-  window.addEventListener("pointerdown", (e) => {
-    if (heroStep !== 0) return;
-    addWaterRipple(e.clientX, e.clientY);
-  });
 
-  gl.enable(gl.BLEND);
-  gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
-  gl.clearColor(0, 0, 0, 0);
+  // ── FBO helpers ───────────────────────────────────────────────────────────
+  const makeFBO = (w, h) => {
+    const tex = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, tex);
+    // init to neutral 0.5 (=0x80) — wave equation resting state is r=0.5, g=0.5
+    const init = new Uint8Array(w * h * 4).fill(0x80);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, w, h, 0, gl.RGBA, gl.UNSIGNED_BYTE, init);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    const fb = gl.createFramebuffer();
+    gl.bindFramebuffer(gl.FRAMEBUFFER, fb);
+    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tex, 0);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    return { tex, fb };
+  };
 
+  let simW = 0, simH = 0;
+  let fboA, fboB;
+  let read, write;
+
+  const resizeFBOs = (w, h) => {
+    if (fboA) { gl.deleteTexture(fboA.tex); gl.deleteFramebuffer(fboA.fb); }
+    if (fboB) { gl.deleteTexture(fboB.tex); gl.deleteFramebuffer(fboB.fb); }
+    fboA = makeFBO(w, h);
+    fboB = makeFBO(w, h);
+    simW = w; simH = h;
+    // update read/write references to the new FBOs
+    read = fboA; write = fboB;
+  };
+
+  // ── title texture ─────────────────────────────────────────────────────────
+  const titleTex = gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D, titleTex);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+
+  const titleCanvas2d = document.createElement("canvas");
+  const updateTitleTexture = () => {
+    const w = canvas.clientWidth  * Math.min(window.devicePixelRatio, 2);
+    const h = canvas.clientHeight * Math.min(window.devicePixelRatio, 2);
+    if (w < 4 || h < 4) return; // canvas not yet laid out
+    titleCanvas2d.width  = w;
+    titleCanvas2d.height = h;
+    const ctx2d = titleCanvas2d.getContext("2d");
+    ctx2d.clearRect(0, 0, w, h);
+    const fontSize = Math.round(w * 0.088);
+    ctx2d.font = `700 ${fontSize}px "Helvetica Neue", Helvetica, Arial, sans-serif`;
+    ctx2d.fillStyle = "rgba(255,255,255,0.95)";
+    ctx2d.textAlign = "center";
+    ctx2d.textBaseline = "middle";
+    ctx2d.fillText("LUCIAN J. YANG", w / 2, h / 2);
+    gl.bindTexture(gl.TEXTURE_2D, titleTex);
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, titleCanvas2d);
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
+  };
+
+  // ── resize ────────────────────────────────────────────────────────────────
+  // Sim runs at half resolution for performance; render pass upscales via LINEAR
+  const SIM_SCALE = 0.5;
   const resize = () => {
     const pr = Math.min(window.devicePixelRatio, 2);
-    canvas.width  = Math.round(canvas.clientWidth  * pr);
-    canvas.height = Math.round(canvas.clientHeight * pr);
-    gl.viewport(0, 0, canvas.width, canvas.height);
+    const w  = Math.round(canvas.clientWidth  * pr);
+    const h  = Math.round(canvas.clientHeight * pr);
+    if (w < 4 || h < 4) { requestAnimationFrame(resize); return; }
+    canvas.width  = w;
+    canvas.height = h;
+    gl.viewport(0, 0, w, h);
+    resizeFBOs(Math.round(w * SIM_SCALE), Math.round(h * SIM_SCALE));
+    updateTitleTexture();
   };
   window.addEventListener("resize", resize);
   resize();
 
-  let mx = 0.5, my = 0.5, tmx = 0.5, tmy = 0.5;
-  const onPointer = (e) => {
-    tmx = e.clientX / window.innerWidth;
-    tmy = 1.0 - e.clientY / window.innerHeight;
+  // ── cache uniform locations ───────────────────────────────────────────────
+  const uSim = {
+    prev:       gl.getUniformLocation(simProg, "u_prev"),
+    res:        gl.getUniformLocation(simProg, "u_res"),
+    mouse:      gl.getUniformLocation(simProg, "u_mouse"),
+    lastMouse:  gl.getUniformLocation(simProg, "u_last_mouse"),
+    velocity:   gl.getUniformLocation(simProg, "u_velocity"),
+    viscosity:  gl.getUniformLocation(simProg, "u_viscosity"),
+    speed:      gl.getUniformLocation(simProg, "u_speed"),
+    size:       gl.getUniformLocation(simProg, "u_size"),
+    frame:      gl.getUniformLocation(simProg, "u_frame"),
   };
-  window.addEventListener("pointermove", onPointer);
+  const uRender = {
+    ripple:   gl.getUniformLocation(renderProg, "u_ripple"),
+    title:    gl.getUniformLocation(renderProg, "u_title"),
+    simRes:   gl.getUniformLocation(renderProg, "u_sim_res"),
+    scroll:   gl.getUniformLocation(renderProg, "u_scroll"),
+    disp:     gl.getUniformLocation(renderProg, "u_disp"),
+    light:    gl.getUniformLocation(renderProg, "u_light"),
+    shadow:   gl.getUniformLocation(renderProg, "u_shadow"),
+  };
 
-  let raf;
-  const animate = (t) => {
-    raf = requestAnimationFrame(animate);
-    mx += (tmx - mx) * 0.08;
-    my += (tmy - my) * 0.08;
-    const shaderTime = t * 0.001;
-    const sp = parseFloat(heroStage?.style.getPropertyValue("--hero-scroll-progress") || "0");
-    // stamp pending ripples with current shader time
-    for (const r of waterRipples) {
-      if (r.pending) { r.t = shaderTime; r.pending = false; }
+  // ── mouse state ───────────────────────────────────────────────────────────
+  let mx = -1.0, my = -0.5, lmx = -1.1, lmy = -0.6;
+  let velX = 0, velY = 0;
+  let pointerSeeded = false;
+
+  const onPointer = (e) => {
+    const nx = e.clientX / window.innerWidth;
+    const ny = 1.0 - e.clientY / window.innerHeight;
+    if (!pointerSeeded) {
+      // first move: seed both positions to avoid a teleport-line across the canvas
+      mx = nx; my = ny; lmx = nx; lmy = ny;
+      pointerSeeded = true;
+      return;
     }
-    gl.clear(gl.COLOR_BUFFER_BIT);
-    gl.uniform1f(uTime,   shaderTime);
-    gl.uniform2f(uRes,    canvas.width, canvas.height);
-    gl.uniform2f(uMouse,  mx, my);
-    gl.uniform1f(uScroll, sp);
-    for (let i = 0; i < 3; i++) {
-      gl.uniform3f(uRipples[i], waterRipples[i].x, waterRipples[i].y, waterRipples[i].t);
-    }
-    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    lmx = mx; lmy = my;
+    mx = nx; my = ny;
+    velX = (mx - lmx) * window.innerWidth  / 16;
+    velY = (my - lmy) * window.innerHeight / 16;
   };
-  animate(0);
+  window.addEventListener("pointermove", onPointer, { passive: true });
+
+  // ── render loop ───────────────────────────────────────────────────────────
+  let frame = 0;
+  let raf;
+
+  const animate = () => {
+    raf = requestAnimationFrame(animate);
+    const sp = parseFloat(heroStage?.style.getPropertyValue("--hero-scroll-progress") || "0");
+
+    // auto-resize when canvas becomes visible after has-entered
+    const pr = Math.min(window.devicePixelRatio, 2);
+    const cw = Math.round(canvas.clientWidth * pr);
+    const ch = Math.round(canvas.clientHeight * pr);
+    if (cw > 4 && ch > 4 && (cw !== canvas.width || ch !== canvas.height)) {
+      canvas.width = cw; canvas.height = ch;
+      gl.viewport(0, 0, cw, ch);
+      resizeFBOs(Math.round(cw * SIM_SCALE), Math.round(ch * SIM_SCALE));
+      updateTitleTexture();
+    }
+
+    // ── sim pass ──
+    gl.bindFramebuffer(gl.FRAMEBUFFER, write.fb);
+    gl.viewport(0, 0, simW, simH);
+    gl.useProgram(simProg);
+    bindQuad(simAPos);
+
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, read.tex);
+    gl.uniform1i(uSim.prev,      0);
+    gl.uniform2f(uSim.res,       simW, simH);
+    gl.uniform2f(uSim.mouse,     mx,   my);
+    gl.uniform2f(uSim.lastMouse, lmx,  lmy);
+    gl.uniform2f(uSim.velocity,  velX, velY);
+    gl.uniform1f(uSim.viscosity, 7.5);
+    gl.uniform1f(uSim.speed,     5.0);
+    gl.uniform1f(uSim.size,      1.25);
+    gl.uniform1i(uSim.frame,     frame);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+
+    const tmp = read; read = write; write = tmp;
+    velX *= 0.88;
+    velY *= 0.88;
+
+    // ── render pass ──
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    gl.viewport(0, 0, canvas.width, canvas.height);
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+
+    gl.useProgram(renderProg);
+    bindQuad(renderAPos);
+
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, read.tex);
+    gl.uniform1i(uRender.ripple,  0);
+    gl.uniform2f(uRender.simRes,  simW, simH);
+    gl.uniform1f(uRender.scroll,  sp);
+    gl.uniform1f(uRender.disp,    18.0);
+    gl.uniform1f(uRender.light,   5.0);
+    gl.uniform1f(uRender.shadow,  2.5);
+
+    gl.activeTexture(gl.TEXTURE1);
+    gl.bindTexture(gl.TEXTURE_2D, titleTex);
+    gl.uniform1i(uRender.title, 1);
+
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+
+    frame++;
+  };
+  animate();
+
+  // re-upload title texture after site enters (canvas may have been invisible before)
+  document.addEventListener("siteEntered", () => {
+    requestAnimationFrame(() => { resize(); });
+  }, { once: true });
 
   const cleanup = () => {
     cancelAnimationFrame(raf);
     window.removeEventListener("pointermove", onPointer);
     window.removeEventListener("resize", resize);
-    gl.deleteProgram(prog);
-    gl.deleteBuffer(buf);
   };
   window.addEventListener("pagehide", cleanup, { once: true });
 };
@@ -3574,6 +4028,15 @@ const enterSite = () => {
 
 entryGo?.addEventListener("click", enterSite);
 
+document.getElementById("pixel-avatar")?.addEventListener("click", () => {
+  if (!document.body.classList.contains("has-entered")) return;
+  // reset to entry state
+  window.scrollTo(0, 0);
+  document.body.classList.remove("has-entered", "is-entering", "is-unfolding");
+  hasEntered = false;
+  entryScreen?.style.removeProperty("display");
+});
+
 entryScreen?.addEventListener("click", (event) => {
   if (hasEntered || document.body.classList.contains("is-unfolding") || document.body.classList.contains("is-entering")) return;
   if (isInsideEntryCore(event)) return;
@@ -3709,7 +4172,7 @@ const createHeroRipple = (clientX, clientY, isClick = false) => {
   });
 
   if (heroRipples.length > 3) heroRipples.shift();
-  playWaterDrop();
+  if (isClick) playWaterDrop();
 };
 
 heroStage?.addEventListener("click", (event) => {
@@ -3895,8 +4358,22 @@ window.requestAnimationFrame(animateCards);
 (function () {
   const section = document.querySelector(".portrait-about-wrapper");
   if (!section) return;
+  const video = section.querySelector(".portrait-video");
 
   let ticking = false;
+  let targetVideoTime = 0;
+  let scrubRaf = null;
+  const smootherStep = (t) => t * t * t * (t * (t * 6 - 15) + 10);
+
+  const scrubVideo = () => {
+    scrubRaf = requestAnimationFrame(scrubVideo);
+    if (!video || !Number.isFinite(video.duration) || video.duration <= 0) return;
+    const delta = targetVideoTime - video.currentTime;
+    if (Math.abs(delta) < 0.006) return;
+    const step = Math.sign(delta) * Math.min(Math.abs(delta) * 0.14, 0.045);
+    video.currentTime += step;
+  };
+
   const update = () => {
     ticking = false;
     const rect = section.getBoundingClientRect();
@@ -3911,7 +4388,25 @@ window.requestAnimationFrame(animateCards);
 
     section.style.setProperty("--portrait-progress", progress.toFixed(4));
     section.style.setProperty("--portrait-exit", exit.toFixed(4));
+
+    if (video && Number.isFinite(video.duration) && video.duration > 0) {
+      const rawVideoProgress = Math.max(0, Math.min(1, progress / 0.9));
+      const videoProgress = smootherStep(rawVideoProgress);
+      targetVideoTime = video.duration * videoProgress;
+    }
   };
+
+  if (video) {
+    video.pause();
+    video.addEventListener("loadedmetadata", () => {
+      section.classList.add("is-portrait-video-ready");
+      update();
+    }, { once: true });
+    video.addEventListener("canplay", () => {
+      section.classList.add("is-portrait-video-ready");
+    }, { once: true });
+    scrubVideo();
+  }
 
   window.addEventListener("scroll", () => {
     if (ticking) return;
@@ -3920,6 +4415,9 @@ window.requestAnimationFrame(animateCards);
   }, { passive: true });
 
   update();
+  window.addEventListener("pagehide", () => {
+    if (scrubRaf) cancelAnimationFrame(scrubRaf);
+  }, { once: true });
 })();
 
 // Bottom nav scroll spy
