@@ -59,7 +59,7 @@ const i18n = {
     contact_text: "如果你正在寻找一位既懂包装表达，也重视真实落地与成本约束的设计师，欢迎联系我。",
     contact_collab: "OEM / 贴牌包装 · 礼品与福利渠道设计 · 系列包装 · 节庆礼盒 · 包装升级 · 包装提案与方向判断支持",
     focus_kicker: "当前项目",
-    meta_name: "杨钦鹏",
+    meta_name: "©杨钦鹏",
   },
   en: {
     nav_about: "About",
@@ -121,7 +121,7 @@ const i18n = {
     contact_text: "If you are looking for a designer who understands packaging expression and takes real-world execution and cost constraints seriously, get in touch.",
     contact_collab: "OEM / Private Label · Gifting & Welfare Channels · Series Packaging · Seasonal Gift Boxes · Packaging Upgrade · Proposal & Direction Support",
     focus_kicker: "Active Project",
-    meta_name: "Lucian J. Yang",
+    meta_name: "©Lucian J. Yang",
   },
 };
 
@@ -274,6 +274,7 @@ const HERO_INTRO_TICKS = 2;
 let heroStep = 0;           // 0..HERO_CARD_COUNT
 let heroStepTarget = 0;     // lerp target (float)
 let heroWheelLocked = false;// debounce between steps
+let heroIntroBudget = HERO_INTRO_TICKS; // ticks remaining in water-only intro
 const heroCardStates = [];
 const fieldPointer = { x: 0.5, y: 0.5, active: false };
 const precisionCursor = document.querySelector("#precision-cursor");
@@ -328,6 +329,10 @@ const homeLinks = Array.from(document.querySelectorAll('a[href="#top"]'));
 const soundToggle = document.querySelector("#sound-toggle");
 const fullscreenToggle = document.querySelector("#fullscreen-toggle");
 const SOUND_STORAGE_KEY = "lucianYangSoundEnabled";
+
+if ("scrollRestoration" in window.history) {
+  window.history.scrollRestoration = "manual";
+}
 
 const readStoredBoolean = (key, fallback) => {
   try {
@@ -895,7 +900,15 @@ const updateStaticText = () => {
   document.querySelectorAll("[data-i18n]").forEach((node) => {
     const key = node.dataset.i18n;
     if (i18n[currentLang][key]) {
-      node.textContent = i18n[currentLang][key];
+      const value = i18n[currentLang][key];
+      const navLabel = node.querySelector?.(".bottom-nav-label");
+      if (navLabel) {
+        navLabel.querySelectorAll("span").forEach((span) => {
+          span.textContent = value;
+        });
+      } else {
+        node.textContent = value;
+      }
     }
   });
 
@@ -1037,6 +1050,54 @@ const releaseOrderedLayout = () => {
     card.classList.remove("is-ordered", "is-dimmed", "is-active");
   });
   heroFocusPanel.classList.remove("is-visible");
+};
+
+const forceScrollTop = () => {
+  document.documentElement.scrollTop = 0;
+  document.body.scrollTop = 0;
+  window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+};
+
+const resetHeroSequenceState = ({ resetScroll = false, resetCards = true } = {}) => {
+  if (resetScroll) forceScrollTop();
+
+  heroStep = 0;
+  heroStepTarget = 0;
+  heroIntroBudget = HERO_INTRO_TICKS;
+  heroWheelLocked = false;
+  orderedMode = false;
+  selectedCardIndex = -1;
+  selectionStartedAt = 0;
+  currentHeroCard = null;
+  fieldPointer.active = false;
+  window.clearTimeout(focusTimeout);
+
+  document.documentElement.classList.remove("snap-active");
+  heroFocusPanel?.classList.remove("is-visible");
+  heroStage?.style.setProperty("--hero-scroll-progress", "0");
+  heroStage?.style.setProperty("--hero-intro-progress", "0");
+  heroStage?.style.setProperty("--hero-tail-fade", "1");
+
+  heroCards.forEach((card) => {
+    card.classList.remove("is-active", "is-dimmed", "is-ordered", "is-scroll-current");
+  });
+
+  if (!resetCards) return;
+
+  resizeStage();
+  initCards();
+  heroCardStates.forEach((state) => {
+    setCardPosition(state.card, {
+      x: state.x,
+      y: state.y,
+      w: state.width,
+      h: state.height,
+      z: state.depth,
+      r: state.rotation,
+      scale: state.scale,
+      opacity: 0,
+    });
+  });
 };
 
 const enterProject = (card) => {
@@ -1424,7 +1485,7 @@ const buildGalleryItems = (items) => {
     <article class="work-gallery-item ${item.size === "small" ? "is-small" : ""}" role="button" tabindex="0" data-project-index="${index}">
       <p class="work-gallery-caption">${getGalleryItemTitle(item, index)}</p>
       <div class="work-gallery-frame" style="--gallery-bg: ${item.bg || "#d8d0c0"}; --gallery-position: ${item.position || "center"};">
-        <img src="${item.src}" alt="">
+        <img src="${item.src}" alt="" decoding="async">
       </div>
     </article>
   `).join("");
@@ -1453,12 +1514,12 @@ const renderWorkDetail = (item, index) => {
         </div>
       </aside>
       <figure class="work-detail-hero" style="--gallery-position: ${item.position || "center"};">
-        <img src="${item.src}" alt="">
+        <img src="${item.src}" alt="" decoding="async">
       </figure>
     </section>
     <section class="work-detail-full">
       <figure class="work-detail-full-figure" style="--gallery-position: ${item.position || "center"};">
-        <img src="${item.src}" alt="">
+        <img src="${item.src}" alt="" decoding="async">
       </figure>
     </section>
   `;
@@ -1558,15 +1619,18 @@ const closeWorkGallery = () => {
 
 document.querySelectorAll(".bottom-nav-item").forEach((item) => {
   item.addEventListener("click", (event) => {
-    if (!galleryOpen) return;
     const targetId = item.getAttribute("href");
     if (!targetId || !targetId.startsWith("#")) return;
+    const target = document.querySelector(targetId);
+    if (!target) return;
+
     event.preventDefault();
-    closeWorkGallery();
+    if (galleryOpen) closeWorkGallery();
+
     window.requestAnimationFrame(() => {
-      document.querySelector(targetId)?.scrollIntoView({
+      window.scrollTo({
+        top: target.offsetTop,
         behavior: reducedMotion ? "auto" : "smooth",
-        block: "start",
       });
     });
   });
@@ -2856,7 +2920,12 @@ const updateBeijingMeta = () => {
   });
 
   if (beijingTimeNode) {
-    beijingTimeNode.textContent = timeFormatter.format(now);
+    const period = new Intl.DateTimeFormat("en-US", {
+      timeZone: "Asia/Shanghai",
+      hour: "numeric",
+      hour12: true,
+    }).formatToParts(now).find((part) => part.type === "dayPeriod")?.value || "";
+    beijingTimeNode.innerHTML = `<span class="top-meta-period">${period.toUpperCase()}</span>${timeFormatter.format(now)}`;
   }
 
   if (beijingDateNode) {
@@ -3898,12 +3967,14 @@ const createEntryDieline = (clientX, clientY) => {
 
 const enterSite = () => {
   if (hasEntered) return;
+  resetHeroSequenceState({ resetScroll: true, resetCards: true });
   hasEntered = true;
   playUiTone("click");
 
   if (reducedMotion) {
     document.body.classList.add("has-entered");
     requestAnimationFrame(() => {
+      forceScrollTop();
       resizeStage();
       initCards();
     });
@@ -3924,10 +3995,13 @@ const enterSite = () => {
   window.setTimeout(() => {
     document.body.classList.remove("is-entering");
     document.body.classList.add("has-entered");
+    forceScrollTop();
     // Re-measure stage after CSS switches to sticky/100vh
     requestAnimationFrame(() => {
+      forceScrollTop();
       resizeStage();
       initCards();
+      resetHeroSequenceState({ resetScroll: false, resetCards: true });
     });
     document.dispatchEvent(new CustomEvent("siteEntered"));
   }, 2680);
@@ -3960,10 +4034,16 @@ entryScreen?.addEventListener("touchmove", (event) => {
 document.getElementById("pixel-avatar")?.addEventListener("click", () => {
   if (!document.body.classList.contains("has-entered")) return;
   // reset to entry state
-  window.scrollTo(0, 0);
   document.body.classList.remove("has-entered", "is-entering", "is-unfolding");
   hasEntered = false;
+  resetHeroSequenceState({ resetScroll: true, resetCards: true });
+  requestAnimationFrame(forceScrollTop);
   entryScreen?.style.removeProperty("display");
+});
+
+window.addEventListener("pageshow", () => {
+  if (document.body.classList.contains("has-entered")) return;
+  resetHeroSequenceState({ resetScroll: true, resetCards: true });
 });
 
 entryScreen?.addEventListener("click", (event) => {
@@ -3973,21 +4053,8 @@ entryScreen?.addEventListener("click", (event) => {
   createEntryDieline(event.clientX, event.clientY);
 });
 
-entryScreen?.addEventListener(
-  "wheel",
-  (event) => {
-    if (event.deltaY > 0) {
-      event.preventDefault();
-      enterSite();
-    }
-  },
-  { passive: false }
-);
-
 // Hero section wheel hijack: discrete step-through of intro + 6 cards
 // 2 intro ticks (water only) → 6 card steps → release to normal scroll
-let heroIntroBudget = HERO_INTRO_TICKS; // ticks remaining in water-only intro
-
 const isHeroStepControlActive = () => {
   if (!document.body.classList.contains("has-entered")) return false;
   if (orderedMode) return false;
@@ -4261,6 +4328,7 @@ window.addEventListener("resize", () => {
 switchLanguage("zh");
 resizeStage();
 initCards();
+resetHeroSequenceState({ resetScroll: true, resetCards: true });
 updateFocusPanel("oem");
 updateWorksPanel("oem");
 heroWireframeController = initHeroWireframe(heroWireframe);
