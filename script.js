@@ -657,6 +657,7 @@ const contactForm = document.querySelector("#contact-form");
 const showContactToast = () => {
   const toast = document.getElementById("contact-toast");
   if (!toast) return;
+  toast.textContent = currentLang === "zh" ? "已打开邮件，并复制内容" : "Email draft opened and copied";
   toast.classList.add("is-visible");
   setTimeout(() => toast.classList.remove("is-visible"), 2400);
 };
@@ -695,9 +696,9 @@ contactForm?.addEventListener("submit", (event) => {
     message,
   ].join("\n");
 
+  navigator.clipboard?.writeText(body).catch(() => null);
   window.location.href = `mailto:y1156813759@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   playUiTone("click");
-  contactForm.reset();
   showContactToast();
 });
 
@@ -707,9 +708,23 @@ const wechatModal = document.querySelector("#wechat-qr-modal");
 const wechatBackdrop = document.querySelector("#wechat-qr-backdrop");
 const wechatClose = document.querySelector("#wechat-qr-close");
 
-wechatTrigger?.addEventListener("click", () => wechatModal?.classList.add("is-open"));
-wechatClose?.addEventListener("click", () => wechatModal?.classList.remove("is-open"));
-wechatBackdrop?.addEventListener("click", () => wechatModal?.classList.remove("is-open"));
+const openWechatModal = () => {
+  if (!wechatModal) return;
+  wechatModal.classList.add("is-open");
+  wechatModal.setAttribute("aria-hidden", "false");
+  wechatClose?.focus({ preventScroll: true });
+};
+
+const closeWechatModal = () => {
+  if (!wechatModal) return;
+  wechatModal.classList.remove("is-open");
+  wechatModal.setAttribute("aria-hidden", "true");
+  wechatTrigger?.focus({ preventScroll: true });
+};
+
+wechatTrigger?.addEventListener("click", openWechatModal);
+wechatClose?.addEventListener("click", closeWechatModal);
+wechatBackdrop?.addEventListener("click", closeWechatModal);
 
 const stageMotion = {
   width: 0,
@@ -1613,6 +1628,10 @@ window.addEventListener("resize", () => {
   queueGalleryRender();
 });
 window.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && wechatModal?.classList.contains("is-open")) {
+    closeWechatModal();
+    return;
+  }
   if (event.key === "Escape") closeWorkGallery();
 });
 
@@ -2982,33 +3001,29 @@ const initEntryField = (canvas) => {
     pointer.hover = false;
   });
 
-  const updateCreepyEyes = (event) => {
-    const eyes = entryGo.querySelector(".entry-creepy-eyes");
-    if (!eyes) return;
-    const rect = eyes.getBoundingClientRect();
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
-    const dx = event.clientX - centerX;
-    const dy = event.clientY - centerY;
-    const distance = Math.hypot(dx, dy);
-    const angle = Math.atan2(-dy, dx) + Math.PI / 2;
-    const x = Math.max(-0.58, Math.min(0.58, (Math.sin(angle) * distance) / 180));
-    const y = Math.max(-0.58, Math.min(0.58, (Math.cos(angle) * distance) / 75));
-    entryGo.style.setProperty("--entry-eye-x", `${-50 + x * 50}%`);
-    entryGo.style.setProperty("--entry-eye-y", `${-50 + y * 50}%`);
+  const updateEntryCalibration = (event) => {
+    if (!entryGo) return;
+    const rect = entryGo.getBoundingClientRect();
+    const x = ((event.clientX - rect.left) / Math.max(rect.width, 1) - 0.5) * 2;
+    const y = ((event.clientY - rect.top) / Math.max(rect.height, 1) - 0.5) * 2;
+    entryGo.style.setProperty("--entry-calibration-x", `${Math.max(-1, Math.min(1, x)) * 4}px`);
+    entryGo.style.setProperty("--entry-calibration-y", `${Math.max(-1, Math.min(1, y)) * 3}px`);
+    entryGo.style.setProperty("--entry-calibration-light", "1");
   };
 
-  const resetCreepyEyes = () => {
-    entryGo.style.setProperty("--entry-eye-x", "-50%");
-    entryGo.style.setProperty("--entry-eye-y", "-50%");
+  const resetEntryCalibration = () => {
+    if (!entryGo) return;
+    entryGo.style.setProperty("--entry-calibration-x", "0px");
+    entryGo.style.setProperty("--entry-calibration-y", "0px");
+    entryGo.style.setProperty("--entry-calibration-light", "0");
   };
 
-  entryGo?.addEventListener("pointermove", updateCreepyEyes);
+  entryGo?.addEventListener("pointermove", updateEntryCalibration);
   entryGo?.addEventListener("touchmove", (event) => {
     const touch = event.touches?.[0];
-    if (touch) updateCreepyEyes(touch);
+    if (touch) updateEntryCalibration(touch);
   }, { passive: true });
-  entryGo?.addEventListener("pointerleave", resetCreepyEyes);
+  entryGo?.addEventListener("pointerleave", resetEntryCalibration);
 
   window.addEventListener("resize", resize);
   resize();
@@ -3720,8 +3735,8 @@ const initWaterSurface = (canvas) => {
 const playEntryCodeReveal = () => {
   if (!entryCodeWord) return;
 
-  const target = "LUCIANJYANG";
-  const glyphSets = ["L1|", "UVY", "C<(", "I1L|", "A4@", "NMW/", "J7]", "YV/", "A4@", "NMW/", "G6&"];
+  const target = "LUCIAN J. YANG";
+  const glyphSets = ["L1|", "UVY", "C<(", "I1L|", "A4@", "NMW/", " ", "J7]", ".:", " ", "YV/", "A4@", "NMW/", "G6&"];
   const duration = 760;
   entryCodeWord.dataset.ghost = target;
   entryCodeWord.textContent = target;
@@ -3919,6 +3934,28 @@ const enterSite = () => {
 };
 
 entryGo?.addEventListener("click", enterSite);
+
+entryScreen?.addEventListener("wheel", (event) => {
+  if (hasEntered || Math.abs(event.deltaY) < 8) return;
+  event.preventDefault();
+  createEntryWave(Math.min(1.6, Math.abs(event.deltaY) / 80));
+  enterSite();
+}, { passive: false });
+
+let entryScrollTouchY = 0;
+entryScreen?.addEventListener("touchstart", (event) => {
+  entryScrollTouchY = event.touches[0]?.clientY || 0;
+}, { passive: true });
+
+entryScreen?.addEventListener("touchmove", (event) => {
+  if (hasEntered) return;
+  const y = event.touches[0]?.clientY || entryScrollTouchY;
+  const delta = entryScrollTouchY - y;
+  if (Math.abs(delta) < 10) return;
+  event.preventDefault();
+  createEntryWave(Math.min(1.6, Math.abs(delta) / 70));
+  enterSite();
+}, { passive: false });
 
 document.getElementById("pixel-avatar")?.addEventListener("click", () => {
   if (!document.body.classList.contains("has-entered")) return;
@@ -4548,3 +4585,4 @@ window.requestAnimationFrame(animateCards);
 
   animate();
 })();
+
