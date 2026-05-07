@@ -283,6 +283,8 @@ let focusTimeout = null;
 let orderedMode = false;
 let selectedWorkKey = "oem";
 let hasEntered = false;
+let entryTransitionLocked = false;
+let entryTransitionReleaseTimer = 0;
 let selectionStartedAt = 0;
 let selectedCardIndex = -1;
 
@@ -989,7 +991,7 @@ const initCards = () => {
       targetY: stageMotion.height * 0.5,
       rotation: layout.rot,
       scale: layout.scale,
-      opacity: 0.76,
+      opacity: 0,
       depth: layout.depth,
       layout,
       phase: layout.phase,
@@ -1085,6 +1087,24 @@ const forceScrollTop = () => {
   window.scrollTo({ top: 0, left: 0, behavior: "auto" });
 };
 
+const lockEntryTransitionScroll = (locked) => {
+  entryTransitionLocked = locked;
+  document.body.classList.toggle("is-entry-scroll-locked", locked);
+  window.clearTimeout(entryTransitionReleaseTimer);
+  if (locked) forceScrollTop();
+};
+
+const releaseEntryTransitionScroll = () => {
+  lockEntryTransitionScroll(false);
+  forceScrollTop();
+};
+
+const scheduleEntryTransitionRelease = (delay = 260) => {
+  window.clearTimeout(entryTransitionReleaseTimer);
+  if (!document.body.classList.contains("has-entered")) return;
+  entryTransitionReleaseTimer = window.setTimeout(releaseEntryTransitionScroll, delay);
+};
+
 const resetHeroSequenceState = ({ resetScroll = false, resetCards = true } = {}) => {
   if (resetScroll) forceScrollTop();
 
@@ -1114,6 +1134,11 @@ const resetHeroSequenceState = ({ resetScroll = false, resetCards = true } = {})
   resizeStage();
   initCards();
   heroCardStates.forEach((state) => {
+    state.x = stageMotion.width * 0.5;
+    state.y = stageMotion.height * 0.5;
+    state.targetX = state.x;
+    state.targetY = state.y;
+    state.opacity = 0;
     setCardPosition(state.card, {
       x: state.x,
       y: state.y,
@@ -3397,278 +3422,6 @@ const initEntryField = (canvas) => {
   window.requestAnimationFrame(render);
 };
 
-// ── Bamboo Particle Tree (Three.js) ──────────────────────────────────
-const initBambooParticles = (canvas) => {
-  if (!canvas || reducedMotion || typeof THREE === "undefined") return;
-
-  const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-  renderer.setClearColor(0x000000, 0);
-
-  const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
-  camera.position.set(0, 0, 5.5);
-
-  const positions = [];
-  const colors = [];
-
-  const c1 = new THREE.Color(0x49c4b0);
-  const c2 = new THREE.Color(0x8ee8c8);
-  const c3 = new THREE.Color(0xd4f0e0);
-
-  const addSection = (cy, r, h) => {
-    for (let i = 0; i < 70; i++) {
-      const theta = Math.random() * Math.PI * 2;
-      const y = cy + (Math.random() - 0.5) * h;
-      positions.push(Math.cos(theta) * r, y, Math.sin(theta) * r);
-      const mix = c1.clone().lerp(c2, Math.random());
-      colors.push(mix.r, mix.g, mix.b);
-    }
-    for (let i = 0; i < 32; i++) {
-      const theta = (i / 32) * Math.PI * 2;
-      positions.push(Math.cos(theta) * (r + 0.014), cy + h * 0.5, Math.sin(theta) * (r + 0.014));
-      colors.push(c3.r, c3.g, c3.b);
-    }
-  };
-
-  const addLeaf = (ox, oy, oz, dx, dy, dz, len) => {
-    for (let i = 0; i < 60; i++) {
-      const t = Math.random();
-      const sp = (Math.random() - 0.5) * 0.055 * (1 - t);
-      positions.push(ox + dx * len * t + sp, oy + dy * len * t + sp * 0.4, oz + dz * len * t + sp);
-      const mix = c1.clone().lerp(c3, t * 0.65);
-      colors.push(mix.r, mix.g, mix.b);
-    }
-  };
-
-  [
-    [-1.80, 0.072, 0.38], [-1.42, 0.068, 0.36], [-1.06, 0.064, 0.34],
-    [-0.72, 0.060, 0.32], [-0.40, 0.056, 0.30], [-0.10, 0.052, 0.28],
-    [ 0.18, 0.048, 0.26], [ 0.44, 0.044, 0.24],
-  ].forEach(([cy, r, h]) => addSection(cy, r, h));
-
-  [
-    [-0.07, -1.10, 0, -0.55, 0.38, 0.10, 0.72],
-    [ 0.07, -0.78, 0,  0.52, 0.42, 0.08, 0.68],
-    [-0.06, -0.44, 0, -0.48, 0.50, 0.06, 0.64],
-    [ 0.06, -0.12, 0,  0.44, 0.54, 0.05, 0.60],
-    [-0.05,  0.20, 0, -0.40, 0.58, 0.04, 0.56],
-    [ 0.05,  0.46, 0,  0.36, 0.60, 0.03, 0.52],
-    [-0.04,  0.58, 0, -0.28, 0.70, 0.02, 0.38],
-    [ 0.04,  0.62, 0,  0.26, 0.72, 0.02, 0.36],
-  ].forEach(([ox, oy, oz, dx, dy, dz, l]) => addLeaf(ox, oy, oz, dx, dy, dz, l));
-
-  const geo = new THREE.BufferGeometry();
-  geo.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3));
-  geo.setAttribute("color",    new THREE.Float32BufferAttribute(colors, 3));
-
-  const mat = new THREE.PointsMaterial({
-    size: 0.024, vertexColors: true, transparent: true,
-    opacity: 0.85, sizeAttenuation: true, depthWrite: false,
-  });
-
-  const plant = new THREE.Points(geo, mat);
-  plant.scale.setScalar(0.68);
-  plant.position.y = -0.08;
-  scene.add(plant);
-
-  let mx = 0, my = 0;
-  window.addEventListener("pointermove", (e) => {
-    mx = (e.clientX / window.innerWidth  - 0.5) * 2;
-    my = (e.clientY / window.innerHeight - 0.5) * 2;
-  });
-
-  const resize = () => {
-    const w = canvas.clientWidth, h = canvas.clientHeight;
-    renderer.setSize(w, h, false);
-    camera.aspect = w / h;
-    camera.updateProjectionMatrix();
-  };
-  window.addEventListener("resize", resize);
-  resize();
-
-  let raf;
-  const animate = (t) => {
-    raf = requestAnimationFrame(animate);
-    plant.rotation.y = t * 0.00018 + mx * 0.10;
-    plant.rotation.x += (my * 0.05 - plant.rotation.x) * 0.05;
-    renderer.render(scene, camera);
-  };
-  animate(0);
-
-  document.addEventListener("siteEntered", () => {
-    cancelAnimationFrame(raf);
-    renderer.dispose();
-  }, { once: true });
-};
-
-// ── Hero Bamboo (Three.js, sticky hero stage) ─────────────────────────────
-// 造型参考中式插花：多根细茎从花瓶口散开，叶片向外展开，整体紧凑小巧
-const initHeroBamboo = (canvas) => {
-  if (!canvas || reducedMotion || typeof THREE === "undefined") return;
-
-  const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-  renderer.setClearColor(0x000000, 0);
-
-  const scene = new THREE.Scene();
-  // 相机拉远 + 窄 FOV，整体显示更小
-  const camera = new THREE.PerspectiveCamera(28, 1, 0.1, 100);
-  camera.position.set(0, 0, 14.0);
-
-  const positions = [], colors = [];
-  const cStem  = new THREE.Color(0x3aaa8e); // 茎：深青绿
-  const cNode  = new THREE.Color(0xc8ede0); // 节环：浅白绿
-  const cLeafA = new THREE.Color(0x5ecfb2); // 叶：亮青
-  const cLeafB = new THREE.Color(0xa8e8d0); // 叶尖：浅绿
-
-  // 3D 竹茎：bx/bz = 根部 XZ，by = 根部 Y，leanX/leanZ = XZ 倾斜，segN 节，r0 初始半径
-  const addStalk = (bx, bz, by, leanX, leanZ, segN, r0) => {
-    for (let s = 0; s < segN; s++) {
-      const t = s / segN;
-      const cy = by + s * 0.16;
-      const cx = bx + leanX * t * 0.12;
-      const cz = bz + leanZ * t * 0.12;
-      const r  = r0 * (1 - t * 0.35);
-      const h  = 0.13;
-      for (let i = 0; i < 12; i++) {
-        const theta = Math.random() * Math.PI * 2;
-        const yy = cy + (Math.random() - 0.5) * h;
-        positions.push(cx + Math.cos(theta) * r, yy, cz + Math.sin(theta) * r);
-        const mix = cStem.clone().lerp(cLeafA, Math.random() * 0.3);
-        colors.push(mix.r, mix.g, mix.b);
-      }
-      for (let i = 0; i < 8; i++) {
-        const theta = (i / 8) * Math.PI * 2;
-        positions.push(cx + Math.cos(theta) * (r + 0.005), cy + h * 0.5, cz + Math.sin(theta) * (r + 0.005));
-        colors.push(cNode.r, cNode.g, cNode.b);
-      }
-    }
-  };
-
-  // 3D 叶片：ox/oy/oz = 起点，dx/dy/dz = 生长方向，len 长，spread 宽
-  const addLeaf = (ox, oy, oz, dx, dy, dz, len, spread) => {
-    const d = Math.sqrt(dx*dx + dy*dy + dz*dz);
-    const ax = dx/d, ay = dy/d, az = dz/d;
-    // 叉积求垂直于生长方向的侧向量
-    let px, py, pz;
-    if (Math.abs(ay) < 0.9) { px = az; py = 0; pz = -ax; }
-    else { px = 1; py = 0; pz = 0; }
-    const pl = Math.sqrt(px*px + py*py + pz*pz);
-    px /= pl; py /= pl; pz /= pl;
-    for (let i = 0; i < 18; i++) {
-      const t = Math.random();
-      const sp = (Math.random() - 0.5) * spread * (1 - t * 0.8);
-      positions.push(ox + ax*len*t + px*sp, oy + ay*len*t + py*sp, oz + az*len*t + pz*sp);
-      const mix = cLeafA.clone().lerp(cLeafB, t * 0.7);
-      colors.push(mix.r, mix.g, mix.b);
-    }
-  };
-
-  // ── 5 根竹茎，从瓶口散开，各自有 XZ 方向倾斜 ──
-  // [bx, bz, by, leanX, leanZ, segN, r0]
-  [
-    [ 0.00,  0.00, -0.28,  0.0,  0.0,  5, 0.009], // 中间主茎，直立
-    [-0.05,  0.04, -0.28, -0.5,  0.3,  4, 0.008], // 左前
-    [ 0.05, -0.04, -0.28,  0.4, -0.4,  4, 0.008], // 右后
-    [-0.08, -0.05, -0.28, -0.9, -0.5,  3, 0.007], // 左后
-    [ 0.08,  0.06, -0.28,  0.8,  0.6,  3, 0.007], // 右前
-  ].forEach(([bx, bz, by, leanX, leanZ, segN, r0]) => addStalk(bx, bz, by, leanX, leanZ, segN, r0));
-
-  // ── 叶片：ox/oy/oz + 3D 方向 dx/dy/dz ──
-  const L = 0.30, S = 0.055;
-  [
-    // 主茎叶（向四面散开）
-    [ 0.00,  0.30,  0.00, -0.70,  0.50,  0.50, L,     S    ],
-    [ 0.00,  0.46,  0.00,  0.65,  0.55, -0.50, L,     S    ],
-    [ 0.00,  0.58,  0.00, -0.50,  0.70,  0.50, L*0.8, S    ],
-    [ 0.00,  0.68,  0.00,  0.40,  0.80, -0.45, L*0.7, S*0.8],
-    // 左前茎叶
-    [-0.06,  0.20,  0.05, -0.80,  0.40,  0.45, L*0.9, S    ],
-    [-0.06,  0.36,  0.05, -0.60,  0.65,  0.45, L*0.85,S    ],
-    [-0.08,  0.50,  0.05, -0.40,  0.80,  0.45, L*0.7, S*0.8],
-    // 右后茎叶
-    [ 0.06,  0.18, -0.05,  0.75,  0.45, -0.50, L*0.9, S    ],
-    [ 0.06,  0.34, -0.05,  0.60,  0.60, -0.50, L*0.85,S    ],
-    [ 0.08,  0.48, -0.05,  0.45,  0.75, -0.50, L*0.7, S*0.8],
-    // 左后茎叶
-    [-0.10,  0.10, -0.06, -0.85,  0.30, -0.45, L*0.8, S*0.9],
-    [-0.10,  0.26, -0.06, -0.70,  0.55, -0.45, L*0.75,S*0.8],
-    // 右前茎叶
-    [ 0.10,  0.08,  0.07,  0.80,  0.35,  0.50, L*0.8, S*0.9],
-    [ 0.10,  0.24,  0.07,  0.70,  0.50,  0.50, L*0.75,S*0.8],
-    // 顶部散叶
-    [-0.02,  0.76,  0.03, -0.40,  0.80,  0.45, L*0.6, S*0.7],
-    [ 0.02,  0.76, -0.03,  0.35,  0.85, -0.40, L*0.6, S*0.7],
-  ].forEach(([ox, oy, oz, dx, dy, dz, len, spread]) => addLeaf(ox, oy, oz, dx, dy, dz, len, spread));
-
-  // ── 花瓶轮廓（圆形截面，旋转时有立体感） ──
-  const vaseProfile = [
-    // [cy, r]  — 圆形截面，rx=rz
-    [-0.90, 0.11], [-0.80, 0.13], [-0.70, 0.14],
-    [-0.60, 0.12], [-0.50, 0.09], [-0.38, 0.10],
-    [-0.28, 0.12],
-  ];
-  const cVase = new THREE.Color(0x4ab8a0);
-  vaseProfile.forEach(([cy, r]) => {
-    for (let i = 0; i < 18; i++) {
-      const theta = (i / 18) * Math.PI * 2;
-      positions.push(Math.cos(theta) * r, cy, Math.sin(theta) * r);
-      const mix = cVase.clone().lerp(cNode, Math.random() * 0.4);
-      colors.push(mix.r, mix.g, mix.b);
-    }
-  });
-
-  const geo = new THREE.BufferGeometry();
-  geo.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3));
-  geo.setAttribute("color",    new THREE.Float32BufferAttribute(colors, 3));
-
-  const mat = new THREE.PointsMaterial({
-    size: 0.016, vertexColors: true, transparent: true,
-    opacity: 0.82, sizeAttenuation: true, depthWrite: false,
-  });
-
-  const plant = new THREE.Points(geo, mat);
-  // 整体下移，让瓶底不被裁掉，竹叶在画面上半部
-  plant.position.y = 0.2;
-  scene.add(plant);
-
-  let mx = 0, my = 0;
-  const onPointer = (e) => {
-    mx = (e.clientX / window.innerWidth  - 0.5) * 2;
-    my = (e.clientY / window.innerHeight - 0.5) * 2;
-  };
-  window.addEventListener("pointermove", onPointer);
-
-  const resize = () => {
-    const w = canvas.clientWidth, h = canvas.clientHeight;
-    renderer.setSize(w, h, false);
-    camera.aspect = w / h;
-    camera.updateProjectionMatrix();
-  };
-  window.addEventListener("resize", resize);
-  resize();
-
-  let raf;
-  const animate = (t) => {
-    raf = requestAnimationFrame(animate);
-    const sp = parseFloat(heroStage?.style.getPropertyValue("--hero-scroll-progress") || "0");
-    plant.rotation.y = t * 0.00010 + mx * 0.06 + sp * 0.35;
-    plant.rotation.x += (my * 0.03 + sp * 0.05 - plant.rotation.x) * 0.04;
-    mat.opacity = 0.82 - sp * 0.30;
-    renderer.render(scene, camera);
-  };
-  animate(0);
-
-  const cleanup = () => {
-    cancelAnimationFrame(raf);
-    window.removeEventListener("pointermove", onPointer);
-    window.removeEventListener("resize", resize);
-    renderer.dispose();
-  };
-  window.addEventListener("pagehide", cleanup, { once: true });
-};
-
 // Frozen: hero WebGL water surface ------------------------------------------
 const initWaterSurface = (canvas) => {
   if (!canvas || reducedMotion) return;
@@ -4087,11 +3840,6 @@ const initWaterSurface = (canvas) => {
   };
   animate();
 
-  // re-upload title texture after site enters (canvas may have been invisible before)
-  document.addEventListener("siteEntered", () => {
-    requestAnimationFrame(() => { resize(); });
-  }, { once: true });
-
   const cleanup = () => {
     cancelAnimationFrame(raf);
     window.removeEventListener("pointermove", onPointer);
@@ -4269,6 +4017,7 @@ const enterSite = () => {
   if (hasEntered) return;
   resetHeroSequenceState({ resetScroll: true, resetCards: true });
   hasEntered = true;
+  lockEntryTransitionScroll(true);
   playUiTone("click");
 
   if (reducedMotion) {
@@ -4277,6 +4026,8 @@ const enterSite = () => {
       forceScrollTop();
       resizeStage();
       initCards();
+      resetHeroSequenceState({ resetScroll: false, resetCards: true });
+      releaseEntryTransitionScroll();
     });
     return;
   }
@@ -4302,8 +4053,8 @@ const enterSite = () => {
       resizeStage();
       initCards();
       resetHeroSequenceState({ resetScroll: false, resetCards: true });
+      scheduleEntryTransitionRelease(420);
     });
-    document.dispatchEvent(new CustomEvent("siteEntered"));
   }, 2680);
 };
 
@@ -4334,12 +4085,27 @@ entryScreen?.addEventListener("touchmove", (event) => {
 document.getElementById("pixel-avatar")?.addEventListener("click", () => {
   if (!document.body.classList.contains("has-entered")) return;
   // reset to entry state
-  document.body.classList.remove("has-entered", "is-entering", "is-unfolding");
+  document.body.classList.remove("has-entered", "is-entering", "is-unfolding", "is-entry-scroll-locked");
   hasEntered = false;
+  entryTransitionLocked = false;
   resetHeroSequenceState({ resetScroll: true, resetCards: true });
   requestAnimationFrame(forceScrollTop);
   entryScreen?.style.removeProperty("display");
 });
+
+window.addEventListener("wheel", (event) => {
+  if (!entryTransitionLocked) return;
+  event.preventDefault();
+  forceScrollTop();
+  scheduleEntryTransitionRelease(260);
+}, { passive: false, capture: true });
+
+window.addEventListener("touchmove", (event) => {
+  if (!entryTransitionLocked) return;
+  event.preventDefault();
+  forceScrollTop();
+  scheduleEntryTransitionRelease(260);
+}, { passive: false, capture: true });
 
 window.addEventListener("pageshow", () => {
   if (document.body.classList.contains("has-entered")) return;
@@ -4771,166 +4537,5 @@ window.requestAnimationFrame(animateCards);
   window.addEventListener("scroll", updateActiveNav, { passive: true });
   window.addEventListener("resize", updateActiveNav);
   updateActiveNav();
-})();
-
-// ── Three.js packaging box ────────────────────────────────────────────────
-(function initBox3D() {
-  if (typeof THREE === "undefined") return;
-  const canvas = document.getElementById("box3d-canvas");
-  if (!canvas) return;
-
-  const W = 200, H = 200;
-  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-  renderer.setSize(W, H);
-  renderer.shadowMap.enabled = true;
-  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-  renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.1;
-
-  const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(38, W / H, 0.1, 100);
-  camera.position.set(2.2, 2.6, 3.4);
-  camera.lookAt(0, 0.1, 0);
-
-  // Lighting — warm natural light for kraft paper
-  scene.add(new THREE.AmbientLight(0xfff1e4, 0.72));
-
-  const keyLight = new THREE.DirectionalLight(0xfff3e2, 2.8);
-  keyLight.position.set(3, 5, 4);
-  keyLight.castShadow = true;
-  keyLight.shadow.mapSize.set(512, 512);
-  scene.add(keyLight);
-
-  const fillLight = new THREE.DirectionalLight(0xe3c9b3, 1.2);
-  fillLight.position.set(-3, 2, -2);
-  scene.add(fillLight);
-
-  const rimLight = new THREE.DirectionalLight(0xc69d86, 0.8);
-  rimLight.position.set(0, -2, -4);
-  scene.add(rimLight);
-
-  // Materials — white kraft paper palette
-  const matFront  = new THREE.MeshStandardMaterial({ color: 0xe9dccb, roughness: 0.93, metalness: 0.00 });
-  const matSide   = new THREE.MeshStandardMaterial({ color: 0xdccab6, roughness: 0.95, metalness: 0.00 });
-  const matTop    = new THREE.MeshStandardMaterial({ color: 0xf1e6d7, roughness: 0.90, metalness: 0.00 });
-  const matBottom = new THREE.MeshStandardMaterial({ color: 0xcfbaa3, roughness: 0.98, metalness: 0.00 });
-  const matInner  = new THREE.MeshStandardMaterial({ color: 0xc5ad94, roughness: 0.99, metalness: 0.00 });
-
-  // Box: square 1×1×1
-  const bx = 1, by = 1, bz = 1, t = 0.04;
-
-  // Root group — everything rotates together
-  const root = new THREE.Group();
-  scene.add(root);
-
-  function addFace(geo, mat, px, py, pz) {
-    const m = new THREE.Mesh(geo, mat);
-    m.position.set(px, py, pz);
-    m.castShadow = true;
-    m.receiveShadow = true;
-    root.add(m);
-    return m;
-  }
-
-  const faceXZ = new THREE.BoxGeometry(bx, by, t);
-  const faceYZ = new THREE.BoxGeometry(t, by, bz);
-  const faceXY = new THREE.BoxGeometry(bx, t, bz);
-
-  addFace(faceXZ, matFront,  0,  0,  bz / 2);
-  addFace(faceXZ, matSide,   0,  0, -bz / 2);
-  addFace(faceYZ, matSide,  -bx / 2, 0, 0);
-  addFace(faceYZ, matFront,  bx / 2, 0, 0);
-  addFace(faceXY, matBottom, 0, -by / 2, 0);
-
-  // Inner bottom (visible when lid opens)
-  const innerGeo = new THREE.BoxGeometry(bx - t * 2, t, bz - t * 2);
-  const innerMesh = new THREE.Mesh(innerGeo, matInner);
-  innerMesh.position.set(0, -by / 2 + t, 0);
-  root.add(innerMesh);
-
-  // Lid — pivot at back-top edge: y = +by/2, z = -bz/2
-  const lidPivot = new THREE.Group();
-  lidPivot.position.set(0, by / 2, -bz / 2);
-  root.add(lidPivot);
-
-  const skirtH = 0.18;
-
-  // Lid top panel — closed: sits flat at y=by/2, covering the opening
-  const lidTopGeo = new THREE.BoxGeometry(bx, t, bz);
-  const lidTopMesh = new THREE.Mesh(lidTopGeo, matTop);
-  lidTopMesh.position.set(0, 0, bz / 2);
-  lidTopMesh.castShadow = true;
-  lidPivot.add(lidTopMesh);
-
-  // Lid front skirt (drops down over front face)
-  const lidFrontGeo = new THREE.BoxGeometry(bx, skirtH, t);
-  const lidFrontMesh = new THREE.Mesh(lidFrontGeo, matFront);
-  lidFrontMesh.position.set(0, -skirtH / 2, bz);
-  lidPivot.add(lidFrontMesh);
-
-  // Lid side skirts
-  const lidSideGeo = new THREE.BoxGeometry(t, skirtH, bz);
-  const lidLeftMesh = new THREE.Mesh(lidSideGeo, matSide);
-  lidLeftMesh.position.set(-bx / 2, -skirtH / 2, bz / 2);
-  lidPivot.add(lidLeftMesh);
-
-  const lidRightMesh = new THREE.Mesh(lidSideGeo, matFront);
-  lidRightMesh.position.set(bx / 2, -skirtH / 2, bz / 2);
-  lidPivot.add(lidRightMesh);
-
-  // Shadow plane
-  const shadowPlane = new THREE.Mesh(
-    new THREE.PlaneGeometry(4, 4),
-    new THREE.ShadowMaterial({ opacity: 0.16 })
-  );
-  shadowPlane.rotation.x = -Math.PI / 2;
-  shadowPlane.position.y = -by / 2 - 0.01;
-  shadowPlane.receiveShadow = true;
-  scene.add(shadowPlane);
-
-  // Animation state — start fully closed
-  let lidAngle = 0;
-  let lidTarget = 0;
-  let isHovered = false;
-  let isUnfolding = false;
-  let idleT = 0;
-
-  const HOVER_ANGLE = -0.62;
-  const OPEN_ANGLE  = -2.05;
-
-  const trigger = document.getElementById("entry-go");
-  trigger?.addEventListener("mouseenter", () => { isHovered = true; });
-  trigger?.addEventListener("mouseleave", () => { isHovered = false; });
-
-  const bodyObserver = new MutationObserver(() => {
-    isUnfolding = document.body.classList.contains("is-unfolding");
-  });
-  bodyObserver.observe(document.body, { attributes: true, attributeFilter: ["class"] });
-
-  function lerp(a, b, f) { return a + (b - a) * f; }
-
-  function animate() {
-    window.requestAnimationFrame(animate);
-    idleT += 0.006;
-
-    root.rotation.y = 0.52 + Math.sin(idleT * 0.7) * 0.04;
-    root.rotation.x = -0.32 + Math.sin(idleT * 0.5) * 0.02;
-
-    if (isUnfolding) {
-      lidTarget = OPEN_ANGLE;
-    } else if (isHovered) {
-      lidTarget = HOVER_ANGLE;
-    } else {
-      lidTarget = 0;
-    }
-
-    lidAngle = lerp(lidAngle, lidTarget, 0.07);
-    lidPivot.rotation.x = lidAngle;
-
-    renderer.render(scene, camera);
-  }
-
-  animate();
 })();
 
