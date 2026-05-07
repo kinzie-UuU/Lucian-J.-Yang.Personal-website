@@ -251,7 +251,7 @@
     <section class="portrait-about-wrapper" id="about">
       <!-- 媒体 sticky 固定，spacer 提供滚动停留空间 -->
       <div class="portrait-canvas">
-        <video class="portrait-video" id="portrait-video" src="videos/Video%208.mp4" poster="images/9999.png" muted playsinline preload="auto"></video>
+        <video class="portrait-video" id="portrait-video" src="videos/Video%208.mp4" poster="images/9999.png" muted playsinline preload="metadata"></video>
         <img class="portrait-image" src="images/9999.png" alt="" aria-hidden="true">
         <div class="portrait-overlay"></div>
         <div class="about-rows reveal">
@@ -379,7 +379,7 @@
       </div>
     </section>
 
-    <aside class="work-gallery" id="work-gallery" aria-hidden="true" aria-label="Works gallery">
+    <aside class="work-gallery" id="work-gallery" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="work-gallery-title">
       <div class="work-gallery-topbar">
         <p class="work-gallery-index" id="work-gallery-index">01</p>
         <h3 class="work-gallery-title" id="work-gallery-title">Project</h3>
@@ -404,7 +404,7 @@
         <p class="contact-collab" data-i18n="contact_collab" data-reveal data-delay="160">OEM / 贴牌包装 · 礼品与福利渠道设计 · 系列包装 · 节庆礼盒 · 包装升级 · 包装提案与方向判断支持</p>
       </div>
 
-      <form class="contact-form" id="contact-form" data-reveal data-delay="240">
+      <form class="contact-form" id="contact-form" action="mailto:y1156813759@gmail.com" method="post" enctype="text/plain" data-reveal data-delay="240">
         <div class="contact-form-grid">
           <label class="contact-field">
             <span data-i18n="contact_form_name">姓名</span>
@@ -464,11 +464,11 @@
       </div>
 
       <!-- WeChat QR modal -->
-      <div class="wechat-qr-modal" id="wechat-qr-modal" aria-hidden="true">
+      <div class="wechat-qr-modal" id="wechat-qr-modal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="wechat-qr-id">
         <div class="wechat-qr-backdrop" id="wechat-qr-backdrop"></div>
         <div class="wechat-qr-card">
           <img src="images/wechat-qr.jpg" alt="微信二维码" class="wechat-qr-img">
-          <p class="wechat-qr-id">LLovingyourself</p>
+          <p class="wechat-qr-id" id="wechat-qr-id">LLovingyourself</p>
           <button class="wechat-qr-close" id="wechat-qr-close" aria-label="关闭">×</button>
         </div>
       </div>

@@ -92,6 +92,23 @@
   font-display: swap;
 }
 
+/* ============================================================================
+   STYLE MAP
+   Keep this file in runtime order. The entry screen, hero water surface,
+   services scroll story, and work gallery rely on later override layers.
+
+   Safe edit zones:
+   1. tokens and base page styles
+   2. top/bottom navigation
+   3. content sections: about, services, works, contact
+   4. final correction layers at the end of the file
+
+   Frozen visual chains:
+   - entry packaging seal and calibration styles
+   - hero kinetic water canvas and hero scroll progress
+   - services white-stage transition
+   - work gallery overlay and horizontal/detail motion
+   ============================================================================ */
 :root {
   --bg: #f3efe7;
   --bg-soft: #ece7de;
@@ -331,6 +348,7 @@ body:not(.has-entered) {
   overflow: hidden;
 }
 
+/* Entry and hero stage ------------------------------------------------------ */
 body:not(.has-entered) .hero-section {
   opacity: 0;
   visibility: hidden;
@@ -410,12 +428,14 @@ main > section {
 
 
 
+/* Bottom navigation --------------------------------------------------------- */
 body:not(.has-entered):not(.is-entering) .bottom-nav {
   opacity: 0;
   pointer-events: none;
   transform: translateX(-50%) translateY(8px);
 }
 
+/* Top meta navigation ------------------------------------------------------- */
 body:not(.has-entered) .top-meta {
   opacity: 0;
   pointer-events: none;
@@ -1681,6 +1701,7 @@ html[lang="zh-CN"] .statement-title {
 }
 
 /* ── Portrait + About wrapper (nuageboi pattern) ── */
+/* About and portrait scroll section ---------------------------------------- */
 .portrait-about-wrapper {
   position: relative;
   z-index: 2;
@@ -2108,6 +2129,7 @@ html[lang="zh-CN"] .about-detail {
   color: rgba(0, 204, 189, 0.9);
 }
 
+/* Services section ---------------------------------------------------------- */
 .services-section {
   position: relative;
   min-height: 340svh;
@@ -2235,6 +2257,7 @@ html[lang="zh-CN"] .service-index {
   color: rgba(235, 231, 224, 0.52);
 }
 
+/* Works list and hover preview --------------------------------------------- */
 .works-section {
   --works-enter: 0;
   position: relative;
@@ -2577,6 +2600,7 @@ body.work-gallery-open .precision-guides {
   z-index: 710;
 }
 
+/* Work gallery overlay ------------------------------------------------------ */
 .work-gallery {
   --gallery-progress: 0;
   position: fixed;
@@ -3036,6 +3060,7 @@ body.work-gallery-open .precision-guides {
   }
 }
 
+/* Contact section ----------------------------------------------------------- */
 .contact-section {
   min-height: 100svh;
   padding-top: 140px;
@@ -3552,6 +3577,10 @@ body.work-gallery-open .precision-guides {
   }
 }
 
+/* Runtime correction layers -------------------------------------------------
+   These later blocks intentionally override earlier section styles. Prefer
+   adding new small corrections here before changing the cinematic sections.
+*/
 /* 2026-04-25 GO entry restoration: keep existing site, replace only the entry layer. */
 .entry-screen {
   position: relative;
@@ -6772,6 +6801,55 @@ body:not(.has-entered) .entry-hint {
   font-size: 0.72rem;
   letter-spacing: 0;
   color: rgba(180, 198, 190, 0.34);
+}
+
+/* Requested visual refinements: tighter hero cards and centered works names. */
+body .hero-card {
+  border-radius: 14px;
+}
+
+body .hero-card-image-area {
+  border-radius: 14px 14px 0 0;
+}
+
+body .works-list-header,
+body .works-row {
+  grid-template-columns: 3rem minmax(0, 1fr) minmax(280px, 36vw) minmax(0, 1fr) minmax(180px, 220px);
+}
+
+body .works-list-col-project,
+body .works-row-name {
+  grid-column: 1 / -1;
+  justify-self: center;
+  text-align: center;
+  z-index: 1;
+}
+
+body .works-list-col-type,
+body .works-row-tags {
+  grid-column: 5;
+  justify-self: end;
+  z-index: 2;
+}
+
+@media (max-width: 768px) {
+  body .works-list-header,
+  body .works-row {
+    grid-template-columns: 2rem 1fr minmax(112px, 34vw);
+  }
+
+  body .works-list-col-project,
+  body .works-row-name {
+    grid-column: 2;
+    justify-self: stretch;
+    text-align: left;
+  }
+
+  body .works-list-col-type,
+  body .works-row-tags {
+    grid-column: 3;
+    justify-self: start;
+  }
 }
 
 body.is-unfolding .entry-box-trigger {

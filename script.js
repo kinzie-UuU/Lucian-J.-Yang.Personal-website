@@ -1,5 +1,24 @@
+/* ============================================================================
+   SCRIPT MAP
+   This file intentionally stays in runtime order for now. The entry animation,
+   hero water surface, hero wheel-step control, services scroll story, and work
+   gallery share state through DOM classes and CSS variables.
+
+   Safe edit zones:
+   1. copy/data objects
+   2. contact form and social interactions
+   3. works hover preview and gallery text/data
+   4. isolated utility helpers
+
+   Frozen visual chains:
+   - initWaterSurface and its canvas setup
+   - enterSite and entry screen transition
+   - hero wheel-step control
+   - services scroll story renderer
+   ============================================================================ */
 const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+// Copy and localization data -------------------------------------------------
 const i18n = {
   zh: {
     nav_about: "关于",
@@ -130,7 +149,7 @@ Object.assign(i18n.zh, {
   contact_form_company: "\u516c\u53f8",
   contact_form_contact: "\u90ae\u7bb1/\u7535\u8bdd",
   contact_form_message: "\u9700\u6c42\u4fe1\u606f",
-  contact_form_send: "\u53d1\u9001",
+  contact_form_send: "\u6253\u5f00\u90ae\u4ef6",
 });
 
 Object.assign(i18n.en, {
@@ -138,7 +157,7 @@ Object.assign(i18n.en, {
   contact_form_company: "Company",
   contact_form_contact: "Email / Phone",
   contact_form_message: "Project Needs",
-  contact_form_send: "Send",
+  contact_form_send: "Open Email",
 });
 
 Object.assign(i18n.zh, {
@@ -171,6 +190,7 @@ Object.assign(i18n.en, {
   work_row_5_name: "AIGC Video",
 });
 
+// Works taxonomy and hero card data -----------------------------------------
 const worksData = {
   oem: {
     label: { zh: "OEM Packaging", en: "OEM Packaging" },
@@ -334,6 +354,7 @@ if ("scrollRestoration" in window.history) {
   window.history.scrollRestoration = "manual";
 }
 
+// Header controls, sound, and fullscreen state ------------------------------
 const readStoredBoolean = (key, fallback) => {
   try {
     const value = window.localStorage.getItem(key);
@@ -408,6 +429,7 @@ document.addEventListener("fullscreenchange", updateFullscreenState);
 applySoundState();
 updateFullscreenState();
 
+// Scroll typography and section reveal effects ------------------------------
 const SCROLL_TYPE_SELECTOR = [
   ".js-scroll-type-disabled",
 ].join(",");
@@ -655,6 +677,7 @@ if (!reducedMotion) {
   });
 }
 
+// Contact interactions -------------------------------------------------------
 // Contact: hover-to-copy
 const copyItems = document.querySelectorAll(".contact-copy-item");
 const contactForm = document.querySelector("#contact-form");
@@ -731,6 +754,7 @@ wechatTrigger?.addEventListener("click", openWechatModal);
 wechatClose?.addEventListener("click", closeWechatModal);
 wechatBackdrop?.addEventListener("click", closeWechatModal);
 
+// Audio feedback and shared interaction state -------------------------------
 const stageMotion = {
   width: 0,
   height: 0,
@@ -895,6 +919,7 @@ const playBoxOpenTone = () => {
   playPackagingSnap(0.92, 0.68, 94);
 };
 
+// Static UI updates and language switching ----------------------------------
 const updateStaticText = () => {
   document.documentElement.lang = currentLang === "zh" ? "zh-CN" : "en";
   document.querySelectorAll("[data-i18n]").forEach((node) => {
@@ -1234,6 +1259,7 @@ worksTabs.forEach((tab) => {
   });
 });
 
+// Works preview and project gallery -----------------------------------------
 // Works list hover preview
 const worksPreview = document.querySelector("#works-hover-preview");
 const worksPreviewImg = document.querySelector("#works-preview-img");
@@ -3371,6 +3397,7 @@ const initHeroBamboo = (canvas) => {
   window.addEventListener("pagehide", cleanup, { once: true });
 };
 
+// Frozen: hero WebGL water surface ------------------------------------------
 const initWaterSurface = (canvas) => {
   if (!canvas || reducedMotion) return;
 
@@ -3965,6 +3992,7 @@ const createEntryDieline = (clientX, clientY) => {
   window.setTimeout(() => fragment.remove(), 3900);
 };
 
+// Frozen: entry-to-site transition ------------------------------------------
 const enterSite = () => {
   if (hasEntered) return;
   resetHeroSequenceState({ resetScroll: true, resetCards: true });
@@ -4053,6 +4081,7 @@ entryScreen?.addEventListener("click", (event) => {
   createEntryDieline(event.clientX, event.clientY);
 });
 
+// Frozen: hero wheel-step sequence ------------------------------------------
 // Hero section wheel hijack: discrete step-through of intro + 6 cards
 // 2 intro ticks (water only) → 6 card steps → release to normal scroll
 const isHeroStepControlActive = () => {
@@ -4340,6 +4369,7 @@ updateBeijingMeta();
 window.setInterval(updateBeijingMeta, 30000);
 window.requestAnimationFrame(animateCards);
 
+// Secondary section effects --------------------------------------------------
 // Marquee: clone track so it loops seamlessly regardless of item count
 (function () {
   const marquee = document.querySelector(".clients-marquee");
@@ -4446,6 +4476,7 @@ window.requestAnimationFrame(animateCards);
   }, { once: true });
 })();
 
+// Navigation scroll spy ------------------------------------------------------
 // Bottom nav scroll spy
 (function () {
   const nav = document.querySelector(".bottom-nav");
