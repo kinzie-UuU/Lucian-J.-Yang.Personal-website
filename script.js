@@ -288,8 +288,8 @@ let selectedCardIndex = -1;
 
 // Hero wheel-step system
 // step 0 = water intro (2 wheel ticks held here)
-// step 1-6 = card focus steps
-const HERO_CARD_COUNT = 6;
+// step 1-5 = card focus steps
+const HERO_CARD_COUNT = 5;
 const HERO_INTRO_TICKS = 2;
 let heroStep = 0;           // 0..HERO_CARD_COUNT
 let heroStepTarget = 0;     // lerp target (float)
@@ -695,10 +695,11 @@ copyItems.forEach((item) => {
   item.addEventListener("mouseenter", () => {
     hoverTimer = setTimeout(() => {
       const text = item.dataset.copy;
+      if (!text || !navigator.clipboard?.writeText) return;
       navigator.clipboard.writeText(text).then(() => {
         item.classList.add("copied");
         setTimeout(() => item.classList.remove("copied"), 1600);
-      });
+      }).catch(() => null);
     }, 400);
   });
   item.addEventListener("mouseleave", () => {
@@ -926,11 +927,12 @@ const updateStaticText = () => {
     const key = node.dataset.i18n;
     if (i18n[currentLang][key]) {
       const value = i18n[currentLang][key];
-      const navLabel = node.querySelector?.(".bottom-nav-label");
-      if (navLabel) {
-        navLabel.querySelectorAll("span").forEach((span) => {
+      const pillLabel = node.querySelector?.(".label-stack");
+      if (pillLabel) {
+        pillLabel.querySelectorAll(".pill-label, .pill-label-hover").forEach((span) => {
           span.textContent = value;
         });
+        node.setAttribute("aria-label", value);
       } else {
         node.textContent = value;
       }
@@ -1158,6 +1160,7 @@ const enterProject = (card) => {
   void workGallery.offsetWidth;
   workGallery.classList.add("is-open");
   workGallery.scrollTo({ top: 0, behavior: "auto" });
+  queueWorkDetailReveal();
 
   window.setTimeout(() => {
     measureGallery();
@@ -1170,7 +1173,9 @@ const enterProject = (card) => {
 
 const switchLanguage = (lang) => {
   currentLang = lang;
+  if (typeof restoreScrambledTextNodes === "function") restoreScrambledTextNodes();
   updateStaticText();
+  initScrambledText();
   window.rebuildServicesStoryText?.();
   updateFocusPanel(selectedWorkKey);
   updateWorksPanel(selectedWorkKey);
@@ -1308,7 +1313,7 @@ worksRows.forEach((row) => {
   row.addEventListener("mouseenter", (e) => {
     if (worksPreviewImg) {
       const imagePool = workGalleryImages?.[cat] || [];
-      const imageItem = imagePool[Math.floor(Math.random() * imagePool.length)];
+      const imageItem = imagePool[0];
       worksPreviewImg.classList.remove("is-image-preview", "is-waving");
       if (imageItem?.src) {
         worksPreviewImg.style.setProperty("--preview-image", `url("${imageItem.src}")`);
@@ -1320,7 +1325,7 @@ worksRows.forEach((row) => {
           worksPreviewImg.classList.add("is-waving");
         }
       } else {
-        const bg = colors[Math.floor(Math.random() * colors.length)];
+        const bg = colors[0];
         worksPreviewImg.style.setProperty("--preview-image", "none");
         worksPreviewImg.style.setProperty("--preview-position", "center");
         worksPreviewImg.style.setProperty("--preview-fallback", `${pattern}, ${bg}`);
@@ -1329,12 +1334,20 @@ worksRows.forEach((row) => {
     if (worksPreview) {
       worksPreview.classList.add("is-visible");
     }
+    const rect = row.getBoundingClientRect();
+    previewTarget.x = rect.left + rect.width * 0.67 - 120;
+    previewTarget.y = rect.top + rect.height * 0.32;
     if (!previewRaf) previewRaf = requestAnimationFrame(animatePreview);
   });
 
   row.addEventListener("mousemove", (e) => {
-    previewTarget.x = e.clientX + 24;
-    previewTarget.y = e.clientY - 80;
+    const rect = row.getBoundingClientRect();
+    const anchorX = rect.left + rect.width * 0.67 - 120;
+    const anchorY = rect.top + rect.height * 0.32;
+    const driftX = (e.clientX - (rect.left + rect.width * 0.5)) * 0.38;
+    const driftY = (e.clientY - (rect.top + rect.height * 0.5)) * 0.42;
+    previewTarget.x = anchorX + driftX;
+    previewTarget.y = anchorY + driftY;
   });
 
   row.addEventListener("mouseleave", () => {
@@ -1549,6 +1562,29 @@ const renderWorkDetail = (item, index) => {
       </figure>
     </section>
   `;
+  workGallery?.style.setProperty("--work-detail-reveal", "0");
+};
+
+const updateWorkDetailReveal = () => {
+  if (!workGallery || galleryMode !== "detail") return;
+  const figure = workGallery.querySelector(".work-detail-full-figure");
+  if (!figure) return;
+
+  const galleryRect = workGallery.getBoundingClientRect();
+  const figureRect = figure.getBoundingClientRect();
+  const revealLine = galleryRect.top + galleryRect.height * 0.76;
+  const revealDistance = Math.max(320, galleryRect.height * 0.5);
+  const progress = Math.max(0, Math.min(1, (revealLine - figureRect.top) / revealDistance));
+  workGallery.style.setProperty("--work-detail-reveal", progress.toFixed(4));
+};
+
+let workDetailRevealRaf = 0;
+const queueWorkDetailReveal = () => {
+  if (workDetailRevealRaf) return;
+  workDetailRevealRaf = window.requestAnimationFrame(() => {
+    workDetailRevealRaf = 0;
+    updateWorkDetailReveal();
+  });
 };
 
 const openWorkDetail = (index) => {
@@ -1563,6 +1599,7 @@ const openWorkDetail = (index) => {
   if (workGalleryTitle) workGalleryTitle.textContent = getGalleryItemTitle(item, galleryStep);
   if (workGalleryIndex) workGalleryIndex.textContent = String(galleryStep + 1).padStart(2, "0");
   workGallery.scrollTo({ top: 0, behavior: "auto" });
+  queueWorkDetailReveal();
   playUiTone("click");
 };
 
@@ -1571,6 +1608,7 @@ const returnToGalleryIndex = () => {
   galleryMode = "index";
   workGallery.classList.remove("is-detail");
   if (workDetail) workDetail.innerHTML = "";
+  workGallery.style.setProperty("--work-detail-reveal", "0");
   const activeItem = workGalleryTrack?.children[galleryStep];
   if (workGalleryTitle) workGalleryTitle.textContent = activeItem?.querySelector(".work-gallery-caption")?.textContent || galleryText[currentLang].project;
   queueGalleryRender();
@@ -1613,6 +1651,7 @@ const openWorkGallery = (row) => {
   galleryWheelLocked = false;
   workGallery.classList.remove("is-detail");
   if (workDetail) workDetail.innerHTML = "";
+  workGallery.style.setProperty("--work-detail-reveal", "0");
   updateGalleryChromeText();
   if (workGalleryTitle) workGalleryTitle.textContent = title;
   if (workGalleryIndex) workGalleryIndex.textContent = index;
@@ -1641,6 +1680,7 @@ const closeWorkGallery = () => {
   document.body.classList.remove("work-gallery-open");
   document.documentElement.classList.remove("work-gallery-open");
   if (workDetail) workDetail.innerHTML = "";
+  workGallery.style.setProperty("--work-detail-reveal", "0");
 };
 
 document.querySelectorAll(".bottom-nav-item").forEach((item) => {
@@ -1654,8 +1694,14 @@ document.querySelectorAll(".bottom-nav-item").forEach((item) => {
     if (galleryOpen) closeWorkGallery();
 
     window.requestAnimationFrame(() => {
+      const aboutTextProgress = 0.32;
+      const scrollable = Math.max(0, target.scrollHeight - window.innerHeight);
+      const top = target.id === "about"
+        ? target.offsetTop + scrollable * aboutTextProgress
+        : target.offsetTop;
+
       window.scrollTo({
-        top: target.offsetTop,
+        top,
         behavior: reducedMotion ? "auto" : "smooth",
       });
     });
@@ -1712,10 +1758,12 @@ workGalleryTrack?.addEventListener("keydown", (event) => {
 
 workGalleryBack?.addEventListener("click", returnToGalleryIndex);
 workGalleryClose?.addEventListener("click", closeWorkGallery);
+workGallery?.addEventListener("scroll", queueWorkDetailReveal, { passive: true });
 window.addEventListener("resize", () => {
   if (!galleryOpen) return;
   measureGallery();
   queueGalleryRender();
+  queueWorkDetailReveal();
 });
 window.addEventListener("keydown", (event) => {
   if (event.key === "Escape" && wechatModal?.classList.contains("is-open")) {
@@ -2416,58 +2464,123 @@ initServicesScrollStory();
   window.addEventListener("resize", requestUpdate);
 })();
 
-const hoverCodeGlyphs = "LUCIANJYANG0123456789#/_包装判断结构";
-const hoverCodeTargets = Array.from(
-  document.querySelectorAll(
-    ".about-heading, .about-lead, .about-detail, .section-head h2, .section-intro, .service-item h3, .service-item p, .works-statement-title, .works-statement-body"
-  )
-).filter((node) => !node.classList.contains("scroll-type-text") && !node.closest(".services-scroll-story"));
+const scrambleTextChars = ".:·_";
+const scrambleTextRadius = 112;
+const scrambleTextDuration = 780;
+const scrambleTextSpeed = 0.48;
+let scrambledTextCleanups = [];
 
-hoverCodeTargets.forEach((node) => {
-  if (!node.textContent.trim()) return;
-  node.classList.add("code-hover-text");
-  let raf = 0;
-  let frame = 0;
-  let source = "";
+const restoreScrambledTextNodes = () => {
+  scrambledTextCleanups.forEach((cleanup) => cleanup());
+  scrambledTextCleanups = [];
+};
 
-  const restore = () => {
-    if (raf) cancelAnimationFrame(raf);
-    raf = 0;
-    frame = 0;
-    if (source) node.textContent = source;
-    node.classList.remove("is-coding");
-  };
+const splitScrambledNode = (node) => {
+  const children = Array.from(node.childNodes).map((child) => child.cloneNode(true));
+  const sourceText = node.textContent || "";
+  if (!sourceText.trim()) return [];
 
-  node.addEventListener("pointerenter", () => {
-    source = node.textContent;
-    node.classList.add("is-coding");
+  node.replaceChildren();
+  node.classList.add("scrambled-text");
 
-    const run = () => {
-      frame += 1;
-      const strength = Math.max(0, 1 - frame / 18);
-      node.textContent = source
-        .split("")
-        .map((char, index) => {
-          if (char.trim() === "" || Math.random() > strength * 0.28) return char;
-          return hoverCodeGlyphs[(index + frame + Math.floor(Math.random() * hoverCodeGlyphs.length)) % hoverCodeGlyphs.length];
-        })
-        .join("");
-
-      if (frame < 18) {
-        raf = requestAnimationFrame(run);
+  const chars = [];
+  const appendScrambledText = (target, text) => {
+    Array.from(text).forEach((char) => {
+      if (/\s/.test(char)) {
+        target.appendChild(document.createTextNode(char));
         return;
       }
 
-      restore();
-      node.classList.add("is-code-settled");
-      window.setTimeout(() => node.classList.remove("is-code-settled"), 360);
+      const span = document.createElement("span");
+      span.className = "scramble-char";
+      span.textContent = char;
+      span.dataset.content = char;
+      span.dataset.scrambleUntil = "0";
+      target.appendChild(span);
+      chars.push(span);
+    });
+  };
+
+  const rebuild = (sourceNode, target) => {
+    if (sourceNode.nodeType === Node.TEXT_NODE) {
+      appendScrambledText(target, sourceNode.textContent || "");
+      return;
+    }
+
+    if (sourceNode.nodeType !== Node.ELEMENT_NODE) return;
+
+    const clone = sourceNode.cloneNode(false);
+    target.appendChild(clone);
+    sourceNode.childNodes.forEach((child) => rebuild(child, clone));
+  };
+
+  children.forEach((child) => rebuild(child, node));
+
+  return chars;
+};
+
+const initScrambledText = () => {
+  restoreScrambledTextNodes();
+  if (reducedMotion) return;
+
+  document.querySelectorAll(".js-scrambled-text").forEach((node) => {
+    const source = node.innerHTML;
+    const chars = splitScrambledNode(node);
+    if (!chars.length) return;
+
+    let raf = 0;
+
+    const render = () => {
+      raf = 0;
+      const now = performance.now();
+      let hasActive = false;
+
+      chars.forEach((charNode) => {
+        const endAt = Number(charNode.dataset.scrambleUntil || 0);
+        if (endAt > now) {
+          hasActive = true;
+          charNode.textContent = scrambleTextChars[Math.floor(Math.random() * scrambleTextChars.length)];
+          return;
+        }
+        charNode.textContent = charNode.dataset.content || "";
+      });
+
+      if (hasActive) {
+        const delay = Math.max(1, 1000 / (24 + scrambleTextSpeed * 48));
+        window.setTimeout(() => {
+          if (!raf) raf = requestAnimationFrame(render);
+        }, delay);
+      }
     };
 
-    raf = requestAnimationFrame(run);
-  });
+    const handleMove = (event) => {
+      const now = performance.now();
+      chars.forEach((charNode) => {
+        const rect = charNode.getBoundingClientRect();
+        const dx = event.clientX - (rect.left + rect.width / 2);
+        const dy = event.clientY - (rect.top + rect.height / 2);
+        const distance = Math.hypot(dx, dy);
 
-  node.addEventListener("pointerleave", restore);
-});
+        if (distance >= scrambleTextRadius) return;
+        const strength = 1 - distance / scrambleTextRadius;
+        const endAt = now + scrambleTextDuration * strength;
+        charNode.dataset.scrambleUntil = String(Math.max(Number(charNode.dataset.scrambleUntil || 0), endAt));
+      });
+
+      if (!raf) raf = requestAnimationFrame(render);
+    };
+
+    node.addEventListener("pointermove", handleMove);
+    scrambledTextCleanups.push(() => {
+      if (raf) cancelAnimationFrame(raf);
+      node.removeEventListener("pointermove", handleMove);
+      node.classList.remove("scrambled-text");
+      node.innerHTML = source;
+    });
+  });
+};
+
+initScrambledText();
 
 const animateCards = (timestamp) => {
   if (!stageMotion.width || !stageMotion.height) {
@@ -4479,25 +4592,13 @@ window.requestAnimationFrame(animateCards);
 // Navigation scroll spy ------------------------------------------------------
 // Bottom nav scroll spy
 (function () {
-  const nav = document.querySelector(".bottom-nav");
-  const indicator = document.querySelector(".bottom-nav-indicator");
   const navItems = document.querySelectorAll(".bottom-nav-item");
   const sectionIds = ["about", "services", "works", "contact"];
   const sections = sectionIds.map((id) => document.getElementById(id)).filter(Boolean);
 
-  function moveIndicator(item) {
-    if (!nav || !indicator || !item) return;
-    const navRect = nav.getBoundingClientRect();
-    const itemRect = item.getBoundingClientRect();
-    nav.style.setProperty("--nav-indicator-x", `${itemRect.left - navRect.left}px`);
-    nav.style.setProperty("--nav-indicator-w", `${itemRect.width}px`);
-    nav.classList.add("has-indicator");
-  }
-
   function updateActiveNav() {
     const scrollY = window.scrollY + window.innerHeight * 0.4;
     let active = null;
-    let activeItem = null;
     for (const sec of sections) {
       if (sec.offsetTop <= scrollY) active = sec.id;
     }
@@ -4505,19 +4606,8 @@ window.requestAnimationFrame(animateCards);
       const href = item.getAttribute("href");
       const isActive = href === "#" + active;
       item.classList.toggle("is-active", isActive);
-      if (isActive) activeItem = item;
     });
-    moveIndicator(activeItem);
   }
-
-  navItems.forEach((item) => {
-    item.addEventListener("pointerenter", () => moveIndicator(item));
-    item.addEventListener("focus", () => moveIndicator(item));
-  });
-
-  nav?.addEventListener("pointerleave", () => {
-    moveIndicator(document.querySelector(".bottom-nav-item.is-active"));
-  });
 
   window.addEventListener("scroll", updateActiveNav, { passive: true });
   window.addEventListener("resize", updateActiveNav);
