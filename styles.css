@@ -4525,21 +4525,6 @@ body .contact-copy-value {
   font-size: 1.22rem;
 }
 
-body .contact-social {
-  gap: 30px;
-  margin-top: 60px;
-}
-
-body .contact-social-icon {
-  width: 70px;
-  height: 70px;
-}
-
-body .contact-social-icon svg {
-  width: 24px;
-  height: 24px;
-}
-
 @media (max-width: 760px) {
   body .top-meta-inner {
     min-height: 52px;
@@ -4736,50 +4721,6 @@ body .contact-social {
   text-align: center;
 }
 
-body .contact-social-icon {
-  width: 48px;
-  height: 36px;
-  min-width: 0;
-  padding: 0;
-  border-radius: 50%;
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.012)),
-    rgba(255, 255, 255, 0.035);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  color: rgba(235, 231, 224, 0.72);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.05),
-    0 12px 26px rgba(0, 0, 0, 0.18);
-}
-
-body .contact-social-icon:hover,
-body .contact-social-icon:focus-visible {
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0.02)),
-    rgba(255, 255, 255, 0.055);
-  color: rgba(247, 244, 238, 0.96);
-  border-color: rgba(255, 255, 255, 0.18);
-  transform: translateY(-2px);
-}
-
-body .contact-social-icon svg {
-  width: 23px;
-  height: 23px;
-  display: block;
-}
-
-body .contact-social-icon[aria-label="Email"] svg {
-  width: 26px;
-  height: 26px;
-}
-
-body .contact-wechat-trigger svg {
-  width: 25px;
-  height: 25px;
-}
-
-
-
 /* Top meta icon buttons are bare icons, no circular hover shell. */
 body .top-meta-toggle,
 body .top-meta-toggle:hover,
@@ -4798,24 +4739,36 @@ body .contact-social-icon {
   border: 0;
   border-radius: 0;
   box-shadow: none;
+  filter: none;
 }
 
 body .contact-social-icon:hover,
 body .contact-social-icon:focus-visible {
   background: transparent;
   border-color: transparent;
+  color: #ff4b36;
   box-shadow: none;
+  filter: drop-shadow(0 0 10px rgba(255, 75, 54, 0.34));
 }
 
 body .contact-social-icon svg {
-  width: 21px;
-  height: 21px;
-}
-
-body .contact-social-icon[aria-label="Email"] svg,
-body .contact-wechat-trigger svg {
   width: 22px;
   height: 22px;
+}
+
+body .contact-social-icon[aria-label="Email"] svg {
+  width: 24px;
+  height: 24px;
+}
+
+body .contact-wechat-trigger svg {
+  width: 24px;
+  height: 24px;
+}
+
+body .contact-social-icon[aria-label="X (Twitter)"] svg {
+  width: 21px;
+  height: 21px;
 }
 
 body .contact-form {
@@ -4882,37 +4835,50 @@ body .contact-field-message {
 }
 
 body .contact-submit {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 0.34em;
   width: auto;
-  min-width: 92px;
-  height: 34px;
+  min-width: 0;
+  height: auto;
   margin: clamp(24px, 3vh, 34px) 0 0 auto;
-  padding: 0 22px;
-  border: 1px solid rgba(235, 231, 224, 0.22);
-  border-radius: 999px;
-  background: rgba(247, 244, 238, 0.86);
-  color: rgba(7, 8, 11, 0.9);
-  font: 700 0.68rem/1 "Satoshi", "MiSans", system-ui, sans-serif;
-  letter-spacing: 0.14em;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: rgba(235, 231, 224, 0.84);
+  font: 700 0.9rem/1 "Satoshi", "MiSans", system-ui, sans-serif;
+  letter-spacing: 0.08em;
   cursor: pointer;
   transition:
-    background 180ms ease,
-    border-color 180ms ease,
+    color 180ms ease,
     transform 180ms ease;
 }
 
 body .contact-submit:hover,
 body .contact-submit:focus-visible {
-  background: #ffffff;
-  border-color: #ffffff;
-  transform: translateY(-2px);
-  outline: none;
+  color: #ffffff;
+  background: transparent;
+  outline: 1px solid rgba(235, 231, 224, 0.36);
+  outline-offset: 8px;
 }
 
 body .contact-submit:active {
   transform: translateY(0);
+}
+
+body .contact-submit-arrow {
+  display: inline-block;
+  margin-top: -0.24em;
+  font-size: 1.08em;
+  line-height: 1;
+  transition: transform 180ms ease;
+}
+
+body .contact-submit:hover .contact-submit-arrow,
+body .contact-submit:focus-visible .contact-submit-arrow {
+  transform: translate(3px, -3px);
 }
 
 body .contact-form + .contact-social {
@@ -5015,7 +4981,7 @@ body .contact-section {
 
   body .contact-submit {
     width: auto;
-    min-width: 88px;
+    min-width: 0;
     margin-top: 34px;
   }
 }
@@ -6964,20 +6930,6 @@ body .bottom-nav.pill-nav .pill:focus-visible .pill-label-hover {
   transform: translate3d(0, 0, 0);
 }
 
-body .bottom-nav.pill-nav .pill.is-active::after {
-  content: "";
-  position: absolute;
-  left: 50%;
-  bottom: 5px;
-  z-index: 3;
-  width: 4px;
-  height: 4px;
-  border-radius: 999px;
-  background: rgba(125, 255, 234, 0.88);
-  transform: translateX(-50%);
-  opacity: 0.84;
-}
-
 body .bottom-nav.pill-nav:hover .pill.is-active:not(:hover) {
   background: var(--pill-bg-active);
   color: var(--pill-active-text);
@@ -6996,11 +6948,6 @@ body.services-white-stage .bottom-nav.pill-nav {
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.34),
     0 18px 46px rgba(18, 18, 18, 0.1);
-}
-
-body.work-gallery-open .bottom-nav.pill-nav .pill.is-active::after,
-body.services-white-stage .bottom-nav.pill-nav .pill.is-active::after {
-  background: rgba(16, 17, 20, 0.72);
 }
 
 @media (max-width: 760px) {

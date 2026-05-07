@@ -149,7 +149,7 @@ Object.assign(i18n.zh, {
   contact_form_company: "\u516c\u53f8",
   contact_form_contact: "\u90ae\u7bb1/\u7535\u8bdd",
   contact_form_message: "\u9700\u6c42\u4fe1\u606f",
-  contact_form_send: "\u6253\u5f00\u90ae\u4ef6",
+  contact_form_send: "\u53d1\u9001\u90ae\u4ef6",
 });
 
 Object.assign(i18n.en, {
@@ -157,7 +157,7 @@ Object.assign(i18n.en, {
   contact_form_company: "Company",
   contact_form_contact: "Email / Phone",
   contact_form_message: "Project Needs",
-  contact_form_send: "Open Email",
+  contact_form_send: "Send Email",
 });
 
 Object.assign(i18n.zh, {
@@ -685,7 +685,7 @@ const contactForm = document.querySelector("#contact-form");
 const showContactToast = () => {
   const toast = document.getElementById("contact-toast");
   if (!toast) return;
-  toast.textContent = currentLang === "zh" ? "已打开邮件，并复制内容" : "Email draft opened and copied";
+  toast.textContent = currentLang === "zh" ? "已准备发送邮件，并复制内容" : "Email draft ready to send and copied";
   toast.classList.add("is-visible");
   setTimeout(() => toast.classList.remove("is-visible"), 2400);
 };

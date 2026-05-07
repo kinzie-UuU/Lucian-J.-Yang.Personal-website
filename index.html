@@ -381,7 +381,10 @@
             <textarea name="message" rows="4" required></textarea>
           </label>
         </div>
-        <button class="contact-submit" type="submit" data-i18n="contact_form_send">发送</button>
+        <button class="contact-submit" type="submit">
+          <span data-i18n="contact_form_send">发送邮件</span>
+          <span class="contact-submit-arrow" aria-hidden="true">↗</span>
+        </button>
       </form>
 
       <!-- Social icons -->
@@ -411,12 +414,12 @@
         <!-- WeChat QR trigger -->
         <button class="contact-social-icon contact-wechat-trigger" aria-label="微信二维码" id="wechat-qr-trigger">
           <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M9.35 5.2C5.8 5.2 3 7.45 3 10.25C3 11.85 3.9 13.28 5.32 14.22L4.82 16.05L6.98 15.02C7.7 15.22 8.5 15.33 9.35 15.33C12.9 15.33 15.7 13.08 15.7 10.25C15.7 7.45 12.9 5.2 9.35 5.2Z" stroke="currentColor" stroke-width="1.55" stroke-linejoin="round"/>
-            <path d="M14.75 9.12C18.1 9.28 20.72 11.43 20.72 14.08C20.72 15.55 19.92 16.88 18.65 17.8L19.08 19.38L17.2 18.48C16.55 18.65 15.85 18.75 15.1 18.75C12.18 18.75 9.72 17.18 9.05 15.02" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"/>
-            <circle cx="7.35" cy="9.95" r="0.58" fill="currentColor"/>
-            <circle cx="11.28" cy="9.95" r="0.58" fill="currentColor"/>
-            <circle cx="13.12" cy="13.9" r="0.5" fill="currentColor"/>
-            <circle cx="16.68" cy="13.9" r="0.5" fill="currentColor"/>
+            <path d="M9.55 5.35C5.94 5.35 3.1 7.58 3.1 10.34C3.1 11.9 4.02 13.3 5.45 14.22L4.94 16.1L7.12 15.08C7.84 15.27 8.67 15.38 9.55 15.38C13.16 15.38 16 13.15 16 10.34C16 7.58 13.16 5.35 9.55 5.35Z" stroke="currentColor" stroke-width="1.48" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M13.95 10.3C17.03 10.52 19.35 12.42 19.35 14.76C19.35 16 18.66 17.13 17.55 17.92L17.94 19.35L16.2 18.53C15.65 18.67 15.05 18.74 14.42 18.74C11.55 18.74 9.2 17.12 8.9 15.04" stroke="currentColor" stroke-width="1.48" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="7.25" cy="10.04" r="0.52" fill="currentColor"/>
+            <circle cx="11.05" cy="10.04" r="0.52" fill="currentColor"/>
+            <circle cx="13.02" cy="14.3" r="0.44" fill="currentColor"/>
+            <circle cx="16.22" cy="14.3" r="0.44" fill="currentColor"/>
           </svg>
         </button>
       </div>
