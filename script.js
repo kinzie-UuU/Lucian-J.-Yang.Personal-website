@@ -19,20 +19,7 @@ const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matc
 
 // Site copy, work taxonomy, and gallery data are loaded from site-data.js.
 
-const cardPresets = [
-  { x: -0.46, y: -0.12, w: 200, h: 268, r: -9, d: -120 },
-  { x: -0.31, y: -0.04, w: 212, h: 284, r: -6, d: -56 },
-  { x: -0.17, y: -0.16, w: 196, h: 262, r: -4, d: 18 },
-  { x: -0.03, y: -0.18, w: 190, h: 254, r:  5, d: 44 },
-  { x:  0.13, y: -0.05, w: 222, h: 296, r:  7, d: 110 },
-  { x:  0.28, y: -0.12, w: 188, h: 252, r: -6, d: 176 },
-  { x:  0.38, y:  0.04, w: 180, h: 240, r: -4, d: 132 },
-  { x: -0.24, y:  0.08, w: 194, h: 260, r:  7, d: -12 },
-  { x: -0.06, y:  0.06, w: 214, h: 286, r: -9, d: -74 },
-  { x:  0.11, y:  0.06, w: 190, h: 254, r:  4, d: 28 },
-  { x:  0.26, y:  0.05, w: 206, h: 276, r: -5, d: 104 },
-  { x:  0.42, y:  0.02, w: 184, h: 246, r:  6, d: 188 },
-];
+// Hero card presets and thresholds are loaded from scripts/hero-card-config.js.
 
 let currentLang = "zh";
 let audioContext = null;
@@ -48,15 +35,6 @@ let hasEntered = false;
 let selectionStartedAt = 0;
 let selectedCardIndex = -1;
 
-// Hero wheel-step system
-// step 0 = water intro (2 wheel ticks held here)
-// step 1-5 = card focus steps
-const HERO_CARD_COUNT = 5;
-const HERO_INTRO_TICKS = 2;
-const HERO_WHEEL_STEP_THRESHOLD = 18;
-const HERO_WHEEL_BACK_THRESHOLD = 44;
-const HERO_TOUCH_STEP_THRESHOLD = 42;
-const HERO_RELEASE_EASING_GAP = 0.08;
 let heroStep = 0;           // 0..HERO_CARD_COUNT
 let heroStepTarget = 0;     // lerp target (float)
 let heroWheelLocked = false;// debounce between steps
@@ -65,21 +43,6 @@ const heroCardStates = [];
 const fieldPointer = { x: 0.5, y: 0.5, active: false };
 const precisionCursor = document.querySelector("#precision-cursor");
 const precisionGuides = document.querySelector("#precision-guides");
-const heroClusterLayout = [
-  { ox: -0.52, oy: -0.23, scale: 0.88, rot: -12, depth: -24, phase: 0.1 },
-  { ox: -0.32, oy: -0.31, scale: 0.86, rot: -6, depth: -8,  phase: 0.6 },
-  { ox: -0.10, oy: -0.29, scale: 0.84, rot:  5, depth:  8,  phase: 1.1 },
-  { ox:  0.14, oy: -0.23, scale: 0.86, rot:  9, depth: 22,  phase: 1.7 },
-  { ox:  0.38, oy: -0.15, scale: 0.92, rot:  7, depth: 52,  phase: 2.1 },
-  { ox:  0.52, oy:  0.07, scale: 0.84, rot: -8, depth: 18,  phase: 2.6 },
-  { ox:  0.36, oy:  0.27, scale: 0.86, rot:  4, depth: -2,  phase: 3.1 },
-  { ox:  0.12, oy:  0.35, scale: 0.90, rot: -9, depth: -18, phase: 3.7 },
-  { ox: -0.16, oy:  0.31, scale: 0.82, rot:  8, depth: -34, phase: 4.2 },
-  { ox: -0.40, oy:  0.17, scale: 1.04, rot:  0, depth: 66,  phase: 4.8 },
-  { ox: -0.24, oy: -0.07, scale: 0.82, rot: -4, depth: 28,  phase: 5.4 },
-  { ox:  0.22, oy:  0.09, scale: 0.78, rot: 11, depth: -12, phase: 5.9 },
-];
-
 const revealNodes = document.querySelectorAll(".reveal");
 const langButtons = Array.from(document.querySelectorAll(".lang-button"));
 const heroCards = Array.from(document.querySelectorAll(".hero-card"));
@@ -88,8 +51,6 @@ const heroSection = document.querySelector(".hero-section");
 const heroStage = document.querySelector("#hero-stage");
 const heroWireframe = document.querySelector("#hero-wireframe");
 const particleCanvas = document.querySelector("#clients-particles");
-const beijingTimeNode = document.querySelector("#beijing-time");
-const beijingDateNode = document.querySelector("#beijing-date");
 const heroFocusPanel = document.querySelector("#hero-focus-panel");
 const heroFocusKicker = document.querySelector("#hero-focus-kicker");
 const heroFocusTitle = document.querySelector("#hero-focus-title");
@@ -706,49 +667,10 @@ const resizeStage = () => {
   stageMotion.height = rect.height;
 };
 
-const setCardPosition = (card, config) => {
-  const w = config.w;
-  const h = config.h;
-  const z = config.z || 0;
-  const r = config.r || 0;
-  const ry = config.ry || 0;
-  const rx = config.rx || 0;
-  const x = config.x;
-  const y = config.y;
-  const scale = config.scale ?? 1;
-  const opacity = config.opacity ?? 1;
-  card.style.width = `${w}px`;
-  card.style.height = `${h}px`;
-  card.style.opacity = String(opacity);
-  card.style.zIndex = `${Math.round(160 + z)}`;
-  card.style.transform = `translate3d(${x - w / 2}px, ${y - h / 2}px, ${z}px) rotateY(${ry}deg) rotateX(${rx}deg) rotateZ(${r}deg) scale(${scale})`;
-};
-
 const initCards = () => {
   heroCardStates.length = 0;
   heroCards.forEach((card, index) => {
-    const preset = cardPresets[index % cardPresets.length];
-    const layout = heroClusterLayout[index % heroClusterLayout.length];
-    const width = Math.round(Math.min(320, Math.max(220, preset.w * 1.18)));
-    const height = Math.round(width * (4 / 3));
-    const state = {
-      card,
-      index,
-      width,
-      height,
-      x: stageMotion.width * 0.5,
-      y: stageMotion.height * 0.5,
-      targetX: stageMotion.width * 0.5,
-      targetY: stageMotion.height * 0.5,
-      rotation: layout.rot,
-      scale: layout.scale,
-      opacity: 0,
-      depth: layout.depth,
-      layout,
-      phase: layout.phase,
-      captureX: stageMotion.width * 0.5,
-      captureY: stageMotion.height * 0.5,
-    };
+    const state = createHeroCardState(card, index, stageMotion);
     heroCardStates.push(state);
     card.dataset.index = String(index);
   });
@@ -853,31 +775,13 @@ const resetHeroSequenceState = ({ resetScroll = false, resetCards = true } = {})
   heroStage?.style.setProperty("--hero-water-progress", "0");
   heroStage?.style.setProperty("--hero-tail-fade", "1");
 
-  heroCards.forEach((card) => {
-    card.classList.remove("is-active", "is-dimmed", "is-ordered", "is-scroll-current");
-  });
+  resetHeroCardClasses(heroCards);
 
   if (!resetCards) return;
 
   resizeStage();
   initCards();
-  heroCardStates.forEach((state) => {
-    state.x = stageMotion.width * 0.5;
-    state.y = stageMotion.height * 0.5;
-    state.targetX = state.x;
-    state.targetY = state.y;
-    state.opacity = 0;
-    setCardPosition(state.card, {
-      x: state.x,
-      y: state.y,
-      w: state.width,
-      h: state.height,
-      z: state.depth,
-      r: state.rotation,
-      scale: state.scale,
-      opacity: 0,
-    });
-  });
+  resetHeroCardPositions(heroCardStates, stageMotion);
 };
 
 window.LucianRuntime = {
@@ -2434,33 +2338,22 @@ const animateCards = (timestamp) => {
     return;
   }
 
-  const elapsed = (timestamp - stageMotion.startAt) * 0.001;
-  const width = stageMotion.width;
-  const height = stageMotion.height;
-  const minSide = Math.min(width, height);
-  const centerX = width * 0.5;
-  const centerY = height * 0.50;
-  const pointerX = fieldPointer.x * width;
-  const pointerY = fieldPointer.y * height;
-  const swayX = Math.sin(elapsed * 0.22) * width * 0.014;
-  const swayY = Math.cos(elapsed * 0.18) * height * 0.012;
-  const heroRect = heroSection?.getBoundingClientRect();
+  const frame = getHeroMotionFrame({ timestamp, stageMotion, fieldPointer, heroSection });
+  const { elapsed, width, height, minSide, centerX, centerY, pointerX, pointerY, swayX, swayY, heroRect } = frame;
   const hasEntered = document.body.classList.contains("has-entered");
   const scrollDriven = hasEntered && !orderedMode;
 
   // Lerp heroStepTarget toward heroStep for smooth card transitions
   heroStepTarget += (heroStep - heroStepTarget) * 0.072;
 
-  // scrollProgress: 0 = card 0 front, 1 = card 5 front
-  const scrollProgress = HERO_CARD_COUNT > 1
-    ? Math.max(0, Math.min(1, (heroStepTarget - 1) / (HERO_CARD_COUNT - 1)))
-    : 0;
-
-  // Water intro fade: 0 = full water, 1 = cards active
-  const introProgress = Math.min(1, heroStepTarget);
-  const waterProgress = heroStep > 0
-    ? 1
-    : (HERO_INTRO_TICKS - heroIntroBudget) / HERO_INTRO_TICKS;
+  const progressState = getHeroProgressState({
+    heroStepTarget,
+    heroStep,
+    heroIntroBudget,
+    heroRect,
+    stageHeight: stageMotion.height,
+  });
+  const { scrollProgress, introProgress, tailFade } = progressState;
 
   // Enable scroll-snap to next section only after last card
   if (hasEntered) {
@@ -2470,19 +2363,7 @@ const animateCards = (timestamp) => {
     }
   }
 
-  // Tail fade: hero-section is 180vh; sticky stage = 100vh, tail = 80vh
-  // heroRect.bottom starts at ~180vh, drops to 0 as user scrolls out
-  // fade cards over the last ~80vh of hero-section (heroRect.bottom: 100vh → 0)
-  const tailFade = heroRect
-    ? Math.min(1, Math.max(0, (heroRect.bottom - stageMotion.height) / (stageMotion.height * 0.7)))
-    : 1;
-
-  if (heroStage) {
-    heroStage.style.setProperty("--hero-scroll-progress", scrollProgress.toFixed(4));
-    heroStage.style.setProperty("--hero-intro-progress", introProgress.toFixed(4));
-    heroStage.style.setProperty("--hero-water-progress", waterProgress.toFixed(4));
-    heroStage.style.setProperty("--hero-tail-fade", tailFade.toFixed(4));
-  }
+  applyHeroProgressVars(heroStage, progressState);
 
   if (hasEntered && heroRect && heroRect.bottom < -stageMotion.height * 0.25 && !orderedMode) {
     window.requestAnimationFrame(animateCards);
@@ -2891,35 +2772,6 @@ const initParticleCanvas = (canvas, mode = "light") => {
   window.addEventListener("resize", resize);
   resize();
   window.requestAnimationFrame(render);
-};
-
-const updateBeijingMeta = () => {
-  const now = new Date();
-  const timeFormatter = new Intl.DateTimeFormat("en-GB", {
-    timeZone: "Asia/Shanghai",
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false,
-  });
-  const dateFormatter = new Intl.DateTimeFormat("en-CA", {
-    timeZone: "Asia/Shanghai",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  });
-
-  if (beijingTimeNode) {
-    const period = new Intl.DateTimeFormat("en-US", {
-      timeZone: "Asia/Shanghai",
-      hour: "numeric",
-      hour12: true,
-    }).formatToParts(now).find((part) => part.type === "dayPeriod")?.value || "";
-    beijingTimeNode.innerHTML = `<span class="top-meta-period">${period.toUpperCase()}</span>${timeFormatter.format(now)}`;
-  }
-
-  if (beijingDateNode) {
-    beijingDateNode.textContent = dateFormatter.format(now).replace(/-/g, ".");
-  }
 };
 
 // Frozen: hero WebGL water surface ------------------------------------------
@@ -3447,8 +3299,6 @@ updateWorksTabState("oem");
 heroWireframeController = initHeroWireframe(heroWireframe);
 initWaterSurface(document.getElementById("hero-kinetic-canvas"));
 // initParticleCanvas(particleCanvas, "light");
-updateBeijingMeta();
-window.setInterval(updateBeijingMeta, 30000);
 window.requestAnimationFrame(animateCards);
 
 // Secondary section effects --------------------------------------------------
