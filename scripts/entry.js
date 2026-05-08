@@ -169,7 +169,6 @@ const initEntryField = (canvas) => {
   entryGo?.addEventListener("pointerenter", () => {
     pointer.hover = true;
     createEntryWave(1.25);
-    playUiTone("hover");
   });
 
   entryGo?.addEventListener("pointerleave", () => {
