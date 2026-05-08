@@ -3402,64 +3402,16 @@ const stepHeroSequence = (isForward) => {
   return true;
 };
 
-window.addEventListener(
-  "wheel",
-  (event) => {
-    const deltaY = event.deltaY;
-    if (!isHeroStepControlActive(deltaY)) return;
-    event.preventDefault();
-
-    const threshold = deltaY > 0 ? HERO_WHEEL_STEP_THRESHOLD : HERO_WHEEL_BACK_THRESHOLD;
-    if (Math.abs(deltaY) < threshold) return;
-
-    stepHeroSequence(deltaY > 0);
+window.LucianRuntime.heroSteps = {
+  get stage() {
+    return heroStage;
   },
-  { passive: false }
-);
-
-let heroTouchStart = null;
-
-heroStage?.addEventListener(
-  "touchstart",
-  (event) => {
-    const touch = event.touches[0];
-    if (!touch) return;
-    heroTouchStart = {
-      x: touch.clientX,
-      y: touch.clientY,
-    };
-  },
-  { passive: true }
-);
-
-heroStage?.addEventListener(
-  "touchmove",
-  (event) => {
-    const touch = event.touches[0];
-    const dy = touch && heroTouchStart ? touch.clientY - heroTouchStart.y : 0;
-    if (isHeroStepControlActive(-dy)) {
-      event.preventDefault();
-    }
-  },
-  { passive: false }
-);
-
-heroStage?.addEventListener(
-  "touchend",
-  (event) => {
-    if (!heroTouchStart) return;
-    const touch = event.changedTouches[0];
-    if (!touch) return;
-
-    const dx = touch.clientX - heroTouchStart.x;
-    const dy = touch.clientY - heroTouchStart.y;
-    heroTouchStart = null;
-
-    if (Math.abs(dy) < HERO_TOUCH_STEP_THRESHOLD || Math.abs(dy) < Math.abs(dx)) return;
-    stepHeroSequence(dy < 0);
-  },
-  { passive: true }
-);
+  isActive: isHeroStepControlActive,
+  step: stepHeroSequence,
+  wheelStepThreshold: HERO_WHEEL_STEP_THRESHOLD,
+  wheelBackThreshold: HERO_WHEEL_BACK_THRESHOLD,
+  touchStepThreshold: HERO_TOUCH_STEP_THRESHOLD,
+};
 
 // Hero stage click ripple effect
 const heroRipples = [];
