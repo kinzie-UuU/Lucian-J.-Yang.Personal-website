@@ -1,5 +1,4 @@
 window.initHeroFocusRuntime = ({ getCurrentLang }) => {
-  const worksTabs = Array.from(document.querySelectorAll(".works-tab"));
   const panel = document.querySelector("#hero-focus-panel");
   const kicker = document.querySelector("#hero-focus-kicker");
   const title = document.querySelector("#hero-focus-title");
@@ -22,9 +21,6 @@ window.initHeroFocusRuntime = ({ getCurrentLang }) => {
     if (metaB) metaB.textContent = data.value[lang];
     if (enter) enter.textContent = window.i18n?.[lang]?.hero_action_works || "";
 
-    worksTabs.forEach((tab) => {
-      tab.classList.toggle("is-active", tab.dataset.workTarget === selectedWorkKey);
-    });
   };
 
   refresh(selectedWorkKey);

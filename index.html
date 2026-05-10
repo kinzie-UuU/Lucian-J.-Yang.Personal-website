@@ -8,7 +8,30 @@
     name="description"
     content="Lucian J. Yang portfolio site for OEM, gifting, series packaging, and brand-upgrade projects built under real production constraints."
   >
+  <script>
+    (() => {
+      if (window.location.protocol !== "file:") return;
+
+      const target = `http://127.0.0.1:4180/index.html${window.location.hash || ""}`;
+      fetch(target, { mode: "no-cors", cache: "no-store" })
+        .then(() => window.location.replace(target))
+        .catch(() => {});
+    })();
+  </script>
+  <link rel="stylesheet" href="styles/fonts.css">
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles/cursor.css">
+  <link rel="stylesheet" href="styles/typography.css">
+  <link rel="stylesheet" href="styles/home.css">
+  <link rel="stylesheet" href="styles/about.css">
+  <link rel="stylesheet" href="styles/services.css">
+  <link rel="stylesheet" href="styles/works.css">
+  <link rel="stylesheet" href="styles/clients.css">
+  <link rel="stylesheet" href="styles/work-gallery.css?v=20260510-gallery-indexfix">
+  <link rel="stylesheet" href="styles/contact.css">
+  <link rel="stylesheet" href="styles/navigation.css">
+  <link rel="stylesheet" href="styles/responsive.css">
+  <link rel="stylesheet" href="styles/shared-motion.css">
   <script src="three.min.js"></script>
 </head>
 <body>
@@ -130,7 +153,7 @@
           <button class="hero-card" type="button" data-work="oem" data-tone="light" data-project-key="oem" data-project-index="0">
             <span class="hero-card-image-area"></span>
             <div class="hero-card-info">
-              <span class="hero-card-category">OEM / 品牌包装</span>
+              <span class="hero-card-category">品牌包装</span>
               <span class="hero-card-name">包装设计</span>
               <span class="hero-card-meta">01 · 结构与识别</span>
             </div>
@@ -138,7 +161,7 @@
           <button class="hero-card" type="button" data-work="gift" data-project-key="gift" data-project-index="0">
             <span class="hero-card-image-area"></span>
             <div class="hero-card-info">
-              <span class="hero-card-category">礼品福利渠道</span>
+              <span class="hero-card-category">礼品福利</span>
               <span class="hero-card-name">节礼包装设计</span>
               <span class="hero-card-meta">02 · 节点与渠道</span>
             </div>
@@ -146,7 +169,7 @@
           <button class="hero-card" type="button" data-work="brand" data-project-key="brand" data-project-index="0">
             <span class="hero-card-image-area"></span>
             <div class="hero-card-info">
-              <span class="hero-card-category">品牌字体辅助</span>
+              <span class="hero-card-category">品牌字体</span>
               <span class="hero-card-name">品牌与字体设计</span>
               <span class="hero-card-meta">03 · 字体与识别</span>
             </div>
@@ -154,7 +177,7 @@
           <button class="hero-card hero-card-dark" type="button" data-work="aigc" data-tone="dark" data-project-key="aigc" data-project-index="0">
             <span class="hero-card-image-area"></span>
             <div class="hero-card-info">
-              <span class="hero-card-category">AIGC 流程 / SOP</span>
+              <span class="hero-card-category">AIGC流</span>
               <span class="hero-card-name">AIGC 工作流</span>
               <span class="hero-card-meta">04 · 提案与筛选</span>
             </div>
@@ -162,7 +185,7 @@
           <button class="hero-card hero-card-dark" type="button" data-work="aigc-video" data-tone="dark" data-project-key="aigc-video" data-project-index="0">
             <span class="hero-card-image-area"></span>
             <div class="hero-card-info">
-              <span class="hero-card-category">短视频 / 商业片创作</span>
+              <span class="hero-card-category">视频创作</span>
               <span class="hero-card-name">AIGC 视频</span>
               <span class="hero-card-meta">05 · 动态表达</span>
             </div>
@@ -297,35 +320,27 @@
         <h2 class="works-statement-title js-scrambled-text" data-i18n="works_statement_title" data-reveal data-delay="80">不是把包装做漂亮，而是把包装做对。</h2>
         <p class="works-statement-body js-scrambled-text" data-i18n="works_statement_body" data-reveal data-delay="180">Lucian J. Yang 聚焦 OEM、礼赠渠道、系列礼盒与品牌升级项目。比起单纯制造风格，我更关心包装如何在真实约束中成立。</p>
       </div>
-      <div class="works-list-header" data-reveal data-delay="260">
-        <span class="works-list-col-project" data-i18n="works_col_project">类别</span>
-        <span class="works-list-col-type" data-i18n="works_col_type">Type</span>
-      </div>
+      <div class="works-list-header" data-reveal data-delay="260" aria-hidden="true"></div>
       <ul class="works-list" id="works-list">
         <li class="works-row" data-category="oem" data-reveal data-delay="320">
           <span class="works-row-index">01</span>
           <span class="works-row-name" data-i18n="work_row_1_name">包装设计</span>
-          <span class="works-row-tags"><span class="works-tag" data-i18n="work_tab_oem">OEM</span></span>
         </li>
         <li class="works-row" data-category="gift" data-reveal data-delay="380">
           <span class="works-row-index">02</span>
           <span class="works-row-name" data-i18n="work_row_2_name">节礼包装设计</span>
-          <span class="works-row-tags"><span class="works-tag" data-i18n="work_tab_gift">Gift</span></span>
         </li>
         <li class="works-row" data-category="brand" data-reveal data-delay="440">
           <span class="works-row-index">03</span>
           <span class="works-row-name" data-i18n="work_row_3_name">品牌与字体设计</span>
-          <span class="works-row-tags"><span class="works-tag" data-i18n="work_tab_brand">Brand</span></span>
         </li>
         <li class="works-row" data-category="aigc" data-reveal data-delay="500">
           <span class="works-row-index">04</span>
           <span class="works-row-name" data-i18n="work_row_4_name">AIGC工作流</span>
-          <span class="works-row-tags"><span class="works-tag" data-i18n="work_tab_aigc">AIGC</span></span>
         </li>
         <li class="works-row" data-category="aigc-video" data-reveal data-delay="560">
           <span class="works-row-index">05</span>
           <span class="works-row-name" data-i18n="work_row_5_name">AIGC视频</span>
-          <span class="works-row-tags"><span class="works-tag" data-i18n="work_tab_aigc_video">Video</span></span>
         </li>
       </ul>
       <div class="works-hover-preview" id="works-hover-preview" aria-hidden="true">
@@ -340,7 +355,10 @@
     <aside class="work-gallery" id="work-gallery" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="work-gallery-title">
       <div class="work-gallery-topbar">
         <p class="work-gallery-index" id="work-gallery-index">01</p>
-        <h3 class="work-gallery-title" id="work-gallery-title">Project</h3>
+        <div class="work-gallery-heading">
+          <h3 class="work-gallery-title" id="work-gallery-title">Project</h3>
+          <p class="work-gallery-description" id="work-gallery-description"></p>
+        </div>
         <div class="work-gallery-actions">
           <button class="work-gallery-back" id="work-gallery-back" type="button">Back</button>
           <button class="work-gallery-close" id="work-gallery-close" type="button" aria-label="关闭作品画廊">Close</button>
@@ -442,7 +460,11 @@
       <canvas class="clients-particles" id="clients-particles" aria-hidden="true"></canvas>
       <div class="clients-content">
         <div class="clients-title-band" aria-hidden="true">
-          <span>PACKAGING BRAND DESIGN</span>
+          <div class="clients-title-float" id="clients-title-float" aria-hidden="true"></div>
+          <span class="clients-title-lockup">
+            <span class="clients-title-line"><span class="clients-title-serif">Packaging</span> Brand</span>
+            <span class="clients-title-line"><span class="clients-title-serif">Design</span></span>
+          </span>
         </div>
 
         <div class="section-head section-head-centered section-head-light">
@@ -544,7 +566,7 @@
   <script src="scripts/services-entry-grid-scan.js"></script>
   <script src="scripts/service-panel-shaders.js"></script>
   <script src="scripts/services-scroll-story.js"></script>
-  <script src="scripts/work-gallery.js"></script>
+  <script src="scripts/work-gallery.js?v=20260510-gallery-indexfix"></script>
   <script src="scripts/scrambled-text.js"></script>
   <script src="scripts/header-controls.js"></script>
   <script src="scripts/language-controls.js"></script>
@@ -555,12 +577,12 @@
   <script src="scripts/precision-cursor.js"></script>
   <script src="scripts/services-image-trail.js"></script>
   <script src="scripts/hero-card-events.js"></script>
-  <script src="scripts/works-tabs.js"></script>
   <script src="scripts/works-hover-preview.js"></script>
   <script src="scripts/works-statement-motion.js"></script>
   <script src="scripts/site-clock.js"></script>
   <script src="scripts/bottom-nav-scroll-spy.js"></script>
   <script src="scripts/clients-marquee.js"></script>
+  <script src="scripts/clients-title-interaction.js"></script>
   <script src="scripts/portrait-motion.js"></script>
   <script src="scripts/hero-ripples.js"></script>
   <script src="scripts/hero-steps.js"></script>

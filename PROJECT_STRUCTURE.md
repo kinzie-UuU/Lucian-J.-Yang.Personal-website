@@ -1,25 +1,48 @@
-# 项目结构说明
+# Project Structure
 
-当前先保持 `index.html`、`styles.css`、`script.js` 三个核心文件不拆分，因为首屏水面、入口动画、Services 滚动和作品画廊依赖执行顺序、后置 CSS 覆盖和共享状态。
+This project is now split into small CSS and JS modules while keeping `index.html` as the static page entry.
 
-## 现在怎么改
+## Root Files
 
-- 改视觉优先看 `styles.css` 里的分段注释。
-- 改文案、作品分类、联系表单，优先看 `script.js` 前半部分和对应分段注释。
-- 不要直接移动 `initWaterSurface`、`enterSite`、Hero wheel-step、Services scroll story 相关代码。
-- 后续如果要拆文件，先做截图对照，再一次只拆一个低风险模块。
+- `index.html`: page markup and ordered stylesheet/script references.
+- `styles.css`: global tokens, reset, base body/page rules, and shared global states.
+- `script.js`: one-line application entry that calls `window.initLucianApp()`.
+- `site-data.js`: text, works data, gallery image data, and gallery copy.
+- `three.min.js`: local Three.js dependency used by `scripts/services-entry-grid-scan.js`.
+- `HANDOFF.md`: implementation history, validation notes, and high-risk areas.
 
-## 高风险冻结区
+## CSS Modules
 
-- 首屏入口和包装盒开启动画
-- `hero-kinetic-canvas` / `initWaterSurface`
-- Hero 滚轮分步浏览逻辑
-- Services 白场滚动切换
-- Work gallery 弹层、横向滚动和详情页
+- `styles/fonts.css`: font-face declarations and font variables.
+- `styles/cursor.css`: precision cursor and cursor-related states.
+- `styles/typography.css`: shared text effects and typographic utilities.
+- `styles/home.css`: entry, hero, water surface, hero cards, and home-section visuals.
+- `styles/about.css`: about and portrait sections.
+- `styles/services.css`: services entry, panels, scroll story, and services effects.
+- `styles/works.css`: works rows, works statements, and works section visuals.
+- `styles/clients.css`: client marquee/title section and particle/client effects.
+- `styles/work-gallery.css`: gallery overlay, horizontal gallery, and detail page.
+- `styles/contact.css`: contact form, social links, and QR modal.
+- `styles/navigation.css`: header controls and bottom navigation.
+- `styles/responsive.css`: current responsive overrides.
+- `styles/shared-motion.css`: shared reveal and motion helpers.
 
-## 推荐后续顺序
+## JS Modules
 
-1. 继续完善分段注释和重复覆盖说明。
-2. 只抽离联系表单或作品数据这类低风险模块。
-3. 补一个本地截图验证脚本。
-4. 最后再做字体、视频和图片瘦身。
+The JS split is complete for the current static-script architecture. `script.js` only starts the app; behavior lives under `scripts/`.
+
+Key groups:
+
+- App/bootstrap/runtime bridge: `app-bootstrap.js`, `runtime-bridge.js`, `hero-state-runtime.js`.
+- Entry and hero: `entry.js`, `hero-steps.js`, `hero-step-runtime.js`, `hero-actions-runtime.js`, `hero-sequence-runtime.js`, `hero-card-*`, `hero-water-surface.js`, `hero-ripples.js`, `hero-wireframe.js`, `hero-focus-runtime.js`.
+- Services: `services-entry-grid-scan.js`, `service-panel-shaders.js`, `services-scroll-story.js`, `services-image-trail.js`.
+- Works/gallery: `work-gallery.js`, `works-hover-preview.js`, `works-statement-motion.js`.
+- Site UI: `header-controls.js`, `language-controls.js`, `language-runtime.js`, `static-text-runtime.js`, `bottom-nav-scroll-spy.js`, `site-navigation.js`, `site-clock.js`, `precision-cursor.js`.
+- Effects and supporting modules: `audio-feedback.js`, `scrambled-text.js`, `scroll-type-effects.js`, `reveal-effects.js`, `clients-marquee.js`, `clients-title-interaction.js`, `portrait-motion.js`, `particle-canvas.js`.
+
+## Audit Notes
+
+- Keep `three.min.js`; it is an active local dependency.
+- Keep the script order in `index.html` unless a dependency is intentionally changed.
+- After structural edits, run missing-reference checks plus JS/CSS syntax checks before visual QA.
+- Temporary verification files should not be written into the project root.

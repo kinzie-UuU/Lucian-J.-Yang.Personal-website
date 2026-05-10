@@ -5,24 +5,25 @@
   const workGalleryTrack = document.querySelector("#work-gallery-track");
   const workGalleryTitle = document.querySelector("#work-gallery-title");
   const workGalleryIndex = document.querySelector("#work-gallery-index");
+  const workGalleryDescription = document.querySelector("#work-gallery-description");
   const workGalleryClose = document.querySelector("#work-gallery-close");
   const workGalleryBack = document.querySelector("#work-gallery-back");
-  const workGalleryProgressFill = document.querySelector("#work-gallery-progress-fill");
   const workDetail = document.querySelector("#work-detail");
 
-  let galleryTargetX = 0;
-  let galleryCurrentX = 0;
-  let galleryMaxX = 0;
-  let galleryRaf = 0;
   let galleryOpen = false;
   let galleryMode = "index";
   let galleryCategory = "oem";
   let galleryStep = 0;
-  let galleryWheelLocked = false;
-  let galleryPositions = [0];
   let workDetailRevealRaf = 0;
+  let gallerySourceItems = [];
+
+  let circularCleanup = null;
+  let circularCurrentIndex = 0;
+  const circularImageCache = new Map();
 
   const getCurrentLang = () => runtime?.getCurrentLang?.() || "zh";
+  const isCircularGallery = () => workGallery?.classList.contains("is-circular");
+  const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
 
   const localizedValue = (value) => {
     const currentLang = getCurrentLang();
@@ -32,17 +33,48 @@
     return value || "";
   };
 
+  const getAllWorkGalleryItems = () => Object.entries(workGalleryImages).flatMap(([categoryKey, items]) => (
+    items.map((item, categoryIndex) => ({ ...item, categoryKey, categoryIndex }))
+  ));
+
+  const getGalleryDisplayIndex = (item, fallbackIndex = 0) => {
+    const displayIndex = Number.isFinite(item?.categoryIndex) ? item.categoryIndex : fallbackIndex;
+    return String(displayIndex + 1).padStart(2, "0");
+  };
+
   const getGalleryItemTitle = (item, index) => {
     const currentLang = getCurrentLang();
     const rawTitle = localizedValue(item?.title);
+    const itemCategory = item?.categoryKey || galleryCategory;
+    const itemIndex = Number.isFinite(item?.categoryIndex) ? item.categoryIndex : index;
     if (currentLang === "zh") {
       if (item?.title && typeof item.title === "object" && item.title.zh) return rawTitle;
       const giftMatch = rawTitle.match(/^GIFT PROJECT\s+(\d+)/i);
       if (giftMatch) return `${galleryText.zh.giftTitle} ${giftMatch[1]}`;
-      const categoryTitle = galleryText.zh.categoryTitles[galleryCategory] || galleryText.zh.project;
-      return `${categoryTitle} ${String(index + 1).padStart(2, "0")}`;
+      const categoryTitle = galleryText.zh.categoryTitles[itemCategory] || galleryText.zh.project;
+      return `${categoryTitle} ${getGalleryDisplayIndex(item, index)}`;
     }
-    return rawTitle || `${galleryText[currentLang].project} ${String(index + 1).padStart(2, "0")}`;
+    return rawTitle || `${galleryText[currentLang].project} ${getGalleryDisplayIndex(item, index)}`;
+  };
+
+  const getGalleryCategoryDescription = (item) => {
+    const currentLang = getCurrentLang();
+    const itemCategory = item?.categoryKey || galleryCategory;
+    return galleryText[currentLang]?.categoryDescriptions?.[itemCategory]
+      || galleryText.zh?.categoryDescriptions?.[itemCategory]
+      || "";
+  };
+
+  const updateGalleryHeader = (item, index, fallbackTitle = "") => {
+    if (workGalleryTitle) {
+      workGalleryTitle.textContent = item ? getGalleryItemTitle(item, index) : fallbackTitle || galleryText[getCurrentLang()].project;
+    }
+    if (workGalleryIndex) {
+      workGalleryIndex.textContent = getGalleryDisplayIndex(item, index);
+    }
+    if (workGalleryDescription) {
+      workGalleryDescription.textContent = getGalleryCategoryDescription(item);
+    }
   };
 
   const updateGalleryChromeText = () => {
@@ -54,50 +86,768 @@
     }
   };
 
-  const clampGalleryX = (value) => Math.max(0, Math.min(galleryMaxX, value));
-
-  const measureGallery = () => {
-    if (!workGalleryTrack || !workGallery) return;
-    galleryMaxX = Math.max(0, workGalleryTrack.scrollWidth - workGallery.clientWidth);
-    const items = Array.from(workGalleryTrack.children);
-    const firstLeft = items[0]?.offsetLeft || 0;
-    galleryPositions = items.map((item) => clampGalleryX(item.offsetLeft - firstLeft));
-    if (!galleryPositions.length) galleryPositions = [0];
-    galleryStep = Math.max(0, Math.min(galleryPositions.length - 1, galleryStep));
-    galleryTargetX = clampGalleryX(galleryTargetX);
-    galleryCurrentX = clampGalleryX(galleryCurrentX);
+  const destroyCircularGallery = () => {
+    if (!circularCleanup) return;
+    circularCleanup();
+    circularCleanup = null;
   };
 
-  const renderGallery = () => {
-    galleryRaf = 0;
-    galleryCurrentX += (galleryTargetX - galleryCurrentX) * 0.16;
-    if (Math.abs(galleryTargetX - galleryCurrentX) < 0.12) galleryCurrentX = galleryTargetX;
-    if (workGalleryTrack) {
-      workGalleryTrack.style.transform = `translate3d(${-galleryCurrentX}px, 0, 0)`;
-    }
-    if (workGalleryProgressFill) {
-      const progress = galleryMaxX ? galleryCurrentX / galleryMaxX : 0;
-      workGalleryProgressFill.style.transform = `scaleX(${Math.max(0.04, progress).toFixed(4)})`;
-    }
-    if (galleryCurrentX !== galleryTargetX) {
-      galleryRaf = window.requestAnimationFrame(renderGallery);
-    }
+  const initDomCircularGallery = (root, sourceItems) => {
+    root.innerHTML = "";
+    root.classList.add("is-dom-fallback");
+
+    const cards = sourceItems.map((item, index) => {
+      const card = document.createElement("button");
+      card.className = "work-circular-dom-card";
+      card.type = "button";
+      card.dataset.index = String(index);
+      card.innerHTML = `
+        <span class="work-circular-dom-image">
+          <img src="${item.src}" alt="" draggable="false" decoding="async">
+        </span>
+        <span class="work-circular-dom-title">${getGalleryItemTitle(item, index)}</span>
+      `;
+      root.appendChild(card);
+      return card;
+    });
+
+    let raf = 0;
+    let snapTimeout = 0;
+    let disposed = false;
+    let isDown = false;
+    let didDrag = false;
+    let startX = 0;
+    let scrollTarget = galleryStep;
+    let scrollCurrent = scrollTarget;
+    let dragStartTarget = scrollTarget;
+    let metrics = { width: 1, height: 1, cardWidth: 220, centerY: 320, spacing: 320 };
+    const startedAt = performance.now();
+
+    const shortestRelative = (index) => {
+      const total = Math.max(1, sourceItems.length);
+      let relative = index - scrollCurrent;
+      while (relative > total / 2) relative -= total;
+      while (relative < -total / 2) relative += total;
+      return relative;
+    };
+
+    const resize = () => {
+      metrics = {
+        width: Math.max(1, root.clientWidth || window.innerWidth),
+        height: Math.max(1, root.clientHeight || window.innerHeight),
+        cardWidth: clamp((root.clientWidth || window.innerWidth) * 0.135, 170, 250),
+        centerY: Math.max(270, (root.clientHeight || window.innerHeight) * 0.47),
+        spacing: clamp((root.clientWidth || window.innerWidth) * 0.22, 270, 390)
+      };
+    };
+
+    const snap = () => {
+      scrollTarget = Math.round(scrollTarget);
+    };
+
+    const scheduleSnap = () => {
+      window.clearTimeout(snapTimeout);
+      snapTimeout = window.setTimeout(snap, 180);
+    };
+
+    const updateChrome = () => {
+      circularCurrentIndex = ((Math.round(scrollCurrent) % sourceItems.length) + sourceItems.length) % sourceItems.length;
+      const activeItem = sourceItems[circularCurrentIndex] || sourceItems[0];
+      updateGalleryHeader(activeItem, circularCurrentIndex);
+    };
+
+    const render = () => {
+      if (disposed) return;
+      scrollCurrent += (scrollTarget - scrollCurrent) * 0.06;
+      if (Math.abs(scrollTarget - scrollCurrent) < 0.001) scrollCurrent = scrollTarget;
+
+      const elapsed = (performance.now() - startedAt) / 1000;
+      const halfWidth = metrics.width / 2;
+
+      cards.forEach((card, index) => {
+        const relative = shortestRelative(index);
+        const x = halfWidth + relative * metrics.spacing;
+        const distance = Math.min(1.45, Math.abs(x - halfWidth) / Math.max(1, metrics.width * 0.48));
+        const y = metrics.centerY + distance * distance * metrics.height * 0.14;
+        const scale = 1 - Math.min(0.22, distance * 0.16);
+        const rotation = clamp(relative * -8, -18, 18);
+        const opacity = clamp(1 - distance * 0.38, 0.22, 1);
+        const wave = Math.sin(elapsed * 1.35 + index * 0.8) * 2.6;
+        const img = card.querySelector("img");
+
+        card.style.width = `${metrics.cardWidth}px`;
+        card.style.opacity = opacity.toFixed(3);
+        card.style.zIndex = String(100 - Math.round(distance * 60));
+        card.style.pointerEvents = distance < 0.78 ? "auto" : "none";
+        card.style.transform = `translate3d(${(x - metrics.cardWidth / 2).toFixed(2)}px, ${(y - metrics.cardWidth * 0.72).toFixed(2)}px, 0) rotate(${rotation.toFixed(2)}deg) scale(${scale.toFixed(3)})`;
+        if (img) {
+          img.style.transform = `translate3d(0, ${wave.toFixed(2)}px, 0) scale(${(1.025 + Math.abs(wave) * 0.002).toFixed(3)})`;
+        }
+      });
+
+      updateChrome();
+      raf = window.requestAnimationFrame(render);
+    };
+
+    const onWheel = (event) => {
+      if (!isCircularGallery() || galleryMode !== "index") return;
+      event.preventDefault();
+      scrollTarget += (event.deltaY > 0 ? 1 : -1) * 0.38;
+      scheduleSnap();
+    };
+
+    const onPointerDown = (event) => {
+      if (galleryMode !== "index") return;
+      isDown = true;
+      didDrag = false;
+      startX = event.clientX;
+      dragStartTarget = scrollTarget;
+      root.classList.add("is-dragging");
+      root.setPointerCapture?.(event.pointerId);
+    };
+
+    const onPointerMove = (event) => {
+      if (!isDown) return;
+      const dx = event.clientX - startX;
+      if (Math.abs(dx) > 4) didDrag = true;
+      scrollTarget = dragStartTarget - dx / Math.max(160, metrics.spacing * 0.62);
+    };
+
+    const onPointerUp = (event) => {
+      if (!isDown) return;
+      isDown = false;
+      root.classList.remove("is-dragging");
+      root.releasePointerCapture?.(event.pointerId);
+      if (didDrag) {
+        scheduleSnap();
+        return;
+      }
+
+      const card = event.target.closest?.(".work-circular-dom-card");
+      if (!card) return;
+      const index = Number.parseInt(card.dataset.index || "0", 10);
+      openWorkDetail(index);
+    };
+
+    resize();
+    window.addEventListener("resize", resize);
+    window.addEventListener("wheel", onWheel, { passive: false, capture: true });
+    root.addEventListener("pointerdown", onPointerDown);
+    root.addEventListener("pointermove", onPointerMove);
+    root.addEventListener("pointerup", onPointerUp);
+    root.addEventListener("pointercancel", onPointerUp);
+    raf = window.requestAnimationFrame(render);
+
+    circularCleanup = () => {
+      disposed = true;
+      if (raf) window.cancelAnimationFrame(raf);
+      window.clearTimeout(snapTimeout);
+      window.removeEventListener("resize", resize);
+      window.removeEventListener("wheel", onWheel, { capture: true });
+      root.removeEventListener("pointerdown", onPointerDown);
+      root.removeEventListener("pointermove", onPointerMove);
+      root.removeEventListener("pointerup", onPointerUp);
+      root.removeEventListener("pointercancel", onPointerUp);
+      root.classList.remove("is-dom-fallback");
+      root.innerHTML = "";
+    };
   };
 
-  const queueGalleryRender = () => {
-    if (!galleryRaf) galleryRaf = window.requestAnimationFrame(renderGallery);
+  const initCircularGallery = (items) => {
+    destroyCircularGallery();
+    const root = workGalleryTrack?.querySelector(".work-circular-root");
+    if (!root) return;
+
+    const sourceItems = items.length ? items : getAllWorkGalleryItems();
+    if (!sourceItems.length) return;
+
+    root.innerHTML = "";
+    if (window.location.protocol === "file:") {
+      initDomCircularGallery(root, sourceItems);
+      return;
+    }
+
+    const canvas = document.createElement("canvas");
+    canvas.className = "work-circular-canvas";
+    canvas.setAttribute("aria-label", galleryText[getCurrentLang()].project);
+    root.appendChild(canvas);
+
+    const gl = canvas.getContext("webgl", {
+      alpha: true,
+      antialias: true,
+      depth: false,
+      premultipliedAlpha: false
+    });
+
+    if (!gl) {
+      root.innerHTML = `<p class="work-circular-fallback">${galleryText[getCurrentLang()].project}</p>`;
+      return;
+    }
+
+    const vertexSource = `
+      precision mediump float;
+      attribute vec2 aPosition;
+      attribute vec2 aUv;
+      uniform mat4 uMatrix;
+      uniform vec2 uPlaneSize;
+      uniform float uTime;
+      uniform float uSpeed;
+      uniform float uWave;
+      varying vec2 vUv;
+      void main() {
+        vUv = aUv;
+        vec3 p = vec3(aPosition * uPlaneSize, 0.0);
+        float ripple = sin(p.x * 4.0 + uTime) * 1.5 + cos(p.y * 2.0 + uTime) * 1.5;
+        p.z += ripple * (uWave + abs(uSpeed) * 0.42);
+        gl_Position = uMatrix * vec4(p, 1.0);
+      }
+    `;
+    const fragmentSource = `
+      precision mediump float;
+      uniform sampler2D uTexture;
+      uniform vec2 uImageSize;
+      uniform vec2 uPlaneSize;
+      uniform float uBorderRadius;
+      uniform float uAlpha;
+      uniform float uIsText;
+      varying vec2 vUv;
+
+      float roundedBoxSDF(vec2 p, vec2 b, float r) {
+        vec2 d = abs(p) - b;
+        return length(max(d, vec2(0.0))) + min(max(d.x, d.y), 0.0) - r;
+      }
+
+      void main() {
+        if (uIsText > 0.5) {
+          vec4 text = texture2D(uTexture, vUv);
+          if (text.a < 0.08) discard;
+          gl_FragColor = vec4(text.rgb, text.a * uAlpha);
+          return;
+        }
+
+        vec2 ratio = vec2(
+          min((uPlaneSize.x / uPlaneSize.y) / (uImageSize.x / uImageSize.y), 1.0),
+          min((uPlaneSize.y / uPlaneSize.x) / (uImageSize.y / uImageSize.x), 1.0)
+        );
+        vec2 uv = vec2(
+          vUv.x * ratio.x + (1.0 - ratio.x) * 0.5,
+          vUv.y * ratio.y + (1.0 - ratio.y) * 0.5
+        );
+        vec4 color = texture2D(uTexture, uv);
+        float d = roundedBoxSDF(vUv - 0.5, vec2(0.5 - uBorderRadius), uBorderRadius);
+        float alpha = 1.0 - smoothstep(-0.002, 0.002, d);
+        gl_FragColor = vec4(color.rgb, color.a * alpha * uAlpha);
+      }
+    `;
+
+    const compileShader = (type, source) => {
+      const shader = gl.createShader(type);
+      gl.shaderSource(shader, source);
+      gl.compileShader(shader);
+      if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+        throw new Error(gl.getShaderInfoLog(shader) || "Work gallery shader failed.");
+      }
+      return shader;
+    };
+
+    const program = gl.createProgram();
+    gl.attachShader(program, compileShader(gl.VERTEX_SHADER, vertexSource));
+    gl.attachShader(program, compileShader(gl.FRAGMENT_SHADER, fragmentSource));
+    gl.linkProgram(program);
+    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+      throw new Error(gl.getProgramInfoLog(program) || "Work gallery program failed.");
+    }
+    gl.useProgram(program);
+
+    const locations = {
+      position: gl.getAttribLocation(program, "aPosition"),
+      uv: gl.getAttribLocation(program, "aUv"),
+      matrix: gl.getUniformLocation(program, "uMatrix"),
+      planeSize: gl.getUniformLocation(program, "uPlaneSize"),
+      imageSize: gl.getUniformLocation(program, "uImageSize"),
+      time: gl.getUniformLocation(program, "uTime"),
+      speed: gl.getUniformLocation(program, "uSpeed"),
+      wave: gl.getUniformLocation(program, "uWave"),
+      borderRadius: gl.getUniformLocation(program, "uBorderRadius"),
+      alpha: gl.getUniformLocation(program, "uAlpha"),
+      isText: gl.getUniformLocation(program, "uIsText"),
+      texture: gl.getUniformLocation(program, "uTexture")
+    };
+
+    const createPlaneGeometry = (columns = 36, rows = 48) => {
+      const vertices = [];
+      const indices = [];
+      for (let y = 0; y <= rows; y++) {
+        for (let x = 0; x <= columns; x++) {
+          const u = x / columns;
+          const v = y / rows;
+          vertices.push(u - 0.5, 0.5 - v, u, v);
+        }
+      }
+      for (let y = 0; y < rows; y++) {
+        for (let x = 0; x < columns; x++) {
+          const a = y * (columns + 1) + x;
+          const b = a + 1;
+          const c = a + columns + 1;
+          const d = c + 1;
+          indices.push(a, c, b, b, c, d);
+        }
+      }
+      return {
+        vertices: new Float32Array(vertices),
+        indices: new Uint16Array(indices),
+        count: indices.length
+      };
+    };
+
+    const geometry = createPlaneGeometry();
+    const vertexBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, geometry.vertices, gl.STATIC_DRAW);
+    const indexBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, geometry.indices, gl.STATIC_DRAW);
+    gl.enableVertexAttribArray(locations.position);
+    gl.vertexAttribPointer(locations.position, 2, gl.FLOAT, false, 16, 0);
+    gl.enableVertexAttribArray(locations.uv);
+    gl.vertexAttribPointer(locations.uv, 2, gl.FLOAT, false, 16, 8);
+
+    const createTexture = () => {
+      const texture = gl.createTexture();
+      gl.bindTexture(gl.TEXTURE_2D, texture);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([36, 34, 30, 255]));
+      return texture;
+    };
+
+    const uploadLoadedImage = (entry, img) => {
+      try {
+        entry.imageSize = [img.naturalWidth || 1, img.naturalHeight || 1];
+        gl.bindTexture(gl.TEXTURE_2D, entry.texture);
+        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+        entry.loaded = true;
+      } catch (error) {
+        entry.loaded = false;
+      }
+    };
+
+    const uploadImageTexture = (entry) => {
+      const cachedImage = circularImageCache.get(entry.item.src);
+      if (cachedImage?.complete && cachedImage.naturalWidth) {
+        uploadLoadedImage(entry, cachedImage);
+        return;
+      }
+
+      const img = cachedImage || new Image();
+      img.onload = () => {
+        circularImageCache.set(entry.item.src, img);
+        media
+          .filter((mediaEntry) => mediaEntry.item.src === entry.item.src)
+          .forEach((mediaEntry) => uploadLoadedImage(mediaEntry, img));
+      };
+      img.onerror = () => {
+        entry.loaded = false;
+      };
+      circularImageCache.set(entry.item.src, img);
+      img.src = entry.item.src;
+    };
+
+    const createTextTexture = (text) => {
+      const ratio = Math.min(window.devicePixelRatio || 1, 2);
+      const textCanvas = document.createElement("canvas");
+      const context = textCanvas.getContext("2d");
+      const fontSize = 34 * ratio;
+      context.font = `800 ${fontSize}px Arial, "Microsoft YaHei", sans-serif`;
+      const metrics = context.measureText(text);
+      textCanvas.width = Math.ceil(metrics.width + 52 * ratio);
+      textCanvas.height = Math.ceil(62 * ratio);
+      context.font = `800 ${fontSize}px Arial, "Microsoft YaHei", sans-serif`;
+      context.textAlign = "center";
+      context.textBaseline = "middle";
+      context.fillStyle = "rgba(244, 242, 237, 0.92)";
+      context.clearRect(0, 0, textCanvas.width, textCanvas.height);
+      context.fillText(text, textCanvas.width / 2, textCanvas.height / 2);
+      const texture = createTexture();
+      gl.bindTexture(gl.TEXTURE_2D, texture);
+      gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
+      gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, textCanvas);
+      gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
+      return { texture, size: [textCanvas.width, textCanvas.height] };
+    };
+
+    const identity = () => new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
+    const multiply = (a, b) => {
+      const out = new Float32Array(16);
+      for (let i = 0; i < 4; i++) {
+        for (let j = 0; j < 4; j++) {
+          out[j * 4 + i] =
+            a[0 * 4 + i] * b[j * 4 + 0] +
+            a[1 * 4 + i] * b[j * 4 + 1] +
+            a[2 * 4 + i] * b[j * 4 + 2] +
+            a[3 * 4 + i] * b[j * 4 + 3];
+        }
+      }
+      return out;
+    };
+    const perspective = (fov, aspect, near, far) => {
+      const f = 1 / Math.tan(fov / 2);
+      const nf = 1 / (near - far);
+      return new Float32Array([
+        f / aspect, 0, 0, 0,
+        0, f, 0, 0,
+        0, 0, (far + near) * nf, -1,
+        0, 0, (2 * far * near) * nf, 0
+      ]);
+    };
+    const translate = (x, y, z) => {
+      const out = identity();
+      out[12] = x;
+      out[13] = y;
+      out[14] = z;
+      return out;
+    };
+    const rotateX = (angle) => {
+      const c = Math.cos(angle);
+      const s = Math.sin(angle);
+      return new Float32Array([1, 0, 0, 0, 0, c, s, 0, 0, -s, c, 0, 0, 0, 0, 1]);
+    };
+    const rotateY = (angle) => {
+      const c = Math.cos(angle);
+      const s = Math.sin(angle);
+      return new Float32Array([c, 0, -s, 0, 0, 1, 0, 0, s, 0, c, 0, 0, 0, 0, 1]);
+    };
+    const rotateZ = (angle) => {
+      const c = Math.cos(angle);
+      const s = Math.sin(angle);
+      return new Float32Array([c, s, 0, 0, -s, c, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
+    };
+
+    const transformPoint = (matrix, point) => {
+      const [x, y, z, w] = point;
+      return [
+        matrix[0] * x + matrix[4] * y + matrix[8] * z + matrix[12] * w,
+        matrix[1] * x + matrix[5] * y + matrix[9] * z + matrix[13] * w,
+        matrix[2] * x + matrix[6] * y + matrix[10] * z + matrix[14] * w,
+        matrix[3] * x + matrix[7] * y + matrix[11] * z + matrix[15] * w
+      ];
+    };
+
+    const sourceLoop = sourceItems.concat(sourceItems);
+    const media = sourceLoop.map((item, index) => {
+      const itemIndex = index % sourceItems.length;
+      const title = getGalleryItemTitle(item, itemIndex);
+      const titleTexture = createTextTexture(title);
+      const entry = {
+        index,
+        item,
+        itemIndex,
+        title,
+        texture: createTexture(),
+        titleTexture: titleTexture.texture,
+        titleTextureSize: titleTexture.size,
+        imageSize: [1, 1],
+        loaded: false,
+        hit: null
+      };
+      return entry;
+    });
+    media.forEach(uploadImageTexture);
+
+    let screen = { width: 1, height: 1, dpr: 1, aspect: 1 };
+    let metrics = { worldWidth: 12, worldHeight: 8, cardWidth: 2, cardHeight: 3, spacing: 3 };
+    let scrollTarget = sourceItems.length + galleryStep;
+    let scrollCurrent = scrollTarget;
+    let scrollLast = scrollTarget;
+    let raf = 0;
+    let snapTimeout = 0;
+    let disposed = false;
+    let isDown = false;
+    let didDrag = false;
+    let openingDetail = false;
+    let dragStartX = 0;
+    let dragStartTarget = 0;
+    const cameraZ = 12;
+    const startedAt = performance.now();
+
+    const resize = () => {
+      screen = {
+        width: Math.max(1, root.clientWidth || window.innerWidth),
+        height: Math.max(1, root.clientHeight || window.innerHeight),
+        dpr: Math.min(window.devicePixelRatio || 1, 2),
+        aspect: 1
+      };
+      screen.aspect = screen.width / screen.height;
+      canvas.width = Math.round(screen.width * screen.dpr);
+      canvas.height = Math.round(screen.height * screen.dpr);
+      canvas.style.width = `${screen.width}px`;
+      canvas.style.height = `${screen.height}px`;
+      gl.viewport(0, 0, canvas.width, canvas.height);
+
+      const fov = 45 * Math.PI / 180;
+      const worldHeight = 2 * Math.tan(fov / 2) * cameraZ;
+      const worldWidth = worldHeight * screen.aspect;
+      const cardHeight = clamp(worldHeight * 0.36, 2.85, 3.85);
+      const cardWidth = cardHeight * 0.72;
+      metrics = {
+        worldWidth,
+        worldHeight,
+        cardWidth,
+        cardHeight,
+        spacing: cardWidth * 1.82
+      };
+    };
+
+    const normalizeScroll = () => {
+      if (scrollTarget < sourceItems.length * 0.55) {
+        scrollTarget += sourceItems.length;
+        scrollCurrent += sourceItems.length;
+      } else if (scrollTarget > sourceItems.length * 2.45) {
+        scrollTarget -= sourceItems.length;
+        scrollCurrent -= sourceItems.length;
+      }
+    };
+
+    const syncChrome = () => {
+      circularCurrentIndex = ((Math.round(scrollCurrent) % sourceItems.length) + sourceItems.length) % sourceItems.length;
+      const activeItem = sourceItems[circularCurrentIndex] || sourceItems[0];
+      updateGalleryHeader(activeItem, circularCurrentIndex);
+    };
+
+    const snapToNearest = () => {
+      scrollTarget = Math.round(scrollTarget);
+    };
+
+    const scheduleSnap = () => {
+      window.clearTimeout(snapTimeout);
+      snapTimeout = window.setTimeout(snapToNearest, 180);
+    };
+
+    const drawPlane = ({ matrix, texture, planeSize, imageSize, alpha, borderRadius, isText, wave, speed, time }) => {
+      gl.uniformMatrix4fv(locations.matrix, false, matrix);
+      gl.uniform2fv(locations.planeSize, planeSize);
+      gl.uniform2fv(locations.imageSize, imageSize);
+      gl.uniform1f(locations.time, time);
+      gl.uniform1f(locations.speed, speed);
+      gl.uniform1f(locations.wave, wave);
+      gl.uniform1f(locations.borderRadius, borderRadius);
+      gl.uniform1f(locations.alpha, alpha);
+      gl.uniform1f(locations.isText, isText ? 1 : 0);
+      gl.activeTexture(gl.TEXTURE0);
+      gl.bindTexture(gl.TEXTURE_2D, texture);
+      gl.uniform1i(locations.texture, 0);
+      gl.drawElements(gl.TRIANGLES, geometry.count, gl.UNSIGNED_SHORT, 0);
+    };
+
+    const getLayoutForEntry = (entry, elapsed, speed) => {
+      const relative = entry.index - scrollCurrent;
+      const x = relative * metrics.spacing;
+      const half = metrics.worldWidth / 2;
+      const distance = Math.min(1, Math.abs(x) / half);
+      const effectiveX = Math.min(Math.abs(x), half);
+      const bend = metrics.worldHeight * 0.32;
+      const radius = (half * half + bend * bend) / (2 * bend);
+      const arc = radius - Math.sqrt(Math.max(0, radius * radius - effectiveX * effectiveX));
+      const floatPhase = elapsed * 0.66 + entry.index * 0.9;
+      const floatY = Math.sin(floatPhase) * 0.018 * (1 - distance * 0.45);
+      const y = -arc + 0.42 + floatY;
+      const z = (1 - distance) * 0.9 - distance * 0.9;
+      const rz = (x < 0 ? -1 : 1) * Math.asin(Math.min(0.92, effectiveX / radius)) * 0.62;
+      const ry = clamp((-x / half) * 0.16, -0.18, 0.18);
+      const rx = Math.sin(elapsed * 0.52 + entry.index * 0.7) * 0.006 * (1 - distance * 0.45);
+      const alpha = clamp(1 - distance * 0.34, 0.45, 1);
+      const wave = 0.088 + (1 - distance) * 0.018;
+      return { x, y, z, rx, ry, rz, distance, alpha, wave };
+    };
+
+    const getMatrix = (layout, offsetY = 0, offsetZ = 0) => {
+      const projection = perspective(45 * Math.PI / 180, screen.aspect, 0.1, 80);
+      const view = translate(0, 0, -cameraZ);
+      const model = multiply(
+        translate(layout.x, layout.y + offsetY, layout.z + offsetZ),
+        multiply(rotateZ(layout.rz), multiply(rotateY(layout.ry), rotateX(layout.rx)))
+      );
+      return multiply(projection, multiply(view, model));
+    };
+
+    const updateHit = (entry, matrix, layout) => {
+      const w = metrics.cardWidth / 2;
+      const h = metrics.cardHeight / 2;
+      const points = [
+        [-w, -h, 0, 1],
+        [w, -h, 0, 1],
+        [w, h, 0, 1],
+        [-w, h, 0, 1]
+      ].map((point) => {
+        const p = transformPoint(matrix, point);
+        const ndcX = p[0] / p[3];
+        const ndcY = p[1] / p[3];
+        return {
+          x: (ndcX * 0.5 + 0.5) * screen.width,
+          y: (-ndcY * 0.5 + 0.5) * screen.height
+        };
+      });
+      entry.hit = {
+        itemIndex: entry.itemIndex,
+        distance: layout.distance,
+        left: Math.min(...points.map((point) => point.x)),
+        right: Math.max(...points.map((point) => point.x)),
+        top: Math.min(...points.map((point) => point.y)),
+        bottom: Math.max(...points.map((point) => point.y))
+      };
+    };
+
+    const render = () => {
+      if (disposed) return;
+      normalizeScroll();
+      scrollCurrent += (scrollTarget - scrollCurrent) * 0.045;
+      if (Math.abs(scrollTarget - scrollCurrent) < 0.001) scrollCurrent = scrollTarget;
+
+      const elapsed = (performance.now() - startedAt) / 1000;
+      const speed = scrollCurrent - scrollLast;
+      scrollLast = scrollCurrent;
+
+      gl.clearColor(0, 0, 0, 0);
+      gl.clear(gl.COLOR_BUFFER_BIT);
+      gl.enable(gl.BLEND);
+      gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+      gl.disable(gl.DEPTH_TEST);
+
+      const visible = media
+        .map((entry) => ({ entry, layout: getLayoutForEntry(entry, elapsed, speed) }))
+        .filter(({ layout }) => Math.abs(layout.x) < metrics.worldWidth * 0.78)
+        .sort((a, b) => b.layout.distance - a.layout.distance);
+
+      visible.forEach(({ entry, layout }) => {
+        const matrix = getMatrix(layout);
+        updateHit(entry, matrix, layout);
+        drawPlane({
+          matrix,
+          texture: entry.texture,
+          planeSize: [metrics.cardWidth, metrics.cardHeight],
+          imageSize: entry.imageSize,
+          alpha: entry.loaded ? layout.alpha : 0,
+          borderRadius: 0.045,
+          isText: false,
+          wave: layout.wave,
+          speed,
+          time: elapsed + entry.index * 0.18
+        });
+      });
+
+      visible.forEach(({ entry, layout }) => {
+        const textAspect = entry.titleTextureSize[0] / Math.max(1, entry.titleTextureSize[1]);
+        const textHeight = metrics.cardHeight * 0.12;
+        drawPlane({
+          matrix: getMatrix(layout, -metrics.cardHeight * 0.62, 0.02),
+          texture: entry.titleTexture,
+          planeSize: [textHeight * textAspect, textHeight],
+          imageSize: entry.titleTextureSize,
+          alpha: layout.alpha,
+          borderRadius: 0,
+          isText: true,
+          wave: 0,
+          speed: 0,
+          time: elapsed
+        });
+      });
+
+      syncChrome();
+      raf = window.requestAnimationFrame(render);
+    };
+
+    const onWheel = (event) => {
+      if (!isCircularGallery() || galleryMode !== "index") return;
+      event.preventDefault();
+      event.stopPropagation();
+      const delta = Math.abs(event.deltaX) > Math.abs(event.deltaY) ? event.deltaX : event.deltaY;
+      scrollTarget += (delta > 0 ? 1 : -1) * 0.42;
+      scheduleSnap();
+    };
+
+    const getHitFromEvent = (event) => {
+      const rect = canvas.getBoundingClientRect();
+      const x = event.clientX - rect.left;
+      const y = event.clientY - rect.top;
+      return media
+        .map((entry) => entry.hit)
+        .filter(Boolean)
+        .filter((hit) => x >= hit.left && x <= hit.right && y >= hit.top && y <= hit.bottom)
+        .sort((a, b) => a.distance - b.distance)[0] || null;
+    };
+
+    const openHitDetail = (hit) => {
+      if (!hit || openingDetail || galleryMode !== "index") return;
+      openingDetail = true;
+      openWorkDetail(hit.itemIndex);
+    };
+
+    const onPointerDown = (event) => {
+      if (!isCircularGallery() || galleryMode !== "index") return;
+      if (event.pointerType === "mouse" && event.button !== 0) return;
+      isDown = true;
+      didDrag = false;
+      dragStartX = event.clientX;
+      dragStartTarget = scrollTarget;
+      window.clearTimeout(snapTimeout);
+      root.classList.add("is-dragging");
+    };
+
+    const onPointerMove = (event) => {
+      if (!isDown) return;
+      const distance = (dragStartX - event.clientX) * 0.008;
+      if (Math.abs(event.clientX - dragStartX) > 6) didDrag = true;
+      scrollTarget = dragStartTarget + distance;
+    };
+
+    const onPointerUp = (event) => {
+      if (!isDown) return;
+      isDown = false;
+      root.classList.remove("is-dragging");
+      snapToNearest();
+      if (!didDrag && galleryMode === "index") {
+        openHitDetail(getHitFromEvent(event));
+      }
+    };
+
+    resize();
+    window.addEventListener("resize", resize);
+    window.addEventListener("wheel", onWheel, { passive: false, capture: true });
+    root.addEventListener("pointerdown", onPointerDown);
+    root.addEventListener("pointermove", onPointerMove);
+    root.addEventListener("pointerup", onPointerUp);
+    root.addEventListener("pointercancel", onPointerUp);
+    raf = window.requestAnimationFrame(render);
+
+    circularCleanup = () => {
+      disposed = true;
+      if (raf) window.cancelAnimationFrame(raf);
+      window.clearTimeout(snapTimeout);
+      window.removeEventListener("resize", resize);
+      window.removeEventListener("wheel", onWheel, { capture: true });
+      root.removeEventListener("pointerdown", onPointerDown);
+      root.removeEventListener("pointermove", onPointerMove);
+      root.removeEventListener("pointerup", onPointerUp);
+      root.removeEventListener("pointercancel", onPointerUp);
+      root.innerHTML = "";
+    };
   };
 
   const buildGalleryItems = (items) => {
     if (!workGalleryTrack) return;
-    workGalleryTrack.innerHTML = items.map((item, index) => `
-      <article class="work-gallery-item ${item.size === "small" ? "is-small" : ""}" role="button" tabindex="0" data-project-index="${index}">
-        <p class="work-gallery-caption">${getGalleryItemTitle(item, index)}</p>
-        <div class="work-gallery-frame" style="--gallery-bg: ${item.bg || "#d8d0c0"}; --gallery-position: ${item.position || "center"};">
-          <img src="${item.src}" alt="" decoding="async">
-        </div>
-      </article>
-    `).join("");
+    gallerySourceItems = items;
+    destroyCircularGallery();
+    workGallery?.classList.add("is-circular");
+    workGalleryTrack.style.transform = "translate3d(0, 0, 0)";
+    workGalleryTrack.innerHTML = `
+      <div class="work-circular-root">
+      </div>
+    `;
+    initCircularGallery(items);
   };
 
   const renderWorkDetail = (item, index) => {
@@ -112,7 +862,7 @@
       <section class="work-detail-intro">
         <aside class="work-detail-side">
           <div>
-            <p class="work-detail-kicker">${copy.project} ${String(index + 1).padStart(2, "0")}</p>
+            <p class="work-detail-kicker">${copy.project} ${getGalleryDisplayIndex(item, index)}</p>
             <h4 class="work-detail-name">${title}</h4>
             <div class="work-detail-tags">
               ${tags.map((tag) => `<span class="work-detail-tag">${tag}</span>`).join("")}
@@ -159,15 +909,16 @@
 
   const openWorkDetail = (index) => {
     if (!workGallery) return;
-    const items = workGalleryImages[galleryCategory] || workGalleryImages.oem;
+    const items = gallerySourceItems.length ? gallerySourceItems : getAllWorkGalleryItems();
     const item = items[index] || items[0];
     galleryStep = Math.max(0, Math.min(items.length - 1, index));
     galleryMode = "detail";
+    destroyCircularGallery();
     renderWorkDetail(item, galleryStep);
     workGallery.classList.add("is-detail");
+    workGallery.classList.remove("is-circular");
     updateGalleryChromeText();
-    if (workGalleryTitle) workGalleryTitle.textContent = getGalleryItemTitle(item, galleryStep);
-    if (workGalleryIndex) workGalleryIndex.textContent = String(galleryStep + 1).padStart(2, "0");
+    updateGalleryHeader(item, galleryStep);
     workGallery.scrollTo({ top: 0, behavior: "auto" });
     queueWorkDetailReveal();
     runtime?.playUiTone?.("click");
@@ -177,36 +928,32 @@
     if (!workGallery) return;
     galleryMode = "index";
     workGallery.classList.remove("is-detail");
+    if (workGalleryTrack?.querySelector(".work-circular-root")) {
+      workGallery.classList.add("is-circular");
+      initCircularGallery(gallerySourceItems.length ? gallerySourceItems : getAllWorkGalleryItems());
+    }
     if (workDetail) workDetail.innerHTML = "";
     workGallery.style.setProperty("--work-detail-reveal", "0");
-    const activeItem = workGalleryTrack?.children[galleryStep];
-    if (workGalleryTitle) {
-      workGalleryTitle.textContent = activeItem?.querySelector(".work-gallery-caption")?.textContent || galleryText[getCurrentLang()].project;
-    }
-    queueGalleryRender();
+    const activeItem = gallerySourceItems[galleryStep];
+    updateGalleryHeader(activeItem, galleryStep);
   };
 
   const refreshLanguage = () => {
     updateGalleryChromeText();
     if (!workGallery || !galleryOpen) return;
 
-    const items = workGalleryImages[galleryCategory] || workGalleryImages.oem;
+    const items = gallerySourceItems.length ? gallerySourceItems : getAllWorkGalleryItems();
 
     if (galleryMode === "detail") {
       const item = items[galleryStep] || items[0];
       renderWorkDetail(item, galleryStep);
-      if (workGalleryTitle) workGalleryTitle.textContent = getGalleryItemTitle(item, galleryStep);
-      if (workGalleryIndex) workGalleryIndex.textContent = String(galleryStep + 1).padStart(2, "0");
+      updateGalleryHeader(item, galleryStep);
       return;
     }
 
     buildGalleryItems(items);
-    const activeItem = workGalleryTrack?.children[galleryStep];
-    if (workGalleryTitle) {
-      workGalleryTitle.textContent = activeItem?.querySelector(".work-gallery-caption")?.textContent || galleryText[getCurrentLang()].project;
-    }
-    measureGallery();
-    queueGalleryRender();
+    const activeItem = items[galleryStep];
+    updateGalleryHeader(activeItem, galleryStep);
   };
 
   const showGallery = () => {
@@ -225,91 +972,56 @@
     if (!workGallery || !workGalleryTrack || !projectKey) return;
 
     galleryCategory = projectKey;
-    const items = workGalleryImages[projectKey] || workGalleryImages.oem;
+    const items = getAllWorkGalleryItems();
+    const initialIndex = Math.max(0, items.findIndex((item) => (
+      item.categoryKey === projectKey && item.categoryIndex === projectIndex
+    )));
 
+    galleryStep = initialIndex;
     buildGalleryItems(items);
-    galleryTargetX = 0;
-    galleryCurrentX = 0;
-    galleryStep = projectIndex;
-    galleryWheelLocked = false;
-    galleryMode = "detail";
-    renderWorkDetail(items[projectIndex] || items[0], projectIndex);
-    workGallery.classList.add("is-detail");
+    galleryMode = "index";
+    workGallery.classList.remove("is-detail");
+    if (workDetail) workDetail.innerHTML = "";
 
     updateGalleryChromeText();
-    if (workGalleryTitle) workGalleryTitle.textContent = getGalleryItemTitle(items[projectIndex] || items[0], projectIndex) || cardName;
-    if (workGalleryIndex) workGalleryIndex.textContent = String(projectIndex + 1).padStart(2, "0");
+    updateGalleryHeader(items[initialIndex] || items[0], initialIndex, cardName);
 
     showGallery();
     workGallery.scrollTo({ top: 0, behavior: "auto" });
-    queueWorkDetailReveal();
-
-    window.setTimeout(() => {
-      measureGallery();
-      queueGalleryRender();
-    }, 40);
   };
 
   const openWorkGallery = (row) => {
     if (!workGallery || !workGalleryTrack) return;
     const category = row.dataset.category || "oem";
-    const index = row.querySelector(".works-row-index")?.textContent.trim() || "";
     const title = row.querySelector(".works-row-name")?.textContent.trim() || "Project";
+    const items = getAllWorkGalleryItems();
+    const initialIndex = Math.max(0, items.findIndex((item) => item.categoryKey === category));
     galleryCategory = category;
     galleryMode = "index";
-    buildGalleryItems(workGalleryImages[category] || workGalleryImages.oem);
-    galleryTargetX = 0;
-    galleryCurrentX = 0;
-    galleryStep = 0;
-    galleryWheelLocked = false;
+    galleryStep = initialIndex;
+    buildGalleryItems(items);
     workGallery.classList.remove("is-detail");
     if (workDetail) workDetail.innerHTML = "";
     workGallery.style.setProperty("--work-detail-reveal", "0");
     updateGalleryChromeText();
-    if (workGalleryTitle) workGalleryTitle.textContent = title;
-    if (workGalleryIndex) workGalleryIndex.textContent = index;
-
+    updateGalleryHeader(items[initialIndex], initialIndex, title);
     showGallery();
-    window.setTimeout(() => {
-      measureGallery();
-      queueGalleryRender();
-    }, 40);
   };
 
   const close = () => {
     if (!workGallery || !galleryOpen) return;
     galleryOpen = false;
     galleryMode = "index";
+    destroyCircularGallery();
     workGallery.classList.remove("is-open");
     workGallery.classList.remove("is-detail");
+    workGallery.classList.remove("is-circular");
     workGallery.setAttribute("aria-hidden", "true");
     document.body.classList.remove("work-gallery-open");
     document.documentElement.classList.remove("work-gallery-open");
     if (workDetail) workDetail.innerHTML = "";
     workGallery.style.setProperty("--work-detail-reveal", "0");
-  };
-
-  const handleWorkGalleryWheel = (event) => {
-    if (!galleryOpen) return;
-    if (galleryMode === "detail") return;
-    event.preventDefault();
-    event.stopPropagation();
-    measureGallery();
-    const delta = Math.abs(event.deltaX) > Math.abs(event.deltaY) ? event.deltaX : event.deltaY;
-    if (Math.abs(delta) < 8 || galleryWheelLocked) return;
-    galleryWheelLocked = true;
-    galleryStep += delta > 0 ? 1 : -1;
-    galleryStep = Math.max(0, Math.min(galleryPositions.length - 1, galleryStep));
-    galleryTargetX = galleryPositions[galleryStep] || 0;
-    const activeItem = workGalleryTrack?.children[galleryStep];
-    if (workGalleryTitle && activeItem) {
-      workGalleryTitle.textContent = activeItem.querySelector(".work-gallery-caption")?.textContent || workGalleryTitle.textContent;
-    }
-    if (workGalleryIndex) workGalleryIndex.textContent = String(galleryStep + 1).padStart(2, "0");
-    queueGalleryRender();
-    window.setTimeout(() => {
-      galleryWheelLocked = false;
-    }, 260);
+    if (workGalleryDescription) workGalleryDescription.textContent = "";
   };
 
   worksRows.forEach((row) => {
@@ -321,28 +1033,11 @@
     });
   });
 
-  workGalleryTrack?.addEventListener("click", (event) => {
-    const item = event.target.closest(".work-gallery-item");
-    if (!item) return;
-    openWorkDetail(Number(item.dataset.projectIndex || 0));
-  });
-
-  workGalleryTrack?.addEventListener("keydown", (event) => {
-    if (event.key !== "Enter" && event.key !== " ") return;
-    const item = event.target.closest(".work-gallery-item");
-    if (!item) return;
-    event.preventDefault();
-    openWorkDetail(Number(item.dataset.projectIndex || 0));
-  });
-
   workGalleryBack?.addEventListener("click", returnToGalleryIndex);
   workGalleryClose?.addEventListener("click", close);
   workGallery?.addEventListener("scroll", queueWorkDetailReveal, { passive: true });
-  window.addEventListener("wheel", handleWorkGalleryWheel, { passive: false, capture: true });
   window.addEventListener("resize", () => {
     if (!galleryOpen) return;
-    measureGallery();
-    queueGalleryRender();
     queueWorkDetailReveal();
   });
   window.addEventListener("keydown", (event) => {

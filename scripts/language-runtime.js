@@ -10,6 +10,7 @@ window.initLanguageRuntime = ({
     window.LucianScrambledText?.restore?.();
     window.LucianStaticText?.update?.(currentLang, { langButtons });
     window.LucianScrambledText?.init?.();
+    window.LucianWorksFlowingMenu?.refresh?.();
     window.rebuildServicesStoryText?.();
     onChange?.(currentLang);
     window.LucianWorkGallery?.refreshLanguage?.();

@@ -1,0 +1,250 @@
+/* Clients section ----------------------------------------------------------- */
+.clients-section {
+  position: relative;
+  width: 100%;
+  margin-top: -8svh;
+  background:
+    linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, #000 16%, #000 100%),
+    #000;
+  overflow: hidden;
+  border-top: 0;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+
+.clients-particles {
+  display: none;
+}
+
+.clients-content {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  padding: 0 0 96px;
+}
+
+.clients-marquee {
+  margin-top: 44px;
+  overflow: hidden;
+  display: flex;
+}
+
+.clients-track {
+  display: flex;
+  gap: 48px;
+  min-width: max-content;
+  flex-shrink: 0;
+  animation: marquee 28s linear infinite;
+  color: rgba(255, 255, 255, 0.11);
+  font-size: clamp(1.55rem, 3vw, 3.25rem);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  padding-right: 48px;
+}
+
+.clients-logo-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 2px;
+  margin-top: 48px;
+  padding: 0 clamp(24px, 4vw, 64px);
+}
+
+.client-logo-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 28px 20px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  min-height: 88px;
+  transition: background 0.25s ease;
+}
+
+.client-logo-item:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.client-logo-item img {
+  max-width: 110px;
+  max-height: 44px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  filter: grayscale(1) brightness(0.55) invert(1);
+  opacity: 0.55;
+  transition: filter 0.3s ease, opacity 0.3s ease;
+}
+
+.client-logo-item:hover img {
+  filter: grayscale(0) brightness(1) invert(0);
+  opacity: 1;
+}
+
+.client-logo-text,
+.client-logo-text-fallback {
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  color: rgba(235, 231, 224, 0.28);
+  font-weight: 500;
+  text-align: center;
+  transition: color 0.25s ease;
+}
+
+.client-logo-text:hover,
+.client-logo-text-fallback:hover {
+  color: rgba(235, 231, 224, 0.6);
+}
+
+/* Client title band --------------------------------------------------------- */
+.clients-title-band {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: clamp(180px, 28vh, 320px);
+  padding: clamp(36px, 5vh, 70px) clamp(28px, 4.4vw, 86px) clamp(28px, 4vh, 54px);
+  overflow: hidden;
+  border-bottom: 1px solid rgba(247, 244, 238, 0.08);
+  background:
+    linear-gradient(180deg, #000 0%, rgba(73, 196, 176, 0.026) 48%, #000 100%),
+    #000;
+}
+
+.clients-title-lockup {
+  position: relative;
+  z-index: 2;
+  display: block;
+  width: 100%;
+  color: rgba(247, 244, 238, 0.94);
+  font-family: "Outfit", "Satoshi", "MiSans", system-ui, sans-serif;
+  font-size: clamp(3.15rem, 7vw, 7.5rem);
+  font-weight: 300;
+  line-height: 0.98;
+  letter-spacing: 0;
+  text-align: center;
+  text-transform: lowercase;
+  white-space: nowrap;
+}
+
+.clients-title-line {
+  display: block;
+}
+
+.clients-title-char {
+  display: inline-block;
+  transition:
+    color 260ms ease,
+    filter 260ms ease,
+    transform 260ms ease;
+  will-change: transform, filter;
+}
+
+.clients-title-serif {
+  display: inline-block;
+  color: #ff6268;
+  font-family: "Playfair Display", Georgia, "Times New Roman", serif;
+  font-style: italic;
+  font-weight: 560;
+  letter-spacing: -0.055em;
+  text-transform: lowercase;
+}
+
+.clients-title-float {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.clients-title-float-item {
+  position: absolute;
+  color: rgba(247, 244, 238, 0.34);
+  font-family: "Playfair Display", Georgia, "Times New Roman", serif;
+  font-size: clamp(1.05rem, 2.4vw, 2.2rem);
+  font-style: italic;
+  font-weight: 520;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  opacity: 0;
+  white-space: nowrap;
+  filter: blur(16px);
+  transform: translate3d(0, 12px, 0) scale(0.96) rotate(var(--float-rotate, 0deg));
+  animation:
+    clientsFloatIn 1.45s ease forwards,
+    clientsFloatOut 1.7s ease 4s forwards;
+}
+
+@keyframes clientsFloatIn {
+  from {
+    opacity: 0;
+    filter: blur(18px);
+    transform: translate3d(0, 12px, 0) scale(0.96) rotate(var(--float-rotate, 0deg));
+  }
+  to {
+    opacity: 0.46;
+    filter: blur(0);
+    transform: translate3d(var(--float-drift-x, 0px), 0, 0) scale(1) rotate(var(--float-rotate, 0deg));
+  }
+}
+
+@keyframes clientsFloatOut {
+  from {
+    opacity: 0.46;
+    filter: blur(0);
+    transform: translate3d(var(--float-drift-x, 0px), 0, 0) scale(1) rotate(var(--float-rotate, 0deg));
+  }
+  to {
+    opacity: 0;
+    filter: blur(18px);
+    transform: translate3d(calc(var(--float-drift-x, 0px) * 1.8), -16px, 0) scale(1.04) rotate(var(--float-rotate, 0deg));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .clients-title-char,
+  .clients-title-float-item {
+    transition: none;
+    animation: none;
+  }
+}
+
+@media (max-width: 1180px) {
+  .clients-title-lockup {
+    font-size: clamp(2.55rem, 6.5vw, 5rem);
+  }
+}
+
+@media (max-width: 900px) {
+  .clients-logo-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (max-width: 760px) {
+  .clients-title-band {
+    min-height: 180px;
+    padding: 40px 18px 32px;
+  }
+
+  .clients-title-lockup {
+    font-size: clamp(2.25rem, 11.2vw, 4.15rem);
+    white-space: normal;
+  }
+}
+
+@media (max-width: 560px) {
+  .clients-logo-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .client-logo-item {
+    padding: 20px 12px;
+    min-height: 72px;
+  }
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-100%); }
+}

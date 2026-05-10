@@ -1,0 +1,436 @@
+/* Portrait and about layout */
+/* ── Portrait + About wrapper (nuageboi pattern) ── */
+/* About and portrait scroll section ---------------------------------------- */
+.portrait-about-wrapper {
+  position: relative;
+  z-index: 2;
+  margin-top: -18svh;
+  background: #000;
+  --portrait-enter: 0;
+  --portrait-text-enter: 0;
+  --portrait-progress: 0;
+  --portrait-exit: 0;
+}
+
+.portrait-about-wrapper::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -30svh;
+  z-index: 3;
+  height: 44svh;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.46) 48%, #000 100%);
+}
+
+.portrait-canvas {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: hidden;
+  isolation: isolate;
+  background: #000;
+}
+
+.portrait-canvas::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  width: min(36vw, 620px);
+  height: min(44vh, 420px);
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 100% 100%, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.42) 42%, transparent 72%),
+    linear-gradient(135deg, transparent 0%, rgba(0, 0, 0, 0.54) 74%, rgba(0, 0, 0, 0.92) 100%);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  mask-image: radial-gradient(ellipse at 100% 100%, #000 0 44%, rgba(0, 0, 0, 0.72) 62%, transparent 82%);
+}
+
+.portrait-video,
+.portrait-image {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: min(62vw, 840px);
+  height: min(94vh, 960px);
+  object-fit: contain;
+  object-position: center;
+  opacity: max(0, calc(0.02 + var(--portrait-enter) * 0.98 - var(--portrait-exit) * 0.98));
+  filter:
+    saturate(0.94)
+    contrast(1.12)
+    brightness(calc(0.52 + var(--portrait-enter) * 0.31 - var(--portrait-exit) * 0.22))
+    blur(calc((1 - var(--portrait-enter)) * 4px + var(--portrait-exit) * 12px));
+  transform:
+    translate3d(calc(-50% + (0.5 - var(--portrait-progress)) * 0.5vw), calc(-50% + (1 - var(--portrait-enter)) * 3vh - var(--portrait-exit) * 6vh), 0)
+    scale(calc(0.982 + var(--portrait-enter) * 0.014 - var(--portrait-exit) * 0.02));
+  transform-origin: 50% 50%;
+  will-change: transform;
+}
+
+.portrait-video {
+  z-index: 0;
+  opacity: max(0, calc(0.02 + var(--portrait-enter) * 0.98 - var(--portrait-exit) * 1));
+  filter:
+    saturate(0.96)
+    contrast(1.12)
+    brightness(calc(0.52 + var(--portrait-enter) * 0.31 - var(--portrait-exit) * 0.25))
+    blur(calc((1 - var(--portrait-enter)) * 4px + var(--portrait-exit) * 16px));
+}
+
+.portrait-image {
+  z-index: 0;
+  opacity: max(0, calc(0.04 + var(--portrait-enter) * 0.94 - var(--portrait-exit) * 0.98));
+}
+
+.portrait-about-wrapper.is-portrait-video-ready .portrait-image {
+  opacity: 0;
+}
+
+.portrait-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background:
+    radial-gradient(circle at 62% 42%, rgba(0, 148, 54, 0.12), transparent 30%),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.48) 34%, rgba(0, 0, 0, 0.12) 62%, rgba(0, 0, 0, 0.42) 100%),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.38) 0%, transparent 40%, rgba(0, 0, 0, 0.84) 100%);
+  opacity: calc(1 - var(--portrait-exit) * 0.34);
+  pointer-events: none;
+}
+
+.portrait-text {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-start;
+  padding: 0 clamp(22px, 3.8vw, 62px) clamp(52px, 7vh, 92px);
+  color: rgba(246, 242, 234, 0.98);
+  transform:
+    translate3d(0, calc(var(--portrait-progress) * -36vh), 0)
+    scale(calc(1 + var(--portrait-progress) * 0.08));
+  transform-origin: left bottom;
+  opacity: calc(1 - var(--portrait-exit) * 0.34);
+  will-change: transform, opacity;
+}
+
+.portrait-location {
+  margin: 0 0 12px;
+  font-size: clamp(0.72rem, 0.95vw, 0.9rem);
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(246, 242, 234, 0.62);
+}
+
+.portrait-title {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  max-width: min(62vw, 900px);
+}
+
+.portrait-title-line {
+  display: block;
+  font-family: "MiSans", "PingFang SC", "Microsoft YaHei", sans-serif;
+  font-size: clamp(4rem, 10vw, 11rem);
+  font-weight: 700;
+  line-height: 0.92;
+  letter-spacing: -0.02em;
+  color: currentColor;
+  text-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.18),
+    0 30px 90px rgba(0, 0, 0, 0.78);
+  white-space: nowrap;
+  word-break: keep-all;
+}
+
+.portrait-title-line:nth-child(2) {
+  margin-left: clamp(0px, 3.2vw, 58px);
+}
+
+/* ── About rows (scrolls over portrait video) ── */
+.portrait-spacer {
+  height: 260vh;
+}
+
+.about-rows {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: grid;
+  align-items: center;
+  margin: 0;
+  padding: clamp(86px, 10vh, 126px) clamp(42px, 6vw, 116px) clamp(92px, 12vh, 138px);
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  pointer-events: none;
+}
+
+.about-layout {
+  display: grid;
+  grid-template-columns: minmax(360px, 0.82fr) minmax(420px, 0.58fr);
+  gap: clamp(72px, 10vw, 180px);
+  align-items: center;
+  width: 100%;
+  max-width: 1720px;
+  margin-inline: auto;
+  padding-inline: 0;
+  transform:
+    translate3d(0, calc((1 - var(--portrait-text-enter)) * 10vh - var(--portrait-exit) * 10vh), 0)
+    scale(calc(0.988 + var(--portrait-text-enter) * 0.012 - var(--portrait-exit) * 0.015));
+  opacity: max(0, min(1, calc(var(--portrait-text-enter) * 1.12 - var(--portrait-exit) * 1.08)));
+  transform-origin: left bottom;
+  will-change: transform, opacity;
+}
+
+.about-rows [data-reveal],
+.about-rows [data-reveal].is-revealed {
+  opacity: 1;
+  transform: none;
+  transition: none;
+}
+
+.about-rows .scroll-type-glyph {
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+.about-left {
+  display: grid;
+  gap: clamp(20px, 3vh, 34px);
+  align-content: center;
+  max-width: 46ch;
+  padding-top: 0;
+}
+
+.about-heading {
+  margin: 0;
+  font-size: clamp(2.4rem, 4.5vw, 5rem);
+  line-height: 1.1;
+  letter-spacing: -0.04em;
+  color: rgba(248, 245, 239, 0.97);
+  text-align: left;
+  max-width: 14ch;
+}
+
+html[lang="zh-CN"] .about-heading {
+  font-family: "MiSans", "PingFang SC", "Microsoft YaHei", sans-serif;
+  font-size: clamp(2.1rem, 3.2vw, 3.8rem);
+  line-height: 1.16;
+  letter-spacing: 0;
+  font-weight: 560;
+  max-width: 8ch;
+  word-break: keep-all;
+}
+
+.about-role {
+  display: flex;
+  flex-direction: column;
+  gap: 0.02em;
+  margin: clamp(8px, 1.4vh, 18px) 0 0;
+  color: rgba(246, 242, 234, 0.96);
+  font-family: "MiSans", "PingFang SC", "Microsoft YaHei", sans-serif;
+  font-size: clamp(4.8rem, 7.4vw, 8.8rem);
+  font-weight: 680;
+  line-height: 0.98;
+  letter-spacing: 0;
+  text-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.16),
+    0 30px 90px rgba(0, 0, 0, 0.82);
+  white-space: nowrap;
+  word-break: keep-all;
+}
+
+.about-role span:last-child {
+  margin-left: clamp(22px, 3.8vw, 76px);
+}
+
+.about-right {
+  display: grid;
+  gap: clamp(24px, 3.2vh, 38px);
+  max-width: min(46ch, 100%);
+  padding: clamp(10px, 2vh, 22px) 0 0;
+  justify-self: end;
+}
+
+/* About copy and skills */
+.about-lead {
+  color: rgba(246, 242, 234, 0.9);
+  max-width: 36ch;
+  font-size: clamp(1rem, 1.3vw, 1.18rem);
+  line-height: 1.82;
+  letter-spacing: -0.005em;
+  text-align: left;
+  text-shadow: 0 18px 48px rgba(0, 0, 0, 0.78);
+}
+
+.about-detail {
+  color: rgba(246, 242, 234, 0.62);
+  max-width: 40ch;
+  font-size: 0.92rem;
+  line-height: 1.82;
+  letter-spacing: 0.005em;
+  text-align: left;
+  text-shadow: 0 18px 48px rgba(0, 0, 0, 0.78);
+}
+
+html[lang="zh-CN"] .about-lead {
+  font-family: "MiSans", "PingFang SC", "Microsoft YaHei", sans-serif;
+  font-weight: 460;
+  font-size: clamp(1.02rem, 1.05vw, 1.16rem);
+  line-height: 1.86;
+  letter-spacing: 0.01em;
+  max-width: 34ch;
+  word-break: keep-all;
+  text-align: left;
+}
+
+html[lang="zh-CN"] .about-detail {
+  font-family: "MiSans", "PingFang SC", "Microsoft YaHei", sans-serif;
+  font-weight: 400;
+  font-size: 0.88rem;
+  line-height: 1.88;
+  letter-spacing: 0.01em;
+  max-width: 36ch;
+  word-break: keep-all;
+  text-align: left;
+}
+
+.about-skills {
+  margin-top: clamp(2px, 1vh, 10px);
+}
+
+.about-skills-label {
+  margin: 0 0 14px;
+  font-size: 0.68rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(235, 231, 224, 0.32);
+}
+
+.about-skills-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 10px;
+  max-width: 40ch;
+}
+
+.about-skills-list span {
+  display: inline-block;
+  padding: 5px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  font-size: 0.68rem;
+  letter-spacing: 0.03em;
+  color: rgba(235, 231, 224, 0.56);
+  background: rgba(255, 255, 255, 0.03);
+  transition: border-color 200ms ease, color 200ms ease;
+}
+
+.about-skills-list span:hover {
+  border-color: rgba(0, 204, 189, 0.4);
+  color: rgba(0, 204, 189, 0.9);
+}
+
+/* About responsive tablet */
+@media (max-width: 1120px) {
+  .about-rows {
+    padding-inline: clamp(30px, 5vw, 64px);
+  }
+
+  .about-layout {
+    grid-template-columns: minmax(300px, 0.78fr) minmax(340px, 0.62fr);
+    gap: clamp(42px, 6vw, 86px);
+  }
+
+  .about-role {
+    font-size: clamp(4.2rem, 8.4vw, 6.6rem);
+  }
+
+  .about-right {
+    max-width: 40ch;
+  }
+}
+
+/* About responsive mobile */
+@media (max-width: 760px) {
+  .about-rows {
+    min-height: auto;
+    padding: 86px 22px 82px;
+  }
+
+  .about-layout {
+    grid-template-columns: 1fr;
+    gap: 34px 0;
+    align-items: end;
+    transform:
+      translate3d(0, calc((1 - var(--portrait-text-enter)) * 10vh - var(--portrait-exit) * 10vh), 0)
+      scale(calc(0.99 + var(--portrait-text-enter) * 0.01 - var(--portrait-exit) * 0.014));
+  }
+
+  .about-heading {
+    max-width: none;
+  }
+
+  .about-role {
+    font-size: clamp(3.7rem, 18vw, 6.2rem);
+  }
+
+  .about-right {
+    justify-self: start;
+    max-width: min(34ch, 100%);
+  }
+}
+
+/* About text interactions */
+.scrambled-text {
+  cursor: crosshair;
+}
+
+.about-rows .scrambled-text,
+.about-rows .scramble-char {
+  pointer-events: auto;
+}
+
+.scramble-char {
+  display: inline-block;
+  white-space: pre;
+  will-change: contents;
+}
+
+
+/* Section scroll typography: starts from About and blurs the text itself. */
+.scroll-type-text {
+  position: relative;
+  isolation: isolate;
+}
+
+.scroll-type-glyph {
+  display: inline-block;
+  --type-focus: 1;
+  --type-blur: 0px;
+  --type-y: 0px;
+  --type-opacity: 1;
+  white-space: pre;
+  opacity: var(--type-opacity);
+  transform: translate3d(0, var(--type-y), 0);
+  will-change: opacity, transform;
+  transition:
+    opacity 120ms linear,
+    transform 260ms cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.scroll-type-glyph {
+  text-shadow: none;
+}

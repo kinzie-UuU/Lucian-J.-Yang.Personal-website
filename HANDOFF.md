@@ -87,9 +87,6 @@ Current local batch covered by this handoff:
 - `scripts/site-navigation.js`
   - Handles home/top link ordered-layout release and hero focus panel "Enter Works" scroll.
   - Uses runtime helpers instead of owning hero/gallery state directly.
-- `scripts/works-tabs.js`
-  - Handles works tab click binding.
-  - Calls `window.LucianRuntime.selectWorkTab()` so selected-work state and focus-panel updates stay in `script.js`.
 - `scripts/hero-card-events.js`
   - Handles hero card pointer/focus/click event binding.
   - Calls runtime methods for activation and project entry so hero step state and gallery opening stay in `script.js`.
@@ -180,7 +177,6 @@ For the current local batch:
   - `scripts/portrait-motion.js`
   - `scripts/reveal-effects.js`
   - `scripts/site-navigation.js`
-  - `scripts/works-tabs.js`
   - `scripts/hero-card-events.js`
   - `scripts/precision-cursor.js`
   - `scripts/scroll-type-effects.js`
@@ -198,7 +194,7 @@ For the current local batch:
   - Reveal effects module marks About reveal nodes/children without console errors.
   - Site navigation module loads without console errors.
   - Hero card event module loads without console errors.
-  - Works tab module loads without console errors. Note: current DOM snapshot did not include `.works-tab` controls, so click behavior was not exercised in this pass.
+  - The stale `scripts/works-tabs.js` module was removed because the current DOM no longer includes `.works-tab` controls.
   - Precision cursor module updates cursor position style after pointer movement without console errors.
   - Scroll type module updates section `--scene-*` CSS variables without console errors.
   - Audio tuning syntax checks pass and page console has no `warn` or `error` logs.

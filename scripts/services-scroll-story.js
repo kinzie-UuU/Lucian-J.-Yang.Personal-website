@@ -12,6 +12,10 @@
     if (!stage || !entryTitle || !panels.length) return;
     const entryGridScan = window.initServicesEntryGridScan?.(entryGrid);
     const panelShaders = window.initServicePanelShaders?.(panels);
+    const capabilityRail = document.createElement("div");
+    capabilityRail.className = "services-capability-rail";
+    capabilityRail.setAttribute("aria-hidden", "true");
+    stage.appendChild(capabilityRail);
 
     const clamp01 = (value) => Math.min(1, Math.max(0, value));
     const smooth = (value) => value * value * (3 - 2 * value);
@@ -20,6 +24,11 @@
     let currentProgress = 0;
     let servicesInView = false;
     let panelGlyphs = [];
+    let activePanelIndex = -1;
+    let lastScrollY = window.scrollY;
+    let lastScrollAt = performance.now();
+    let displayActiveService = 0;
+    let serviceVelocity = 0;
 
     const splitGlyphs = (node, text) => {
       node.textContent = "";
@@ -58,6 +67,17 @@
           body: splitGlyphs(bodyNode, body),
         };
       });
+      capabilityRail.innerHTML = panels.map((panel, index) => {
+        const title = i18n[currentLang]?.[panel.dataset.serviceTitle] || panel.querySelector(".service-text-title")?.textContent || "";
+        return `<span class="services-capability-item" data-service-index="${index}"><b>${String(index + 1).padStart(2, "0")}</b>${title}</span>`;
+      }).join("");
+    };
+
+    const updateCapabilityRail = (index) => {
+      activePanelIndex = index;
+      capabilityRail.querySelectorAll(".services-capability-item").forEach((item, itemIndex) => {
+        item.classList.toggle("is-active", itemIndex === index);
+      });
     };
 
     const renderGlyphs = (glyphs, phase, stagger, travel) => {
@@ -81,69 +101,116 @@
       });
     };
 
-    const setPanel = (panel, local, index) => {
-      const enter = smooth(clamp01((local + 0.12) / 0.78));
-      const exit = smooth(clamp01((local - 0.66) / 0.46));
-      const inRange = local >= -0.14 && local <= 1.08 ? 1 : 0;
-      const y = local < 0.62
-        ? 104 - enter * 104
-        : -exit * 132;
-      const clarity = smooth(clamp01((local - 0.34) / 0.24)) * (1 - smooth(clamp01((local - 0.76) / 0.24)));
-      const z = -130 + clarity * 230 - exit * 52;
-      const scale = local < 0.62
-        ? 0.52 + enter * 0.44 + clarity * 0.34
-        : 1.3 - exit * 0.9;
-      const direction = index % 2 === 0 ? 1 : -1;
-      const rotate = local < 0.62
-        ? direction * (-5.2 + enter * 4.8)
-        : direction * (-0.4 + exit * 4.8);
-      const opacity = Math.min(enter * 1.12, 1) * (1 - exit) * inRange;
-      const contentOpacity = smooth(clamp01((local - 0.3) / 0.26)) * (1 - smooth(clamp01((local - 0.76) / 0.22)));
+    const renderGlyphsByAmount = (glyphs, amount, travel) => {
+      glyphs.forEach((glyph, index) => {
+        const delay = Math.min(index * 0.006, 0.16);
+        const glyphAmount = smooth(clamp01((amount - delay) / 0.72));
+        const blur = 16 * (1 - glyphAmount);
+        const y = (1 - glyphAmount) * travel;
+        glyph.style.opacity = glyphAmount.toFixed(3);
+        glyph.style.filter = `blur(${blur.toFixed(2)}px)`;
+        glyph.style.transform = `translate3d(0, ${y.toFixed(2)}px, 0)`;
+      });
+    };
 
+    const getLoopDelta = (index, active, length) => {
+      let delta = index - active;
+      const half = length / 2;
+      if (delta > half) delta -= length;
+      if (delta < -half) delta += length;
+      return delta;
+    };
+
+    const setPanel = (panel, delta, index, galleryVisible, outro) => {
+      const distance = Math.abs(delta);
+      const focus = smooth(clamp01(1 - distance / 1.18));
+      const visible = galleryVisible * smooth(clamp01(2.18 - distance));
+      const outroFocus = outro * focus;
+      const x = delta * 31 * (1 - outroFocus);
+      const y = ((1 - galleryVisible) * 8 + Math.sin((index + 1) * 1.7) * 0.42) * (1 - outroFocus);
+      const z = -90 + focus * 150 + outroFocus * 520;
+      const scale = 0.84 + focus * 0.08 + outroFocus * 4.15;
+      const rotate = 0;
+      const opacity = visible * (0.42 + focus * 0.58);
+      const contentOpacity = visible * (0.38 + focus * 0.62) * (1 - outroFocus * 0.92);
+
+      panel.classList.toggle("is-active-service", focus > 0.72 && galleryVisible > 0.5);
+      panel.style.setProperty("--service-panel-x", `${x.toFixed(2)}vw`);
       panel.style.setProperty("--service-panel-y", `${y.toFixed(2)}vh`);
       panel.style.setProperty("--service-panel-z", `${z.toFixed(2)}px`);
       panel.style.setProperty("--service-panel-scale", scale.toFixed(4));
       panel.style.setProperty("--service-card-rotate", `${rotate.toFixed(3)}deg`);
       panel.style.setProperty("--service-panel-opacity", opacity.toFixed(3));
       panel.style.setProperty("--service-content-opacity", contentOpacity.toFixed(3));
+      panel.style.setProperty("--service-outro-focus", outroFocus.toFixed(3));
 
       if (panelGlyphs[index]) {
-        renderGlyphs(panelGlyphs[index].title, local + 0.04, 0.004, 14);
-        renderGlyphs(panelGlyphs[index].body, local - 0.02, 0.0012, 12);
+        renderGlyphsByAmount(panelGlyphs[index].title, contentOpacity, 12);
+        renderGlyphsByAmount(panelGlyphs[index].body, contentOpacity, 10);
       }
+    };
+
+    const applyProgress = (progress, { snap = false } = {}) => {
+      const open = smooth(clamp01(progress / 0.22));
+      const inside = smooth(clamp01((progress - 0.13) / 0.22));
+      const outro = smooth(clamp01((progress - 0.82) / 0.18));
+      const galleryVisible = inside * (1 - outro);
+      const galleryProgress = smooth(clamp01((progress - 0.2) / 0.52));
+      const rawActiveService = galleryProgress * Math.max(0, panels.length - 1);
+      const nearestService = Math.min(panels.length - 1, Math.max(0, Math.round(rawActiveService)));
+      const idleMs = performance.now() - lastScrollAt;
+      const snapAmount = galleryVisible * (1 - outro) * 0.42 * smooth(clamp01((idleMs - 360) / 900));
+      const targetActiveService = rawActiveService + (nearestService - rawActiveService) * snapAmount;
+      if (snap) {
+        displayActiveService = targetActiveService;
+      } else {
+        displayActiveService += (targetActiveService - displayActiveService) * 0.15;
+      }
+
+      section.style.setProperty("--services-progress", progress.toFixed(4));
+      section.style.setProperty("--services-open", open.toFixed(4));
+      section.style.setProperty("--services-inside", inside.toFixed(4));
+      section.style.setProperty("--services-outro", outro.toFixed(4));
+      section.style.setProperty("--services-gallery", galleryVisible.toFixed(4));
+      section.style.setProperty("--services-slab-opacity", (inside * 0.96).toFixed(3));
+      document.body.classList.remove("services-white-stage");
+      if (entryGridScan) entryGridScan.setProgress(open, inside, progress, { snap });
+
+      panels.forEach((panel, index) => {
+        setPanel(panel, getLoopDelta(index, displayActiveService, panels.length), index, galleryVisible, outro);
+      });
+      const railIndex = progress < 0.19 || outro > 0.72
+        ? -1
+        : Math.min(panels.length - 1, Math.max(0, Math.round(displayActiveService)));
+      updateCapabilityRail(railIndex);
     };
 
     const readProgress = () => {
       const rect = section.getBoundingClientRect();
       const travel = Math.max(1, rect.height - window.innerHeight);
       servicesInView = rect.top < window.innerHeight && rect.bottom > 0;
-      targetProgress = runtime?.reducedMotion ? 1 : clamp01(-rect.top / travel);
+      if (Math.abs(window.scrollY - lastScrollY) > 0.5) {
+        lastScrollY = window.scrollY;
+        lastScrollAt = performance.now();
+      }
+      const nextProgress = runtime?.reducedMotion ? 1 : clamp01(-rect.top / travel);
+      serviceVelocity += (nextProgress - targetProgress) * 0.62;
+      serviceVelocity = Math.max(-0.028, Math.min(0.028, serviceVelocity));
+      const jumped = Math.abs(nextProgress - targetProgress) > 0.16 || (nextProgress < 0.02 && currentProgress > 0.12);
+      targetProgress = nextProgress;
+      if (jumped) {
+        currentProgress = targetProgress;
+        applyProgress(currentProgress, { snap: true });
+      }
     };
 
     const render = () => {
-      currentProgress += (targetProgress - currentProgress) * 0.105;
+      serviceVelocity *= 0.9;
+      const inertialTarget = clamp01(targetProgress + serviceVelocity);
+      currentProgress += (inertialTarget - currentProgress) * 0.15;
       if (Math.abs(targetProgress - currentProgress) < 0.00008) currentProgress = targetProgress;
 
-      const progress = currentProgress;
-      const open = smooth(clamp01(progress / 0.22));
-      const inside = smooth(clamp01((progress - 0.13) / 0.22));
-      const outro = smooth(clamp01((progress - 0.82) / 0.18));
-
-      section.style.setProperty("--services-progress", progress.toFixed(4));
-      section.style.setProperty("--services-open", open.toFixed(4));
-      section.style.setProperty("--services-inside", inside.toFixed(4));
-      section.style.setProperty("--services-outro", outro.toFixed(4));
-      section.style.setProperty("--services-slab-opacity", (inside * 0.96).toFixed(3));
-      document.body.classList.toggle("services-white-stage", servicesInView && inside > 0.58 && outro < 0.55);
-      if (entryGridScan) entryGridScan.setProgress(open, inside, progress);
-
-      panels.forEach((panel, index) => {
-        const start = 0.19 + index * 0.085;
-        const step = 0.19;
-        const local = (progress - start) / step;
-        setPanel(panel, local, index);
-      });
-
+      applyProgress(currentProgress);
       requestAnimationFrame(render);
     };
 

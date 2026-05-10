@@ -3,6 +3,8 @@
   let audioContext = null;
   let lastToneAt = 0;
   let lastWaterDropAt = 0;
+  const UI_TONE_GAIN = 0.06;
+  const WATER_DROP_GAIN = 0.04;
 
   const getAudioContext = async () => {
     if (!soundEnabled) return null;
@@ -42,7 +44,7 @@
     filter.frequency.setValueAtTime(1400, now);
 
     gain.gain.setValueAtTime(0.0001, now);
-    gain.gain.exponentialRampToValueAtTime(0.032, now + 0.01);
+    gain.gain.exponentialRampToValueAtTime(UI_TONE_GAIN, now + 0.01);
     gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.14);
 
     osc.connect(filter);
@@ -82,7 +84,7 @@
     osc.frequency.exponentialRampToValueAtTime(390, now + 0.11);
 
     gain.gain.setValueAtTime(0.0001, now);
-    gain.gain.exponentialRampToValueAtTime(0.018, now + 0.012);
+    gain.gain.exponentialRampToValueAtTime(WATER_DROP_GAIN, now + 0.012);
     gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.14);
 
     osc.connect(filter);
@@ -112,4 +114,3 @@
     },
   };
 })();
-

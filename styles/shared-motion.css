@@ -1,0 +1,148 @@
+/* Shared reveal and scroll motion */
+.reveal {
+  opacity: 0;
+  transform: translateY(22px);
+  transition: opacity 640ms ease, transform 640ms ease;
+}
+
+.reveal-delay {
+  transition-delay: 120ms;
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Child element reveal — triggered by JS per section */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 560ms cubic-bezier(0.22, 1, 0.36, 1),
+              transform 560ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+[data-reveal].is-revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+
+  .work-gallery {
+    --work-detail-reveal: 1;
+  }
+
+  .services-section {
+    min-height: auto;
+  }
+
+  .services-sticky {
+    position: relative;
+    min-height: auto;
+    overflow: visible;
+  }
+
+  .service-item {
+    --service-opacity: 1;
+    --service-y: 0px;
+    --service-rot: 0deg;
+    --service-blur: 0px;
+    --service-line: 1;
+  }
+}
+
+/* Keep content sections fluid; the hero owns the cinematic scroll lock. */
+.about-rows,
+.services-section,
+.works-section,
+.contact-section,
+.clients-section {
+  scroll-snap-stop: normal;
+}
+
+/* Text and service motion layer. */
+[data-reveal] {
+  will-change: opacity, transform, filter;
+}
+
+.service-item[data-reveal] {
+  transform: perspective(900px) rotateX(14deg) translateY(24px);
+  transform-origin: top center;
+  filter: blur(6px);
+  transition:
+    opacity 780ms cubic-bezier(0.19, 1, 0.22, 1),
+    transform 860ms cubic-bezier(0.19, 1, 0.22, 1),
+    filter 760ms ease,
+    border-color 260ms ease;
+}
+
+.service-item[data-reveal].is-revealed {
+  transform: perspective(900px) rotateX(0deg) translateY(0);
+  filter: blur(0);
+}
+
+/* Shared section scene motion: keeps each page feeling connected while scrolling. */
+#about,
+#works,
+#contact,
+.clients-section {
+  --scene-active: 1;
+  --scene-y: 0px;
+  --scene-blur: 0px;
+  --scene-scale: 1;
+}
+
+.works-list-header,
+.works-list,
+.contact-section .section-head,
+.contact-form,
+.contact-social,
+.clients-content {
+  transform: translate3d(0, var(--scene-y), 0) scale(var(--scene-scale));
+  opacity: calc(0.72 + var(--scene-active) * 0.28);
+  transform-origin: center;
+  will-change: opacity, transform;
+  transition:
+    opacity 180ms linear,
+    transform 520ms cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.works-statement {
+  opacity: var(--works-enter);
+  transform:
+    translate3d(0, calc((1 - var(--works-enter)) * 20px), 0)
+    scale(calc(0.992 + var(--works-enter) * 0.008));
+  transform-origin: center top;
+  will-change: opacity, transform;
+}
+
+.works-statement [data-reveal],
+.works-statement [data-reveal].is-revealed {
+  opacity: 1;
+  transform: none;
+  transition: none;
+}
+
+.works-list-header,
+.works-list,
+.contact-form,
+.contact-social {
+  transition-duration: 620ms;
+}

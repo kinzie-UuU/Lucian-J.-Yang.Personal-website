@@ -6,11 +6,11 @@
     const renderer = new THREE.WebGLRenderer({
       canvas,
       antialias: true,
-      alpha: true,
+      alpha: false,
       powerPreference: "high-performance",
     });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-    renderer.setClearColor(0x000000, 0);
+    renderer.setClearColor(0x020908, 1);
 
     const uniforms = {
       iResolution: { value: new THREE.Vector3(1, 1, 1) },
@@ -146,10 +146,6 @@
     let targetProgress = 0;
     let currentProgress = 0;
     let raf = 0;
-    let pointerInside = false;
-    let lastPointerAt = 0;
-    let lastPointerX = 0;
-    let lastPointerY = 0;
     const pointerTarget = new THREE.Vector2(0, 0);
     const pointerCurrent = new THREE.Vector2(0, 0);
 
@@ -161,50 +157,15 @@
       uniforms.iResolution.value.set(width, height, renderer.getPixelRatio());
     };
 
-    const onPointerMove = (event) => {
-      lastPointerX = event.clientX;
-      lastPointerY = event.clientY;
-      const rect = card.getBoundingClientRect();
-      const inside =
-        event.clientX >= rect.left &&
-        event.clientX <= rect.right &&
-        event.clientY >= rect.top &&
-        event.clientY <= rect.bottom;
-      pointerInside = inside;
-      lastPointerAt = performance.now();
-      if (inside) {
-        pointerTarget.set(
-          ((event.clientX - rect.left) / Math.max(rect.width, 1)) * 2 - 1,
-          -(((event.clientY - rect.top) / Math.max(rect.height, 1)) * 2 - 1)
-        );
-      } else {
-        pointerTarget.set(0, 0);
-      }
-    };
-
     const onPointerLeave = () => {
-      pointerInside = false;
-      lastPointerAt = 0;
       pointerTarget.set(0, 0);
     };
 
     const tick = (now) => {
-      if (pointerInside && lastPointerAt && now - lastPointerAt > 420) {
-        const rect = card.getBoundingClientRect();
-        const stillInside =
-          lastPointerX >= rect.left &&
-          lastPointerX <= rect.right &&
-          lastPointerY >= rect.top &&
-          lastPointerY <= rect.bottom;
-        if (!stillInside) {
-          pointerInside = false;
-          pointerTarget.set(0, 0);
-        }
-      }
       currentOpen += (targetOpen - currentOpen) * 0.075;
       currentInside += (targetInside - currentInside) * 0.075;
       currentProgress += (targetProgress - currentProgress) * 0.08;
-      pointerCurrent.lerp(pointerTarget, pointerInside ? 0.08 : 0.12);
+      pointerCurrent.lerp(pointerTarget, 0.12);
 
       uniforms.iTime.value = now / 1000;
       uniforms.uOpen.value = currentOpen;
@@ -222,7 +183,6 @@
       resizeObserver.observe(canvas);
     }
     window.addEventListener("resize", resize);
-    window.addEventListener("pointermove", onPointerMove, { passive: true });
     window.addEventListener("blur", onPointerLeave);
     document.addEventListener("mouseleave", onPointerLeave);
     card.addEventListener("pointerleave", onPointerLeave);
@@ -230,16 +190,23 @@
     raf = requestAnimationFrame(tick);
 
     return {
-      setProgress(open, inside, progress) {
+      setProgress(open, inside, progress, options = {}) {
         targetOpen = Math.min(1, Math.max(0, open));
         targetInside = Math.min(1, Math.max(0, inside));
         targetProgress = Math.min(1, Math.max(0, progress));
+        if (options.snap) {
+          currentOpen = targetOpen;
+          currentInside = targetInside;
+          currentProgress = targetProgress;
+          pointerTarget.set(0, 0);
+          pointerCurrent.set(0, 0);
+          resize();
+        }
       },
       destroy() {
         if (raf) cancelAnimationFrame(raf);
         if (resizeObserver) resizeObserver.disconnect();
         window.removeEventListener("resize", resize);
-        window.removeEventListener("pointermove", onPointerMove);
         window.removeEventListener("blur", onPointerLeave);
         document.removeEventListener("mouseleave", onPointerLeave);
         card.removeEventListener("pointerleave", onPointerLeave);

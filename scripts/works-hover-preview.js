@@ -6,93 +6,114 @@
   const worksPreviewImg = document.querySelector("#works-preview-img");
   const worksRows = Array.from(document.querySelectorAll(".works-row"));
 
-  const categoryColors = {
-    oem: ["#2a2420", "#3d3028", "#4a3a30", "#352a22"],
-    gift: ["#2e2228", "#3a2a32", "#4a3040", "#2a1e28"],
-    brand: ["#222820", "#2c3228", "#343c2e", "#1e2418"],
-    aigc: ["#1a1c22", "#20222c", "#242830", "#1c1e26"],
-    "aigc-video": ["#161820", "#202436", "#283048", "#12141d"],
-  };
-
-  const categoryPatterns = {
-    oem: "repeating-linear-gradient(45deg, rgba(255,255,255,0.04) 0px, rgba(255,255,255,0.04) 1px, transparent 1px, transparent 12px)",
-    gift: "repeating-linear-gradient(-45deg, rgba(255,200,180,0.06) 0px, rgba(255,200,180,0.06) 1px, transparent 1px, transparent 10px)",
-    brand: "repeating-linear-gradient(0deg, rgba(180,200,120,0.05) 0px, rgba(180,200,120,0.05) 1px, transparent 1px, transparent 11px)",
-    aigc: "repeating-linear-gradient(135deg, rgba(140,160,220,0.06) 0px, rgba(140,160,220,0.06) 1px, transparent 1px, transparent 9px)",
-    "aigc-video": "repeating-linear-gradient(120deg, rgba(150,180,255,0.07) 0px, rgba(150,180,255,0.07) 1px, transparent 1px, transparent 8px)",
-  };
-
-  let previewRaf = null;
-  let previewTarget = { x: 0, y: 0 };
-  let previewCurrent = { x: 0, y: 0 };
-
-  const animatePreview = () => {
-    previewCurrent.x += (previewTarget.x - previewCurrent.x) * 0.12;
-    previewCurrent.y += (previewTarget.y - previewCurrent.y) * 0.12;
-    if (worksPreview) {
-      worksPreview.style.transform = `translate(${previewCurrent.x}px, ${previewCurrent.y}px)`;
-    }
-    previewRaf = requestAnimationFrame(animatePreview);
-  };
-
   const hideWorksPreview = () => {
     worksPreview?.classList.remove("is-visible");
     worksPreviewImg?.classList.remove("is-waving");
-    if (previewRaf) {
-      cancelAnimationFrame(previewRaf);
-      previewRaf = null;
-    }
   };
 
   runtime.hideWorksPreview = hideWorksPreview;
 
+  const getDistance = (x1, y1, x2, y2) => {
+    const dx = x1 - x2;
+    const dy = y1 - y2;
+    return dx * dx + dy * dy;
+  };
+
+  const getClosestVerticalEdge = (event, element) => {
+    const rect = element.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+    const topDistance = getDistance(x, y, rect.width / 2, 0);
+    const bottomDistance = getDistance(x, y, rect.width / 2, rect.height);
+    return topDistance < bottomDistance ? "top" : "bottom";
+  };
+
+  const getRowText = (row) => row.querySelector(".works-row-name")?.textContent?.trim() || "";
+
+  const getRowImage = (category) => {
+    const imagePool = window.workGalleryImages?.[category] || [];
+    return imagePool[0]?.src || "";
+  };
+
+  const buildFlowingMenu = (row) => {
+    const category = row.dataset.category || "oem";
+    const text = getRowText(row);
+    const image = getRowImage(category);
+    row.querySelector(".works-flowing-menu")?.remove();
+    const overlay = document.createElement("span");
+    const inner = document.createElement("span");
+    const contentWidthEstimate = Math.max(180, text.length * 34 + 260);
+    const repetitions = Math.max(4, Math.ceil(window.innerWidth / contentWidthEstimate) + 2);
+
+    overlay.className = "works-flowing-menu";
+    overlay.setAttribute("aria-hidden", "true");
+    inner.className = "works-flowing-menu-inner";
+
+    for (let index = 0; index < repetitions; index += 1) {
+      const part = document.createElement("span");
+      const label = document.createElement("span");
+      const media = document.createElement("span");
+
+      part.className = "works-flowing-menu-part";
+      label.className = "works-flowing-menu-text";
+      media.className = "works-flowing-menu-img";
+      label.textContent = text;
+      if (image) media.style.backgroundImage = `url("${image}")`;
+
+      part.append(label, media);
+      inner.appendChild(part);
+    }
+
+    overlay.appendChild(inner);
+    row.appendChild(overlay);
+    row.style.setProperty("--flowing-menu-distance", `${contentWidthEstimate}px`);
+  };
+
+  const showFlowingMenu = (row, edge) => {
+    const overlay = row.querySelector(".works-flowing-menu");
+    const inner = row.querySelector(".works-flowing-menu-inner");
+    if (!overlay || !inner) return;
+    overlay.style.transition = "none";
+    inner.style.transition = "none";
+    overlay.style.transform = edge === "top" ? "translate3d(0, -101%, 0)" : "translate3d(0, 101%, 0)";
+    inner.style.transform = edge === "top" ? "translate3d(0, 101%, 0)" : "translate3d(0, -101%, 0)";
+
+    requestAnimationFrame(() => {
+      row.classList.add("is-flowing");
+      overlay.style.transition = "";
+      inner.style.transition = "";
+      overlay.style.transform = "translate3d(0, 0, 0)";
+      inner.style.transform = "translate3d(0, 0, 0)";
+    });
+  };
+
+  const hideFlowingMenu = (row, edge) => {
+    const overlay = row.querySelector(".works-flowing-menu");
+    const inner = row.querySelector(".works-flowing-menu-inner");
+    if (!overlay || !inner) return;
+    row.classList.remove("is-flowing");
+    overlay.style.transform = edge === "top" ? "translate3d(0, -101%, 0)" : "translate3d(0, 101%, 0)";
+    inner.style.transform = edge === "top" ? "translate3d(0, 101%, 0)" : "translate3d(0, -101%, 0)";
+  };
+
+  window.LucianWorksFlowingMenu = {
+    refresh() {
+      worksRows.forEach(buildFlowingMenu);
+    },
+  };
+
   worksRows.forEach((row) => {
-    const cat = row.dataset.category;
-    const colors = categoryColors[cat] || categoryColors.oem;
-    const pattern = categoryPatterns[cat] || categoryPatterns.oem;
+    buildFlowingMenu(row);
     row.setAttribute("role", "button");
     row.setAttribute("tabindex", "0");
 
-    row.addEventListener("mouseenter", () => {
-      if (worksPreviewImg) {
-        const imagePool = workGalleryImages?.[cat] || [];
-        const imageItem = imagePool[0];
-        worksPreviewImg.classList.remove("is-image-preview", "is-waving");
-        if (imageItem?.src) {
-          worksPreviewImg.style.setProperty("--preview-image", `url("${imageItem.src}")`);
-          worksPreviewImg.style.setProperty("--preview-position", imageItem.position || "center");
-          worksPreviewImg.style.removeProperty("--preview-fallback");
-          worksPreviewImg.classList.add("is-image-preview");
-          if (!runtime.reducedMotion) {
-            void worksPreviewImg.offsetWidth;
-            worksPreviewImg.classList.add("is-waving");
-          }
-        } else {
-          const bg = colors[0];
-          worksPreviewImg.style.setProperty("--preview-image", "none");
-          worksPreviewImg.style.setProperty("--preview-position", "center");
-          worksPreviewImg.style.setProperty("--preview-fallback", `${pattern}, ${bg}`);
-        }
-      }
-
-      worksPreview?.classList.add("is-visible");
-      const rect = row.getBoundingClientRect();
-      previewTarget.x = rect.left + rect.width * 0.67 - 120;
-      previewTarget.y = rect.top + rect.height * 0.32;
-      if (!previewRaf) previewRaf = requestAnimationFrame(animatePreview);
+    row.addEventListener("mouseenter", (event) => {
+      hideWorksPreview();
+      showFlowingMenu(row, getClosestVerticalEdge(event, row));
     });
 
-    row.addEventListener("mousemove", (event) => {
-      const rect = row.getBoundingClientRect();
-      const anchorX = rect.left + rect.width * 0.67 - 120;
-      const anchorY = rect.top + rect.height * 0.32;
-      const driftX = (event.clientX - (rect.left + rect.width * 0.5)) * 0.38;
-      const driftY = (event.clientY - (rect.top + rect.height * 0.5)) * 0.42;
-      previewTarget.x = anchorX + driftX;
-      previewTarget.y = anchorY + driftY;
+    row.addEventListener("mouseleave", (event) => {
+      hideFlowingMenu(row, getClosestVerticalEdge(event, row));
     });
-
-    row.addEventListener("mouseleave", hideWorksPreview);
   });
 })();
-

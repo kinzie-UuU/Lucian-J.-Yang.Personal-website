@@ -1,0 +1,126 @@
+/* Precision cursor and guide overlay */
+body.cursor-active,
+body.cursor-active a,
+body.cursor-active button {
+  cursor: none;
+}
+
+body.cursor-active .work-gallery,
+body.cursor-active .work-gallery * {
+  cursor: none !important;
+}
+
+body.has-entered,
+body.has-entered a,
+body.has-entered button,
+body.has-entered .work-gallery,
+body.has-entered .work-gallery * {
+  cursor: auto;
+}
+
+body.has-entered .precision-cursor,
+body.has-entered .precision-guides {
+  opacity: 0 !important;
+}
+
+body.is-unfolding .precision-cursor,
+body.is-unfolding .precision-guides,
+body.is-entering .precision-cursor,
+body.is-entering .precision-guides {
+  opacity: 0 !important;
+  transition: opacity 120ms ease;
+}
+
+.precision-cursor {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 260;
+  width: 36px;
+  height: 36px;
+  pointer-events: none;
+  opacity: 0;
+  transform: translate(-50%, -50%);
+  transition: opacity 180ms ease, width 220ms ease, height 220ms ease;
+  will-change: transform;
+}
+
+.precision-guides {
+  position: fixed;
+  inset: 0;
+  z-index: 250;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 180ms ease;
+}
+
+.precision-guides::before,
+.precision-guides::after {
+  content: "";
+  position: absolute;
+}
+
+.precision-guides::before {
+  left: 0;
+  right: 0;
+  top: var(--cursor-y);
+  height: 1px;
+  transform: translateY(-0.5px);
+  background: rgba(242, 240, 236, 0.28);
+}
+
+.precision-guides::after {
+  top: 0;
+  bottom: 0;
+  left: var(--cursor-x);
+  width: 1px;
+  transform: translateX(-0.5px);
+  background: rgba(242, 240, 236, 0.18);
+}
+
+.precision-guides.is-visible {
+  opacity: 1;
+}
+
+/* viewfinder: four corner L-brackets */
+.precision-cursor::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  /* top-left H, top-left V, top-right H, top-right V,
+     bottom-left H, bottom-left V, bottom-right H, bottom-right V */
+  background:
+    linear-gradient(90deg, rgba(242,240,236,0.9), rgba(242,240,236,0.9))
+      0 0 / 10px 1px no-repeat,
+    linear-gradient(rgba(242,240,236,0.9), rgba(242,240,236,0.9))
+      0 0 / 1px 10px no-repeat,
+    linear-gradient(90deg, rgba(242,240,236,0.9), rgba(242,240,236,0.9))
+      100% 0 / 10px 1px no-repeat,
+    linear-gradient(rgba(242,240,236,0.9), rgba(242,240,236,0.9))
+      100% 0 / 1px 10px no-repeat,
+    linear-gradient(90deg, rgba(242,240,236,0.9), rgba(242,240,236,0.9))
+      0 100% / 10px 1px no-repeat,
+    linear-gradient(rgba(242,240,236,0.9), rgba(242,240,236,0.9))
+      0 100% / 1px 10px no-repeat,
+    linear-gradient(90deg, rgba(242,240,236,0.9), rgba(242,240,236,0.9))
+      100% 100% / 10px 1px no-repeat,
+    linear-gradient(rgba(242,240,236,0.9), rgba(242,240,236,0.9))
+      100% 100% / 1px 10px no-repeat;
+}
+
+/* center dot */
+.precision-cursor::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 3px;
+  height: 3px;
+  background: rgba(242,240,236,0.6);
+  border-radius: 50%;
+}
+
+.precision-cursor.is-visible {
+  opacity: 1;
+}
