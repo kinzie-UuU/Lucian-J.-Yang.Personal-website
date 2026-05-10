@@ -36,7 +36,7 @@ Key groups:
 - App/bootstrap/runtime bridge: `app-bootstrap.js`, `runtime-bridge.js`, `hero-state-runtime.js`.
 - Entry and hero: `entry.js`, `hero-steps.js`, `hero-step-runtime.js`, `hero-actions-runtime.js`, `hero-sequence-runtime.js`, `hero-card-*`, `hero-water-surface.js`, `hero-ripples.js`, `hero-wireframe.js`, `hero-focus-runtime.js`.
 - Services: `services-entry-grid-scan.js`, `service-panel-shaders.js`, `services-scroll-story.js`, `services-image-trail.js`.
-- Works/gallery: `work-gallery.js`, `works-hover-preview.js`, `works-statement-motion.js`.
+- Works/gallery: `work-gallery.js`, `works-hover-preview.js`, `works-transition-motion.js`.
 - Site UI: `header-controls.js`, `language-controls.js`, `language-runtime.js`, `static-text-runtime.js`, `bottom-nav-scroll-spy.js`, `site-navigation.js`, `site-clock.js`, `precision-cursor.js`.
 - Effects and supporting modules: `audio-feedback.js`, `scrambled-text.js`, `scroll-type-effects.js`, `reveal-effects.js`, `clients-marquee.js`, `clients-title-interaction.js`, `portrait-motion.js`, `particle-canvas.js`.
 

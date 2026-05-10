@@ -2,6 +2,7 @@
   const runtime = window.LucianRuntime;
   if (!runtime) return;
 
+  const contactSection = document.querySelector("#contact");
   const copyItems = document.querySelectorAll(".contact-copy-item");
   const contactForm = document.querySelector("#contact-form");
   const wechatTrigger = document.querySelector("#wechat-qr-trigger");
@@ -10,6 +11,56 @@
   const wechatClose = document.querySelector("#wechat-qr-close");
 
   const getLang = () => runtime.getCurrentLang();
+  const clamp01 = (value) => Math.min(1, Math.max(0, value));
+  const smootherStep = (value) => value * value * value * (value * (value * 6 - 15) + 10);
+
+  const initContactPaperMotion = () => {
+    if (!contactSection) return;
+
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let ticking = false;
+
+    const setVar = (name, value) => {
+      contactSection.style.setProperty(name, value.toFixed(4));
+    };
+
+    const update = () => {
+      ticking = false;
+
+      if (prefersReducedMotion.matches) {
+        setVar("--contact-paper-place", 1);
+        setVar("--contact-paper-settle", 1);
+        setVar("--contact-paper-exit", 0);
+        setVar("--contact-paper-bg", 1);
+        return;
+      }
+
+      const vh = Math.max(1, window.innerHeight);
+      const rect = contactSection.getBoundingClientRect();
+      const enter = smootherStep(clamp01((vh * 1.08 - rect.top) / (vh * 0.94)));
+      const settle = smootherStep(clamp01((vh * 0.74 - rect.top) / (vh * 0.72)));
+      const bg = smootherStep(clamp01((vh * 1.18 - rect.top) / (vh * 1.16)));
+      const exit = smootherStep(clamp01((vh * 0.04 - rect.bottom) / (vh * 0.7)));
+
+      setVar("--contact-paper-place", enter);
+      setVar("--contact-paper-settle", settle);
+      setVar("--contact-paper-exit", exit);
+      setVar("--contact-paper-bg", bg);
+    };
+
+    const requestUpdate = () => {
+      if (ticking) return;
+      ticking = true;
+      window.requestAnimationFrame(update);
+    };
+
+    update();
+    window.addEventListener("scroll", requestUpdate, { passive: true });
+    window.addEventListener("resize", requestUpdate);
+    prefersReducedMotion.addEventListener?.("change", requestUpdate);
+  };
+
+  initContactPaperMotion();
 
   const showContactToast = () => {
     const toast = document.getElementById("contact-toast");
@@ -92,4 +143,3 @@
     }
   });
 })();
-

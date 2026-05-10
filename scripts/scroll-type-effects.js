@@ -120,14 +120,10 @@
     measured.forEach(({ glyph, parent, index, rect, parentRect }) => {
       if (!parent) return;
       const isHeroDisplay = parent.matches(".about-heading, .contact-headline");
-      const isWorksStatementTitle = parent.matches(".works-statement-title");
-      const isParagraph = parent.matches(".about-lead, .about-detail, .works-statement-body");
-      const localFocusRange = isWorksStatementTitle || parent.matches(".works-statement-body")
-        ? Math.max(420, vh * 0.7)
-        : focusRange;
+      const isParagraph = parent.matches(".about-lead, .about-detail");
       const center = rect.top + rect.height * 0.5;
       const distance = Math.abs(center - focusLine);
-      const raw = 1 - Math.min(1, distance / localFocusRange);
+      const raw = 1 - Math.min(1, distance / focusRange);
       const viewportFocus = raw * raw * (3 - 2 * raw);
       const count = Number(parent.style.getPropertyValue("--glyph-count") || 1);
       const glyphOrder = count <= 1 ? 0 : index / (count - 1);
@@ -247,4 +243,3 @@
     subtree: true,
   });
 })();
-

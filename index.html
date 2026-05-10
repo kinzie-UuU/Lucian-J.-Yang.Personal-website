@@ -153,41 +153,41 @@
           <button class="hero-card" type="button" data-work="oem" data-tone="light" data-project-key="oem" data-project-index="0">
             <span class="hero-card-image-area"></span>
             <div class="hero-card-info">
-              <span class="hero-card-category">品牌包装</span>
-              <span class="hero-card-name">包装设计</span>
-              <span class="hero-card-meta">01 · 结构与识别</span>
+              <span class="hero-card-category" data-i18n="hero_card_1_category">品牌包装</span>
+              <span class="hero-card-name" data-i18n="hero_card_1_name">包装设计</span>
+              <span class="hero-card-meta" data-i18n="hero_card_1_meta">01 · 结构与识别</span>
             </div>
           </button>
           <button class="hero-card" type="button" data-work="gift" data-project-key="gift" data-project-index="0">
             <span class="hero-card-image-area"></span>
             <div class="hero-card-info">
-              <span class="hero-card-category">礼品福利</span>
-              <span class="hero-card-name">节礼包装设计</span>
-              <span class="hero-card-meta">02 · 节点与渠道</span>
+              <span class="hero-card-category" data-i18n="hero_card_2_category">礼品福利</span>
+              <span class="hero-card-name" data-i18n="hero_card_2_name">节礼包装设计</span>
+              <span class="hero-card-meta" data-i18n="hero_card_2_meta">02 · 节点与渠道</span>
             </div>
           </button>
           <button class="hero-card" type="button" data-work="brand" data-project-key="brand" data-project-index="0">
             <span class="hero-card-image-area"></span>
             <div class="hero-card-info">
-              <span class="hero-card-category">品牌字体</span>
-              <span class="hero-card-name">品牌与字体设计</span>
-              <span class="hero-card-meta">03 · 字体与识别</span>
+              <span class="hero-card-category" data-i18n="hero_card_3_category">品牌字体</span>
+              <span class="hero-card-name" data-i18n="hero_card_3_name">品牌与字体设计</span>
+              <span class="hero-card-meta" data-i18n="hero_card_3_meta">03 · 字体与识别</span>
             </div>
           </button>
           <button class="hero-card hero-card-dark" type="button" data-work="aigc" data-tone="dark" data-project-key="aigc" data-project-index="0">
             <span class="hero-card-image-area"></span>
             <div class="hero-card-info">
-              <span class="hero-card-category">AIGC流</span>
-              <span class="hero-card-name">AIGC 工作流</span>
-              <span class="hero-card-meta">04 · 提案与筛选</span>
+              <span class="hero-card-category" data-i18n="hero_card_4_category">AIGC流</span>
+              <span class="hero-card-name" data-i18n="hero_card_4_name">AIGC 工作流</span>
+              <span class="hero-card-meta" data-i18n="hero_card_4_meta">04 · 提案与筛选</span>
             </div>
           </button>
           <button class="hero-card hero-card-dark" type="button" data-work="aigc-video" data-tone="dark" data-project-key="aigc-video" data-project-index="0">
             <span class="hero-card-image-area"></span>
             <div class="hero-card-info">
-              <span class="hero-card-category">视频创作</span>
-              <span class="hero-card-name">AIGC 视频</span>
-              <span class="hero-card-meta">05 · 动态表达</span>
+              <span class="hero-card-category" data-i18n="hero_card_5_category">视频创作</span>
+              <span class="hero-card-name" data-i18n="hero_card_5_name">AIGC 视频</span>
+              <span class="hero-card-meta" data-i18n="hero_card_5_meta">05 · 动态表达</span>
             </div>
           </button>
         </div>
@@ -314,13 +314,26 @@
       </div>
     </section>
 
-    <section class="works-section reveal" id="works">
-      <div class="works-statement">
-        <p class="works-statement-kicker section-kicker" data-i18n="works_kicker" data-reveal data-delay="0">作品</p>
-        <h2 class="works-statement-title js-scrambled-text" data-i18n="works_statement_title" data-reveal data-delay="80">不是把包装做漂亮，而是把包装做对。</h2>
-        <p class="works-statement-body js-scrambled-text" data-i18n="works_statement_body" data-reveal data-delay="180">Lucian J. Yang 聚焦 OEM、礼赠渠道、系列礼盒与品牌升级项目。比起单纯制造风格，我更关心包装如何在真实约束中成立。</p>
+    <section class="service-work-transition reveal" aria-hidden="true">
+      <div class="works-transition-gear" aria-hidden="true">
+        <svg viewBox="0 0 900 900" focusable="false">
+          <circle class="works-transition-progress-track" cx="450" cy="450" r="360" />
+          <circle class="works-transition-progress-ring" cx="450" cy="450" r="360" />
+          <circle class="works-transition-progress-tick" cx="450" cy="90" r="3" />
+        </svg>
       </div>
-      <div class="works-list-header" data-reveal data-delay="260" aria-hidden="true"></div>
+      <div class="works-transition-copy" aria-hidden="true">
+        <section class="works-transition-line">
+          <span class="works-transition-line-text" data-i18n="works_transition_line_1">不是把包装做漂亮，</span>
+        </section>
+        <section class="works-transition-line">
+          <span class="works-transition-line-text" data-i18n="works_transition_line_2">而是把包装做对。</span>
+        </section>
+        <p class="works-transition-note" data-i18n="works_transition_note">Lucian J. Yang 聚焦 OEM、礼赠渠道、系列礼盒与品牌升级项目。比起单纯制造风格，我更关心包装如何在真实约束中成立。</p>
+      </div>
+    </section>
+
+    <section class="works-section reveal" id="works">
       <ul class="works-list" id="works-list">
         <li class="works-row" data-category="oem" data-reveal data-delay="320">
           <span class="works-row-index">01</span>
@@ -374,44 +387,61 @@
     </aside>
 
     <section class="contact-section reveal" id="contact">
-      <div class="section-head section-head-centered">
-        <p class="section-kicker" data-i18n="contact_kicker" data-reveal data-delay="0">联系</p>
-        <h2 class="contact-headline js-scrambled-text" data-i18n="contact_text" data-reveal data-delay="80">如果你正在寻找一位既懂包装表达，也重视真实落地与成本约束的设计师，欢迎联系我。</h2>
-        <p class="contact-collab js-scrambled-text" data-i18n="contact_collab" data-reveal data-delay="160">OEM / 贴牌包装 · 礼品与福利渠道设计 · 系列包装 · 节庆礼盒 · 包装升级 · 包装提案与方向判断支持</p>
-      </div>
-
-      <form class="contact-form" id="contact-form" action="mailto:y1156813759@gmail.com" method="post" enctype="text/plain" data-reveal data-delay="240">
-        <div class="contact-form-grid">
-          <label class="contact-field">
-            <span data-i18n="contact_form_name">姓名</span>
-            <input type="text" name="name" autocomplete="name" required>
-          </label>
-          <label class="contact-field">
-            <span data-i18n="contact_form_company">公司</span>
-            <input type="text" name="company" autocomplete="organization">
-          </label>
-          <label class="contact-field">
-            <span data-i18n="contact_form_contact">邮箱/电话</span>
-            <input type="text" name="contact" autocomplete="email tel" required>
-          </label>
-          <label class="contact-field contact-field-message">
-            <span data-i18n="contact_form_message">需求信息</span>
-            <textarea name="message" rows="4" required></textarea>
-          </label>
+      <div class="contact-layout">
+        <div class="contact-cell contact-cell-label" data-reveal data-delay="0">
+          <p class="contact-meta">Lucian J. Yang</p>
         </div>
-        <button class="contact-submit" type="submit">
-          <span data-i18n="contact_form_send">发送邮件</span>
-          <span class="contact-submit-arrow" aria-hidden="true">↗</span>
-        </button>
-      </form>
+        <div class="contact-cell contact-cell-status" data-reveal data-delay="40">
+          <p class="contact-meta">Available for selected projects · 2026</p>
+        </div>
 
-      <!-- Social icons -->
-      <div class="contact-social" data-reveal data-delay="320">
-        <a class="contact-social-icon" href="mailto:y1156813759@gmail.com" aria-label="Email">
+        <div class="contact-cell contact-cell-heading" data-reveal data-delay="80">
+          <p class="section-kicker" data-i18n="contact_kicker">联系</p>
+          <h2 class="contact-title js-scrambled-text" data-i18n="contact_title">联系</h2>
+        </div>
+
+        <div class="contact-cell contact-cell-intro" data-reveal data-delay="140">
+          <p class="contact-headline js-scrambled-text" data-i18n="contact_text">如果你正在寻找一位既懂包装表达，也重视真实落地与成本约束的设计师，欢迎联系我。</p>
+          <p class="contact-collab js-scrambled-text" data-i18n="contact_collab">OEM / 贴牌包装 · 礼品与福利渠道设计 · 系列包装 · 节庆礼盒 · 包装升级 · 包装提案与方向判断支持</p>
+        </div>
+
+        <form class="contact-form contact-cell" id="contact-form" action="mailto:y1156813759@gmail.com" method="post" enctype="text/plain" data-reveal data-delay="220">
+          <div class="contact-form-header">
+            <p class="contact-meta" data-i18n="contact_form_kicker">项目咨询</p>
+            <p class="contact-form-note" data-i18n="contact_form_note">一句清楚的需求，就足够开始沟通。</p>
+          </div>
+          <div class="contact-form-grid">
+            <label class="contact-field">
+              <span data-i18n="contact_form_name">姓名</span>
+              <input type="text" name="name" autocomplete="name" required>
+            </label>
+            <label class="contact-field">
+              <span data-i18n="contact_form_company">公司</span>
+              <input type="text" name="company" autocomplete="organization">
+            </label>
+            <label class="contact-field">
+              <span data-i18n="contact_form_contact">邮箱/电话</span>
+              <input type="text" name="contact" autocomplete="email tel" required>
+            </label>
+            <label class="contact-field contact-field-message">
+              <span data-i18n="contact_form_message">需求信息</span>
+              <textarea name="message" rows="3" required></textarea>
+            </label>
+          </div>
+          <button class="contact-submit" type="submit">
+            <span data-i18n="contact_form_send">发送邮件</span>
+            <span class="contact-submit-arrow" aria-hidden="true">↗</span>
+          </button>
+        </form>
+
+        <!-- Social icons -->
+        <div class="contact-social contact-cell" data-reveal data-delay="300">
+          <a class="contact-social-icon" href="mailto:y1156813759@gmail.com" aria-label="Email">
           <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <rect x="3" y="5.5" width="18" height="13" rx="2.4" stroke="currentColor" stroke-width="1.6"/>
             <path d="M4.2 7.2L12 12.6L19.8 7.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
+          <span>Email</span>
         </a>
 
         <a class="contact-social-icon" href="https://www.instagram.com/dapeng3y/" target="_blank" rel="noopener" aria-label="Instagram">
@@ -420,6 +450,7 @@
             <circle cx="12" cy="12" r="4.2" stroke="currentColor" stroke-width="1.6"/>
             <circle cx="17.5" cy="6.5" r="1" fill="currentColor"/>
           </svg>
+          <span>Instagram</span>
         </a>
 
         <!-- X / Twitter -->
@@ -427,19 +458,22 @@
           <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
             <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L2.25 2.25h6.978l4.259 5.631 4.757-5.631Zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77Z"/>
           </svg>
+          <span>X</span>
         </a>
 
         <!-- WeChat QR trigger -->
         <button class="contact-social-icon contact-wechat-trigger" aria-label="微信二维码" id="wechat-qr-trigger">
           <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M9.55 5.35C5.94 5.35 3.1 7.58 3.1 10.34C3.1 11.9 4.02 13.3 5.45 14.22L4.94 16.1L7.12 15.08C7.84 15.27 8.67 15.38 9.55 15.38C13.16 15.38 16 13.15 16 10.34C16 7.58 13.16 5.35 9.55 5.35Z" stroke="currentColor" stroke-width="1.48" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M13.95 10.3C17.03 10.52 19.35 12.42 19.35 14.76C19.35 16 18.66 17.13 17.55 17.92L17.94 19.35L16.2 18.53C15.65 18.67 15.05 18.74 14.42 18.74C11.55 18.74 9.2 17.12 8.9 15.04" stroke="currentColor" stroke-width="1.48" stroke-linecap="round" stroke-linejoin="round"/>
-            <circle cx="7.25" cy="10.04" r="0.52" fill="currentColor"/>
-            <circle cx="11.05" cy="10.04" r="0.52" fill="currentColor"/>
-            <circle cx="13.02" cy="14.3" r="0.44" fill="currentColor"/>
-            <circle cx="16.22" cy="14.3" r="0.44" fill="currentColor"/>
+            <path d="M10.2 5.4C6.3 5.4 3.2 7.75 3.2 10.68C3.2 12.3 4.18 13.75 5.72 14.72L5.2 16.78L7.55 15.7C8.38 15.9 9.26 16 10.2 16C14.08 16 17.2 13.62 17.2 10.68C17.2 7.75 14.08 5.4 10.2 5.4Z" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M13.6 11.55C17.1 11.75 19.8 13.78 19.8 16.28C19.8 17.65 19.02 18.88 17.76 19.72L18.18 21.28L16.28 20.4C15.68 20.56 15.02 20.64 14.34 20.64C11.62 20.64 9.28 19.38 8.34 17.6" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="7.85" cy="10.48" r="0.58" fill="currentColor"/>
+            <circle cx="12.05" cy="10.48" r="0.58" fill="currentColor"/>
+            <circle cx="13.2" cy="16.12" r="0.5" fill="currentColor"/>
+            <circle cx="16.65" cy="16.12" r="0.5" fill="currentColor"/>
           </svg>
+          <span>WeChat</span>
         </button>
+        </div>
       </div>
 
       <!-- WeChat QR modal -->
@@ -453,7 +487,7 @@
       </div>
 
       <!-- Copy toast -->
-      <div class="contact-toast" id="contact-toast" aria-live="polite">已复制</div>
+      <div class="contact-toast" id="contact-toast" aria-live="polite" data-i18n="contact_copied">已复制</div>
     </section>
 
     <section class="clients-section reveal">
@@ -578,7 +612,7 @@
   <script src="scripts/services-image-trail.js"></script>
   <script src="scripts/hero-card-events.js"></script>
   <script src="scripts/works-hover-preview.js"></script>
-  <script src="scripts/works-statement-motion.js"></script>
+  <script src="scripts/works-transition-motion.js"></script>
   <script src="scripts/site-clock.js"></script>
   <script src="scripts/bottom-nav-scroll-spy.js"></script>
   <script src="scripts/clients-marquee.js"></script>

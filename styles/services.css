@@ -133,6 +133,7 @@ html[lang="zh-CN"] .service-index {
   --services-progress: 0;
   --services-open: 0;
   --services-inside: 0;
+  --service-to-works-outro: 0;
   --services-entry-center-offset: 0px;
   position: relative;
   margin-top: -16svh;
@@ -1034,6 +1035,13 @@ html[lang="zh-CN"] .services-scroll-story .service-text-body {
 
 .services-scroll-story .services-sticky {
   background: #000;
+  opacity: calc(1 - var(--service-to-works-outro) * 0.78);
+  filter: blur(calc(var(--service-to-works-outro) * 4px));
+  transform:
+    translate3d(0, calc(var(--service-to-works-outro) * -12vh), 0)
+    scale(calc(1 - var(--service-to-works-outro) * 0.22));
+  transform-origin: center 52%;
+  will-change: opacity, filter, transform;
 }
 
 .services-scroll-story .services-sticky::before {
@@ -1049,7 +1057,12 @@ html[lang="zh-CN"] .services-scroll-story .service-text-body {
   position: absolute;
   inset: 0;
   z-index: 4;
-  opacity: calc(var(--services-gallery) * (1 - var(--services-outro)));
+  opacity: calc(var(--services-gallery) * (1 - var(--services-outro)) * (1 - var(--service-to-works-outro) * 0.72));
+  transform:
+    translate3d(0, calc(var(--service-to-works-outro) * -6vh), 0)
+    scale(calc(1 - var(--service-to-works-outro) * 0.06));
+  transform-origin: center;
+  will-change: opacity, transform;
   pointer-events: none;
 }
 
@@ -1200,9 +1213,9 @@ html[lang="zh-CN"] .services-scroll-story .service-text-body {
   background: linear-gradient(
     90deg,
     transparent,
-    rgba(73, 196, 176, 0.1) 10%,
-    rgba(73, 196, 176, 0.26) 50%,
-    rgba(73, 196, 176, 0.1) 90%,
+    rgba(255, 98, 104, 0.1) 10%,
+    rgba(255, 98, 104, 0.26) 50%,
+    rgba(255, 98, 104, 0.1) 90%,
     transparent
   );
   transform: translateY(-50%);
@@ -1236,7 +1249,7 @@ html[lang="zh-CN"] .services-scroll-story .service-text-body {
   width: 3px;
   height: 3px;
   border-radius: 50%;
-  background: rgba(73, 196, 176, 0.26);
+  background: rgba(255, 98, 104, 0.26);
   transform: translateX(-50%);
 }
 
@@ -1279,12 +1292,12 @@ html[lang="zh-CN"] .services-scroll-story .service-text-body {
 }
 
 .services-scroll-story .services-capability-item.is-active::before {
-  color: #49c4b0;
+  color: #ff6268;
   opacity: 1;
 }
 
 .services-scroll-story .services-capability-item.is-active::after {
-  background: #49c4b0;
+  background: #ff6268;
 }
 
 @media (max-width: 760px) {

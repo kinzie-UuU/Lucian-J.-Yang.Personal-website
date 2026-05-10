@@ -76,8 +76,8 @@ Current local batch covered by this handoff:
   - `script.js` still owns `switchLanguage()` because it coordinates static text, scrambled text, hero focus, works tabs, open gallery text, and services story text.
 - `scripts/clients-marquee.js`
   - Clones the clients marquee track for seamless looping.
-- `scripts/works-statement-motion.js`
-  - Handles the works statement scroll-linked `--works-enter` CSS variable.
+- `scripts/works-transition-motion.js`
+  - Handles the service-to-works transition scroll-linked CSS variables.
 - `scripts/portrait-motion.js`
   - Handles portrait/about sticky scroll motion CSS variables and video scrubbing.
   - Moved as-is from the tail of `script.js`; animation constants and scrub math were not changed.
@@ -170,7 +170,7 @@ For the current local batch:
   - `scripts/header-controls.js`
   - `scripts/contact-interactions.js`
   - `scripts/works-hover-preview.js`
-  - `scripts/works-statement-motion.js`
+  - `scripts/works-transition-motion.js`
   - `scripts/bottom-nav-scroll-spy.js`
   - `scripts/language-controls.js`
   - `scripts/clients-marquee.js`
