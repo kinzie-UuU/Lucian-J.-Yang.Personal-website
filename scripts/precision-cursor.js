@@ -10,6 +10,9 @@
     }
 
     runtime.updatePrecisionCursor(event.clientX, event.clientY);
+    if (document.body.classList.contains("has-entered")) {
+      runtime.setCursorVisible(true);
+    }
     const entryRect = runtime.entryScreen?.getBoundingClientRect();
     const insideEntry = !!entryRect &&
       entryRect.bottom > 0 &&
@@ -17,7 +20,9 @@
       event.clientX <= entryRect.right &&
       event.clientY >= entryRect.top &&
       event.clientY <= entryRect.bottom;
-    runtime.setCursorVisible(insideEntry);
+    if (!document.body.classList.contains("has-entered")) {
+      runtime.setCursorVisible(insideEntry);
+    }
 
     const heroStage = runtime.heroStage;
     if (!heroStage) return;
@@ -45,4 +50,3 @@
     runtime.clearFieldPointer();
   });
 })();
-

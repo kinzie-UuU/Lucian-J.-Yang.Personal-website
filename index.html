@@ -20,16 +20,16 @@
   </script>
   <link rel="stylesheet" href="styles/fonts.css">
   <link rel="stylesheet" href="styles.css">
-  <link rel="stylesheet" href="styles/cursor.css">
+  <link rel="stylesheet" href="styles/cursor.css?v=20260512-pointer-frame3">
   <link rel="stylesheet" href="styles/typography.css">
   <link rel="stylesheet" href="styles/home.css">
   <link rel="stylesheet" href="styles/about.css">
   <link rel="stylesheet" href="styles/services.css">
   <link rel="stylesheet" href="styles/works.css">
   <link rel="stylesheet" href="styles/clients.css">
-  <link rel="stylesheet" href="styles/work-gallery.css?v=20260510-gallery-indexfix">
+  <link rel="stylesheet" href="styles/work-gallery.css?v=20260511-gallery-waterfall3">
   <link rel="stylesheet" href="styles/contact.css">
-  <link rel="stylesheet" href="styles/navigation.css">
+  <link rel="stylesheet" href="styles/navigation.css?v=20260511-gallery-chrome3">
   <link rel="stylesheet" href="styles/responsive.css">
   <link rel="stylesheet" href="styles/shared-motion.css">
   <script src="three.min.js"></script>
@@ -315,7 +315,7 @@
       </div>
     </section>
 
-    <section class="service-work-transition reveal" aria-hidden="true">
+    <section class="service-work-transition reveal" id="works-transition" aria-hidden="true">
       <div class="works-transition-gear" aria-hidden="true">
         <svg viewBox="0 0 900 900" focusable="false">
           <circle class="works-transition-progress-track" cx="450" cy="450" r="360" />
@@ -335,6 +335,12 @@
     </section>
 
     <section class="works-section reveal" id="works">
+      <div class="works-statement">
+        <p class="works-statement-kicker section-kicker" data-i18n="works_kicker" data-reveal data-delay="0">作品</p>
+        <h2 class="works-statement-title js-scrambled-text" data-i18n="works_statement_title" data-reveal data-delay="80">不是把包装做漂亮，而是把包装做对。</h2>
+        <p class="works-statement-body js-scrambled-text" data-i18n="works_statement_body" data-reveal data-delay="180">Lucian J. Yang 聚焦 OEM、礼赠渠道、系列礼盒与品牌升级项目。比起单纯制造风格，我更关心包装如何在真实约束中成立。</p>
+      </div>
+      <div class="works-list-header" data-reveal data-delay="260" aria-hidden="true"></div>
       <ul class="works-list" id="works-list">
         <li class="works-row" data-category="oem" data-reveal data-delay="320">
           <span class="works-row-index">01</span>
@@ -375,7 +381,10 @@
         </div>
         <div class="work-gallery-actions">
           <button class="work-gallery-back" id="work-gallery-back" type="button">Back</button>
-          <button class="work-gallery-close" id="work-gallery-close" type="button" aria-label="关闭作品画廊">Close</button>
+          <button class="work-gallery-close" id="work-gallery-close" type="button" aria-label="关闭作品画廊">
+            <span class="work-gallery-close-dot" aria-hidden="true"></span>
+            <span class="work-gallery-close-label">BACK ↵</span>
+          </button>
         </div>
       </div>
       <div class="work-gallery-viewport">
@@ -592,7 +601,7 @@
   <script src="scripts/hero-card-animation.js"></script>
   <script src="scripts/hero-step-runtime.js"></script>
   <script src="scripts/hero-sequence-runtime.js"></script>
-  <script src="scripts/runtime-bridge.js"></script>
+  <script src="scripts/runtime-bridge.js?v=20260512-pointer-frame2"></script>
   <script src="scripts/app-bootstrap.js"></script>
   <script src="scripts/static-text-runtime.js"></script>
   <script src="scripts/language-runtime.js"></script>
@@ -609,7 +618,7 @@
   <script src="scripts/scroll-type-effects.js"></script>
   <script src="scripts/reveal-effects.js"></script>
   <script src="scripts/site-navigation.js"></script>
-  <script src="scripts/precision-cursor.js"></script>
+  <script src="scripts/precision-cursor.js?v=20260512-pointer-frame2"></script>
   <script src="scripts/services-image-trail.js"></script>
   <script src="scripts/hero-card-events.js"></script>
   <script src="scripts/works-hover-preview.js"></script>

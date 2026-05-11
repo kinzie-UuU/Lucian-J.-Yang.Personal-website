@@ -16,10 +16,14 @@ window.initLucianRuntimeBridge = ({
 }) => {
   const setCursorVisible = (visible) => {
     if (!precisionCursor) return;
-    const allowed = visible && entryScreen && !document.body.classList.contains("has-entered");
+    const allowed = visible && entryScreen;
+    const showGuides = allowed && !document.body.classList.contains("has-entered");
     precisionCursor.classList.toggle("is-visible", allowed);
-    precisionGuides?.classList.toggle("is-visible", allowed);
-    document.body.classList.toggle("cursor-active", allowed);
+    precisionGuides?.classList.toggle("is-visible", showGuides);
+    document.body.classList.toggle("cursor-active", showGuides);
+    if (document.body.classList.contains("has-entered")) {
+      document.body.classList.remove("cursor-active");
+    }
   };
 
   const updatePrecisionCursor = (clientX, clientY) => {

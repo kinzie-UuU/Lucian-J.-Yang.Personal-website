@@ -15,10 +15,9 @@ body.has-entered a,
 body.has-entered button,
 body.has-entered .work-gallery,
 body.has-entered .work-gallery * {
-  cursor: auto;
+  cursor: auto !important;
 }
 
-body.has-entered .precision-cursor,
 body.has-entered .precision-guides {
   opacity: 0 !important;
 }
@@ -122,5 +121,31 @@ body.is-entering .precision-guides {
 }
 
 .precision-cursor.is-visible {
+  opacity: 1;
+}
+
+body.has-entered .precision-cursor {
+  z-index: 740;
+  width: 18px;
+  height: 18px;
+  opacity: 0;
+  transform: translate(-50%, -50%);
+  transition: opacity 120ms ease;
+}
+
+body.has-entered .precision-cursor::before {
+  inset: 0;
+  border: 1.25px solid var(--cursor-frame-color, #f4f2ed);
+  background: transparent;
+  box-shadow:
+    0 0 0 0.75px rgba(255, 223, 88, 0.22),
+    0 0 10px rgba(255, 223, 88, 0.16);
+}
+
+body.has-entered .precision-cursor::after {
+  display: none;
+}
+
+body.has-entered .precision-cursor.is-visible {
   opacity: 1;
 }

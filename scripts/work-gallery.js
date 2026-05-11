@@ -20,6 +20,8 @@
   let circularCleanup = null;
   let circularCurrentIndex = 0;
   const circularImageCache = new Map();
+  const circularTextTextureCache = new Map();
+  let circularPrewarmStarted = false;
 
   const getCurrentLang = () => runtime?.getCurrentLang?.() || "zh";
   const isCircularGallery = () => workGallery?.classList.contains("is-circular");
@@ -81,7 +83,6 @@
     const currentLang = getCurrentLang();
     if (workGalleryBack) workGalleryBack.textContent = galleryText[currentLang].back;
     if (workGalleryClose) {
-      workGalleryClose.textContent = galleryText[currentLang].close;
       workGalleryClose.setAttribute("aria-label", galleryText[currentLang].close);
     }
   };
@@ -94,113 +95,162 @@
 
   const initDomCircularGallery = (root, sourceItems) => {
     root.innerHTML = "";
-    root.classList.add("is-dom-fallback");
-
-    const cards = sourceItems.map((item, index) => {
-      const card = document.createElement("button");
-      card.className = "work-circular-dom-card";
-      card.type = "button";
-      card.dataset.index = String(index);
-      card.innerHTML = `
-        <span class="work-circular-dom-image">
-          <img src="${item.src}" alt="" draggable="false" decoding="async">
-        </span>
-        <span class="work-circular-dom-title">${getGalleryItemTitle(item, index)}</span>
-      `;
-      root.appendChild(card);
-      return card;
-    });
+    root.classList.add("is-dom-fallback", "is-waterfall");
 
     let raf = 0;
-    let snapTimeout = 0;
     let disposed = false;
     let isDown = false;
     let didDrag = false;
-    let startX = 0;
-    let scrollTarget = galleryStep;
+    let activeCard = null;
+    let suppressNextClick = false;
+    let startY = 0;
+    let pointerDeltaY = 0;
+    let scrollTarget = 0;
     let scrollCurrent = scrollTarget;
     let dragStartTarget = scrollTarget;
-    let metrics = { width: 1, height: 1, cardWidth: 220, centerY: 320, spacing: 320 };
+    let columns = [];
+    let columnCount = 3;
+    let metrics = { width: 1, height: 1, cardWidth: 320, gap: 30 };
     const startedAt = performance.now();
 
-    const shortestRelative = (index) => {
+    const getLoopIndex = (index) => {
       const total = Math.max(1, sourceItems.length);
-      let relative = index - scrollCurrent;
-      while (relative > total / 2) relative -= total;
-      while (relative < -total / 2) relative += total;
-      return relative;
+      return ((index % total) + total) % total;
+    };
+
+    const getColumnCount = () => {
+      const width = root.clientWidth || window.innerWidth;
+      if (width >= 760) return 3;
+      return 2;
+    };
+
+    const getCardFromEvent = (event) => {
+      const directCard = event.target.closest?.(".work-waterfall-card");
+      if (directCard) return directCard;
+
+      const pointStack = document.elementsFromPoint?.(event.clientX, event.clientY) || [];
+      const pointCard = pointStack
+        .map((element) => element.closest?.(".work-waterfall-card"))
+        .find(Boolean);
+      return pointCard || null;
+    };
+
+    const openCard = (card) => {
+      if (!card || galleryMode !== "index") return;
+      const index = Number.parseInt(card.dataset.index || "0", 10);
+      openWorkDetail(index);
+    };
+
+    const makeCard = (item, index) => {
+      const card = document.createElement("button");
+      card.className = "work-waterfall-card";
+      card.type = "button";
+      card.dataset.index = String(index);
+      card.style.setProperty("--gallery-position", item.position || "center");
+      card.innerHTML = `
+        <span class="work-waterfall-image">
+          <img src="${item.src}" alt="" draggable="false" decoding="async">
+        </span>
+        <span class="work-waterfall-title">${getGalleryItemTitle(item, index)}</span>
+      `;
+      return card;
+    };
+
+    const buildColumns = () => {
+      columnCount = getColumnCount();
+      root.innerHTML = "";
+      const shell = document.createElement("div");
+      shell.className = "work-waterfall";
+      root.appendChild(shell);
+
+      columns = Array.from({ length: columnCount }, (_, columnIndex) => {
+        const box = document.createElement("div");
+        box.className = "work-waterfall-column";
+        box.style.setProperty("--column-index", String(columnIndex));
+        const list = document.createElement("div");
+        list.className = "work-waterfall-list";
+        box.appendChild(list);
+        shell.appendChild(box);
+        return { box, list, height: 1, speed: 0.62 + (columnIndex % 3) * 0.1 };
+      });
+
+      const repeated = Array.from({ length: 4 }, () => sourceItems).flat();
+      repeated.forEach((item, repeatedIndex) => {
+        const realIndex = getLoopIndex(repeatedIndex);
+        const column = columns[realIndex % columnCount];
+        column.list.appendChild(makeCard(item, realIndex));
+      });
+
+      columns.forEach((column) => {
+        column.height = Math.max(1, column.list.scrollHeight / 4);
+      });
     };
 
     const resize = () => {
+      const nextColumnCount = getColumnCount();
       metrics = {
         width: Math.max(1, root.clientWidth || window.innerWidth),
         height: Math.max(1, root.clientHeight || window.innerHeight),
-        cardWidth: clamp((root.clientWidth || window.innerWidth) * 0.135, 170, 250),
-        centerY: Math.max(270, (root.clientHeight || window.innerHeight) * 0.47),
-        spacing: clamp((root.clientWidth || window.innerWidth) * 0.22, 270, 390)
+        cardWidth: clamp((root.clientWidth || window.innerWidth) * 0.22, 260, 430),
+        gap: clamp(24, (root.clientWidth || window.innerWidth) * 0.026, 48)
       };
-    };
-
-    const snap = () => {
-      scrollTarget = Math.round(scrollTarget);
-    };
-
-    const scheduleSnap = () => {
-      window.clearTimeout(snapTimeout);
-      snapTimeout = window.setTimeout(snap, 180);
-    };
-
-    const updateChrome = () => {
-      circularCurrentIndex = ((Math.round(scrollCurrent) % sourceItems.length) + sourceItems.length) % sourceItems.length;
-      const activeItem = sourceItems[circularCurrentIndex] || sourceItems[0];
-      updateGalleryHeader(activeItem, circularCurrentIndex);
+      root.style.setProperty("--waterfall-card-width", `${metrics.cardWidth}px`);
+      root.style.setProperty("--waterfall-gap", `${metrics.gap}px`);
+      if (!columns.length || nextColumnCount !== columnCount) {
+        buildColumns();
+      } else {
+        columns.forEach((column) => {
+          column.height = Math.max(1, column.list.scrollHeight / 4);
+        });
+      }
     };
 
     const render = () => {
       if (disposed) return;
-      scrollCurrent += (scrollTarget - scrollCurrent) * 0.06;
-      if (Math.abs(scrollTarget - scrollCurrent) < 0.001) scrollCurrent = scrollTarget;
-
+      scrollCurrent += (scrollTarget - scrollCurrent) * 0.055;
       const elapsed = (performance.now() - startedAt) / 1000;
-      const halfWidth = metrics.width / 2;
 
-      cards.forEach((card, index) => {
-        const relative = shortestRelative(index);
-        const x = halfWidth + relative * metrics.spacing;
-        const distance = Math.min(1.45, Math.abs(x - halfWidth) / Math.max(1, metrics.width * 0.48));
-        const y = metrics.centerY + distance * distance * metrics.height * 0.14;
-        const scale = 1 - Math.min(0.22, distance * 0.16);
-        const rotation = clamp(relative * -8, -18, 18);
-        const opacity = clamp(1 - distance * 0.38, 0.22, 1);
-        const wave = Math.sin(elapsed * 1.35 + index * 0.8) * 2.6;
-        const img = card.querySelector("img");
+      columns.forEach((column, columnIndex) => {
+        const direction = columnIndex % 2 === 0 ? 1 : -1;
+        const offset = columnIndex * column.height * 0.21;
+        const raw = scrollCurrent * column.speed * direction + offset;
+        const loop = ((raw % column.height) + column.height) % column.height;
+        const driftX = Math.sin(elapsed * 0.24 + columnIndex * 1.7) * 10;
+        const driftY = Math.sin(elapsed * 0.34 + columnIndex * 2.1) * 22;
+        column.list.style.transform = `translate3d(${driftX.toFixed(2)}px, ${(-column.height + loop + driftY).toFixed(2)}px, 0)`;
 
-        card.style.width = `${metrics.cardWidth}px`;
-        card.style.opacity = opacity.toFixed(3);
-        card.style.zIndex = String(100 - Math.round(distance * 60));
-        card.style.pointerEvents = distance < 0.78 ? "auto" : "none";
-        card.style.transform = `translate3d(${(x - metrics.cardWidth / 2).toFixed(2)}px, ${(y - metrics.cardWidth * 0.72).toFixed(2)}px, 0) rotate(${rotation.toFixed(2)}deg) scale(${scale.toFixed(3)})`;
-        if (img) {
-          img.style.transform = `translate3d(0, ${wave.toFixed(2)}px, 0) scale(${(1.025 + Math.abs(wave) * 0.002).toFixed(3)})`;
+        const cards = column.list.children;
+        for (let index = 0; index < cards.length; index += 1) {
+          const card = cards[index];
+          const wave = Math.sin(elapsed * 0.52 + index * 0.74 + columnIndex * 1.25) * 5.2;
+          const breathe = 1 + Math.sin(elapsed * 0.38 + index * 0.41) * 0.006;
+          card.style.transform = `translate3d(0, ${wave.toFixed(2)}px, 0) scale(${breathe.toFixed(4)})`;
+          const img = card.querySelector("img");
+          if (img) {
+            img.style.transform = `translate3d(0, ${(wave * -0.42).toFixed(2)}px, 0) scale(1.055)`;
+          }
         }
       });
 
-      updateChrome();
       raf = window.requestAnimationFrame(render);
     };
 
     const onWheel = (event) => {
       if (!isCircularGallery() || galleryMode !== "index") return;
       event.preventDefault();
-      scrollTarget += (event.deltaY > 0 ? 1 : -1) * 0.38;
-      scheduleSnap();
+      event.stopPropagation();
+      const delta = Math.abs(event.deltaY) > Math.abs(event.deltaX) ? event.deltaY : event.deltaX;
+      scrollTarget += delta * 0.68;
     };
 
     const onPointerDown = (event) => {
       if (galleryMode !== "index") return;
+      if (event.pointerType === "mouse" && event.button !== 0) return;
       isDown = true;
       didDrag = false;
-      startX = event.clientX;
+      activeCard = getCardFromEvent(event);
+      startY = event.clientY;
+      pointerDeltaY = 0;
       dragStartTarget = scrollTarget;
       root.classList.add("is-dragging");
       root.setPointerCapture?.(event.pointerId);
@@ -208,9 +258,12 @@
 
     const onPointerMove = (event) => {
       if (!isDown) return;
-      const dx = event.clientX - startX;
-      if (Math.abs(dx) > 4) didDrag = true;
-      scrollTarget = dragStartTarget - dx / Math.max(160, metrics.spacing * 0.62);
+      const dy = event.clientY - startY;
+      pointerDeltaY = dy;
+      if (Math.abs(dy) > 14) {
+        didDrag = true;
+        scrollTarget = dragStartTarget - dy * 1.4;
+      }
     };
 
     const onPointerUp = (event) => {
@@ -218,15 +271,30 @@
       isDown = false;
       root.classList.remove("is-dragging");
       root.releasePointerCapture?.(event.pointerId);
-      if (didDrag) {
-        scheduleSnap();
+      if (didDrag && Math.abs(pointerDeltaY) > 14) {
+        activeCard = null;
         return;
       }
 
-      const card = event.target.closest?.(".work-circular-dom-card");
+      const card = activeCard || getCardFromEvent(event);
+      activeCard = null;
       if (!card) return;
-      const index = Number.parseInt(card.dataset.index || "0", 10);
-      openWorkDetail(index);
+      suppressNextClick = true;
+      openCard(card);
+    };
+
+    const onClick = (event) => {
+      if (galleryMode !== "index") return;
+      const card = getCardFromEvent(event);
+      if (!card) return;
+      event.preventDefault();
+      event.stopPropagation();
+      if (suppressNextClick) {
+        suppressNextClick = false;
+        return;
+      }
+      if (didDrag) return;
+      openCard(card);
     };
 
     resize();
@@ -236,19 +304,20 @@
     root.addEventListener("pointermove", onPointerMove);
     root.addEventListener("pointerup", onPointerUp);
     root.addEventListener("pointercancel", onPointerUp);
+    root.addEventListener("click", onClick, true);
     raf = window.requestAnimationFrame(render);
 
     circularCleanup = () => {
       disposed = true;
       if (raf) window.cancelAnimationFrame(raf);
-      window.clearTimeout(snapTimeout);
       window.removeEventListener("resize", resize);
       window.removeEventListener("wheel", onWheel, { capture: true });
       root.removeEventListener("pointerdown", onPointerDown);
       root.removeEventListener("pointermove", onPointerMove);
       root.removeEventListener("pointerup", onPointerUp);
       root.removeEventListener("pointercancel", onPointerUp);
-      root.classList.remove("is-dom-fallback");
+      root.removeEventListener("click", onClick, true);
+      root.classList.remove("is-dom-fallback", "is-waterfall");
       root.innerHTML = "";
     };
   };
@@ -262,6 +331,9 @@
     if (!sourceItems.length) return;
 
     root.innerHTML = "";
+    initDomCircularGallery(root, sourceItems);
+    return;
+
     if (window.location.protocol === "file:") {
       initDomCircularGallery(root, sourceItems);
       return;
@@ -457,15 +529,27 @@
     };
 
     const createTextTexture = (text) => {
+      const cacheKey = `${getCurrentLang()}::${text}`;
+      const cached = circularTextTextureCache.get(cacheKey);
+      if (cached) {
+        const texture = createTexture();
+        gl.bindTexture(gl.TEXTURE_2D, texture);
+        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
+        gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, cached.canvas);
+        gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
+        return { texture, size: cached.size };
+      }
+
       const ratio = Math.min(window.devicePixelRatio || 1, 2);
       const textCanvas = document.createElement("canvas");
       const context = textCanvas.getContext("2d");
-      const fontSize = 34 * ratio;
+      const fontSize = 26 * ratio;
       context.font = `800 ${fontSize}px Arial, "Microsoft YaHei", sans-serif`;
       const metrics = context.measureText(text);
-      textCanvas.width = Math.ceil(metrics.width + 52 * ratio);
-      textCanvas.height = Math.ceil(62 * ratio);
-      context.font = `800 ${fontSize}px Arial, "Microsoft YaHei", sans-serif`;
+      textCanvas.width = Math.ceil(metrics.width + 42 * ratio);
+      textCanvas.height = Math.ceil(52 * ratio);
+      context.font = `700 ${fontSize}px Arial, "Microsoft YaHei", sans-serif`;
       context.textAlign = "center";
       context.textBaseline = "middle";
       context.fillStyle = "rgba(244, 242, 237, 0.92)";
@@ -477,6 +561,7 @@
       gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
       gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, textCanvas);
       gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
+      circularTextTextureCache.set(cacheKey, { canvas: textCanvas, size: [textCanvas.width, textCanvas.height] });
       return { texture, size: [textCanvas.width, textCanvas.height] };
     };
 
@@ -559,7 +644,7 @@
     media.forEach(uploadImageTexture);
 
     let screen = { width: 1, height: 1, dpr: 1, aspect: 1 };
-    let metrics = { worldWidth: 12, worldHeight: 8, cardWidth: 2, cardHeight: 3, spacing: 3 };
+    let metrics = { worldWidth: 12, worldHeight: 8, cardWidth: 2, cardHeight: 3, spacing: 3, bend: 3 };
     let scrollTarget = sourceItems.length + galleryStep;
     let scrollCurrent = scrollTarget;
     let scrollLast = scrollTarget;
@@ -571,6 +656,7 @@
     let openingDetail = false;
     let dragStartX = 0;
     let dragStartTarget = 0;
+    let lastChromeIndex = -1;
     const cameraZ = 12;
     const startedAt = performance.now();
 
@@ -578,7 +664,7 @@
       screen = {
         width: Math.max(1, root.clientWidth || window.innerWidth),
         height: Math.max(1, root.clientHeight || window.innerHeight),
-        dpr: Math.min(window.devicePixelRatio || 1, 2),
+        dpr: Math.min(window.devicePixelRatio || 1, 1.5),
         aspect: 1
       };
       screen.aspect = screen.width / screen.height;
@@ -591,14 +677,15 @@
       const fov = 45 * Math.PI / 180;
       const worldHeight = 2 * Math.tan(fov / 2) * cameraZ;
       const worldWidth = worldHeight * screen.aspect;
-      const cardHeight = clamp(worldHeight * 0.36, 2.85, 3.85);
-      const cardWidth = cardHeight * 0.72;
+      const cardHeight = clamp(worldHeight * 0.3, 2.35, 3.05);
+      const cardWidth = cardHeight * 0.78;
       metrics = {
         worldWidth,
         worldHeight,
         cardWidth,
         cardHeight,
-        spacing: cardWidth * 1.82
+        spacing: cardWidth + 1.7,
+        bend: clamp(worldHeight * 0.16, 1.25, 2.05)
       };
     };
 
@@ -613,7 +700,10 @@
     };
 
     const syncChrome = () => {
-      circularCurrentIndex = ((Math.round(scrollCurrent) % sourceItems.length) + sourceItems.length) % sourceItems.length;
+      const nextIndex = ((Math.round(scrollCurrent) % sourceItems.length) + sourceItems.length) % sourceItems.length;
+      if (nextIndex === lastChromeIndex) return;
+      lastChromeIndex = nextIndex;
+      circularCurrentIndex = nextIndex;
       const activeItem = sourceItems[circularCurrentIndex] || sourceItems[0];
       updateGalleryHeader(activeItem, circularCurrentIndex);
     };
@@ -647,20 +737,18 @@
       const relative = entry.index - scrollCurrent;
       const x = relative * metrics.spacing;
       const half = metrics.worldWidth / 2;
-      const distance = Math.min(1, Math.abs(x) / half);
+      const distance = Math.min(1.15, Math.abs(x) / half);
       const effectiveX = Math.min(Math.abs(x), half);
-      const bend = metrics.worldHeight * 0.32;
+      const bend = metrics.bend;
       const radius = (half * half + bend * bend) / (2 * bend);
       const arc = radius - Math.sqrt(Math.max(0, radius * radius - effectiveX * effectiveX));
-      const floatPhase = elapsed * 0.66 + entry.index * 0.9;
-      const floatY = Math.sin(floatPhase) * 0.018 * (1 - distance * 0.45);
-      const y = -arc + 0.42 + floatY;
-      const z = (1 - distance) * 0.9 - distance * 0.9;
-      const rz = (x < 0 ? -1 : 1) * Math.asin(Math.min(0.92, effectiveX / radius)) * 0.62;
-      const ry = clamp((-x / half) * 0.16, -0.18, 0.18);
-      const rx = Math.sin(elapsed * 0.52 + entry.index * 0.7) * 0.006 * (1 - distance * 0.45);
-      const alpha = clamp(1 - distance * 0.34, 0.45, 1);
-      const wave = 0.088 + (1 - distance) * 0.018;
+      const y = -arc + metrics.worldHeight * 0.04;
+      const z = 0;
+      const rz = (x < 0 ? -1 : 1) * Math.asin(Math.min(0.92, effectiveX / radius)) * 0.58;
+      const ry = 0;
+      const rx = 0;
+      const alpha = clamp(1 - Math.max(0, distance - 0.92) * 1.7, 0.34, 1);
+      const wave = 0.045;
       return { x, y, z, rx, ry, rz, distance, alpha, wave };
     };
 
@@ -704,7 +792,7 @@
     const render = () => {
       if (disposed) return;
       normalizeScroll();
-      scrollCurrent += (scrollTarget - scrollCurrent) * 0.045;
+      scrollCurrent += (scrollTarget - scrollCurrent) * 0.028;
       if (Math.abs(scrollTarget - scrollCurrent) < 0.001) scrollCurrent = scrollTarget;
 
       const elapsed = (performance.now() - startedAt) / 1000;
@@ -719,7 +807,7 @@
 
       const visible = media
         .map((entry) => ({ entry, layout: getLayoutForEntry(entry, elapsed, speed) }))
-        .filter(({ layout }) => Math.abs(layout.x) < metrics.worldWidth * 0.78)
+        .filter(({ layout }) => Math.abs(layout.x) < metrics.worldWidth * 0.72 + metrics.cardWidth)
         .sort((a, b) => b.layout.distance - a.layout.distance);
 
       visible.forEach(({ entry, layout }) => {
@@ -741,9 +829,9 @@
 
       visible.forEach(({ entry, layout }) => {
         const textAspect = entry.titleTextureSize[0] / Math.max(1, entry.titleTextureSize[1]);
-        const textHeight = metrics.cardHeight * 0.12;
+        const textHeight = metrics.cardHeight * 0.105;
         drawPlane({
-          matrix: getMatrix(layout, -metrics.cardHeight * 0.62, 0.02),
+          matrix: getMatrix(layout, -metrics.cardHeight * 0.62, 0.01),
           texture: entry.titleTexture,
           planeSize: [textHeight * textAspect, textHeight],
           imageSize: entry.titleTextureSize,
@@ -765,7 +853,7 @@
       event.preventDefault();
       event.stopPropagation();
       const delta = Math.abs(event.deltaX) > Math.abs(event.deltaY) ? event.deltaX : event.deltaY;
-      scrollTarget += (delta > 0 ? 1 : -1) * 0.42;
+      scrollTarget += (delta > 0 ? 1 : -1) * 0.34;
       scheduleSnap();
     };
 
@@ -799,7 +887,7 @@
 
     const onPointerMove = (event) => {
       if (!isDown) return;
-      const distance = (dragStartX - event.clientX) * 0.008;
+      const distance = (dragStartX - event.clientX) * 0.006;
       if (Math.abs(event.clientX - dragStartX) > 6) didDrag = true;
       scrollTarget = dragStartTarget + distance;
     };
@@ -837,7 +925,7 @@
     };
   };
 
-  const buildGalleryItems = (items) => {
+  const buildGalleryItems = (items, { defer = false } = {}) => {
     if (!workGalleryTrack) return;
     gallerySourceItems = items;
     destroyCircularGallery();
@@ -847,7 +935,54 @@
       <div class="work-circular-root">
       </div>
     `;
+    if (defer) {
+      window.requestAnimationFrame(() => {
+        if (!galleryOpen || galleryMode !== "index") return;
+        initCircularGallery(items);
+      });
+      return;
+    }
     initCircularGallery(items);
+  };
+
+  const prewarmCircularGallery = () => {
+    if (circularPrewarmStarted) return;
+    circularPrewarmStarted = true;
+    const runIdle = window.requestIdleCallback || ((callback) => window.setTimeout(callback, 650));
+
+    runIdle(() => {
+      const items = getAllWorkGalleryItems();
+      items.forEach((item, index) => {
+        if (!circularImageCache.has(item.src)) {
+          const img = new Image();
+          img.decoding = "async";
+          img.src = item.src;
+          circularImageCache.set(item.src, img);
+          if (img.decode) img.decode().catch(() => {});
+        }
+
+        const title = getGalleryItemTitle(item, index);
+        const cacheKey = `${getCurrentLang()}::${title}`;
+        if (circularTextTextureCache.has(cacheKey)) return;
+
+        const ratio = Math.min(window.devicePixelRatio || 1, 2);
+        const textCanvas = document.createElement("canvas");
+        const context = textCanvas.getContext("2d");
+        if (!context) return;
+        const fontSize = 26 * ratio;
+        context.font = `700 ${fontSize}px Arial, "Microsoft YaHei", sans-serif`;
+        const metrics = context.measureText(title);
+        textCanvas.width = Math.ceil(metrics.width + 42 * ratio);
+        textCanvas.height = Math.ceil(52 * ratio);
+        context.font = `700 ${fontSize}px Arial, "Microsoft YaHei", sans-serif`;
+        context.textAlign = "center";
+        context.textBaseline = "middle";
+        context.fillStyle = "rgba(244, 242, 237, 0.92)";
+        context.clearRect(0, 0, textCanvas.width, textCanvas.height);
+        context.fillText(title, textCanvas.width / 2, textCanvas.height / 2);
+        circularTextTextureCache.set(cacheKey, { canvas: textCanvas, size: [textCanvas.width, textCanvas.height] });
+      });
+    }, { timeout: 1800 });
   };
 
   const renderWorkDetail = (item, index) => {
@@ -978,7 +1113,6 @@
     )));
 
     galleryStep = initialIndex;
-    buildGalleryItems(items);
     galleryMode = "index";
     workGallery.classList.remove("is-detail");
     if (workDetail) workDetail.innerHTML = "";
@@ -986,6 +1120,7 @@
     updateGalleryChromeText();
     updateGalleryHeader(items[initialIndex] || items[0], initialIndex, cardName);
 
+    buildGalleryItems(items, { defer: true });
     showGallery();
     workGallery.scrollTo({ top: 0, behavior: "auto" });
   };
@@ -999,12 +1134,12 @@
     galleryCategory = category;
     galleryMode = "index";
     galleryStep = initialIndex;
-    buildGalleryItems(items);
     workGallery.classList.remove("is-detail");
     if (workDetail) workDetail.innerHTML = "";
     workGallery.style.setProperty("--work-detail-reveal", "0");
     updateGalleryChromeText();
     updateGalleryHeader(items[initialIndex], initialIndex, title);
+    buildGalleryItems(items, { defer: true });
     showGallery();
   };
 
@@ -1046,6 +1181,7 @@
   });
 
   updateGalleryChromeText();
+  prewarmCircularGallery();
 
   window.LucianWorkGallery = {
     close,
