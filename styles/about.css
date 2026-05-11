@@ -221,6 +221,7 @@
   letter-spacing: -0.04em;
   color: rgba(248, 245, 239, 0.97);
   text-align: left;
+  white-space: pre-line;
   max-width: 14ch;
 }
 
