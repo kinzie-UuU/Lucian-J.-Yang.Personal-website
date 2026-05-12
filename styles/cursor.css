@@ -13,9 +13,12 @@ body.cursor-active .work-gallery * {
 body.has-entered,
 body.has-entered a,
 body.has-entered button,
+body.has-entered input,
+body.has-entered textarea,
+body.has-entered select,
 body.has-entered .work-gallery,
 body.has-entered .work-gallery * {
-  cursor: auto !important;
+  cursor: none !important;
 }
 
 body.has-entered .precision-guides {
@@ -126,26 +129,122 @@ body.is-entering .precision-guides {
 
 body.has-entered .precision-cursor {
   z-index: 740;
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
   opacity: 0;
   transform: translate(-50%, -50%);
-  transition: opacity 120ms ease;
+  mix-blend-mode: difference;
+  transition: opacity 120ms ease, scale 180ms ease, width 160ms ease, height 160ms ease;
 }
 
 body.has-entered .precision-cursor::before {
+  display: block;
   inset: 0;
-  border: 1.25px solid var(--cursor-frame-color, #f4f2ed);
+  border: 1.2px solid var(--cursor-frame-color, #f4f2ed);
   background: transparent;
-  box-shadow:
-    0 0 0 0.75px rgba(255, 223, 88, 0.22),
-    0 0 10px rgba(255, 223, 88, 0.16);
+  box-shadow: none;
 }
 
 body.has-entered .precision-cursor::after {
-  display: none;
+  display: block;
+  width: 3px;
+  height: 3px;
+  background: var(--cursor-frame-color, #f4f2ed);
+  opacity: 0.92;
 }
 
 body.has-entered .precision-cursor.is-visible {
   opacity: 1;
+}
+
+.target-cursor-shell {
+  display: none;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+  transform-origin: 0 0;
+}
+
+body.has-entered .target-cursor-shell {
+  display: none;
+}
+
+.target-cursor-dot {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: #fff;
+  transform: translate(-50%, -50%);
+  will-change: transform;
+}
+
+.target-cursor-corner {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 10px;
+  height: 10px;
+  border: 2px solid #fff;
+  will-change: transform;
+}
+
+.target-cursor-corner.corner-tl {
+  border-right: none;
+  border-bottom: none;
+}
+
+.target-cursor-corner.corner-tr {
+  border-left: none;
+  border-bottom: none;
+}
+
+.target-cursor-corner.corner-br {
+  border-left: none;
+  border-top: none;
+}
+
+.target-cursor-corner.corner-bl {
+  border-right: none;
+  border-top: none;
+}
+
+body.has-entered .precision-cursor.is-pressing {
+  scale: 0.9;
+}
+
+body.has-entered .precision-cursor.is-pressing .target-cursor-dot {
+  transform: translate(-50%, -50%) scale(0.7);
+}
+
+body.work-gallery-open,
+body.work-gallery-open a,
+body.work-gallery-open button,
+body.work-gallery-open .work-gallery,
+body.work-gallery-open .work-gallery * {
+  cursor: auto !important;
+}
+
+body.work-gallery-open .precision-cursor {
+  opacity: 0 !important;
+}
+
+@media (pointer: coarse), (max-width: 768px), (prefers-reduced-motion: reduce) {
+  body.has-entered,
+  body.has-entered a,
+  body.has-entered button,
+  body.has-entered input,
+  body.has-entered textarea,
+  body.has-entered select {
+    cursor: auto !important;
+  }
+
+  body.has-entered .precision-cursor {
+    display: none;
+  }
 }

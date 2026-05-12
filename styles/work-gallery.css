@@ -45,6 +45,17 @@ body.work-gallery-open .work-gallery * {
   overscroll-behavior: contain;
 }
 
+.work-gallery.is-detail .work-gallery-topbar {
+  min-height: 72px;
+  padding-top: 24px;
+  padding-bottom: 0;
+}
+
+.work-gallery.is-detail .work-gallery-topbar::before,
+.work-gallery.is-detail .work-gallery-heading {
+  display: none;
+}
+
 .work-gallery.is-open {
   opacity: 1;
   visibility: visible;

@@ -5,8 +5,8 @@
   z-index: 3;
   width: 100%;
   min-height: 100svh;
-  margin-top: -24svh;
-  padding-top: clamp(18px, 3vh, 36px);
+  margin-top: -8svh;
+  padding-top: clamp(34px, 6vh, 76px);
   background: #000;
   padding-bottom: clamp(96px, 14vh, 150px);
   display: flex;
@@ -25,8 +25,8 @@
   position: relative;
   z-index: 3;
   width: 100%;
-  min-height: 158svh;
-  margin-top: -6svh;
+  min-height: 178svh;
+  margin-top: 0;
   overflow: clip;
   background: #000;
   scroll-snap-align: start;
@@ -38,9 +38,9 @@
   position: absolute;
   left: 0;
   right: 0;
-  top: -26svh;
+  top: -18svh;
   z-index: 0;
-  height: 40svh;
+  height: 34svh;
   pointer-events: none;
   background:
     linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.28) 42%, rgba(0, 0, 0, 0.88) 82%, #000 100%);
@@ -79,9 +79,9 @@
   position: absolute;
   left: 0;
   right: 0;
-  top: -42svh;
+  top: -30svh;
   z-index: 0;
-  height: 58svh;
+  height: 46svh;
   pointer-events: none;
   background:
     linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.28) 34%, rgba(0, 0, 0, 0.82) 72%, #000 100%);
@@ -318,10 +318,9 @@ html[lang="zh-CN"] .works-transition-line-text {
 
 .works-list {
   list-style: none;
-  margin: 0;
+  margin: 0 0 0 calc(50% - 50vw);
   padding: 0;
-  width: 100%;
-  padding-inline: clamp(40px, 5vw, 80px);
+  width: 100vw;
 }
 
 .works-row {
@@ -330,7 +329,7 @@ html[lang="zh-CN"] .works-transition-line-text {
   grid-template-columns: 3rem 1fr minmax(180px, 220px);
   gap: 0 24px;
   align-items: center;
-  padding: 28px 0;
+  padding: 28px clamp(40px, 5vw, 80px);
   overflow: hidden;
   cursor: pointer;
   transition: background 200ms ease, padding-inline 200ms ease;
@@ -339,8 +338,8 @@ html[lang="zh-CN"] .works-transition-line-text {
 .works-row::before {
   content: "";
   position: absolute;
-  left: calc(50% - 50vw);
-  right: calc(50% - 50vw);
+  left: 0;
+  right: 0;
   top: 0;
   bottom: 0;
   z-index: 0;
@@ -358,8 +357,8 @@ html[lang="zh-CN"] .works-transition-line-text {
 .works-row::after {
   content: "";
   position: absolute;
-  left: calc(50% - 50vw);
-  right: calc(50% - 50vw);
+  left: 0;
+  right: 0;
   bottom: 0;
   height: 1px;
   pointer-events: none;
@@ -372,7 +371,7 @@ html[lang="zh-CN"] .works-transition-line-text {
 
 .works-row:hover {
   background: transparent;
-  padding-inline: 12px;
+  padding-inline: clamp(40px, 5vw, 80px);
 }
 
 .works-row > * {
@@ -656,7 +655,7 @@ html[lang="zh-CN"] .works-transition-line-text {
 @media (max-width: 768px) {
   .works-list-header,
   .works-list {
-    width: calc(100vw - 40px);
+    width: 100vw;
   }
 
   .works-list-header {
@@ -665,6 +664,7 @@ html[lang="zh-CN"] .works-transition-line-text {
 
   .works-row {
     grid-template-columns: 2rem 1fr minmax(112px, 34vw);
+    padding-inline: 20px;
   }
 
   .works-row-name {
@@ -715,8 +715,8 @@ body .works-row-tags {
 
 @media (max-width: 768px) {
   .service-work-transition {
-    min-height: 126svh;
-    margin-top: -4svh;
+    min-height: 142svh;
+    margin-top: 0;
   }
 
   .works-transition-copy {

@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Lucian J. Yang | Packaging Judged In Reality</title>
+  <link rel="icon" href='data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"%3E%3Crect width="64" height="64" fill="%23050605"/%3E%3Cpath d="M15 17h34v30H15z" fill="none" stroke="%23dfe8e2" stroke-width="3"/%3E%3Cpath d="M23 25h18v14H23z" fill="none" stroke="%23dfe8e2" stroke-width="2"/%3E%3Cpath d="M15 17 23 25M49 17 41 25M15 47 23 39M49 47 41 39" stroke="%23dfe8e2" stroke-width="2"/%3E%3C/svg%3E'>
   <meta
     name="description"
     content="Lucian J. Yang portfolio site for OEM, gifting, series packaging, and brand-upgrade projects built under real production constraints."
@@ -20,7 +21,7 @@
   </script>
   <link rel="stylesheet" href="styles/fonts.css">
   <link rel="stylesheet" href="styles.css">
-  <link rel="stylesheet" href="styles/cursor.css?v=20260512-pointer-frame3">
+  <link rel="stylesheet" href="styles/cursor.css?v=20260512-target-cursor1">
   <link rel="stylesheet" href="styles/typography.css">
   <link rel="stylesheet" href="styles/home.css">
   <link rel="stylesheet" href="styles/about.css">
@@ -99,6 +100,25 @@
   <main id="top">
     <section class="entry-screen" id="entry-screen" aria-label="Site entry">
       <canvas class="entry-field-canvas" id="entry-field-canvas" aria-hidden="true"></canvas>
+      <div class="entry-atmosphere" aria-hidden="true">
+        <span class="entry-blur-shape entry-blur-shape-a"></span>
+        <span class="entry-blur-shape entry-blur-shape-b"></span>
+        <span class="entry-blur-shape entry-blur-shape-c"></span>
+        <span class="entry-blur-shape entry-blur-shape-d"></span>
+        <span class="entry-blur-shape entry-blur-shape-e"></span>
+        <div class="entry-system-readout entry-system-readout-loading">
+          <span>[[</span>
+          <strong>[loading]</strong>
+          <span>]]]</span>
+          <b>[100%]</b>
+          <span>[[[]]]</span>
+        </div>
+        <div class="entry-system-readout entry-system-readout-note">
+          <span>Packaging memory loaded.</span>
+          <span>Real delivery, material constraint, archive ready.</span>
+          <strong>OPEN THE INDEX.</strong>
+        </div>
+      </div>
       <div class="entry-grid" aria-hidden="true"></div>
       <div class="entry-wave-layer" id="entry-wave-layer" aria-hidden="true"></div>
       <div class="entry-dieline-layer" id="entry-dieline-layer" aria-hidden="true"></div>
@@ -231,7 +251,7 @@
               <p class="section-kicker" data-reveal data-delay="0">ABOUT</p>
               <h2 class="about-heading js-scrambled-text" data-i18n="about_heading" data-reveal data-delay="60">关于
 我</h2>
-              <p class="about-role js-scrambled-text" data-reveal data-delay="90">
+              <p class="about-role js-flip-text" data-reveal data-delay="90">
                 <span data-i18n="about_role_1">包装</span>
                 <span data-i18n="about_role_2">设计师</span>
               </p>
@@ -406,8 +426,13 @@
         </div>
 
         <div class="contact-cell contact-cell-heading" data-reveal data-delay="80">
+          <div
+            class="contact-circular-text"
+            data-circular-text="PACKAGING DESIGN * REAL DELIVERY * CONTACT * "
+            aria-hidden="true"
+          ></div>
           <p class="section-kicker" data-i18n="contact_kicker">联系</p>
-          <h2 class="contact-title js-scrambled-text" data-i18n="contact_title">联系</h2>
+          <h2 class="contact-title js-flip-text" data-i18n="contact_title">联系</h2>
         </div>
 
         <div class="contact-cell contact-cell-intro" data-reveal data-delay="140">
@@ -415,7 +440,7 @@
           <p class="contact-collab js-scrambled-text" data-i18n="contact_collab">OEM / 贴牌包装 · 礼品与福利渠道设计 · 系列包装 · 节庆礼盒 · 包装升级 · 包装提案与方向判断支持</p>
         </div>
 
-        <form class="contact-form contact-cell" id="contact-form" action="mailto:y1156813759@gmail.com" method="post" enctype="text/plain" data-reveal data-delay="220">
+        <form class="contact-form contact-cell" id="contact-form" action="https://mail.google.com/mail/" method="get" target="_blank" data-reveal data-delay="220">
           <div class="contact-form-header">
             <p class="contact-meta" data-i18n="contact_form_kicker">项目咨询</p>
             <p class="contact-form-note" data-i18n="contact_form_note">一句清楚的需求，就足够开始沟通。</p>
@@ -446,7 +471,7 @@
 
         <!-- Social icons -->
         <div class="contact-social contact-cell" data-reveal data-delay="300">
-          <a class="contact-social-icon" href="mailto:y1156813759@gmail.com" aria-label="Email">
+          <a class="contact-social-icon" href="https://mail.google.com/mail/?view=cm&fs=1&to=y1156813759%40gmail.com" target="_blank" rel="noopener" aria-label="Email">
           <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <rect x="3" y="5.5" width="18" height="13" rx="2.4" stroke="currentColor" stroke-width="1.6"/>
             <path d="M4.2 7.2L12 12.6L19.8 7.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
@@ -474,8 +499,8 @@
         <!-- WeChat QR trigger -->
         <button class="contact-social-icon contact-wechat-trigger" aria-label="微信二维码" id="wechat-qr-trigger">
           <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M10.2 5.4C6.3 5.4 3.2 7.75 3.2 10.68C3.2 12.3 4.18 13.75 5.72 14.72L5.2 16.78L7.55 15.7C8.38 15.9 9.26 16 10.2 16C14.08 16 17.2 13.62 17.2 10.68C17.2 7.75 14.08 5.4 10.2 5.4Z" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M13.6 11.55C17.1 11.75 19.8 13.78 19.8 16.28C19.8 17.65 19.02 18.88 17.76 19.72L18.18 21.28L16.28 20.4C15.68 20.56 15.02 20.64 14.34 20.64C11.62 20.64 9.28 19.38 8.34 17.6" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M10.1 5.4C6.32 5.4 3.28 7.68 3.28 10.5C3.28 12 4.18 13.36 5.62 14.3L5.08 16.46L7.56 15.32C8.34 15.5 9.2 15.6 10.1 15.6C13.88 15.6 16.92 13.32 16.92 10.5C16.92 7.68 13.88 5.4 10.1 5.4Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>
+            <path d="M13.68 11.86C16.9 11.94 19.36 13.86 19.36 16.24C19.36 17.48 18.66 18.62 17.46 19.42L17.88 20.98L15.94 20.1C15.42 20.24 14.88 20.3 14.32 20.3C11.32 20.3 8.9 18.74 8.48 16.58" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
             <circle cx="7.85" cy="10.48" r="0.58" fill="currentColor"/>
             <circle cx="12.05" cy="10.48" r="0.58" fill="currentColor"/>
             <circle cx="13.2" cy="16.12" r="0.5" fill="currentColor"/>
@@ -514,46 +539,33 @@
         <div class="section-head section-head-centered section-head-light">
           <p class="section-kicker accent" data-i18n="clients_kicker">合作客户</p>
         </div>
-        <div class="clients-marquee">
-          <div class="clients-track">
-            <span>顺丰</span>
-            <span>追觅科技</span>
-            <span>信维通信</span>
-            <span>顾家家居</span>
-            <span>本来生活</span>
-            <span>熊小夕</span>
-            <span>糕上有点</span>
-            <span>功能粥</span>
-            <span>吉利</span>
-            <span>中兴</span>
-            <span>鞍钢</span>
-            <span>爱情地产</span>
-            <span>安吉尔</span>
-            <span>固德威</span>
-            <span>心中甜</span>
-            <span>瓷和居</span>
-            <span>熙图</span>
-            <span>85°C</span>
-          </div>
-          <div class="clients-track" aria-hidden="true">
-            <span>顺丰</span>
-            <span>追觅科技</span>
-            <span>信维通信</span>
-            <span>顾家家居</span>
-            <span>本来生活</span>
-            <span>熊小夕</span>
-            <span>糕上有点</span>
-            <span>功能粥</span>
-            <span>吉利</span>
-            <span>中兴</span>
-            <span>鞍钢</span>
-            <span>爱情地产</span>
-            <span>安吉尔</span>
-            <span>固德威</span>
-            <span>心中甜</span>
-            <span>瓷和居</span>
-            <span>熙图</span>
-            <span>85°C</span>
+        <div
+          class="clients-marquee logoloop logoloop--horizontal logoloop--fade logoloop--scale-hover"
+          data-speed="74"
+          data-hover-speed="14"
+          aria-label="合作客户"
+        >
+          <div class="logoloop__track">
+            <ul class="logoloop__list">
+              <li class="logoloop__item"><span class="logoloop__node">顺丰</span></li>
+              <li class="logoloop__item"><span class="logoloop__node">追觅科技</span></li>
+              <li class="logoloop__item"><span class="logoloop__node">信维通信</span></li>
+              <li class="logoloop__item"><span class="logoloop__node">顾家家居</span></li>
+              <li class="logoloop__item"><span class="logoloop__node">本来生活</span></li>
+              <li class="logoloop__item"><span class="logoloop__node">熊小夕</span></li>
+              <li class="logoloop__item"><span class="logoloop__node">糕上有点</span></li>
+              <li class="logoloop__item"><span class="logoloop__node">功能粥</span></li>
+              <li class="logoloop__item"><span class="logoloop__node">吉利</span></li>
+              <li class="logoloop__item"><span class="logoloop__node">中兴</span></li>
+              <li class="logoloop__item"><span class="logoloop__node">鞍钢</span></li>
+              <li class="logoloop__item"><span class="logoloop__node">爱情地产</span></li>
+              <li class="logoloop__item"><span class="logoloop__node">安吉尔</span></li>
+              <li class="logoloop__item"><span class="logoloop__node">固德威</span></li>
+              <li class="logoloop__item"><span class="logoloop__node">心中甜</span></li>
+              <li class="logoloop__item"><span class="logoloop__node">瓷和居</span></li>
+              <li class="logoloop__item"><span class="logoloop__node">熙图</span></li>
+              <li class="logoloop__item"><span class="logoloop__node">85°C</span></li>
+            </ul>
           </div>
         </div>
       </div>
@@ -605,6 +617,7 @@
   <script src="scripts/app-bootstrap.js"></script>
   <script src="scripts/static-text-runtime.js"></script>
   <script src="scripts/language-runtime.js"></script>
+  <script src="scripts/flip-text.js"></script>
   <script src="scripts/particle-canvas.js"></script>
   <script src="script.js"></script>
   <script src="scripts/services-entry-grid-scan.js"></script>
@@ -618,7 +631,7 @@
   <script src="scripts/scroll-type-effects.js"></script>
   <script src="scripts/reveal-effects.js"></script>
   <script src="scripts/site-navigation.js"></script>
-  <script src="scripts/precision-cursor.js?v=20260512-pointer-frame2"></script>
+  <script src="scripts/precision-cursor.js?v=20260512-target-cursor1"></script>
   <script src="scripts/services-image-trail.js"></script>
   <script src="scripts/hero-card-events.js"></script>
   <script src="scripts/works-hover-preview.js"></script>

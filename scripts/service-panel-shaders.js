@@ -33,8 +33,8 @@
       #define S smoothstep
 
       float rnd(vec2 p) {
-        p = fract(p * vec2(12.9898, 78.233));
-        p += dot(p, p + 34.56);
+        p = fract(p * vec2(13.1931, 77.713));
+        p += dot(p, p + 35.17);
         return fract(p.x * p.y);
       }
 

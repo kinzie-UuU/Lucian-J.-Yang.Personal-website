@@ -7,6 +7,7 @@
   font-style: normal;
   font-display: swap;
 }
+
 @font-face {
   font-family: "SkyHeart Clear Serif SC";
   src: url("../fonts/空心晴宋体-v2.00/SkyHeartClearSerifSC-Regular.ttf") format("truetype");
@@ -14,6 +15,15 @@
   font-style: normal;
   font-display: swap;
 }
+
+@font-face {
+  font-family: "Major Mono Display";
+  src: url("../fonts/Major_Mono_Display,Playfair_Display/Major_Mono_Display/MajorMonoDisplay-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 @font-face {
   font-family: "Outfit";
   src: url("../fonts/Outfit_Complete/Fonts/WEB/fonts/Outfit-Variable.woff2") format("woff2-variations"),
@@ -22,6 +32,7 @@
   font-style: normal;
   font-display: swap;
 }
+
 @font-face {
   font-family: "Playfair Display";
   src: url("../fonts/Major_Mono_Display,Playfair_Display/Playfair_Display/PlayfairDisplay-Italic-VariableFont_wght.ttf") format("truetype");
@@ -29,6 +40,7 @@
   font-style: italic;
   font-display: swap;
 }
+
 @font-face {
   font-family: "Satoshi";
   src: url("../fonts/Satoshi/Satoshi-Regular.woff2") format("woff2");
@@ -36,6 +48,7 @@
   font-style: normal;
   font-display: swap;
 }
+
 @font-face {
   font-family: "Satoshi";
   src: url("../fonts/Satoshi/Satoshi-Medium.woff2") format("woff2");
@@ -43,6 +56,7 @@
   font-style: normal;
   font-display: swap;
 }
+
 @font-face {
   font-family: "Satoshi";
   src: url("../fonts/Satoshi/Satoshi-Bold.woff2") format("woff2");
@@ -50,6 +64,7 @@
   font-style: normal;
   font-display: swap;
 }
+
 @font-face {
   font-family: "Cabinet Grotesk";
   src: url("../fonts/CabinetGrotesk/CabinetGrotesk-Regular.woff2") format("woff2");
@@ -57,6 +72,7 @@
   font-style: normal;
   font-display: swap;
 }
+
 @font-face {
   font-family: "Cabinet Grotesk";
   src: url("../fonts/CabinetGrotesk/CabinetGrotesk-Medium.woff2") format("woff2");
@@ -64,6 +80,7 @@
   font-style: normal;
   font-display: swap;
 }
+
 @font-face {
   font-family: "Cabinet Grotesk";
   src: url("../fonts/CabinetGrotesk/CabinetGrotesk-Bold.woff2") format("woff2");
@@ -71,6 +88,7 @@
   font-style: normal;
   font-display: swap;
 }
+
 @font-face {
   font-family: "Cabinet Grotesk";
   src: url("../fonts/CabinetGrotesk/CabinetGrotesk-Extrabold.woff2") format("woff2");
@@ -78,6 +96,7 @@
   font-style: normal;
   font-display: swap;
 }
+
 @font-face {
   font-family: "MiSans";
   src: url("../fonts/MiSans/woff2/MiSans-Regular.woff2") format("woff2");
@@ -85,6 +104,7 @@
   font-style: normal;
   font-display: swap;
 }
+
 @font-face {
   font-family: "MiSans";
   src: url("../fonts/MiSans/woff2/MiSans-Medium.woff2") format("woff2");
@@ -92,6 +112,7 @@
   font-style: normal;
   font-display: swap;
 }
+
 @font-face {
   font-family: "MiSans";
   src: url("../fonts/MiSans/woff2/MiSans-Semibold.woff2") format("woff2");
@@ -99,6 +120,7 @@
   font-style: normal;
   font-display: swap;
 }
+
 @font-face {
   font-family: "MiSans";
   src: url("../fonts/MiSans/woff2/MiSans-Bold.woff2") format("woff2");

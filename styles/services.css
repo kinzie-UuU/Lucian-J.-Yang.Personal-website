@@ -136,9 +136,9 @@ html[lang="zh-CN"] .service-index {
   --service-to-works-outro: 0;
   --services-entry-center-offset: 0px;
   position: relative;
-  margin-top: -16svh;
+  margin-top: -6svh;
   min-height: 600svh;
-  padding: 16svh 0 0;
+  padding: 12svh 0 0;
   overflow: visible;
   background: #000;
   scroll-snap-align: start;
@@ -1030,7 +1030,7 @@ html[lang="zh-CN"] .services-scroll-story .service-text-body {
 
 /* Services gallery stage ---------------------------------------------------- */
 .services-scroll-story {
-  min-height: 500svh;
+  min-height: 540svh;
 }
 
 .services-scroll-story .services-sticky {

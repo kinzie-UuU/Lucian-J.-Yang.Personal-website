@@ -2,6 +2,7 @@
   const runtime = window.LucianRuntime;
   if (!runtime) return;
 
+  const contactEmail = "y1156813759@gmail.com";
   const contactSection = document.querySelector("#contact");
   const copyItems = document.querySelectorAll(".contact-copy-item");
   const contactForm = document.querySelector("#contact-form");
@@ -9,6 +10,7 @@
   const wechatModal = document.querySelector("#wechat-qr-modal");
   const wechatBackdrop = document.querySelector("#wechat-qr-backdrop");
   const wechatClose = document.querySelector("#wechat-qr-close");
+  const circularTexts = document.querySelectorAll(".contact-circular-text");
 
   const getLang = () => runtime.getCurrentLang();
   const clamp01 = (value) => Math.min(1, Math.max(0, value));
@@ -62,6 +64,23 @@
 
   initContactPaperMotion();
 
+  circularTexts.forEach((circle) => {
+    const text = circle.dataset.circularText || "";
+    const letters = Array.from(text);
+    if (!letters.length || circle.querySelector(".contact-circular-letter")) return;
+
+    const fragment = document.createDocumentFragment();
+    letters.forEach((letter, index) => {
+      const span = document.createElement("span");
+      span.className = "contact-circular-letter";
+      span.textContent = letter;
+      span.style.setProperty("--letter-angle", `${(360 / letters.length) * index}deg`);
+      fragment.appendChild(span);
+    });
+    circle.appendChild(fragment);
+    circle.style.setProperty("--letter-count", String(letters.length));
+  });
+
   const showContactToast = () => {
     const toast = document.getElementById("contact-toast");
     if (!toast) return;
@@ -71,6 +90,17 @@
       : "Email draft ready to send and copied";
     toast.classList.add("is-visible");
     setTimeout(() => toast.classList.remove("is-visible"), 2400);
+  };
+
+  const buildGmailComposeUrl = ({ subject = "", body = "" } = {}) => {
+    const params = new URLSearchParams({
+      view: "cm",
+      fs: "1",
+      to: contactEmail,
+      su: subject,
+      body,
+    });
+    return `https://mail.google.com/mail/?${params.toString()}`;
   };
 
   copyItems.forEach((item) => {
@@ -114,7 +144,7 @@
     ].join("\n");
 
     navigator.clipboard?.writeText(body).catch(() => null);
-    window.location.href = `mailto:y1156813759@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    window.open(buildGmailComposeUrl({ subject, body }), "_blank", "noopener");
     runtime.playUiTone("click");
     showContactToast();
   });
