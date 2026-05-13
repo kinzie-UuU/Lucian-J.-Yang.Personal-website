@@ -39,31 +39,13 @@
     });
   };
 
-  const initAutoFlip = () => {
-    const targets = document.querySelectorAll(".contact-title.js-flip-text");
-    if (!targets.length || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting) return;
-        const target = entry.target;
-        target.classList.add("is-flipping");
-        window.setTimeout(() => target.classList.remove("is-flipping"), 1800);
-      });
-    }, { threshold: 0.55 });
-
-    targets.forEach((target) => observer.observe(target));
-  };
-
   window.LucianFlipText = { refresh };
 
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", () => {
       refresh();
-      initAutoFlip();
     }, { once: true });
   } else {
     refresh();
-    initAutoFlip();
   }
 })();

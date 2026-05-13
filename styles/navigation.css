@@ -29,7 +29,113 @@ body.has-entered:not(.is-entry-scroll-locked) .bottom-nav {
   }
 }
 
-/* PillNav replacement */
+/* Navigation water transition --------------------------------------------- */
+.nav-water-transition {
+  position: fixed;
+  inset: 0;
+  z-index: 720;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  color: rgba(122, 20, 18, 0.94);
+  background:
+    linear-gradient(180deg, rgba(247, 244, 238, 0.98), rgba(239, 232, 220, 0.98));
+  transform: translateZ(0);
+  transition: opacity 120ms ease;
+}
+
+.nav-water-transition.is-active,
+.nav-water-transition.is-leaving {
+  opacity: 1;
+}
+
+.nav-water-transition.is-leaving {
+  opacity: 0;
+  transition: opacity 180ms ease;
+}
+
+.nav-water-membrane {
+  position: absolute;
+  inset: -18%;
+  opacity: 0;
+  background: #f7f4ee;
+  filter: none;
+  transform: translate3d(0, 0, 0) scaleY(0.035) skewY(-1deg);
+  transform-origin: 50% 50%;
+  transition:
+    opacity 90ms ease,
+    transform 360ms cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.nav-water-transition.is-active .nav-water-membrane {
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scaleY(1) skewY(0deg);
+}
+
+.nav-water-transition.is-leaving .nav-water-membrane {
+  opacity: 0;
+  transform: translate3d(0, 0, 0) scaleY(0.035) skewY(1deg);
+}
+
+.nav-water-copy {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  z-index: 2147483647;
+  display: grid;
+  justify-items: center;
+  text-align: center;
+  opacity: 0;
+  width: min(520px, calc(100vw - 56px));
+  transform: translate3d(-50%, -50%, 0) scale(1);
+  transition:
+    opacity 220ms ease,
+    transform 420ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.nav-water-copy.is-active {
+  opacity: 1;
+  transform: translate3d(-50%, -50%, 0) scale(1);
+}
+
+.nav-water-copy.is-leaving {
+  opacity: 0;
+  transform: translate3d(-50%, -50%, 0) scale(1.01);
+}
+
+.nav-water-label {
+  font-family: Georgia, "Times New Roman", "Songti SC", serif;
+  font-size: clamp(1.55rem, 3.2vw, 3.15rem);
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  color: rgba(122, 20, 18, 0.92);
+  text-transform: uppercase;
+  text-shadow:
+    0 0 1px rgba(255, 255, 255, 0.62),
+    0 10px 34px rgba(122, 20, 18, 0.16);
+}
+
+html[lang="zh-CN"] .nav-water-label {
+  font-family: Georgia, "Times New Roman", "Songti SC", serif;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+}
+
+body.nav-transition-active .bottom-nav.pill-nav {
+  --pill-bg-active: rgba(255, 98, 104, 0.32);
+  --pill-active-text: rgba(247, 244, 238, 0.96);
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-water-transition {
+    display: none;
+  }
+}
 
 /* PillNav replacement */
 /* React Bits inspired PillNav replacement for the fixed bottom navigation. */

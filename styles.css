@@ -41,6 +41,8 @@
   --grain-opacity-soft: 0.08;
   --cursor-x: 50vw;
   --cursor-y: 50vh;
+  --site-top-safe: clamp(56px, 8svh, 84px);
+  --bottom-nav-safe: clamp(104px, 14svh, 140px);
 }
 
 * {
@@ -124,6 +126,7 @@ button {
 main > section {
   width: 100%;
   margin: 0;
+  scroll-margin-top: var(--site-top-safe);
 }
 
 .top-meta-inner,

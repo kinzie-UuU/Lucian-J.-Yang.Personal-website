@@ -131,8 +131,8 @@
       const z = -90 + focus * 150 + outroFocus * 520;
       const scale = 0.84 + focus * 0.08 + outroFocus * 4.15;
       const rotate = 0;
-      const opacity = visible * (0.42 + focus * 0.58);
-      const contentOpacity = visible * (0.38 + focus * 0.62) * (1 - outroFocus * 0.92);
+      const opacity = visible * (0.56 + focus * 0.44);
+      const contentOpacity = visible * (0.58 + focus * 0.42) * (1 - outroFocus * 0.92);
 
       panel.classList.toggle("is-active-service", focus > 0.72 && galleryVisible > 0.5);
       panel.style.setProperty("--service-panel-x", `${x.toFixed(2)}vw`);
@@ -151,11 +151,12 @@
     };
 
     const applyProgress = (progress, { snap = false } = {}) => {
-      const open = smooth(clamp01(progress / 0.22));
-      const inside = smooth(clamp01((progress - 0.13) / 0.22));
+      const open = smooth(clamp01(progress / 0.26));
+      const inside = smooth(clamp01((progress - 0.04) / 0.18));
       const outro = smooth(clamp01((progress - 0.82) / 0.18));
-      const galleryVisible = inside * (1 - outro);
-      const galleryProgress = smooth(clamp01((progress - 0.2) / 0.52));
+      const earlyGallery = smooth(clamp01((progress - 0.02) / 0.12)) * 0.42;
+      const galleryVisible = Math.max(inside, earlyGallery) * (1 - outro);
+      const galleryProgress = smooth(clamp01((progress - 0.08) / 0.5));
       const rawActiveService = galleryProgress * Math.max(0, panels.length - 1);
       const nearestService = Math.min(panels.length - 1, Math.max(0, Math.round(rawActiveService)));
       const idleMs = performance.now() - lastScrollAt;
@@ -179,7 +180,7 @@
       panels.forEach((panel, index) => {
         setPanel(panel, getLoopDelta(index, displayActiveService, panels.length), index, galleryVisible, outro);
       });
-      const railIndex = progress < 0.19 || outro > 0.72
+      const railIndex = progress < 0.08 || outro > 0.72
         ? -1
         : Math.min(panels.length - 1, Math.max(0, Math.round(displayActiveService)));
       updateCapabilityRail(railIndex);

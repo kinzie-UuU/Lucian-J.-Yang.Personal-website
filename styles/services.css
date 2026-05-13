@@ -215,10 +215,10 @@ html[lang="zh-CN"] .service-index {
     inset 0 -1px 0 rgba(0, 0, 0, 0.28);
   transform:
     translate(-50%, -50%)
-    translateZ(calc(var(--services-open) * 600px))
-    scale(calc(1 + var(--services-open) * 4.6));
-  opacity: calc(1 - var(--services-open) * 1.08);
-  filter: blur(calc(var(--services-open) * 8px));
+    translateZ(calc(var(--services-open) * 260px))
+    scale(calc(1 + var(--services-open) * 1.65));
+  opacity: max(calc(1 - var(--services-open) * 0.9), calc((1 - var(--services-gallery)) * 0.34));
+  filter: blur(calc(var(--services-open) * 3px));
   transform-origin: center;
   will-change: transform, opacity, filter;
 }
@@ -1057,7 +1057,7 @@ html[lang="zh-CN"] .services-scroll-story .service-text-body {
   position: absolute;
   inset: 0;
   z-index: 4;
-  opacity: calc(var(--services-gallery) * (1 - var(--services-outro)) * (1 - var(--service-to-works-outro) * 0.72));
+  opacity: calc((0.18 + var(--services-gallery) * 0.82) * (1 - var(--services-outro)) * (1 - var(--service-to-works-outro) * 0.72));
   transform:
     translate3d(0, calc(var(--service-to-works-outro) * -6vh), 0)
     scale(calc(1 - var(--service-to-works-outro) * 0.06));
@@ -1077,7 +1077,7 @@ html[lang="zh-CN"] .services-scroll-story .service-text-body {
   justify-content: center;
   overflow: hidden;
   border-radius: 10px;
-  background: #10100f;
+  background: #141412;
   box-shadow:
     0 calc(30px * (1 - var(--service-outro-focus))) calc(82px * (1 - var(--service-outro-focus))) rgba(20, 18, 15, 0.18),
     0 1px 0 rgba(255, 255, 255, 0.08);
@@ -1094,7 +1094,7 @@ html[lang="zh-CN"] .services-scroll-story .service-text-body {
   height: 100%;
   border-radius: calc(10px * (1 - var(--service-outro-focus)));
   clip-path: none;
-  opacity: 0.92;
+  opacity: 0.98;
   mix-blend-mode: normal;
   transform: none;
 }
@@ -1149,7 +1149,7 @@ html[lang="zh-CN"] .services-scroll-story .service-text-body {
 html[lang="zh-CN"] .services-scroll-story .service-text-title {
   max-width: 10ch;
   margin-inline: auto;
-  color: rgba(238, 233, 223, 0.9);
+  color: rgba(248, 245, 239, 0.96);
   font-size: clamp(1.75rem, 3.15vw, 4.3rem);
   line-height: 0.92;
   letter-spacing: 0;
@@ -1160,7 +1160,7 @@ html[lang="zh-CN"] .services-scroll-story .service-text-title {
 html[lang="zh-CN"] .services-scroll-story .service-text-body {
   max-width: 28ch;
   margin: clamp(16px, 2.6vh, 28px) auto 0;
-  color: rgba(238, 233, 223, 0.62);
+  color: rgba(248, 245, 239, 0.72);
   font-size: clamp(0.74rem, 0.86vw, 0.94rem);
   line-height: 1.55;
   letter-spacing: 0.02em;
