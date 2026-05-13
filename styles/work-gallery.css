@@ -491,6 +491,20 @@ body.work-gallery-open .work-gallery-back {
   will-change: opacity, transform;
 }
 
+.work-project-image-caption {
+  position: absolute;
+  left: clamp(14px, 1.5vw, 24px);
+  bottom: clamp(12px, 1.3vw, 20px);
+  max-width: min(44ch, calc(100% - 28px));
+  margin: 0;
+  color: rgba(244, 242, 237, 0.78);
+  font-family: "MiSans", "Satoshi", system-ui, sans-serif;
+  font-size: clamp(0.66rem, 0.7vw, 0.84rem);
+  font-weight: 650;
+  line-height: 1.2;
+  text-shadow: 0 12px 28px rgba(0, 0, 0, 0.62);
+}
+
 .work-detail-full-figure img {
   transform:
     translate3d(0, calc((1 - var(--work-detail-reveal, 0)) * -28px), 0)
@@ -502,6 +516,151 @@ body.work-gallery-open .work-gallery-back {
     brightness(calc(0.82 + var(--work-detail-reveal, 0) * 0.18))
     blur(calc((1 - var(--work-detail-reveal, 0)) * 8px));
   will-change: transform, filter;
+}
+
+.work-gallery.is-project-detail {
+  display: block;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+.work-gallery.is-project-detail .work-gallery-topbar {
+  position: fixed;
+  inset: 0 0 auto;
+  width: 100%;
+  pointer-events: none;
+}
+
+.work-gallery.is-project-detail .work-gallery-actions {
+  pointer-events: auto;
+}
+
+.work-gallery.is-project-detail .work-detail {
+  display: block;
+  contain: paint;
+}
+
+.work-project-case {
+  display: grid;
+  grid-template-columns: clamp(260px, 25vw, 520px) minmax(0, 1fr);
+  align-items: start;
+  min-height: 100svh;
+  background: #f4f2ed;
+  color: #101114;
+}
+
+.work-project-info {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  height: 100svh;
+  min-height: 100svh;
+  padding: clamp(96px, 12vh, 150px) clamp(26px, 3vw, 56px) clamp(32px, 6vh, 74px);
+  background: #f4f2ed;
+  box-sizing: border-box;
+}
+
+.work-project-stream {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: clamp(24px, 3.8vw, 76px);
+  padding: clamp(88px, 11vh, 140px) clamp(34px, 4vw, 74px) clamp(56px, 9vh, 110px) 0;
+  box-sizing: border-box;
+}
+
+.work-gallery.is-project-detail .work-detail-full {
+  min-height: 0;
+  padding: 0;
+  display: grid;
+  place-items: start stretch;
+  overflow: visible;
+  content-visibility: auto;
+  contain-intrinsic-size: 640px 960px;
+}
+
+.work-project-panel.is-hero-panel {
+  grid-column: 1 / -1;
+  min-height: 0;
+}
+
+.work-project-panel.is-split-panel {
+  min-height: 0;
+}
+
+.work-project-panel:nth-child(3n) {
+  grid-column: 1 / -1;
+}
+
+.work-gallery.is-project-detail .work-detail-full-figure {
+  display: block;
+  width: 100%;
+  height: auto;
+  min-height: 0;
+  margin: 0;
+  border-radius: 8px;
+  opacity: 0.001;
+  transform: translate3d(13vw, 0, 0) scale(0.986);
+  transform-origin: center;
+  background: transparent;
+  box-shadow: none;
+  font-size: 0;
+  overflow: hidden;
+  line-height: 0;
+  transition:
+    opacity 620ms ease,
+    transform 980ms cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.work-gallery.is-project-detail .work-detail-full-figure.is-png-frame {
+  background: #050505;
+}
+
+.work-gallery.is-project-detail .work-detail-full-figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  vertical-align: top;
+  transform: translate3d(4vw, 0, 0) scale(1.012);
+  object-fit: cover;
+  object-position: var(--gallery-position, center);
+  filter: saturate(0.98) contrast(1.02);
+  transition: transform 1040ms cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+
+.work-gallery.is-project-detail .work-project-panel.is-hero-panel .work-detail-full-figure {
+  height: min(76svh, 860px);
+}
+
+.work-gallery.is-project-detail .work-project-panel.is-hero-panel .work-detail-full-figure img {
+  height: 100%;
+}
+
+.work-gallery.is-project-detail .work-detail-full.is-visible .work-detail-full-figure {
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale(1);
+}
+
+.work-gallery.is-project-detail .work-detail-full.is-visible .work-detail-full-figure img {
+  transform: translate3d(0, 0, 0) scale(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .work-gallery.is-project-detail {
+    scroll-behavior: auto;
+  }
+
+  .work-gallery.is-project-detail .work-detail-full-figure,
+  .work-gallery.is-project-detail .work-detail-full-figure img {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
 }
 
 .work-gallery-progress {
@@ -530,6 +689,12 @@ body.work-gallery-open .work-gallery-back {
 
 .work-gallery.is-circular .work-gallery-topbar {
   color: #f4f2ed;
+}
+
+.work-gallery.is-circular .work-gallery-topbar::before,
+.work-gallery.is-circular .work-gallery-heading,
+.work-gallery.is-circular .work-gallery-index {
+  display: none;
 }
 
 .work-gallery.is-circular .work-gallery-index,
@@ -738,6 +903,27 @@ body.work-gallery-open .work-gallery-back {
   pointer-events: none;
 }
 
+.work-waterfall-count {
+  display: block;
+  margin-top: -6px;
+  color: rgba(244, 242, 237, 0.42);
+  font-family: "Major Mono Display", "Satoshi", monospace;
+  font-size: clamp(0.52rem, 0.52vw, 0.62rem);
+  letter-spacing: 0.08em;
+  line-height: 1;
+  text-align: center;
+  pointer-events: none;
+}
+
+.work-waterfall-card.is-project-card .work-waterfall-image {
+  box-shadow: 0 28px 72px rgba(0, 0, 0, 0.52);
+}
+
+.work-waterfall-card.is-project-card:hover .work-waterfall-title,
+.work-waterfall-card.is-project-card:focus-visible .work-waterfall-title {
+  color: rgba(244, 242, 237, 0.96);
+}
+
 .work-circular-dom-card {
   position: absolute;
   left: 0;
@@ -845,6 +1031,36 @@ body.work-gallery-open .work-gallery-back {
 
   .work-detail-full-figure {
     height: min(82svh, 720px);
+  }
+
+  .work-project-case {
+    grid-template-columns: 1fr;
+  }
+
+  .work-project-info {
+    height: auto;
+    min-height: 42svh;
+    padding: 96px 20px 26px;
+  }
+
+  .work-project-stream {
+    grid-template-columns: 1fr;
+    gap: 18px;
+    padding: 0 20px 28px;
+  }
+
+  .work-project-panel.is-hero-panel,
+  .work-project-panel:nth-child(3n) {
+    grid-column: auto;
+  }
+
+  .work-gallery.is-project-detail .work-detail-full-figure {
+    height: auto;
+    min-height: 0;
+  }
+
+  .work-gallery.is-project-detail .work-project-panel.is-hero-panel .work-detail-full-figure {
+    height: 50svh;
   }
 
 }

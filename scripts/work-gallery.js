@@ -11,11 +11,13 @@
   const workDetail = document.querySelector("#work-detail");
 
   let galleryOpen = false;
-  let galleryMode = "index";
+  let galleryMode = "projects";
   let galleryCategory = "oem";
   let galleryStep = 0;
   let workDetailRevealRaf = 0;
+  let projectDetailObserver = null;
   let gallerySourceItems = [];
+  let galleryCurrentProject = null;
 
   let circularCleanup = null;
   let circularCurrentIndex = 0;
@@ -25,6 +27,7 @@
 
   const getCurrentLang = () => runtime?.getCurrentLang?.() || "zh";
   const isCircularGallery = () => workGallery?.classList.contains("is-circular");
+  const isGalleryBrowsingMode = () => galleryMode === "projects" || galleryMode === "index";
   const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
 
   const localizedValue = (value) => {
@@ -39,14 +42,51 @@
     items.map((item, categoryIndex) => ({ ...item, categoryKey, categoryIndex }))
   ));
 
+  const getCategoryWorkGalleryItems = (categoryKey) => (
+    (workGalleryImages[categoryKey] || []).map((item, categoryIndex) => ({ ...item, categoryKey, categoryIndex }))
+  );
+
+  const getGalleryProjects = (categoryKey) => {
+    const projectItems = window.workGalleryProjects?.[categoryKey];
+    if (projectItems?.length) {
+      return projectItems.map((project, projectIndex) => ({
+        ...project,
+        categoryKey,
+        categoryIndex: projectIndex,
+        projectIndex,
+        isProject: true
+      }));
+    }
+
+    const fallbackItems = getCategoryWorkGalleryItems(categoryKey);
+    return fallbackItems.length ? [{
+      isProject: true,
+      categoryKey,
+      categoryIndex: 0,
+      projectIndex: 0,
+      projectKey: categoryKey,
+      title: galleryText[getCurrentLang()]?.categoryTitles?.[categoryKey] || categoryKey,
+      src: fallbackItems[0].src,
+      cover: fallbackItems[0].src,
+      position: fallbackItems[0].position || "center",
+      imageCount: fallbackItems.length,
+      items: fallbackItems
+    }] : [];
+  };
+
   const getGalleryDisplayIndex = (item, fallbackIndex = 0) => {
-    const displayIndex = Number.isFinite(item?.categoryIndex) ? item.categoryIndex : fallbackIndex;
+    const displayIndex = Number.isFinite(item?.projectIndex)
+      ? item.projectIndex
+      : Number.isFinite(item?.categoryIndex)
+        ? item.categoryIndex
+        : fallbackIndex;
     return String(displayIndex + 1).padStart(2, "0");
   };
 
   const getGalleryItemTitle = (item, index) => {
     const currentLang = getCurrentLang();
     const rawTitle = localizedValue(item?.title);
+    if (item?.isProject) return rawTitle || `${galleryText[currentLang].project} ${getGalleryDisplayIndex(item, index)}`;
     const itemCategory = item?.categoryKey || galleryCategory;
     const itemIndex = Number.isFinite(item?.categoryIndex) ? item.categoryIndex : index;
     if (currentLang === "zh") {
@@ -62,6 +102,14 @@
   const getGalleryCategoryDescription = (item) => {
     const currentLang = getCurrentLang();
     const itemCategory = item?.categoryKey || galleryCategory;
+    if (item?.isProject) {
+      const imageCount = item.imageCount || item.items?.length || 0;
+      const imageLabel = currentLang === "zh" ? `${imageCount} 张图片` : `${imageCount} images`;
+      const categoryDescription = galleryText[currentLang]?.categoryDescriptions?.[itemCategory]
+        || galleryText.zh?.categoryDescriptions?.[itemCategory]
+        || "";
+      return imageCount ? `${categoryDescription} · ${imageLabel}` : categoryDescription;
+    }
     return galleryText[currentLang]?.categoryDescriptions?.[itemCategory]
       || galleryText.zh?.categoryDescriptions?.[itemCategory]
       || "";
@@ -91,6 +139,38 @@
     if (!circularCleanup) return;
     circularCleanup();
     circularCleanup = null;
+  };
+
+  const teardownProjectDetailMotion = () => {
+    if (!projectDetailObserver) return;
+    projectDetailObserver.disconnect();
+    projectDetailObserver = null;
+  };
+
+  const setupProjectDetailMotion = () => {
+    teardownProjectDetailMotion();
+    if (!workGallery || !workDetail) return;
+    const panels = Array.from(workDetail.querySelectorAll("[data-project-panel]"));
+    if (!panels.length) return;
+
+    if (!("IntersectionObserver" in window)) {
+      panels.forEach((panel) => panel.classList.add("is-visible"));
+      return;
+    }
+
+    projectDetailObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        entry.target.classList.toggle("is-visible", entry.isIntersecting);
+      });
+    }, {
+      root: workGallery,
+      rootMargin: "-8% 0px -16%",
+      threshold: [0.18, 0.42, 0.68]
+    });
+
+    panels.forEach((panel) => {
+      projectDetailObserver.observe(panel);
+    });
   };
 
   const initDomCircularGallery = (root, sourceItems) => {
@@ -136,23 +216,47 @@
     };
 
     const openCard = (card) => {
-      if (!card || galleryMode !== "index") return;
+      if (!card || (galleryMode !== "projects" && galleryMode !== "index")) return;
       const index = Number.parseInt(card.dataset.index || "0", 10);
+      if (galleryMode === "projects") {
+        openProjectDetail(index);
+        return;
+      }
       openWorkDetail(index);
     };
 
     const makeCard = (item, index) => {
       const card = document.createElement("button");
       card.className = "work-waterfall-card";
+      if (item.isProject) card.classList.add("is-project-card");
       card.type = "button";
       card.dataset.index = String(index);
       card.style.setProperty("--gallery-position", item.position || "center");
+      const imageCount = item.imageCount || item.items?.length || 0;
+      const imageCountLabel = getCurrentLang() === "zh" ? `${imageCount} 张图片` : `${imageCount} IMAGES`;
       card.innerHTML = `
         <span class="work-waterfall-image">
           <img src="${item.src}" alt="" draggable="false" decoding="async">
         </span>
         <span class="work-waterfall-title">${getGalleryItemTitle(item, index)}</span>
+        ${item.isProject ? `<span class="work-waterfall-count">${imageCountLabel}</span>` : ""}
       `;
+      card.addEventListener("click", (event) => {
+        if (!isGalleryBrowsingMode()) return;
+        if (didDrag || suppressNextClick) {
+          suppressNextClick = false;
+          return;
+        }
+        event.preventDefault();
+        event.stopPropagation();
+        openCard(card);
+      });
+      card.addEventListener("keydown", (event) => {
+        if (!isGalleryBrowsingMode() || (event.key !== "Enter" && event.key !== " ")) return;
+        event.preventDefault();
+        event.stopPropagation();
+        openCard(card);
+      });
       return card;
     };
 
@@ -236,7 +340,7 @@
     };
 
     const onWheel = (event) => {
-      if (!isCircularGallery() || galleryMode !== "index") return;
+      if (!isCircularGallery() || !isGalleryBrowsingMode()) return;
       event.preventDefault();
       event.stopPropagation();
       const delta = Math.abs(event.deltaY) > Math.abs(event.deltaX) ? event.deltaY : event.deltaX;
@@ -244,7 +348,7 @@
     };
 
     const onPointerDown = (event) => {
-      if (galleryMode !== "index") return;
+      if (!isGalleryBrowsingMode()) return;
       if (event.pointerType === "mouse" && event.button !== 0) return;
       isDown = true;
       didDrag = false;
@@ -284,13 +388,14 @@
     };
 
     const onClick = (event) => {
-      if (galleryMode !== "index") return;
+      if (!isGalleryBrowsingMode()) return;
       const card = getCardFromEvent(event);
       if (!card) return;
       event.preventDefault();
       event.stopPropagation();
       if (suppressNextClick) {
         suppressNextClick = false;
+        event.stopImmediatePropagation?.();
         return;
       }
       if (didDrag) return;
@@ -849,7 +954,7 @@
     };
 
     const onWheel = (event) => {
-      if (!isCircularGallery() || galleryMode !== "index") return;
+      if (!isCircularGallery() || !isGalleryBrowsingMode()) return;
       event.preventDefault();
       event.stopPropagation();
       const delta = Math.abs(event.deltaX) > Math.abs(event.deltaY) ? event.deltaX : event.deltaY;
@@ -869,13 +974,17 @@
     };
 
     const openHitDetail = (hit) => {
-      if (!hit || openingDetail || galleryMode !== "index") return;
+      if (!hit || openingDetail || !isGalleryBrowsingMode()) return;
       openingDetail = true;
+      if (galleryMode === "projects") {
+        openProjectDetail(hit.itemIndex);
+        return;
+      }
       openWorkDetail(hit.itemIndex);
     };
 
     const onPointerDown = (event) => {
-      if (!isCircularGallery() || galleryMode !== "index") return;
+      if (!isCircularGallery() || !isGalleryBrowsingMode()) return;
       if (event.pointerType === "mouse" && event.button !== 0) return;
       isDown = true;
       didDrag = false;
@@ -897,7 +1006,7 @@
       isDown = false;
       root.classList.remove("is-dragging");
       snapToNearest();
-      if (!didDrag && galleryMode === "index") {
+      if (!didDrag && isGalleryBrowsingMode()) {
         openHitDetail(getHitFromEvent(event));
       }
     };
@@ -937,7 +1046,7 @@
     `;
     if (defer) {
       window.requestAnimationFrame(() => {
-        if (!galleryOpen || galleryMode !== "index") return;
+        if (!galleryOpen || !isGalleryBrowsingMode()) return;
         initCircularGallery(items);
       });
       return;
@@ -1021,6 +1130,58 @@
     workGallery?.style.setProperty("--work-detail-reveal", "0");
   };
 
+  const renderProjectDetail = (project, index) => {
+    if (!workDetail || !project) return;
+    const currentLang = getCurrentLang();
+    const copy = galleryText[currentLang];
+    const items = project.items || [];
+    const cover = items[0] || project;
+    const title = getGalleryItemTitle(project, index);
+    const categoryTitle = copy.categoryTitles?.[project.categoryKey] || copy.project;
+    const imageLabel = currentLang === "zh" ? `${items.length} 张图片` : `${items.length} IMAGES`;
+    const summary = getGalleryCategoryDescription(project);
+    const detailItems = items.length ? items : [cover];
+    const getProjectFrameClass = (item) => (
+      /\.png(?:[?#].*)?$/i.test(item?.src || "") ? " is-png-frame" : ""
+    );
+    workDetail.innerHTML = `
+      <section class="work-project-case">
+        <aside class="work-detail-side work-project-info">
+          <div>
+            <p class="work-detail-kicker">${categoryTitle} ${getGalleryDisplayIndex(project, index)}</p>
+            <h4 class="work-detail-name">${title}</h4>
+            <div class="work-detail-tags">
+              <span class="work-detail-tag">${categoryTitle}</span>
+              <span class="work-detail-tag">${imageLabel}</span>
+            </div>
+          </div>
+          <div class="work-detail-body">
+            <p class="work-detail-copy">${summary}</p>
+            <p>${copy.summary}</p>
+          </div>
+        </aside>
+        <div class="work-project-stream" aria-label="${title}">
+            ${detailItems.map((item, itemIndex) => `
+              <section class="work-detail-full work-project-panel${itemIndex === 0 ? " is-hero-panel" : ""}${itemIndex % 3 === 1 ? " is-split-panel" : ""}" data-project-panel style="--project-image-index: ${itemIndex};">
+                <figure class="work-detail-full-figure${getProjectFrameClass(item)}" style="--gallery-position: ${item.position || "center"};">
+                  <img
+                    src="${item.src}"
+                    alt=""
+                    decoding="async"
+                    loading="${itemIndex < 2 ? "eager" : "lazy"}"
+                    ${itemIndex === 0 ? 'fetchpriority="high"' : 'fetchpriority="low"'}
+                  >
+                  <figcaption class="work-project-image-caption">${String(itemIndex + 1).padStart(2, "0")} / ${getGalleryItemTitle(item, itemIndex)}</figcaption>
+                </figure>
+              </section>
+            `).join("")}
+        </div>
+      </section>
+    `;
+    workGallery?.style.setProperty("--work-detail-reveal", "0");
+    setupProjectDetailMotion();
+  };
+
   const updateWorkDetailReveal = () => {
     if (!workGallery || galleryMode !== "detail") return;
     const figure = workGallery.querySelector(".work-detail-full-figure");
@@ -1035,6 +1196,7 @@
   };
 
   const queueWorkDetailReveal = () => {
+    if (galleryMode !== "detail") return;
     if (workDetailRevealRaf) return;
     workDetailRevealRaf = window.requestAnimationFrame(() => {
       workDetailRevealRaf = 0;
@@ -1049,6 +1211,7 @@
     galleryStep = Math.max(0, Math.min(items.length - 1, index));
     galleryMode = "detail";
     destroyCircularGallery();
+    teardownProjectDetailMotion();
     renderWorkDetail(item, galleryStep);
     workGallery.classList.add("is-detail");
     workGallery.classList.remove("is-circular");
@@ -1059,30 +1222,56 @@
     runtime?.playUiTone?.("click");
   };
 
+  const openProjectDetail = (index) => {
+    if (!workGallery) return;
+    const projects = gallerySourceItems.length ? gallerySourceItems : getGalleryProjects(galleryCategory);
+    const project = projects[index] || projects[0];
+    if (!project) return;
+    galleryStep = Math.max(0, Math.min(projects.length - 1, index));
+    galleryCurrentProject = project;
+    galleryMode = "project-detail";
+    destroyCircularGallery();
+    renderProjectDetail(project, galleryStep);
+    workGallery.classList.add("is-detail", "is-project-detail");
+    workGallery.classList.remove("is-circular");
+    updateGalleryChromeText();
+    updateGalleryHeader(project, galleryStep);
+    workGallery.scrollTo({ top: 0, behavior: "auto" });
+    runtime?.playUiTone?.("click");
+  };
+
   const returnToGalleryIndex = () => {
     if (!workGallery) return;
-    galleryMode = "index";
-    workGallery.classList.remove("is-detail");
-    if (workGalleryTrack?.querySelector(".work-circular-root")) {
-      workGallery.classList.add("is-circular");
-      initCircularGallery(gallerySourceItems.length ? gallerySourceItems : getAllWorkGalleryItems());
-    }
+    galleryMode = "projects";
+    teardownProjectDetailMotion();
+    workGallery.classList.remove("is-detail", "is-project-detail");
     if (workDetail) workDetail.innerHTML = "";
     workGallery.style.setProperty("--work-detail-reveal", "0");
-    const activeItem = gallerySourceItems[galleryStep];
-    updateGalleryHeader(activeItem, galleryStep);
+    galleryCurrentProject = null;
+    const projects = getGalleryProjects(galleryCategory);
+    buildGalleryItems(projects);
+    const activeProject = projects[galleryStep] || projects[0];
+    updateGalleryHeader(activeProject, galleryStep);
   };
 
   const refreshLanguage = () => {
     updateGalleryChromeText();
     if (!workGallery || !galleryOpen) return;
 
-    const items = gallerySourceItems.length ? gallerySourceItems : getAllWorkGalleryItems();
+    const items = gallerySourceItems.length ? gallerySourceItems : getGalleryProjects(galleryCategory);
 
     if (galleryMode === "detail") {
       const item = items[galleryStep] || items[0];
+      teardownProjectDetailMotion();
       renderWorkDetail(item, galleryStep);
       updateGalleryHeader(item, galleryStep);
+      return;
+    }
+
+    if (galleryMode === "project-detail") {
+      const project = galleryCurrentProject || items[galleryStep] || items[0];
+      renderProjectDetail(project, galleryStep);
+      updateGalleryHeader(project, galleryStep);
       return;
     }
 
@@ -1107,20 +1296,21 @@
     if (!workGallery || !workGalleryTrack || !projectKey) return;
 
     galleryCategory = projectKey;
-    const items = getAllWorkGalleryItems();
-    const initialIndex = Math.max(0, items.findIndex((item) => (
-      item.categoryKey === projectKey && item.categoryIndex === projectIndex
-    )));
+    const projects = getGalleryProjects(projectKey);
+    const initialIndex = Math.max(0, Math.min(projects.length - 1, projectIndex));
 
     galleryStep = initialIndex;
-    galleryMode = "index";
+    galleryMode = "projects";
+    galleryCurrentProject = null;
+    teardownProjectDetailMotion();
     workGallery.classList.remove("is-detail");
+    workGallery.classList.remove("is-project-detail");
     if (workDetail) workDetail.innerHTML = "";
 
     updateGalleryChromeText();
-    updateGalleryHeader(items[initialIndex] || items[0], initialIndex, cardName);
+    updateGalleryHeader(projects[initialIndex] || projects[0], initialIndex, cardName);
 
-    buildGalleryItems(items, { defer: true });
+    buildGalleryItems(projects, { defer: true });
     showGallery();
     workGallery.scrollTo({ top: 0, behavior: "auto" });
   };
@@ -1129,27 +1319,33 @@
     if (!workGallery || !workGalleryTrack) return;
     const category = row.dataset.category || "oem";
     const title = row.querySelector(".works-row-name")?.textContent.trim() || "Project";
-    const items = getAllWorkGalleryItems();
-    const initialIndex = Math.max(0, items.findIndex((item) => item.categoryKey === category));
+    const projects = getGalleryProjects(category);
+    const initialIndex = 0;
     galleryCategory = category;
-    galleryMode = "index";
+    galleryMode = "projects";
     galleryStep = initialIndex;
+    galleryCurrentProject = null;
+    teardownProjectDetailMotion();
     workGallery.classList.remove("is-detail");
+    workGallery.classList.remove("is-project-detail");
     if (workDetail) workDetail.innerHTML = "";
     workGallery.style.setProperty("--work-detail-reveal", "0");
     updateGalleryChromeText();
-    updateGalleryHeader(items[initialIndex], initialIndex, title);
-    buildGalleryItems(items, { defer: true });
+    updateGalleryHeader(projects[initialIndex], initialIndex, title);
+    buildGalleryItems(projects, { defer: true });
     showGallery();
   };
 
   const close = () => {
     if (!workGallery || !galleryOpen) return;
     galleryOpen = false;
-    galleryMode = "index";
+    galleryMode = "projects";
+    galleryCurrentProject = null;
+    teardownProjectDetailMotion();
     destroyCircularGallery();
     workGallery.classList.remove("is-open");
     workGallery.classList.remove("is-detail");
+    workGallery.classList.remove("is-project-detail");
     workGallery.classList.remove("is-circular");
     workGallery.setAttribute("aria-hidden", "true");
     document.body.classList.remove("work-gallery-open");
