@@ -30,15 +30,21 @@
 
   const getRowText = (row) => row.querySelector(".works-row-name")?.textContent?.trim() || "";
 
-  const getRowImage = (category) => {
+  const getRowImage = (row) => {
+    const category = row.dataset.category || "oem";
+    const projectIndex = Number.parseInt(row.dataset.projectIndex || "", 10);
+    const project = Number.isFinite(projectIndex)
+      ? window.workGalleryProjects?.[category]?.[projectIndex]
+      : null;
+    if (project?.cover || project?.src) return project.cover || project.src;
+
     const imagePool = window.workGalleryImages?.[category] || [];
     return imagePool[0]?.src || "";
   };
 
   const buildFlowingMenu = (row) => {
-    const category = row.dataset.category || "oem";
     const text = getRowText(row);
-    const image = getRowImage(category);
+    const image = getRowImage(row);
     row.querySelector(".works-flowing-menu")?.remove();
     const overlay = document.createElement("span");
     const inner = document.createElement("span");

@@ -27,10 +27,10 @@
   <link rel="stylesheet" href="styles/about.css">
   <link rel="stylesheet" href="styles/services.css">
   <link rel="stylesheet" href="styles/works.css">
-  <link rel="stylesheet" href="styles/clients.css">
+  <link rel="stylesheet" href="styles/clients.css?v=20260514-footer-fine1">
   <link rel="stylesheet" href="styles/work-gallery.css?v=20260513-pmg-edgefix2">
   <link rel="stylesheet" href="styles/contact.css">
-  <link rel="stylesheet" href="styles/navigation.css?v=20260513-gallery-navhide1">
+  <link rel="stylesheet" href="styles/navigation.css?v=20260514-nav-lockfix1">
   <link rel="stylesheet" href="styles/responsive.css">
   <link rel="stylesheet" href="styles/shared-motion.css">
   <script src="three.min.js"></script>
@@ -55,22 +55,14 @@
   <header class="top-meta" aria-label="Site meta">
     <div class="top-meta-inner">
       <div class="top-meta-left">
-        <button class="pixel-avatar" id="pixel-avatar" type="button" aria-label="Return to entry" aria-hidden="false">
-          <img src="images/头像.png" alt="" draggable="false">
-        </button>
       </div>
       <div class="top-meta-right">
-        <span class="top-meta-group top-meta-identity">
-          <span class="top-meta-name" data-i18n="meta_name">©杨钦鹏</span>
-        </span>
-        <span class="top-meta-separator" aria-hidden="true"></span>
-        <span class="top-meta-group top-meta-clock">
-          <span class="top-meta-time" id="beijing-time">PM 00:00</span>
-          <span class="top-meta-separator" aria-hidden="true"></span>
-          <span class="top-meta-date" id="beijing-date">2026.04.19</span>
-        </span>
         <span class="top-meta-group top-meta-tools">
-          <span class="top-meta-lang" aria-label="Language">
+          <button class="top-meta-toggle top-meta-sound-toggle top-meta-line-control" id="sound-toggle" type="button" aria-label="Mute interface sounds" aria-pressed="true">
+            <span class="top-meta-line-label">SOUND</span>
+            <span class="top-meta-line-state top-meta-sound-state">ON</span>
+          </button>
+          <span class="top-meta-lang top-meta-line-control" aria-label="Language">
             <button class="lang-button is-active" type="button" data-lang="zh">&#20013;</button>
             <button class="lang-button" type="button" data-lang="en">EN</button>
           </span>
@@ -84,15 +76,6 @@
               <path d="M14 9.5v9M9.5 14h9" stroke="currentColor" stroke-width="1" stroke-linecap="square"/>
             </svg>
           </button>
-          <button class="top-meta-toggle top-meta-sound-toggle" id="sound-toggle" type="button" aria-label="Mute interface sounds" aria-pressed="true">
-            <svg class="toggle-icon icon-lines" viewBox="0 0 28 28" fill="none" aria-hidden="true">
-              <path d="M9.5 17.5V10.5M14 20V8M18.5 17.5V10.5" stroke="currentColor" stroke-width="1.25" stroke-linecap="square"/>
-            </svg>
-            <svg class="toggle-icon icon-dots" viewBox="0 0 28 28" fill="none" aria-hidden="true">
-              <path d="M9.5 17.5V16M14 17.5V16M18.5 17.5V16" stroke="currentColor" stroke-width="1.25" stroke-linecap="square"/>
-            </svg>
-          </button>
-          <a class="top-meta-contact-arrow" href="#contact" aria-label="联系 / Contact" title="联系 / Contact">↗</a>
         </span>
       </div>
     </div>
@@ -363,25 +346,37 @@
       </div>
       <div class="works-list-header" data-reveal data-delay="260" aria-hidden="true"></div>
       <ul class="works-list" id="works-list">
-        <li class="works-row" data-category="oem" data-reveal data-delay="320">
+        <li class="works-row" data-category="oem" data-project-index="0" data-reveal data-delay="320">
           <span class="works-row-index">01</span>
-          <span class="works-row-name" data-i18n="work_row_1_name">包装设计</span>
+          <span class="works-row-name" data-i18n="work_row_1_name">23 年端午</span>
         </li>
-        <li class="works-row" data-category="gift" data-reveal data-delay="380">
+        <li class="works-row" data-category="oem" data-project-index="1" data-reveal data-delay="380">
           <span class="works-row-index">02</span>
-          <span class="works-row-name" data-i18n="work_row_2_name">节礼包装设计</span>
+          <span class="works-row-name" data-i18n="work_row_2_name">24 年端午</span>
         </li>
-        <li class="works-row" data-category="brand" data-reveal data-delay="440">
+        <li class="works-row" data-category="oem" data-project-index="2" data-reveal data-delay="440">
           <span class="works-row-index">03</span>
-          <span class="works-row-name" data-i18n="work_row_3_name">品牌与字体设计</span>
+          <span class="works-row-name" data-i18n="work_row_3_name">24 年中秋</span>
         </li>
-        <li class="works-row" data-category="aigc" data-reveal data-delay="500">
+        <li class="works-row" data-category="oem" data-project-index="3" data-reveal data-delay="500">
           <span class="works-row-index">04</span>
-          <span class="works-row-name" data-i18n="work_row_4_name">AIGC工作流</span>
+          <span class="works-row-name" data-i18n="work_row_4_name">超级粽棒</span>
         </li>
-        <li class="works-row" data-category="aigc-video" data-reveal data-delay="560">
+        <li class="works-row" data-category="oem" data-project-index="4" data-reveal data-delay="560">
           <span class="works-row-index">05</span>
-          <span class="works-row-name" data-i18n="work_row_5_name">AIGC视频</span>
+          <span class="works-row-name" data-i18n="work_row_5_name">风味人间</span>
+        </li>
+        <li class="works-row" data-category="gift" data-project-index="0" data-reveal data-delay="620">
+          <span class="works-row-index">06</span>
+          <span class="works-row-name" data-i18n="work_row_6_name">23 顺丰端午</span>
+        </li>
+        <li class="works-row" data-category="gift" data-project-index="1" data-reveal data-delay="680">
+          <span class="works-row-index">07</span>
+          <span class="works-row-name" data-i18n="work_row_7_name">安吉尔</span>
+        </li>
+        <li class="works-row" data-category="gift" data-project-index="2" data-reveal data-delay="740">
+          <span class="works-row-index">08</span>
+          <span class="works-row-name" data-i18n="work_row_8_name">固德威</span>
         </li>
       </ul>
       <div class="works-hover-preview" id="works-hover-preview" aria-hidden="true">
@@ -417,53 +412,6 @@
       </div>
       <div class="work-detail" id="work-detail" aria-live="polite"></div>
     </aside>
-
-    <section class="clients-section reveal" id="clients" aria-label="合作客户 / Selected clients">
-      <canvas class="clients-particles" id="clients-particles" aria-hidden="true"></canvas>
-      <div class="clients-content">
-        <div class="clients-title-band" aria-hidden="true">
-          <div class="clients-title-float" id="clients-title-float" aria-hidden="true"></div>
-          <span class="clients-title-lockup">
-            <span class="clients-title-line"><span class="clients-title-serif">Packaging</span> Brand</span>
-            <span class="clients-title-line"><span class="clients-title-serif">Design</span></span>
-          </span>
-        </div>
-
-        <div class="section-head section-head-centered section-head-light">
-          <p class="section-kicker accent" data-i18n="clients_kicker">合作客户</p>
-          <p class="clients-intro" data-i18n="clients_intro">部分合作品牌与项目方，覆盖物流、家居、食品、企业福利与消费品渠道。</p>
-        </div>
-        <div
-          class="clients-marquee logoloop logoloop--horizontal logoloop--fade logoloop--scale-hover"
-          data-speed="74"
-          data-hover-speed="14"
-          aria-label="合作客户"
-        >
-          <div class="logoloop__track">
-            <ul class="logoloop__list">
-              <li class="logoloop__item"><span class="logoloop__node">顺丰</span></li>
-              <li class="logoloop__item"><span class="logoloop__node">追觅科技</span></li>
-              <li class="logoloop__item"><span class="logoloop__node">信维通信</span></li>
-              <li class="logoloop__item"><span class="logoloop__node">顾家家居</span></li>
-              <li class="logoloop__item"><span class="logoloop__node">本来生活</span></li>
-              <li class="logoloop__item"><span class="logoloop__node">熊小夕</span></li>
-              <li class="logoloop__item"><span class="logoloop__node">糕上有点</span></li>
-              <li class="logoloop__item"><span class="logoloop__node">功能粥</span></li>
-              <li class="logoloop__item"><span class="logoloop__node">吉利</span></li>
-              <li class="logoloop__item"><span class="logoloop__node">中兴</span></li>
-              <li class="logoloop__item"><span class="logoloop__node">鞍钢</span></li>
-              <li class="logoloop__item"><span class="logoloop__node">爱情地产</span></li>
-              <li class="logoloop__item"><span class="logoloop__node">安吉尔</span></li>
-              <li class="logoloop__item"><span class="logoloop__node">固德威</span></li>
-              <li class="logoloop__item"><span class="logoloop__node">心中甜</span></li>
-              <li class="logoloop__item"><span class="logoloop__node">瓷和居</span></li>
-              <li class="logoloop__item"><span class="logoloop__node">熙图</span></li>
-              <li class="logoloop__item"><span class="logoloop__node">85°C</span></li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </section>
 
     <section class="contact-section reveal" id="contact">
       <div class="contact-layout">
@@ -573,7 +521,114 @@
       <!-- Copy toast -->
       <div class="contact-toast" id="contact-toast" aria-live="polite" data-i18n="contact_copied">已复制</div>
     </section>
+
+    <section class="clients-section reveal" id="clients" aria-label="合作客户 / Selected clients">
+      <canvas class="clients-particles" id="clients-particles" aria-hidden="true"></canvas>
+      <div class="clients-content">
+        <div class="clients-title-band" aria-hidden="true">
+          <div class="clients-title-float" id="clients-title-float" aria-hidden="true"></div>
+          <span class="clients-title-lockup">
+            <span class="clients-title-line"><span class="clients-title-serif">Packaging</span> Brand</span>
+            <span class="clients-title-line"><span class="clients-title-serif">Design</span></span>
+          </span>
+        </div>
+
+        <div class="section-head section-head-centered section-head-light">
+          <p class="section-kicker accent" data-i18n="clients_kicker">合作客户</p>
+          <p class="clients-intro" data-i18n="clients_intro">部分合作品牌与项目方，覆盖物流、家居、食品、企业福利与消费品渠道。</p>
+        </div>
+        <div
+          class="clients-marquee logoloop logoloop--horizontal logoloop--fade logoloop--scale-hover"
+          data-speed="74"
+          data-hover-speed="14"
+          aria-label="合作客户"
+        >
+          <div class="logoloop__track">
+            <ul class="logoloop__list">
+              <li class="logoloop__item"><span class="logoloop__node">顺丰</span></li>
+              <li class="logoloop__item"><span class="logoloop__node">追觅科技</span></li>
+              <li class="logoloop__item"><span class="logoloop__node">信维通信</span></li>
+              <li class="logoloop__item"><span class="logoloop__node">顾家家居</span></li>
+              <li class="logoloop__item"><span class="logoloop__node">本来生活</span></li>
+              <li class="logoloop__item"><span class="logoloop__node">熊小夕</span></li>
+              <li class="logoloop__item"><span class="logoloop__node">糕上有点</span></li>
+              <li class="logoloop__item"><span class="logoloop__node">功能粥</span></li>
+              <li class="logoloop__item"><span class="logoloop__node">吉利</span></li>
+              <li class="logoloop__item"><span class="logoloop__node">中兴</span></li>
+              <li class="logoloop__item"><span class="logoloop__node">鞍钢</span></li>
+              <li class="logoloop__item"><span class="logoloop__node">爱情地产</span></li>
+              <li class="logoloop__item"><span class="logoloop__node">安吉尔</span></li>
+              <li class="logoloop__item"><span class="logoloop__node">固德威</span></li>
+              <li class="logoloop__item"><span class="logoloop__node">心中甜</span></li>
+              <li class="logoloop__item"><span class="logoloop__node">瓷和居</span></li>
+              <li class="logoloop__item"><span class="logoloop__node">熙图</span></li>
+              <li class="logoloop__item"><span class="logoloop__node">85°C</span></li>
+            </ul>
+          </div>
+        </div>
+        <footer class="clients-footer-meta" aria-label="Site footer">
+          <span class="clients-footer-name" data-i18n="meta_name">©杨钦鹏</span>
+          <span class="clients-footer-clock">
+            <span class="clients-footer-time" id="beijing-time">PM 00:00</span>
+            <span class="clients-footer-separator" aria-hidden="true"></span>
+            <span class="clients-footer-date" id="beijing-date">2026.05.14</span>
+          </span>
+        </footer>
+      </div>
+    </section>
   </main>
+
+  <aside class="works-side-rail" id="works-side-rail" aria-label="Works navigation">
+    <div class="works-side-rail-trigger">
+      <button class="pixel-avatar works-side-rail-avatar" id="pixel-avatar" type="button" aria-label="Return to entry" aria-hidden="false">
+        <img src="images/头像.png" alt="" draggable="false">
+      </button>
+      <span class="works-side-rail-label">WORK</span>
+      <button class="works-side-rail-toggle" id="works-side-rail-toggle" type="button" aria-expanded="false" aria-controls="works-side-rail-panel" aria-label="Open works menu">
+        <span class="works-side-rail-cue" aria-hidden="true"></span>
+      </button>
+    </div>
+    <div class="works-side-rail-panel" id="works-side-rail-panel">
+      <div class="works-side-rail-panel-head">
+        <p class="works-side-rail-kicker">WORK</p>
+        <button class="works-side-rail-close" type="button" aria-label="关闭作品菜单">
+          <span aria-hidden="true"></span>
+        </button>
+      </div>
+      <ul class="works-side-rail-list">
+        <li>
+          <button class="works-side-rail-item" type="button" data-category="oem">
+            <span class="works-side-rail-index">01</span>
+            <span class="works-side-rail-name" data-i18n="work_row_category_1_name">包装设计</span>
+          </button>
+        </li>
+        <li>
+          <button class="works-side-rail-item" type="button" data-category="gift">
+            <span class="works-side-rail-index">02</span>
+            <span class="works-side-rail-name" data-i18n="work_row_category_2_name">节礼包装设计</span>
+          </button>
+        </li>
+        <li>
+          <button class="works-side-rail-item" type="button" data-category="brand">
+            <span class="works-side-rail-index">03</span>
+            <span class="works-side-rail-name" data-i18n="work_row_category_3_name">品牌与字体设计</span>
+          </button>
+        </li>
+        <li>
+          <button class="works-side-rail-item" type="button" data-category="aigc">
+            <span class="works-side-rail-index">04</span>
+            <span class="works-side-rail-name" data-i18n="work_row_category_4_name">AIGC工作流</span>
+          </button>
+        </li>
+        <li>
+          <button class="works-side-rail-item" type="button" data-category="aigc-video">
+            <span class="works-side-rail-index">05</span>
+            <span class="works-side-rail-name" data-i18n="work_row_category_5_name">AIGC视频</span>
+          </button>
+        </li>
+      </ul>
+    </div>
+  </aside>
 
   <nav class="bottom-nav pill-nav" aria-label="Main navigation">
     <ul class="pill-list">
@@ -589,10 +644,16 @@
           <span class="label-stack"><span class="pill-label">Services</span><span class="pill-label-hover" aria-hidden="true">Services</span></span>
         </a>
       </li>
-      <li>
+      <li class="nav-mobile-only">
         <a class="bottom-nav-item pill" href="#works" data-i18n="nav_works" aria-label="Works">
           <span class="hover-circle" aria-hidden="true"></span>
           <span class="label-stack"><span class="pill-label">Works</span><span class="pill-label-hover" aria-hidden="true">Works</span></span>
+        </a>
+      </li>
+      <li>
+        <a class="bottom-nav-item pill" href="#contact" data-i18n="nav_contact" aria-label="Contact">
+          <span class="hover-circle" aria-hidden="true"></span>
+          <span class="label-stack"><span class="pill-label">Contact</span><span class="pill-label-hover" aria-hidden="true">Contact</span></span>
         </a>
       </li>
     </ul>
@@ -620,9 +681,10 @@
   <script src="scripts/services-entry-grid-scan.js"></script>
   <script src="scripts/service-panel-shaders.js"></script>
   <script src="scripts/services-scroll-story.js"></script>
-  <script src="scripts/work-gallery.js?v=20260513-pmg-edgefix2"></script>
+  <script src="scripts/work-gallery.js?v=20260514-detail-works1"></script>
+  <script src="scripts/works-side-rail.js?v=20260514-avatar-work-menu1"></script>
   <script src="scripts/scrambled-text.js"></script>
-  <script src="scripts/header-controls.js"></script>
+  <script src="scripts/header-controls.js?v=20260514-footer-meta1"></script>
   <script src="scripts/language-controls.js"></script>
   <script src="scripts/contact-interactions.js"></script>
   <script src="scripts/scroll-type-effects.js"></script>
@@ -631,10 +693,10 @@
   <script src="scripts/precision-cursor.js?v=20260512-target-cursor1"></script>
   <script src="scripts/services-image-trail.js"></script>
   <script src="scripts/hero-card-events.js"></script>
-  <script src="scripts/works-hover-preview.js"></script>
+  <script src="scripts/works-hover-preview.js?v=20260514-detail-works1"></script>
   <script src="scripts/works-transition-motion.js"></script>
   <script src="scripts/site-clock.js"></script>
-  <script src="scripts/bottom-nav-scroll-spy.js"></script>
+  <script src="scripts/bottom-nav-scroll-spy.js?v=20260514-nav-lockfix1"></script>
   <script src="scripts/clients-marquee.js"></script>
   <script src="scripts/clients-title-interaction.js"></script>
   <script src="scripts/portrait-motion.js"></script>

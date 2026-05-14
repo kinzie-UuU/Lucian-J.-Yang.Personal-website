@@ -2,6 +2,7 @@
 .clients-section {
   position: relative;
   width: 100%;
+  min-height: 100svh;
   margin-top: 0;
   padding-top: clamp(112px, 17svh, 210px);
   color: var(--warm-ink);
@@ -35,7 +36,8 @@
   position: relative;
   z-index: 1;
   width: 100%;
-  padding: 0 0 clamp(148px, 18svh, 230px);
+  min-height: calc(100svh - clamp(112px, 17svh, 210px));
+  padding: 0 0 clamp(224px, 22svh, 292px);
 }
 
 .clients-section .section-head {
@@ -70,6 +72,78 @@ html[lang="en"] .clients-intro {
   --logoloop-logoHeight: clamp(1.85rem, 3.4vw, 3.8rem);
   --logoloop-fadeColor: var(--warm-paper);
   margin-top: clamp(68px, 10svh, 132px);
+}
+
+.clients-footer-meta {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 3;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: clamp(20px, 3.8vw, 68px);
+  min-height: clamp(58px, 7.2svh, 76px);
+  padding: 0 clamp(28px, 5.2vw, 92px) max(17px, env(safe-area-inset-bottom));
+  color: rgba(232, 228, 222, 0.56);
+  background: #000;
+  box-shadow: 0 -1px 0 rgba(20, 20, 20, 0.92);
+  font-family: "Satoshi", "MiSans", system-ui, sans-serif;
+  font-size: clamp(0.62rem, 0.64vw, 0.78rem);
+  font-weight: 520;
+  line-height: 1;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  pointer-events: none;
+  font-feature-settings: "tnum" 1, "case" 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.clients-footer-name,
+.clients-footer-clock,
+.clients-footer-time,
+.clients-footer-date {
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.clients-footer-name {
+  justify-content: flex-start;
+  font-weight: 540;
+  letter-spacing: 0.08em;
+  opacity: 0.84;
+}
+
+.clients-footer-clock {
+  justify-content: flex-end;
+  gap: clamp(10px, 1.05vw, 18px);
+  text-align: right;
+}
+
+.clients-footer-separator {
+  flex: 0 0 auto;
+  width: 4px;
+  height: 4px;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  opacity: 0.26;
+}
+
+.clients-footer-time {
+  min-width: 7.7ch;
+  justify-content: flex-end;
+}
+
+.clients-footer-date {
+  min-width: 9.4ch;
+  justify-content: flex-end;
+}
+
+.clients-footer-meta .top-meta-period {
+  margin-right: 0.42em;
+  opacity: 0.42;
 }
 
 .logoloop {
@@ -352,6 +426,11 @@ html[lang="en"] .clients-intro {
     padding-top: 92px;
   }
 
+  .clients-content {
+    min-height: calc(100svh - 92px);
+    padding-bottom: 214px;
+  }
+
   .clients-title-band {
     min-height: 52svh;
     padding: 72px 18px 56px;
@@ -366,6 +445,29 @@ html[lang="en"] .clients-intro {
   .clients-marquee {
     --logoloop-logoHeight: clamp(1.5rem, 8.4vw, 2.8rem);
     margin-top: 56px;
+  }
+
+  .clients-footer-meta {
+    left: 0;
+    right: 0;
+    bottom: 0;
+    align-items: center;
+    min-height: 104px;
+    padding: 0 18px max(82px, env(safe-area-inset-bottom));
+    font-size: 0.58rem;
+    letter-spacing: 0.07em;
+  }
+
+  .clients-footer-clock {
+    gap: 7px;
+  }
+
+  .clients-footer-time {
+    min-width: 7.1ch;
+  }
+
+  .clients-footer-date {
+    min-width: 8.8ch;
   }
 
   .clients-section .section-head {

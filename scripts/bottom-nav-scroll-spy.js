@@ -1,16 +1,24 @@
 (() => {
   const runtime = window.LucianRuntime;
   const navItems = document.querySelectorAll(".bottom-nav-item");
-  const sectionIds = ["about", "services", "works"];
+  const sectionIds = ["about", "services", "works", "contact"];
   const warmSectionIds = ["clients", "contact"];
   const sections = sectionIds.map((id) => document.getElementById(id)).filter(Boolean);
   const warmSections = warmSectionIds.map((id) => document.getElementById(id)).filter(Boolean);
+  const contactSection = document.getElementById("contact");
+  const clientsSection = document.getElementById("clients");
   const anchorLinks = document.querySelectorAll('a[href^="#"]:not([href="#"])');
   let navTransition = null;
   let navTransitionCopy = null;
   let navTransitionLabel = null;
   let transitionTimers = [];
   let transitionActive = false;
+  let transitionToken = 0;
+
+  const clearTransitionTimers = () => {
+    transitionTimers.forEach((timer) => clearTimeout(timer));
+    transitionTimers = [];
+  };
 
   const transitionCopy = {
     about: "ABOUT",
@@ -65,6 +73,8 @@
     membrane.className = "nav-water-membrane";
     navTransitionCopy.className = "nav-water-copy";
     navTransitionLabel.className = "nav-water-label";
+    navTransition.hidden = true;
+    navTransitionCopy.hidden = true;
     navTransitionCopy.append(navTransitionLabel);
     navTransition.append(membrane);
     document.body.append(navTransition, navTransitionCopy);
@@ -75,11 +85,42 @@
     if (navTransitionLabel) navTransitionLabel.textContent = transitionCopy[target.id] || target.id.toUpperCase();
   };
 
+  const resetTransitionLayers = ({ removeNodes = false, clearTimers = true } = {}) => {
+    if (clearTimers) clearTransitionTimers();
+    navTransition?.classList.remove("is-active", "is-leaving");
+    navTransitionCopy?.classList.remove("is-active", "is-leaving");
+    navTransitionCopy?.style.removeProperty("opacity");
+    if (navTransition) navTransition.hidden = true;
+    if (navTransitionCopy) navTransitionCopy.hidden = true;
+    document.body.classList.remove("nav-transition-active");
+    transitionActive = false;
+
+    if (removeNodes) {
+      navTransition?.remove();
+      navTransitionCopy?.remove();
+      navTransition = null;
+      navTransitionCopy = null;
+      navTransitionLabel = null;
+    }
+  };
+
+  const finishTransition = () => {
+    navTransition?.classList.add("is-leaving");
+    navTransitionCopy?.classList.add("is-leaving");
+    navTransition?.classList.remove("is-active");
+    navTransitionCopy?.classList.remove("is-active");
+    navTransitionCopy?.style.removeProperty("opacity");
+    document.body.classList.remove("nav-transition-active");
+    transitionActive = false;
+  };
+
   const scrollToTarget = (target, { forceInstant = false, withTransition = true } = {}) => {
-    if (transitionActive && withTransition) return;
+    if (transitionActive && withTransition) {
+      transitionToken += 1;
+      resetTransitionLayers({ removeNodes: true });
+    }
     runtime?.closeWorkGallery?.();
-    transitionTimers.forEach((timer) => clearTimeout(timer));
-    transitionTimers = [];
+    clearTransitionTimers();
 
     const runScroll = () => {
       const top = getReadableTop(target);
@@ -99,35 +140,43 @@
     }
 
     transitionActive = true;
+    const token = ++transitionToken;
     const overlay = getTransitionOverlay();
     setTransitionText(target);
+    overlay.hidden = false;
+    if (navTransitionCopy) navTransitionCopy.hidden = false;
     document.body.classList.add("nav-transition-active");
     overlay.classList.remove("is-leaving");
     navTransitionCopy?.classList.remove("is-leaving");
     overlay.classList.remove("is-active");
     navTransitionCopy?.classList.remove("is-active");
     window.requestAnimationFrame(() => {
+      if (token !== transitionToken) return;
       overlay.classList.add("is-active");
       navTransitionCopy?.classList.add("is-active");
-      if (navTransitionCopy) navTransitionCopy.style.opacity = "1";
     });
 
-    transitionTimers.push(setTimeout(runScroll, 180));
     transitionTimers.push(setTimeout(() => {
-      overlay.classList.add("is-leaving");
-      navTransitionCopy?.classList.add("is-leaving");
-      overlay.classList.remove("is-active");
-      navTransitionCopy?.classList.remove("is-active");
-      if (navTransitionCopy) navTransitionCopy.style.opacity = "0";
-      document.body.classList.remove("nav-transition-active");
-      transitionActive = false;
+      if (token !== transitionToken) return;
+      runScroll();
+    }, 180));
+    transitionTimers.push(setTimeout(() => {
+      if (token !== transitionToken) return;
+      finishTransition();
     }, 560));
 
     transitionTimers.push(setTimeout(() => {
+      if (token !== transitionToken) return;
       overlay.classList.remove("is-leaving");
       navTransitionCopy?.classList.remove("is-leaving");
-      transitionTimers = [];
+      navTransitionCopy?.style.removeProperty("opacity");
+      resetTransitionLayers({ clearTimers: false });
     }, 820));
+
+    transitionTimers.push(setTimeout(() => {
+      if (token !== transitionToken) return;
+      resetTransitionLayers({ removeNodes: true, clearTimers: false });
+    }, 1400));
   };
 
   const updateActiveNav = () => {
@@ -139,12 +188,23 @@
       if (section.offsetTop <= scrollY) active = section.id;
     }
 
-    const warmActive = warmSections.some((section) => (
+    const isSectionInView = (section) => (
       section.offsetTop <= warmY
       && section.offsetTop + section.offsetHeight > window.scrollY + getTopSafeArea()
-    ));
+    );
 
-    if (warmActive) active = null;
+    if (
+      contactSection
+      && contactSection.getBoundingClientRect().top <= window.innerHeight * 0.58
+      && contactSection.getBoundingClientRect().bottom > getTopSafeArea()
+    ) {
+      active = "contact";
+    }
+
+    const warmActive = warmSections.some(isSectionInView);
+    const clientsActive = clientsSection ? isSectionInView(clientsSection) : false;
+
+    if (clientsActive) active = null;
     document.body.classList.toggle("is-warm-stage", warmActive);
 
     navItems.forEach((item) => {
@@ -167,5 +227,9 @@
 
   window.addEventListener("scroll", updateActiveNav, { passive: true });
   window.addEventListener("resize", updateActiveNav);
+  window.addEventListener("pageshow", () => resetTransitionLayers({ removeNodes: true }));
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) resetTransitionLayers({ removeNodes: true });
+  });
   updateActiveNav();
 })();

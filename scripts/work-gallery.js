@@ -1315,10 +1315,15 @@
     workGallery.scrollTo({ top: 0, behavior: "auto" });
   };
 
-  const openWorkGallery = (row) => {
+  const getCategoryTitle = (category) => {
+    const currentLang = getCurrentLang();
+    return galleryText[currentLang]?.categoryTitles?.[category]
+      || galleryText.zh?.categoryTitles?.[category]
+      || "Project";
+  };
+
+  const openCategory = (category = "oem", title = getCategoryTitle(category)) => {
     if (!workGallery || !workGalleryTrack) return;
-    const category = row.dataset.category || "oem";
-    const title = row.querySelector(".works-row-name")?.textContent.trim() || "Project";
     const projects = getGalleryProjects(category);
     const initialIndex = 0;
     galleryCategory = category;
@@ -1334,6 +1339,25 @@
     updateGalleryHeader(projects[initialIndex], initialIndex, title);
     buildGalleryItems(projects, { defer: true });
     showGallery();
+  };
+
+  const openWorkGallery = (row) => {
+    const category = row.dataset.category || "oem";
+    const title = row.querySelector(".works-row-name")?.textContent.trim() || getCategoryTitle(category);
+    if (row.dataset.projectIndex) {
+      openProject({ category, projectIndex: row.dataset.projectIndex, title });
+      return;
+    }
+    openCategory(category, title);
+  };
+
+  const openProject = ({ category = "oem", projectIndex = 0, title = "" } = {}) => {
+    const parsedIndex = Number.parseInt(projectIndex, 10);
+    openFromHeroCard({
+      projectKey: category,
+      projectIndex: Number.isFinite(parsedIndex) ? parsedIndex : 0,
+      cardName: title || getCategoryTitle(category),
+    });
   };
 
   const close = () => {
@@ -1381,6 +1405,8 @@
 
   window.LucianWorkGallery = {
     close,
+    openCategory,
+    openProject,
     openFromHeroCard,
     refreshLanguage,
   };

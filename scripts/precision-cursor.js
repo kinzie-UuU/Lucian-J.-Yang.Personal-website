@@ -44,6 +44,15 @@
   };
 
   const isTargetCursorEnabled = () => finePointer && !prefersReducedMotion && !!cursor;
+  const isEntryTransitioning = () =>
+    document.body.classList.contains("is-unfolding") ||
+    document.body.classList.contains("is-entering");
+
+  const storePointerPosition = (event) => {
+    cursorState.x = event.clientX;
+    cursorState.y = event.clientY;
+    runtime.updatePrecisionCursor(event.clientX, event.clientY);
+  };
 
   const ensureTargetCursorMarkup = () => {
     if (!cursor || cursor.querySelector(".target-cursor-shell")) return;
@@ -152,6 +161,25 @@
     queueTargetCursorTick();
   };
 
+  const hideDuringEntryTransition = () => {
+    runtime.setCursorVisible(false);
+    cursorState.visible = false;
+    setActiveTarget(null);
+    runtime.clearFieldPointer();
+  };
+
+  const showEnteredCursorFromLastPoint = () => {
+    if (!isTargetCursorEnabled() || !document.body.classList.contains("has-entered") || isEntryTransitioning()) return;
+
+    runtime.updatePrecisionCursor(cursorState.x, cursorState.y);
+    runtime.setCursorVisible(true);
+    cursorState.visible = true;
+
+    const element = document.elementFromPoint(cursorState.x, cursorState.y);
+    setActiveTarget(findTarget(element));
+    queueTargetCursorTick();
+  };
+
   if (isTargetCursorEnabled()) {
     ensureTargetCursorMarkup();
     setCornerTransforms();
@@ -164,9 +192,12 @@
       return;
     }
 
-    cursorState.x = event.clientX;
-    cursorState.y = event.clientY;
-    runtime.updatePrecisionCursor(event.clientX, event.clientY);
+    storePointerPosition(event);
+    if (isEntryTransitioning()) {
+      hideDuringEntryTransition();
+      return;
+    }
+
     if (document.body.classList.contains("has-entered")) {
       runtime.setCursorVisible(true);
       cursorState.visible = true;
@@ -204,7 +235,15 @@
     }
   });
 
-  window.addEventListener("pointerdown", () => {
+  window.addEventListener("pointerdown", (event) => {
+    if (event.pointerType !== "touch") {
+      storePointerPosition(event);
+      if (isEntryTransitioning()) {
+        hideDuringEntryTransition();
+      } else if (document.body.classList.contains("has-entered")) {
+        showEnteredCursorFromLastPoint();
+      }
+    }
     cursor?.classList.add("is-pressing");
   });
 
@@ -225,4 +264,17 @@
     setActiveTarget(null);
     runtime.clearFieldPointer();
   });
+
+  const bodyClassObserver = new MutationObserver(() => {
+    if (isEntryTransitioning()) {
+      hideDuringEntryTransition();
+      return;
+    }
+
+    if (document.body.classList.contains("has-entered")) {
+      requestAnimationFrame(showEnteredCursorFromLastPoint);
+    }
+  });
+
+  bodyClassObserver.observe(document.body, { attributes: true, attributeFilter: ["class"] });
 })();

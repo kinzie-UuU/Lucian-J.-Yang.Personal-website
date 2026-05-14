@@ -3,6 +3,7 @@
   if (!runtime) return;
 
   const soundToggle = document.querySelector("#sound-toggle");
+  const soundStateNode = soundToggle?.querySelector(".top-meta-sound-state");
   const fullscreenToggle = document.querySelector("#fullscreen-toggle");
   const SOUND_STORAGE_KEY = "lucianYangSoundEnabled";
 
@@ -32,6 +33,9 @@
       "aria-label",
       enabled ? "Mute interface sounds" : "Enable interface sounds"
     );
+    if (soundStateNode) {
+      soundStateNode.textContent = enabled ? "ON" : "OFF";
+    }
   };
 
   soundToggle?.addEventListener("click", async () => {
@@ -78,4 +82,3 @@
   applySoundState();
   updateFullscreenState();
 })();
-

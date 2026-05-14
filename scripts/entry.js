@@ -390,6 +390,7 @@ const enterSite = () => {
   }
 
   // Phase 1: lid swings open
+  runtime.setCursorVisible(false);
   document.body.classList.add("is-unfolding");
   playEntryCodeReveal();
 
