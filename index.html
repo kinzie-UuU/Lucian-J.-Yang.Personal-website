@@ -142,83 +142,60 @@
 
         <svg class="hero-wireframe" id="hero-wireframe" aria-hidden="true"></svg>
 
-        <div class="hero-scroll-progress" aria-hidden="true">
-          <span class="hero-scroll-progress-track"></span>
-          <span class="hero-scroll-progress-fill"></span>
-          <span class="hero-scroll-progress-mark">01</span>
-          <span class="hero-scroll-progress-mark">05</span>
-        </div>
-
         <div class="hero-scroll-cue" aria-hidden="true">
           <span class="hero-scroll-cue-wheel"></span>
         </div>
 
-        <div class="hero-grid" id="hero-grid">
-          <button class="hero-card" type="button" data-work="oem" data-tone="light" data-project-key="oem" data-project-index="0">
-            <span class="hero-card-image-area"></span>
-            <div class="hero-card-info">
-              <span class="hero-card-category" data-i18n="hero_card_1_category">品牌包装</span>
-              <span class="hero-card-name" data-i18n="hero_card_1_name">包装设计</span>
-              <span class="hero-card-meta" data-i18n="hero_card_1_meta">01 · 结构与识别</span>
+        <div class="hero-cube-scene" id="hero-cube-scene" aria-label="Packaging cube showcase">
+          <div class="hero-cube" id="hero-cube">
+            <div class="hero-cube-face" data-face="top" data-i="0">
+              <img src="images/works/oem/23nianduanwu/WechatIMG2128.jpg" alt="">
+              <span class="hero-cube-face-ph">TOP</span>
             </div>
-          </button>
-          <button class="hero-card" type="button" data-work="gift" data-project-key="gift" data-project-index="0">
-            <span class="hero-card-image-area"></span>
-            <div class="hero-card-info">
-              <span class="hero-card-category" data-i18n="hero_card_2_category">礼品福利</span>
-              <span class="hero-card-name" data-i18n="hero_card_2_name">节礼包装设计</span>
-              <span class="hero-card-meta" data-i18n="hero_card_2_meta">02 · 节点与渠道</span>
+            <div class="hero-cube-face" data-face="front" data-i="1">
+              <img src="images/works/oem/24nianduanwu/2.png" alt="">
+              <span class="hero-cube-face-ph">FRONT</span>
             </div>
-          </button>
-          <button class="hero-card" type="button" data-work="brand" data-project-key="brand" data-project-index="0">
-            <span class="hero-card-image-area"></span>
-            <div class="hero-card-info">
-              <span class="hero-card-category" data-i18n="hero_card_3_category">品牌字体</span>
-              <span class="hero-card-name" data-i18n="hero_card_3_name">品牌与字体设计</span>
-              <span class="hero-card-meta" data-i18n="hero_card_3_meta">03 · 字体与识别</span>
+            <div class="hero-cube-face" data-face="right" data-i="2">
+              <img src="images/works/oem/24nianzhongqiu/69f4e228dc3023cccc50614c9cd1c92d.png" alt="">
+              <span class="hero-cube-face-ph">RIGHT</span>
             </div>
-          </button>
-          <button class="hero-card hero-card-dark" type="button" data-work="aigc" data-tone="dark" data-project-key="aigc" data-project-index="0">
-            <span class="hero-card-image-area"></span>
-            <div class="hero-card-info">
-              <span class="hero-card-category" data-i18n="hero_card_4_category">AIGC流</span>
-              <span class="hero-card-name" data-i18n="hero_card_4_name">AIGC 工作流</span>
-              <span class="hero-card-meta" data-i18n="hero_card_4_meta">04 · 提案与筛选</span>
+            <div class="hero-cube-face" data-face="back" data-i="3">
+              <img src="images/works/oem/chaojizongbang/03-01.png" alt="">
+              <span class="hero-cube-face-ph">BACK</span>
             </div>
-          </button>
-          <button class="hero-card hero-card-dark" type="button" data-work="aigc-video" data-tone="dark" data-project-key="aigc-video" data-project-index="0">
-            <span class="hero-card-image-area"></span>
-            <div class="hero-card-info">
-              <span class="hero-card-category" data-i18n="hero_card_5_category">视频创作</span>
-              <span class="hero-card-name" data-i18n="hero_card_5_name">AIGC 视频</span>
-              <span class="hero-card-meta" data-i18n="hero_card_5_meta">05 · 动态表达</span>
+            <div class="hero-cube-face" data-face="left" data-i="4">
+              <img src="images/works/gift/23shunfengduanwu/WechatIMG704.jpg" alt="">
+              <span class="hero-cube-face-ph">LEFT</span>
             </div>
-          </button>
+            <div class="hero-cube-face" data-face="bottom" data-i="5">
+              <img src="images/works/gift/anjier/1.1新.jpg" alt="">
+              <span class="hero-cube-face-ph">BOTTOM</span>
+            </div>
+          </div>
         </div>
 
-        <div class="hero-order-k" id="hero-order-k" aria-hidden="true">K</div>
+        <div class="hero-cube-hud" aria-hidden="true">
+          <div class="hero-cube-percent" id="hero-cube-percent">000%</div>
+          <div class="hero-cube-progress">
+            <span class="hero-cube-progress-fill" id="hero-cube-progress-fill"></span>
+          </div>
+          <div class="hero-cube-scene-name" id="hero-cube-scene-name">STRUCTURE</div>
+        </div>
 
-        <aside class="hero-focus-panel" id="hero-focus-panel" aria-live="polite">
-          <p class="hero-focus-kicker" id="hero-focus-kicker">ACTIVE PROJECT</p>
-          <h2 class="hero-focus-title" id="hero-focus-title">OEM Packaging</h2>
-          <p class="hero-focus-desc" id="hero-focus-desc">
-            Build clear, scalable packaging systems for multi-SKU lines, defined price bands, and execution-heavy production needs.
-          </p>
-          <div class="hero-focus-meta">
-            <div>
-              <span data-i18n="metric_focus">Focus</span>
-              <strong id="hero-focus-meta-a">Structure / Recognition / Delivery</strong>
-            </div>
-            <div>
-              <span data-i18n="metric_value">Value</span>
-              <strong id="hero-focus-meta-b">Make packaging work under real constraints</strong>
-            </div>
-          </div>
-          <div class="hero-focus-actions">
-            <a class="hero-link hero-link-solid" href="#works" id="hero-focus-enter" data-i18n="hero_action_works">Enter Works</a>
-            <a class="hero-link hero-link-ghost" href="#services" data-i18n="hero_action_about">View Services</a>
-          </div>
-        </aside>
+        <div class="hero-cube-strip" id="hero-cube-strip" aria-label="Packaging cube faces">
+          <button class="hero-cube-dot is-active" type="button" data-cube-stop="0" aria-label="Cube face 1"></button>
+          <button class="hero-cube-dot" type="button" data-cube-stop="1" aria-label="Cube face 2"></button>
+          <button class="hero-cube-dot" type="button" data-cube-stop="2" aria-label="Cube face 3"></button>
+          <button class="hero-cube-dot" type="button" data-cube-stop="3" aria-label="Cube face 4"></button>
+          <button class="hero-cube-dot" type="button" data-cube-stop="4" aria-label="Cube face 5"></button>
+          <button class="hero-cube-dot" type="button" data-cube-stop="5" aria-label="Cube face 6"></button>
+        </div>
+
+        <div class="hero-cube-caption" aria-hidden="true">
+          <div class="hero-cube-caption-num" id="hero-cube-caption-num">01</div>
+          <div class="hero-cube-caption-name" id="hero-cube-caption-name">STRUCTURE</div>
+        </div>
       </div>
 
     </section>
@@ -678,6 +655,7 @@
   <script src="scripts/flip-text.js"></script>
   <script src="scripts/particle-canvas.js"></script>
   <script src="script.js"></script>
+  <script src="scripts/hero-packaging-cube.js?v=20260514-cube1"></script>
   <script src="scripts/services-entry-grid-scan.js"></script>
   <script src="scripts/service-panel-shaders.js"></script>
   <script src="scripts/services-scroll-story.js"></script>

@@ -7,14 +7,15 @@
     (event) => {
       const deltaY = event.deltaY;
       if (!heroSteps.isActive(deltaY)) return;
-      event.preventDefault();
 
       const threshold = deltaY > 0
         ? heroSteps.wheelStepThreshold
         : heroSteps.wheelBackThreshold;
       if (Math.abs(deltaY) < threshold) return;
 
-      heroSteps.step(deltaY > 0);
+      if (heroSteps.step(deltaY > 0)) {
+        event.preventDefault();
+      }
     },
     { passive: false }
   );

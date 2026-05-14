@@ -208,6 +208,21 @@ const main = async () => {
     await evaluate(client, "document.querySelector('#entry-go')?.click(); true;");
     await delay(3600);
     assert(await evaluate(client, "document.body.classList.contains('has-entered')"), "Entry transition did not complete.");
+    assert(await evaluate(client, "Boolean(document.querySelector('#hero-cube'))"), "Packaging cube was not rendered.");
+    assert(await evaluate(client, "document.querySelectorAll('.hero-card').length === 0"), "Legacy hero cards are still present.");
+
+    const beforeWheel = await evaluate(client, "Math.round(window.scrollY)");
+    const viewport = await evaluate(client, "({ x: Math.round(window.innerWidth / 2), y: Math.round(window.innerHeight / 2) })");
+    await client.send("Input.dispatchMouseEvent", {
+      type: "mouseWheel",
+      x: viewport.x,
+      y: viewport.y,
+      deltaY: 120,
+      deltaX: 0,
+    });
+    await delay(450);
+    const afterWheel = await evaluate(client, "Math.round(window.scrollY)");
+    assert(afterWheel > beforeWheel, `Hero wheel did not scroll the page: before=${beforeWheel}, after=${afterWheel}`);
 
     await evaluate(client, "document.querySelector('.bottom-nav-item[href=\"#contact\"]')?.click(); true;");
     await delay(1800);

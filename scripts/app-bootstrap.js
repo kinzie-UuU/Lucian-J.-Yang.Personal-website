@@ -121,47 +121,55 @@ window.initLucianApp = () => {
       return parseFloat(heroStage?.style.getPropertyValue("--hero-scroll-progress") || "0");
     },
   });
-  heroStepController = window.initHeroStepRuntime?.({
-    heroSection,
-    getState() {
-      return {
-        orderedMode: heroState.orderedMode,
-        heroStep: heroState.heroStep,
-        heroStepTarget: heroState.heroStepTarget,
-        heroIntroBudget: heroState.heroIntroBudget,
-      };
-    },
-    setHeroStep(value) {
-      heroState.heroStep = value;
-    },
-    setHeroIntroBudget(value) {
-      heroState.heroIntroBudget = value;
-    },
-  }) || null;
-  runtimeBridge?.installHeroSteps?.(heroStepController);
+  if (heroCards.length) {
+    heroStepController = window.initHeroStepRuntime?.({
+      heroSection,
+      getState() {
+        return {
+          orderedMode: heroState.orderedMode,
+          heroStep: heroState.heroStep,
+          heroStepTarget: heroState.heroStepTarget,
+          heroIntroBudget: heroState.heroIntroBudget,
+        };
+      },
+      setHeroStep(value) {
+        heroState.heroStep = value;
+      },
+      setHeroIntroBudget(value) {
+        heroState.heroIntroBudget = value;
+      },
+    }) || null;
+    runtimeBridge?.installHeroSteps?.(heroStepController);
+  } else {
+    heroState.heroStep = HERO_CARD_COUNT;
+    heroState.heroStepTarget = HERO_CARD_COUNT;
+    heroState.heroIntroBudget = 0;
+  }
   // window.initParticleCanvas?.(particleCanvas, "light");
-  window.initHeroCardAnimation?.({
-    stageMotion: heroSequenceController?.stageMotion,
-    fieldPointer,
-    heroSection,
-    heroStage,
-    heroFocusPanel: heroFocusController?.panel,
-    heroCardStates,
-    getState() {
-      return {
-        heroStep: heroState.heroStep,
-        heroStepTarget: heroState.heroStepTarget,
-        heroIntroBudget: heroState.heroIntroBudget,
-        orderedMode: heroState.orderedMode,
-        selectedCardIndex: heroState.selectedCardIndex,
-        selectionStartedAt: heroState.selectionStartedAt,
-        currentHeroCard: heroState.currentHeroCard,
-      };
-    },
-    setHeroStepTarget(value) {
-      heroState.heroStepTarget = value;
-    },
-  });
+  if (heroCards.length) {
+    window.initHeroCardAnimation?.({
+      stageMotion: heroSequenceController?.stageMotion,
+      fieldPointer,
+      heroSection,
+      heroStage,
+      heroFocusPanel: heroFocusController?.panel,
+      heroCardStates,
+      getState() {
+        return {
+          heroStep: heroState.heroStep,
+          heroStepTarget: heroState.heroStepTarget,
+          heroIntroBudget: heroState.heroIntroBudget,
+          orderedMode: heroState.orderedMode,
+          selectedCardIndex: heroState.selectedCardIndex,
+          selectionStartedAt: heroState.selectionStartedAt,
+          currentHeroCard: heroState.currentHeroCard,
+        };
+      },
+      setHeroStepTarget(value) {
+        heroState.heroStepTarget = value;
+      },
+    });
+  }
 
   return {
     heroState,

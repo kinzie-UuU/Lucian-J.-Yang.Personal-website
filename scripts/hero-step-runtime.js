@@ -49,6 +49,8 @@ window.initHeroStepRuntime = ({
     } = getState();
 
     if (!isActive(isForward ? 1 : -1)) return false;
+    if (isForward && heroStep >= HERO_CARD_COUNT) return false;
+    if (!isForward && heroStep <= 0 && heroIntroBudget >= HERO_INTRO_TICKS) return false;
     if (wheelLocked) return true;
 
     if (isForward) {

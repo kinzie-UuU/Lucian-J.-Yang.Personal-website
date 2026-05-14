@@ -532,6 +532,236 @@ body.has-entered .entry-screen {
   stroke: rgba(238, 234, 227, 0.1);
 }
 
+.hero-cube-scene {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  perspective: 1200px;
+  pointer-events: none;
+}
+
+.hero-cube {
+  --cube-size: min(58vw, 62vh, 560px);
+  position: relative;
+  width: var(--cube-size);
+  height: var(--cube-size);
+  transform-style: preserve-3d;
+  transform: rotateX(90deg) rotateY(0deg);
+  filter:
+    drop-shadow(0 36px 58px rgba(0, 0, 0, 0.58))
+    drop-shadow(0 0 36px rgba(87, 219, 202, 0.12));
+  will-change: transform;
+}
+
+.hero-cube::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border: 1px solid rgba(236, 248, 244, 0.18);
+  transform: translateZ(calc(var(--cube-size) / -2 - 1px));
+  pointer-events: none;
+}
+
+.hero-cube-face {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  backface-visibility: hidden;
+  border: 1px solid rgba(238, 245, 240, 0.18);
+  background:
+    repeating-linear-gradient(
+      0deg,
+      rgba(255, 255, 255, 0.04) 0,
+      rgba(255, 255, 255, 0.04) 1px,
+      transparent 1px,
+      transparent 44px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.035) 0,
+      rgba(255, 255, 255, 0.035) 1px,
+      transparent 1px,
+      transparent 44px
+    ),
+    #111614;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.035),
+    inset 0 0 60px rgba(8, 18, 18, 0.4);
+}
+
+.hero-cube-face::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.1), transparent 30%, rgba(0, 0, 0, 0.3)),
+    radial-gradient(circle at 28% 22%, rgba(116, 229, 210, 0.14), transparent 42%);
+  mix-blend-mode: screen;
+  opacity: 0.52;
+  pointer-events: none;
+}
+
+.hero-cube-face img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  filter: saturate(0.82) contrast(1.08) brightness(0.88);
+}
+
+.hero-cube-face-ph {
+  position: absolute;
+  left: 1.5rem;
+  bottom: 1.25rem;
+  z-index: 1;
+  color: rgba(247, 244, 238, 0.14);
+  font-family: "Outfit", "Satoshi", "MiSans", system-ui, sans-serif;
+  font-size: clamp(1.6rem, 4vw, 3.8rem);
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  line-height: 1;
+  pointer-events: none;
+  text-transform: uppercase;
+}
+
+.hero-cube-face[data-face="front"] {
+  transform: translateZ(calc(var(--cube-size) / 2));
+}
+
+.hero-cube-face[data-face="back"] {
+  transform: rotateY(180deg) translateZ(calc(var(--cube-size) / 2));
+}
+
+.hero-cube-face[data-face="right"] {
+  transform: rotateY(90deg) translateZ(calc(var(--cube-size) / 2));
+}
+
+.hero-cube-face[data-face="left"] {
+  transform: rotateY(-90deg) translateZ(calc(var(--cube-size) / 2));
+}
+
+.hero-cube-face[data-face="top"] {
+  transform: rotateX(-90deg) translateZ(calc(var(--cube-size) / 2));
+}
+
+.hero-cube-face[data-face="bottom"] {
+  transform: rotateX(90deg) translateZ(calc(var(--cube-size) / 2));
+}
+
+.hero-cube-hud {
+  position: absolute;
+  top: clamp(108px, 14vh, 152px);
+  right: clamp(24px, 3vw, 48px);
+  z-index: 5;
+  min-width: 132px;
+  color: rgba(236, 248, 244, 0.58);
+  font-family: "Satoshi", "MiSans", system-ui, sans-serif;
+  font-size: 0.66rem;
+  font-weight: 680;
+  letter-spacing: 0.16em;
+  line-height: 1;
+  text-align: right;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+
+.hero-cube-progress {
+  position: relative;
+  width: 100%;
+  height: 1px;
+  margin-top: 0.55rem;
+  overflow: hidden;
+  background: rgba(236, 248, 244, 0.2);
+}
+
+.hero-cube-progress-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 0%;
+  background: rgba(95, 222, 202, 0.82);
+  transform-origin: left center;
+}
+
+.hero-cube-scene-name {
+  margin-top: 0.55rem;
+  color: rgba(95, 222, 202, 0.78);
+  font-size: 0.6rem;
+}
+
+.hero-cube-strip {
+  position: absolute;
+  right: clamp(28px, 3vw, 50px);
+  top: 50%;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  transform: translateY(-50%);
+}
+
+.hero-cube-dot {
+  position: relative;
+  display: block;
+  width: 5px;
+  height: 5px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(236, 248, 244, 0.3);
+  cursor: pointer;
+  transition: background 220ms ease, transform 220ms ease;
+}
+
+.hero-cube-dot::before {
+  content: "";
+  position: absolute;
+  inset: -8px;
+}
+
+.hero-cube-dot:hover,
+.hero-cube-dot:focus-visible,
+.hero-cube-dot.is-active {
+  background: rgba(95, 222, 202, 0.9);
+  outline: 0;
+  transform: scale(1.75);
+}
+
+.hero-cube-caption {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(84px, 10vh, 118px);
+  z-index: 5;
+  color: rgba(236, 248, 244, 0.5);
+  text-align: center;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.hero-cube-caption-num {
+  color: rgba(95, 222, 202, 0.76);
+  font-family: "Satoshi", "MiSans", system-ui, sans-serif;
+  font-size: 0.62rem;
+  font-weight: 720;
+  letter-spacing: 0.28em;
+  line-height: 1;
+}
+
+.hero-cube-caption-name {
+  margin-top: 0.22rem;
+  color: rgba(236, 248, 244, 0.38);
+  font-family: "Outfit", "Satoshi", "MiSans", system-ui, sans-serif;
+  font-size: clamp(1.55rem, 4.2vw, 3.3rem);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  line-height: 0.94;
+  text-transform: uppercase;
+}
+
 .hero-grid {
   position: absolute;
   inset: 0;
@@ -1169,7 +1399,7 @@ body.has-entered .hero-card.is-scroll-current {
 
 @media (max-width: 760px) {
   body.has-entered .hero-section {
-    min-height: 1320vh;
+    min-height: 170vh;
   }
 
   body.has-entered .hero-material-plane {
@@ -1177,18 +1407,29 @@ body.has-entered .hero-card.is-scroll-current {
     transform: translate3d(-4vw, -4vh, 80px) rotateY(-12deg) rotateZ(-1deg);
   }
 
-  .hero-scroll-progress {
-    right: 16px;
-    grid-template-rows: auto 150px auto;
+  .hero-cube {
+    --cube-size: min(78vw, 48vh, 360px);
   }
 
-  .hero-scroll-progress-track,
-  .hero-scroll-progress-fill {
-    height: 150px;
+  .hero-cube-hud {
+    top: 92px;
+    right: 18px;
+    min-width: 104px;
+    font-size: 0.58rem;
   }
 
-  .hero-scroll-progress-fill {
-    height: calc(150px * var(--hero-scroll-progress, 0));
+  .hero-cube-strip {
+    right: 18px;
+    gap: 0.62rem;
+  }
+
+  .hero-cube-caption {
+    bottom: 86px;
+  }
+
+  .hero-cube-face-ph {
+    left: 1rem;
+    bottom: 0.85rem;
   }
 
   .hero-scroll-cue {
