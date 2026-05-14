@@ -1,8 +1,10 @@
 (() => {
   const runtime = window.LucianRuntime;
   const navItems = document.querySelectorAll(".bottom-nav-item");
-  const sectionIds = ["about", "services", "works", "contact"];
+  const sectionIds = ["about", "services", "works"];
+  const warmSectionIds = ["clients", "contact"];
   const sections = sectionIds.map((id) => document.getElementById(id)).filter(Boolean);
+  const warmSections = warmSectionIds.map((id) => document.getElementById(id)).filter(Boolean);
   const anchorLinks = document.querySelectorAll('a[href^="#"]:not([href="#"])');
   let navTransition = null;
   let navTransitionCopy = null;
@@ -14,6 +16,7 @@
     about: "ABOUT",
     services: "SERVICES",
     works: "WORKS",
+    clients: "CLIENTS",
     contact: "CONTACT",
   };
 
@@ -41,6 +44,10 @@
 
     if (target.id === "contact") {
       return Math.max(0, target.offsetTop - getTopSafeArea() + viewport * 0.12);
+    }
+
+    if (target.id === "clients") {
+      return Math.max(0, target.offsetTop - getTopSafeArea() + viewport * 0.08);
     }
 
     return Math.max(0, target.offsetTop - getTopSafeArea());
@@ -125,11 +132,20 @@
 
   const updateActiveNav = () => {
     const scrollY = window.scrollY + window.innerHeight * 0.4;
+    const warmY = window.scrollY + window.innerHeight * 0.34;
     let active = null;
 
     for (const section of sections) {
       if (section.offsetTop <= scrollY) active = section.id;
     }
+
+    const warmActive = warmSections.some((section) => (
+      section.offsetTop <= warmY
+      && section.offsetTop + section.offsetHeight > window.scrollY + getTopSafeArea()
+    ));
+
+    if (warmActive) active = null;
+    document.body.classList.toggle("is-warm-stage", warmActive);
 
     navItems.forEach((item) => {
       const href = item.getAttribute("href");

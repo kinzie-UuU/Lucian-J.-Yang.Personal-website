@@ -2,11 +2,11 @@
 .clients-section {
   position: relative;
   width: 100%;
-  margin-top: -8svh;
-  padding-top: clamp(96px, 18svh, 220px);
+  margin-top: 0;
+  padding-top: clamp(112px, 17svh, 210px);
+  color: var(--warm-ink);
   background:
-    linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.78) 22%, #000 42%, #000 100%),
-    #000;
+    linear-gradient(180deg, #000 0%, rgba(7, 8, 11, 0.86) 12%, var(--warm-paper-deep) 34%, var(--warm-paper) 100%);
   overflow: hidden;
   border-top: 0;
   scroll-snap-align: start;
@@ -23,8 +23,8 @@
   height: clamp(220px, 36svh, 420px);
   pointer-events: none;
   background:
-    radial-gradient(ellipse at 50% 100%, rgba(73, 196, 176, 0.07), transparent 58%),
-    linear-gradient(180deg, rgba(0, 0, 0, 0), #000 86%);
+    radial-gradient(ellipse at 50% 100%, rgba(255, 98, 104, 0.09), transparent 58%),
+    linear-gradient(180deg, rgba(0, 0, 0, 0), rgba(247, 244, 238, 0.92) 86%);
 }
 
 .clients-particles {
@@ -35,21 +35,48 @@
   position: relative;
   z-index: 1;
   width: 100%;
-  padding: 0 0 clamp(132px, 18svh, 220px);
+  padding: 0 0 clamp(148px, 18svh, 230px);
+}
+
+.clients-section .section-head {
+  gap: clamp(18px, 2.8svh, 32px);
+  margin-top: clamp(56px, 8svh, 110px);
+  padding-inline: clamp(24px, 5vw, 86px);
+}
+
+.clients-section .section-kicker {
+  color: rgba(20, 20, 20, 0.48);
+}
+
+.clients-intro {
+  width: min(42ch, calc(100vw - 48px));
+  margin: 0 auto;
+  color: var(--warm-muted);
+  font-family: "MiSans", "Outfit", "Satoshi", system-ui, sans-serif;
+  font-size: clamp(0.9rem, 1.04vw, 1.08rem);
+  font-weight: 520;
+  line-height: 1.86;
+  letter-spacing: 0.02em;
+  text-align: center;
+}
+
+html[lang="en"] .clients-intro {
+  font-family: "Outfit", "Satoshi", "MiSans", system-ui, sans-serif;
+  letter-spacing: 0.01em;
 }
 
 .clients-marquee {
-  --logoloop-gap: clamp(34px, 4vw, 72px);
+  --logoloop-gap: clamp(40px, 4.6vw, 84px);
   --logoloop-logoHeight: clamp(1.85rem, 3.4vw, 3.8rem);
-  --logoloop-fadeColor: #000;
-  margin-top: clamp(56px, 8svh, 110px);
+  --logoloop-fadeColor: var(--warm-paper);
+  margin-top: clamp(68px, 10svh, 132px);
 }
 
 .logoloop {
   position: relative;
   overflow: hidden;
   width: 100%;
-  color: rgba(255, 255, 255, 0.11);
+  color: rgba(20, 20, 20, 0.16);
 }
 
 .logoloop__track {
@@ -88,7 +115,7 @@
 }
 
 .logoloop--scale-hover .logoloop__item:hover .logoloop__node {
-  color: rgba(247, 244, 238, 0.52);
+  color: rgba(20, 20, 20, 0.66);
   opacity: 1;
   transform: scale(1.18);
 }
@@ -106,12 +133,12 @@
 
 .logoloop--fade::before {
   left: 0;
-  background: linear-gradient(to right, var(--logoloop-fadeColor) 0%, rgba(0, 0, 0, 0) 100%);
+  background: linear-gradient(to right, var(--logoloop-fadeColor) 0%, rgba(247, 244, 238, 0) 100%);
 }
 
 .logoloop--fade::after {
   right: 0;
-  background: linear-gradient(to left, var(--logoloop-fadeColor) 0%, rgba(0, 0, 0, 0) 100%);
+  background: linear-gradient(to left, var(--logoloop-fadeColor) 0%, rgba(247, 244, 238, 0) 100%);
 }
 
 .clients-logo-grid {
@@ -156,7 +183,7 @@
 .client-logo-text-fallback {
   font-size: 0.72rem;
   letter-spacing: 0.08em;
-  color: rgba(235, 231, 224, 0.28);
+  color: rgba(20, 20, 20, 0.28);
   font-weight: 500;
   text-align: center;
   transition: color 0.25s ease;
@@ -164,7 +191,7 @@
 
 .client-logo-text:hover,
 .client-logo-text-fallback:hover {
-  color: rgba(235, 231, 224, 0.6);
+  color: rgba(20, 20, 20, 0.66);
 }
 
 /* Client title band --------------------------------------------------------- */
@@ -173,14 +200,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: clamp(420px, 62svh, 760px);
-  padding: clamp(72px, 11svh, 150px) clamp(28px, 4.4vw, 86px) clamp(60px, 9svh, 122px);
+  min-height: clamp(390px, 55svh, 680px);
+  padding: clamp(72px, 10svh, 132px) clamp(28px, 4.4vw, 86px) clamp(62px, 9svh, 118px);
   overflow: hidden;
-  border-bottom: 1px solid rgba(247, 244, 238, 0.08);
+  border-bottom: 1px solid rgba(20, 20, 20, 0.08);
   background:
-    radial-gradient(ellipse at 50% 54%, rgba(255, 98, 104, 0.075), transparent 54%),
-    linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(73, 196, 176, 0.032) 44%, #000 100%),
-    #000;
+    radial-gradient(ellipse at 50% 54%, rgba(255, 98, 104, 0.11), transparent 56%),
+    linear-gradient(180deg, rgba(247, 244, 238, 0.42) 0%, rgba(247, 244, 238, 0.78) 52%, var(--warm-paper) 100%);
 }
 
 .clients-title-band::before,
@@ -195,13 +221,13 @@
 .clients-title-band::before {
   top: 0;
   height: 34%;
-  background: linear-gradient(180deg, #000 0%, rgba(0, 0, 0, 0) 100%);
+  background: linear-gradient(180deg, rgba(247, 244, 238, 0.82) 0%, rgba(247, 244, 238, 0) 100%);
 }
 
 .clients-title-band::after {
   bottom: 0;
   height: 28%;
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0), #000 100%);
+  background: linear-gradient(180deg, rgba(247, 244, 238, 0), var(--warm-paper) 100%);
 }
 
 .clients-title-lockup {
@@ -209,7 +235,7 @@
   z-index: 2;
   display: block;
   width: 100%;
-  color: rgba(247, 244, 238, 0.94);
+  color: rgba(20, 20, 20, 0.9);
   font-family: "Outfit", "Satoshi", "MiSans", system-ui, sans-serif;
   font-size: clamp(4.7rem, 9.4vw, 11.8rem);
   font-weight: 300;
@@ -250,7 +276,7 @@
 
 .clients-title-float-item {
   position: absolute;
-  color: rgba(247, 244, 238, 0.34);
+  color: rgba(20, 20, 20, 0.34);
   font-family: "Playfair Display", Georgia, "Times New Roman", serif;
   font-size: clamp(1.05rem, 2.4vw, 2.2rem);
   font-style: italic;
@@ -322,12 +348,12 @@
 
 @media (max-width: 760px) {
   .clients-section {
-    margin-top: -4svh;
-    padding-top: 84px;
+    margin-top: 0;
+    padding-top: 92px;
   }
 
   .clients-title-band {
-    min-height: 54svh;
+    min-height: 52svh;
     padding: 72px 18px 56px;
   }
 
@@ -339,7 +365,16 @@
 
   .clients-marquee {
     --logoloop-logoHeight: clamp(1.5rem, 8.4vw, 2.8rem);
+    margin-top: 56px;
+  }
+
+  .clients-section .section-head {
     margin-top: 48px;
+  }
+
+  .clients-intro {
+    width: min(34ch, calc(100vw - 36px));
+    font-size: 0.86rem;
   }
 }
 

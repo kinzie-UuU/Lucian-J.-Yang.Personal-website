@@ -92,6 +92,7 @@
               <path d="M9.5 17.5V16M14 17.5V16M18.5 17.5V16" stroke="currentColor" stroke-width="1.25" stroke-linecap="square"/>
             </svg>
           </button>
+          <a class="top-meta-contact-arrow" href="#contact" aria-label="联系 / Contact" title="联系 / Contact">↗</a>
         </span>
       </div>
     </div>
@@ -294,7 +295,7 @@
             <h2 class="services-entry-title" aria-label="为何选择我">
               <span>为何</span><span>选择我</span>
             </h2>
-            <p class="services-entry-intro" data-i18n="services_intro">我提供的，不只是包装设计本身，而是在价格、工艺、交付与渠道约束下，更合适的方案判断。</p>
+            <p class="services-entry-intro" data-i18n="services_intro">我提供的不只是画面输出，而是帮助项目在价格带、工艺、渠道和交付节奏里做出更稳的包装判断。</p>
           </div>
         </article>
 
@@ -390,6 +391,7 @@
           <span class="works-preview-layer works-preview-layer-slice"></span>
         </div>
       </div>
+      <a class="works-clients-link" href="#clients" data-i18n="works_clients_link">合作客户 ↗</a>
     </section>
 
     <aside class="work-gallery" id="work-gallery" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="work-gallery-title">
@@ -416,6 +418,53 @@
       <div class="work-detail" id="work-detail" aria-live="polite"></div>
     </aside>
 
+    <section class="clients-section reveal" id="clients" aria-label="合作客户 / Selected clients">
+      <canvas class="clients-particles" id="clients-particles" aria-hidden="true"></canvas>
+      <div class="clients-content">
+        <div class="clients-title-band" aria-hidden="true">
+          <div class="clients-title-float" id="clients-title-float" aria-hidden="true"></div>
+          <span class="clients-title-lockup">
+            <span class="clients-title-line"><span class="clients-title-serif">Packaging</span> Brand</span>
+            <span class="clients-title-line"><span class="clients-title-serif">Design</span></span>
+          </span>
+        </div>
+
+        <div class="section-head section-head-centered section-head-light">
+          <p class="section-kicker accent" data-i18n="clients_kicker">合作客户</p>
+          <p class="clients-intro" data-i18n="clients_intro">部分合作品牌与项目方，覆盖物流、家居、食品、企业福利与消费品渠道。</p>
+        </div>
+        <div
+          class="clients-marquee logoloop logoloop--horizontal logoloop--fade logoloop--scale-hover"
+          data-speed="74"
+          data-hover-speed="14"
+          aria-label="合作客户"
+        >
+          <div class="logoloop__track">
+            <ul class="logoloop__list">
+              <li class="logoloop__item"><span class="logoloop__node">顺丰</span></li>
+              <li class="logoloop__item"><span class="logoloop__node">追觅科技</span></li>
+              <li class="logoloop__item"><span class="logoloop__node">信维通信</span></li>
+              <li class="logoloop__item"><span class="logoloop__node">顾家家居</span></li>
+              <li class="logoloop__item"><span class="logoloop__node">本来生活</span></li>
+              <li class="logoloop__item"><span class="logoloop__node">熊小夕</span></li>
+              <li class="logoloop__item"><span class="logoloop__node">糕上有点</span></li>
+              <li class="logoloop__item"><span class="logoloop__node">功能粥</span></li>
+              <li class="logoloop__item"><span class="logoloop__node">吉利</span></li>
+              <li class="logoloop__item"><span class="logoloop__node">中兴</span></li>
+              <li class="logoloop__item"><span class="logoloop__node">鞍钢</span></li>
+              <li class="logoloop__item"><span class="logoloop__node">爱情地产</span></li>
+              <li class="logoloop__item"><span class="logoloop__node">安吉尔</span></li>
+              <li class="logoloop__item"><span class="logoloop__node">固德威</span></li>
+              <li class="logoloop__item"><span class="logoloop__node">心中甜</span></li>
+              <li class="logoloop__item"><span class="logoloop__node">瓷和居</span></li>
+              <li class="logoloop__item"><span class="logoloop__node">熙图</span></li>
+              <li class="logoloop__item"><span class="logoloop__node">85°C</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <section class="contact-section reveal" id="contact">
       <div class="contact-layout">
         <div class="contact-cell contact-cell-label" data-reveal data-delay="0">
@@ -436,14 +485,14 @@
         </div>
 
         <div class="contact-cell contact-cell-intro" data-reveal data-delay="140">
-          <p class="contact-headline js-scrambled-text" data-i18n="contact_text">如果你正在寻找一位既懂包装表达，也重视真实落地与成本约束的设计师，欢迎联系我。</p>
+          <p class="contact-headline js-scrambled-text" data-i18n="contact_text">如果你需要把包装方向、成本约束和交付节奏同时理清，我们可以从一个具体项目开始。</p>
           <p class="contact-collab js-scrambled-text" data-i18n="contact_collab">OEM / 贴牌包装 · 礼品与福利渠道设计 · 系列包装 · 节庆礼盒 · 包装升级 · 包装提案与方向判断支持</p>
         </div>
 
         <form class="contact-form contact-cell" id="contact-form" action="https://mail.google.com/mail/" method="get" target="_blank" data-reveal data-delay="220">
           <div class="contact-form-header">
             <p class="contact-meta" data-i18n="contact_form_kicker">项目咨询</p>
-            <p class="contact-form-note" data-i18n="contact_form_note">一句清楚的需求，就足够开始沟通。</p>
+            <p class="contact-form-note" data-i18n="contact_form_note">说明项目类型、时间和预算范围即可。</p>
           </div>
           <div class="contact-form-grid">
             <label class="contact-field">
@@ -524,52 +573,6 @@
       <!-- Copy toast -->
       <div class="contact-toast" id="contact-toast" aria-live="polite" data-i18n="contact_copied">已复制</div>
     </section>
-
-    <section class="clients-section reveal">
-      <canvas class="clients-particles" id="clients-particles" aria-hidden="true"></canvas>
-      <div class="clients-content">
-        <div class="clients-title-band" aria-hidden="true">
-          <div class="clients-title-float" id="clients-title-float" aria-hidden="true"></div>
-          <span class="clients-title-lockup">
-            <span class="clients-title-line"><span class="clients-title-serif">Packaging</span> Brand</span>
-            <span class="clients-title-line"><span class="clients-title-serif">Design</span></span>
-          </span>
-        </div>
-
-        <div class="section-head section-head-centered section-head-light">
-          <p class="section-kicker accent" data-i18n="clients_kicker">合作客户</p>
-        </div>
-        <div
-          class="clients-marquee logoloop logoloop--horizontal logoloop--fade logoloop--scale-hover"
-          data-speed="74"
-          data-hover-speed="14"
-          aria-label="合作客户"
-        >
-          <div class="logoloop__track">
-            <ul class="logoloop__list">
-              <li class="logoloop__item"><span class="logoloop__node">顺丰</span></li>
-              <li class="logoloop__item"><span class="logoloop__node">追觅科技</span></li>
-              <li class="logoloop__item"><span class="logoloop__node">信维通信</span></li>
-              <li class="logoloop__item"><span class="logoloop__node">顾家家居</span></li>
-              <li class="logoloop__item"><span class="logoloop__node">本来生活</span></li>
-              <li class="logoloop__item"><span class="logoloop__node">熊小夕</span></li>
-              <li class="logoloop__item"><span class="logoloop__node">糕上有点</span></li>
-              <li class="logoloop__item"><span class="logoloop__node">功能粥</span></li>
-              <li class="logoloop__item"><span class="logoloop__node">吉利</span></li>
-              <li class="logoloop__item"><span class="logoloop__node">中兴</span></li>
-              <li class="logoloop__item"><span class="logoloop__node">鞍钢</span></li>
-              <li class="logoloop__item"><span class="logoloop__node">爱情地产</span></li>
-              <li class="logoloop__item"><span class="logoloop__node">安吉尔</span></li>
-              <li class="logoloop__item"><span class="logoloop__node">固德威</span></li>
-              <li class="logoloop__item"><span class="logoloop__node">心中甜</span></li>
-              <li class="logoloop__item"><span class="logoloop__node">瓷和居</span></li>
-              <li class="logoloop__item"><span class="logoloop__node">熙图</span></li>
-              <li class="logoloop__item"><span class="logoloop__node">85°C</span></li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </section>
   </main>
 
   <nav class="bottom-nav pill-nav" aria-label="Main navigation">
@@ -590,12 +593,6 @@
         <a class="bottom-nav-item pill" href="#works" data-i18n="nav_works" aria-label="Works">
           <span class="hover-circle" aria-hidden="true"></span>
           <span class="label-stack"><span class="pill-label">Works</span><span class="pill-label-hover" aria-hidden="true">Works</span></span>
-        </a>
-      </li>
-      <li>
-        <a class="bottom-nav-item pill" href="#contact" data-i18n="nav_contact" aria-label="Contact">
-          <span class="hover-circle" aria-hidden="true"></span>
-          <span class="label-stack"><span class="pill-label">Contact</span><span class="pill-label-hover" aria-hidden="true">Contact</span></span>
         </a>
       </li>
     </ul>

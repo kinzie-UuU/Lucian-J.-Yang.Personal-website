@@ -323,6 +323,34 @@ html[lang="zh-CN"] .works-transition-line-text {
   width: 100vw;
 }
 
+.works-clients-link {
+  position: absolute;
+  right: clamp(28px, 5vw, 80px);
+  bottom: max(clamp(42px, 7vh, 86px), calc(var(--bottom-nav-safe) + 8px));
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 34px;
+  padding: 0 2px;
+  color: rgba(248, 245, 239, 0.44);
+  font-family: "MiSans", "Outfit", "Satoshi", system-ui, sans-serif;
+  font-size: clamp(0.72rem, 0.72vw, 0.84rem);
+  font-weight: 760;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  transition:
+    color 180ms ease,
+    transform 180ms ease;
+}
+
+.works-clients-link:hover,
+.works-clients-link:focus-visible {
+  color: rgba(248, 245, 239, 0.92);
+  outline: none;
+  transform: translate(2px, -2px);
+}
+
 .works-row {
   position: relative;
   display: grid;
@@ -758,5 +786,12 @@ body .works-row-tags {
     justify-self: center;
     text-align: center;
     font-size: clamp(2rem, 13vw, 4rem);
+  }
+
+  .works-clients-link {
+    right: 22px;
+    bottom: max(34px, calc(var(--bottom-nav-safe) + 4px));
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
   }
 }

@@ -18,6 +18,10 @@
 :root {
   --bg: #f3efe7;
   --bg-soft: #ece7de;
+  --warm-paper: #f7f4ee;
+  --warm-paper-deep: #eee9df;
+  --warm-ink: #141414;
+  --warm-muted: rgba(20, 20, 20, 0.58);
   --ink: #101114;
   --ink-soft: rgba(16, 17, 20, 0.72);
   --line: rgba(16, 17, 20, 0.1);

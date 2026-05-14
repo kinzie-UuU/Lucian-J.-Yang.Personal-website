@@ -1161,7 +1161,8 @@ body.services-white-stage .top-meta-date,
 body.services-white-stage .top-meta-lang .lang-button,
 body.services-white-stage .top-meta-period,
 body.services-white-stage .top-meta-fullscreen,
-body.services-white-stage .top-meta-toggle {
+body.services-white-stage .top-meta-toggle,
+body.services-white-stage .top-meta-contact-arrow {
   color: rgba(18, 18, 18, 0.58);
 }
 
@@ -1174,6 +1175,70 @@ body.services-white-stage .top-meta-separator {
 }
 
 body.services-white-stage .bottom-nav.pill-nav {
+  --pill-nav-base: rgba(243, 239, 231, 0.9);
+  --pill-nav-border: rgba(18, 18, 18, 0.1);
+  --pill-bg: rgba(18, 18, 18, 0.045);
+  --pill-bg-active: rgba(18, 18, 18, 0.11);
+  --pill-hover-bg: rgba(18, 18, 18, 0.16);
+  --pill-text: rgba(18, 18, 18, 0.56);
+  --pill-active-text: rgba(18, 18, 18, 0.94);
+  --pill-hover-text: rgba(18, 18, 18, 0.98);
+}
+
+body .top-meta-contact-arrow {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  width: 28px;
+  height: 30px;
+  margin-left: 0;
+  color: rgba(247, 244, 238, 0.74);
+  font-family: "Satoshi", "MiSans", system-ui, sans-serif;
+  font-size: 1.02rem;
+  font-weight: 800;
+  line-height: 1;
+  text-decoration: none;
+  transition:
+    color 180ms ease,
+    transform 180ms ease;
+}
+
+body .top-meta-contact-arrow:hover,
+body .top-meta-contact-arrow:focus-visible {
+  color: rgba(247, 244, 238, 0.98);
+  outline: none;
+  transform: translate(2px, -2px);
+}
+
+body.is-warm-stage .top-meta-inner {
+  background: rgba(247, 244, 238, 0.78);
+  box-shadow: 0 1px 0 rgba(18, 18, 18, 0.08), 0 10px 26px rgba(18, 18, 18, 0.06);
+  backdrop-filter: blur(18px) saturate(120%);
+  -webkit-backdrop-filter: blur(18px) saturate(120%);
+}
+
+body.is-warm-stage .top-meta-name,
+body.is-warm-stage .top-meta-time,
+body.is-warm-stage .top-meta-date,
+body.is-warm-stage .top-meta-lang .lang-button,
+body.is-warm-stage .top-meta-period,
+body.is-warm-stage .top-meta-fullscreen,
+body.is-warm-stage .top-meta-toggle,
+body.is-warm-stage .top-meta-contact-arrow {
+  color: rgba(18, 18, 18, 0.58);
+}
+
+body.is-warm-stage .top-meta-lang .lang-button.is-active,
+body.is-warm-stage .top-meta-contact-arrow:hover,
+body.is-warm-stage .top-meta-contact-arrow:focus-visible {
+  color: rgba(18, 18, 18, 0.9);
+}
+
+body.is-warm-stage .top-meta-separator {
+  border-color: rgba(18, 18, 18, 0.16);
+}
+
+body.is-warm-stage .bottom-nav.pill-nav {
   --pill-nav-base: rgba(243, 239, 231, 0.9);
   --pill-nav-border: rgba(18, 18, 18, 0.1);
   --pill-bg: rgba(18, 18, 18, 0.045);

@@ -18,6 +18,7 @@
     ".work-gallery-close",
     ".work-gallery-back",
     ".contact-social-icon",
+    ".top-meta-contact-arrow",
     ".bottom-nav-item",
   ].join(",");
 
