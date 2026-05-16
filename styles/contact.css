@@ -694,34 +694,37 @@ html[lang="zh-CN"] .contact-title {
 
 /* Warm contact surface ------------------------------------------------------ */
 .contact-section {
-  background: var(--warm-paper);
-  color: rgba(20, 20, 20, 0.9);
+  background:
+    linear-gradient(180deg, var(--warm-paper) 0%, #fbf8f2 54%, var(--warm-paper-deep) 100%);
+  color: rgba(248, 245, 239, 0.92);
 }
 
 .contact-section::before {
-  background: none;
-  opacity: 0;
+  background:
+    radial-gradient(ellipse at 50% 45%, rgba(255, 98, 104, 0.08), transparent 48%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.34), rgba(20, 20, 20, 0.035));
+  opacity: calc(0.32 + var(--contact-paper-place) * 0.18);
 }
 
 .contact-layout {
-  border-color: rgba(20, 20, 20, 0.14);
+  border-color: rgba(248, 245, 239, 0.32);
   background:
-    linear-gradient(90deg, rgba(255, 255, 255, 0.42), rgba(255, 255, 255, 0.08) 46%),
-    rgba(247, 244, 238, 0.58);
+    linear-gradient(90deg, rgba(248, 245, 239, 0.045), transparent 46%),
+    #030303;
   box-shadow:
-    0 calc(24px + var(--contact-paper-settle) * 18px) calc(48px + var(--contact-paper-settle) * 28px)
-      rgba(18, 18, 18, calc(0.08 + var(--contact-paper-settle) * 0.05));
+    0 calc(34px + var(--contact-paper-settle) * 26px) calc(78px + var(--contact-paper-settle) * 38px)
+      rgba(0, 0, 0, calc(0.36 + var(--contact-paper-settle) * 0.18));
 }
 
 .contact-layout::before {
-  border-color: rgba(20, 20, 20, calc(var(--contact-paper-settle) * 0.08));
+  border-color: rgba(248, 245, 239, calc(var(--contact-paper-settle) * 0.14));
 }
 
 .contact-layout::after {
   background:
-    linear-gradient(90deg, transparent, rgba(255, 255, 255, calc(var(--contact-paper-settle) * 0.28)), transparent);
-  mix-blend-mode: normal;
-  opacity: calc(var(--contact-paper-place) * 0.22);
+    linear-gradient(90deg, transparent, rgba(248, 245, 239, calc(var(--contact-paper-settle) * 0.055)), transparent);
+  mix-blend-mode: screen;
+  opacity: calc(var(--contact-paper-place) * 0.3);
 }
 
 .contact-cell-label,
@@ -729,39 +732,39 @@ html[lang="zh-CN"] .contact-title {
 .contact-cell-heading,
 .contact-cell-intro,
 .contact-form {
-  border-color: rgba(20, 20, 20, 0.14);
+  border-color: rgba(248, 245, 239, 0.32);
 }
 
 .contact-social-icon {
-  border-right-color: rgba(20, 20, 20, 0.14);
+  border-right-color: rgba(248, 245, 239, 0.32);
 }
 
 .contact-meta {
-  color: rgba(20, 20, 20, 0.58);
+  color: rgba(248, 245, 239, 0.64);
 }
 
 .contact-form-note,
 .contact-field span,
 .contact-collab {
-  color: rgba(20, 20, 20, 0.46);
+  color: rgba(248, 245, 239, 0.42);
 }
 
 .contact-circular-text {
-  color: rgba(20, 20, 20, 0.38);
+  color: rgba(248, 245, 239, 0.54);
 }
 
 .contact-title {
-  color: rgba(20, 20, 20, 0.94);
+  color: rgba(248, 245, 239, 0.96);
 }
 
 .contact-headline {
-  color: rgba(20, 20, 20, 0.78);
+  color: rgba(248, 245, 239, 0.84);
 }
 
 .contact-field input,
 .contact-field textarea {
-  border-bottom-color: rgba(20, 20, 20, 0.18);
-  color: rgba(20, 20, 20, 0.9);
+  border-bottom-color: rgba(248, 245, 239, 0.28);
+  color: rgba(248, 245, 239, 0.9);
 }
 
 .contact-submit:hover,
@@ -770,16 +773,16 @@ html[lang="zh-CN"] .contact-title {
 }
 
 .contact-social-icon {
-  color: rgba(20, 20, 20, 0.52);
+  color: rgba(248, 245, 239, 0.56);
 }
 
 .contact-social-icon:hover,
 .contact-social-icon:focus-visible {
-  background: rgba(255, 98, 104, 0.08);
+  background: rgba(255, 98, 104, 0.045);
 }
 
 @media (max-width: 980px) {
   .contact-social-icon {
-    border-top-color: rgba(20, 20, 20, 0.14);
+    border-top-color: rgba(248, 245, 239, 0.32);
   }
 }

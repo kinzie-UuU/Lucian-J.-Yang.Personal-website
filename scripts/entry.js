@@ -5,10 +5,10 @@
   const {
     reducedMotion,
     playUiTone,
+    startBackgroundMusic,
     forceScrollTop,
     resetHeroSequenceState,
     resizeStage,
-    initCards,
   } = runtime;
 
   const entryScreen = document.querySelector("#entry-screen");
@@ -372,18 +372,18 @@ const createEntryDieline = (clientX, clientY) => {
 // Frozen: entry-to-site transition ------------------------------------------
 const enterSite = () => {
   if (runtime.isEntered()) return;
-  resetHeroSequenceState({ resetScroll: true, resetCards: true });
+  resetHeroSequenceState({ resetScroll: true });
   runtime.setEntered(true);
   lockEntryTransitionScroll(true);
   playUiTone("click");
+  startBackgroundMusic?.({ fade: true });
 
   if (reducedMotion) {
     document.body.classList.add("has-entered");
     requestAnimationFrame(() => {
       forceScrollTop();
       resizeStage();
-      initCards();
-      resetHeroSequenceState({ resetScroll: false, resetCards: true });
+      resetHeroSequenceState({ resetScroll: false });
       releaseEntryTransitionScroll();
     });
     return;
@@ -409,8 +409,7 @@ const enterSite = () => {
     requestAnimationFrame(() => {
       forceScrollTop();
       resizeStage();
-      initCards();
-      resetHeroSequenceState({ resetScroll: false, resetCards: true });
+      resetHeroSequenceState({ resetScroll: false });
       scheduleEntryTransitionRelease(420);
     });
   }, 2860);
@@ -446,7 +445,7 @@ document.getElementById("pixel-avatar")?.addEventListener("click", () => {
   document.body.classList.remove("has-entered", "is-entering", "is-unfolding", "is-entry-scroll-locked");
   runtime.setEntered(false);
   entryTransitionLocked = false;
-  resetHeroSequenceState({ resetScroll: true, resetCards: true });
+  resetHeroSequenceState({ resetScroll: true });
   requestAnimationFrame(forceScrollTop);
   entryScreen?.style.removeProperty("display");
 });
@@ -467,7 +466,7 @@ window.addEventListener("touchmove", (event) => {
 
 window.addEventListener("pageshow", () => {
   if (document.body.classList.contains("has-entered")) return;
-  resetHeroSequenceState({ resetScroll: true, resetCards: true });
+  resetHeroSequenceState({ resetScroll: true });
 });
 
 entryScreen?.addEventListener("click", (event) => {

@@ -58,6 +58,10 @@ html {
   overflow-x: clip;
 }
 
+html.nav-jump-instant {
+  scroll-behavior: auto !important;
+}
+
 html.snap-active {
   scroll-snap-type: none;
 }

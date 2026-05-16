@@ -31,7 +31,7 @@
     soundToggle?.setAttribute("aria-pressed", String(enabled));
     soundToggle?.setAttribute(
       "aria-label",
-      enabled ? "Mute interface sounds" : "Enable interface sounds"
+      enabled ? "Mute site sound" : "Enable site sound"
     );
     if (soundStateNode) {
       soundStateNode.textContent = enabled ? "ON" : "OFF";
@@ -46,10 +46,14 @@
 
     if (enabled) {
       await runtime.getAudioContext().catch(() => null);
+      if (document.body.classList.contains("has-entered")) {
+        await runtime.startBackgroundMusic?.({ fade: true }).catch(() => null);
+      }
       runtime.playUiTone("click");
       return;
     }
 
+    await runtime.pauseBackgroundMusic?.({ remember: true });
     await runtime.suspendAudioContext();
   });
 

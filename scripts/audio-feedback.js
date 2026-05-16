@@ -5,6 +5,11 @@
   let lastWaterDropAt = 0;
   const UI_TONE_GAIN = 0.06;
   const WATER_DROP_GAIN = 0.04;
+  const BACKGROUND_MUSIC_SRC = "audio/liquid-light-loop.mp3";
+  const BACKGROUND_MUSIC_VOLUME = 0.24;
+  let backgroundAudio = null;
+  let backgroundRequested = false;
+  let backgroundFadeFrame = 0;
 
   const getAudioContext = async () => {
     if (!soundEnabled) return null;
@@ -95,6 +100,92 @@
     osc.stop(now + 0.15);
   };
 
+  const getBackgroundAudio = () => {
+    if (backgroundAudio) return backgroundAudio;
+
+    backgroundAudio = new Audio(BACKGROUND_MUSIC_SRC);
+    backgroundAudio.loop = true;
+    backgroundAudio.preload = "auto";
+    backgroundAudio.volume = 0;
+    return backgroundAudio;
+  };
+
+  const cancelBackgroundFade = () => {
+    if (!backgroundFadeFrame) return;
+    cancelAnimationFrame(backgroundFadeFrame);
+    backgroundFadeFrame = 0;
+  };
+
+  const clampVolume = (value) => Math.max(0, Math.min(1, value));
+
+  const fadeBackgroundMusic = (targetVolume, duration = 560, onDone) => {
+    const audio = backgroundAudio;
+    if (!audio) {
+      onDone?.();
+      return;
+    }
+
+    const target = clampVolume(targetVolume);
+    cancelBackgroundFade();
+
+    if (duration <= 0) {
+      audio.volume = clampVolume(target);
+      onDone?.();
+      return;
+    }
+
+    const startVolume = audio.volume;
+    const startedAt = performance.now();
+
+    const step = (now) => {
+      const progress = Math.min(1, (now - startedAt) / duration);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      audio.volume = clampVolume(startVolume + (target - startVolume) * eased);
+
+      if (progress < 1) {
+        backgroundFadeFrame = requestAnimationFrame(step);
+        return;
+      }
+
+      backgroundFadeFrame = 0;
+      audio.volume = clampVolume(target);
+      onDone?.();
+    };
+
+    backgroundFadeFrame = requestAnimationFrame(step);
+  };
+
+  const playBackgroundMusic = async ({ request = true, fade = true } = {}) => {
+    if (request) backgroundRequested = true;
+    if (!backgroundRequested || !soundEnabled) return false;
+
+    const audio = getBackgroundAudio();
+    audio.muted = false;
+
+    try {
+      await audio.play();
+      fadeBackgroundMusic(BACKGROUND_MUSIC_VOLUME, fade ? 680 : 0);
+      document.body?.classList.add("music-active");
+      return true;
+    } catch {
+      document.body?.classList.remove("music-active");
+      return false;
+    }
+  };
+
+  const pauseBackgroundMusic = ({ remember = false, fade = true } = {}) => {
+    if (!remember) backgroundRequested = false;
+    if (!backgroundAudio) return Promise.resolve(null);
+
+    return new Promise((resolve) => {
+      fadeBackgroundMusic(0, fade ? 360 : 0, () => {
+        backgroundAudio.pause();
+        document.body?.classList.remove("music-active");
+        resolve(null);
+      });
+    });
+  };
+
   const suspendAudioContext = () => (
     audioContext?.state === "running"
       ? audioContext.suspend().catch(() => null)
@@ -105,9 +196,35 @@
     getAudioContext,
     playUiTone,
     playWaterDrop,
+    startBackgroundMusic(options) {
+      return playBackgroundMusic(options);
+    },
+    resumeBackgroundMusic(options) {
+      return playBackgroundMusic({ ...options, request: false });
+    },
+    pauseBackgroundMusic,
+    isBackgroundMusicRequested() {
+      return backgroundRequested;
+    },
+    getBackgroundMusicState() {
+      return {
+        requested: backgroundRequested,
+        exists: Boolean(backgroundAudio),
+        src: backgroundAudio?.currentSrc || backgroundAudio?.src || BACKGROUND_MUSIC_SRC,
+        loop: Boolean(backgroundAudio?.loop),
+        paused: Boolean(backgroundAudio?.paused),
+        volume: backgroundAudio?.volume ?? 0,
+        readyState: backgroundAudio?.readyState ?? 0,
+      };
+    },
     suspendAudioContext,
     setSoundEnabled(value) {
       soundEnabled = Boolean(value);
+      if (!soundEnabled) {
+        pauseBackgroundMusic({ remember: true });
+      } else if (backgroundRequested) {
+        playBackgroundMusic({ request: false }).catch(() => null);
+      }
     },
     isSoundEnabled() {
       return soundEnabled;

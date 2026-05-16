@@ -162,6 +162,11 @@
     };
 
     const tick = (now) => {
+      if (document.hidden || document.body.classList.contains("nav-transition-active")) {
+        raf = requestAnimationFrame(tick);
+        return;
+      }
+
       currentOpen += (targetOpen - currentOpen) * 0.075;
       currentInside += (targetInside - currentInside) * 0.075;
       currentProgress += (targetProgress - currentProgress) * 0.08;

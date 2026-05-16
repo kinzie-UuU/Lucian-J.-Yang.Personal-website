@@ -121,6 +121,7 @@
       if (!parent) return;
       const isHeroDisplay = parent.matches(".about-heading, .contact-headline");
       const isParagraph = parent.matches(".about-lead, .about-detail");
+      const isWorksStatementTitle = parent.matches(".works-statement-title");
       const center = rect.top + rect.height * 0.5;
       const distance = Math.abs(center - focusLine);
       const raw = 1 - Math.min(1, distance / focusRange);

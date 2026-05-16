@@ -9,8 +9,6 @@ window.initLucianRuntimeBridge = ({
   playUiTone,
   playWaterDrop,
   getLanguageController,
-  getHeroFocusController,
-  getHeroActionsController,
   getHeroSequenceController,
   getHeroState,
 }) => {
@@ -34,12 +32,25 @@ window.initLucianRuntimeBridge = ({
     document.documentElement.style.setProperty("--cursor-y", `${clientY}px`);
   };
 
+  const clearFieldPointer = () => {
+    fieldPointer.active = false;
+  };
+
   const runtime = {
     reducedMotion,
     playUiTone,
     getAudioContext,
     suspendAudioContext() {
       return window.LucianAudio?.suspendAudioContext?.() || Promise.resolve(null);
+    },
+    startBackgroundMusic(options) {
+      return window.LucianAudio?.startBackgroundMusic?.(options) || Promise.resolve(false);
+    },
+    resumeBackgroundMusic(options) {
+      return window.LucianAudio?.resumeBackgroundMusic?.(options) || Promise.resolve(false);
+    },
+    pauseBackgroundMusic(options) {
+      return window.LucianAudio?.pauseBackgroundMusic?.(options) || Promise.resolve(null);
     },
     setSoundEnabled(value) {
       window.LucianAudio?.setSoundEnabled?.(value);
@@ -53,24 +64,8 @@ window.initLucianRuntimeBridge = ({
     switchLanguage(lang) {
       getLanguageController?.()?.switchLanguage?.(lang);
     },
-    selectWorkTab(workKey) {
-      getHeroFocusController?.()?.select?.(workKey);
-      playUiTone("click");
-    },
-    activateHeroCard(card, options = {}) {
-      getHeroActionsController?.()?.activateHeroCard?.(card, options);
-    },
-    enterHeroProject(card, event) {
-      getHeroActionsController?.()?.enterHeroProject?.(card, event);
-    },
     closeWorkGallery() {
       window.LucianWorkGallery?.close?.();
-    },
-    releaseOrderedLayout() {
-      getHeroActionsController?.()?.releaseOrderedLayout?.();
-    },
-    resetCurrentHeroCard() {
-      getHeroActionsController?.()?.resetCurrentHeroCard?.();
     },
     setCursorVisible,
     updatePrecisionCursor,
@@ -85,12 +80,8 @@ window.initLucianRuntimeBridge = ({
       if (typeof value.y === "number") fieldPointer.y = value.y;
       if (typeof value.active === "boolean") fieldPointer.active = value.active;
     },
-    clearHeroPointerState() {
-      getHeroActionsController?.()?.clearHeroPointerState?.(fieldPointer);
-    },
-    clearFieldPointer() {
-      fieldPointer.active = false;
-    },
+    clearHeroPointerState: clearFieldPointer,
+    clearFieldPointer,
     forceScrollTop() {
       getHeroSequenceController?.()?.forceScrollTop?.();
     },
@@ -99,9 +90,6 @@ window.initLucianRuntimeBridge = ({
     },
     resizeStage() {
       getHeroSequenceController?.()?.resizeStage?.();
-    },
-    initCards() {
-      getHeroSequenceController?.()?.initCards?.();
     },
     setEntered(value) {
       const heroState = getHeroState?.();
@@ -124,25 +112,13 @@ window.initLucianRuntimeBridge = ({
     };
   };
 
-  const installHeroSteps = (heroStepController) => {
-    runtime.heroSteps = {
-      get stage() {
-        return heroStage;
-      },
-      isActive: (...args) => heroStepController?.isActive?.(...args) || false,
-      step: (...args) => heroStepController?.step?.(...args) || false,
-      wheelStepThreshold: HERO_WHEEL_STEP_THRESHOLD,
-      wheelBackThreshold: HERO_WHEEL_BACK_THRESHOLD,
-      touchStepThreshold: HERO_TOUCH_STEP_THRESHOLD,
-    };
-  };
-
   const installAudioUnlock = () => {
     window.addEventListener(
       "pointerdown",
       () => {
         if (window.LucianAudio?.isSoundEnabled?.()) {
           getAudioContext().catch(() => null);
+          window.LucianAudio?.resumeBackgroundMusic?.().catch(() => null);
         }
       },
       { once: true, passive: true }
@@ -154,7 +130,6 @@ window.initLucianRuntimeBridge = ({
     setCursorVisible,
     updatePrecisionCursor,
     installHeroRipples,
-    installHeroSteps,
     installAudioUnlock,
   };
 };

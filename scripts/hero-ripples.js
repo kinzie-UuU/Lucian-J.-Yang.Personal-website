@@ -29,7 +29,6 @@
 
   heroRipplesRuntime.stage?.addEventListener("click", (event) => {
     if (!document.body.classList.contains("has-entered")) return;
-    if (event.target.closest(".hero-card")) return;
     createHeroRipple(event.clientX, event.clientY, true);
   });
 
@@ -39,7 +38,6 @@
 
   heroRipplesRuntime.stage?.addEventListener("pointermove", (event) => {
     if (!document.body.classList.contains("has-entered")) return;
-    if (event.target.closest(".hero-card")) return;
 
     const now = performance.now();
     if (now - lastRippleTime < RIPPLE_THROTTLE) return;

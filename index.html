@@ -13,24 +13,38 @@
     (() => {
       if (window.location.protocol !== "file:") return;
 
-      const target = `http://127.0.0.1:4180/index.html${window.location.hash || ""}`;
-      fetch(target, { mode: "no-cors", cache: "no-store" })
-        .then(() => window.location.replace(target))
+      const ports = Array.from({ length: 11 }, (_, index) => 4180 + index);
+      const hash = window.location.hash || "";
+      const probe = (port) => fetch(`http://127.0.0.1:${port}/__lucian_proxy_ping`, {
+        cache: "no-store",
+        mode: "cors",
+      })
+        .then((response) => (
+          response.ok && response.headers.get("X-LJY-Proxy") === "1" ? port : null
+        ))
+        .catch(() => null);
+
+      Promise.all(ports.map(probe))
+        .then((matches) => {
+          const port = matches.find(Boolean);
+          if (port) window.location.replace(`http://127.0.0.1:${port}/index.html${hash}`);
+        })
         .catch(() => {});
     })();
   </script>
   <link rel="stylesheet" href="styles/fonts.css">
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css?v=20260515-nav-speed1">
   <link rel="stylesheet" href="styles/cursor.css?v=20260512-target-cursor1">
   <link rel="stylesheet" href="styles/typography.css">
-  <link rel="stylesheet" href="styles/home.css">
+  <link rel="stylesheet" href="styles/home.css?v=20260516-cube-module1">
+  <link rel="stylesheet" href="components/hero-cube/hero-cube.css?v=20260516-module1">
   <link rel="stylesheet" href="styles/about.css">
   <link rel="stylesheet" href="styles/services.css">
   <link rel="stylesheet" href="styles/works.css">
-  <link rel="stylesheet" href="styles/clients.css?v=20260514-footer-fine1">
+  <link rel="stylesheet" href="styles/clients.css?v=20260516-warm-flat1">
   <link rel="stylesheet" href="styles/work-gallery.css?v=20260513-pmg-edgefix2">
   <link rel="stylesheet" href="styles/contact.css">
-  <link rel="stylesheet" href="styles/navigation.css?v=20260514-nav-lockfix1">
+  <link rel="stylesheet" href="styles/navigation.css?v=20260515-nav-speed1">
   <link rel="stylesheet" href="styles/responsive.css">
   <link rel="stylesheet" href="styles/shared-motion.css">
   <script src="three.min.js"></script>
@@ -58,7 +72,7 @@
       </div>
       <div class="top-meta-right">
         <span class="top-meta-group top-meta-tools">
-          <button class="top-meta-toggle top-meta-sound-toggle top-meta-line-control" id="sound-toggle" type="button" aria-label="Mute interface sounds" aria-pressed="true">
+          <button class="top-meta-toggle top-meta-sound-toggle top-meta-line-control" id="sound-toggle" type="button" aria-label="Mute site sound" aria-pressed="true">
             <span class="top-meta-line-label">SOUND</span>
             <span class="top-meta-line-state top-meta-sound-state">ON</span>
           </button>
@@ -148,53 +162,13 @@
 
         <div class="hero-cube-scene" id="hero-cube-scene" aria-label="Packaging cube showcase">
           <div class="hero-cube" id="hero-cube">
-            <div class="hero-cube-face" data-face="top" data-i="0">
-              <img src="images/works/oem/23nianduanwu/WechatIMG2128.jpg" alt="">
-              <span class="hero-cube-face-ph">TOP</span>
-            </div>
-            <div class="hero-cube-face" data-face="front" data-i="1">
-              <img src="images/works/oem/24nianduanwu/2.png" alt="">
-              <span class="hero-cube-face-ph">FRONT</span>
-            </div>
-            <div class="hero-cube-face" data-face="right" data-i="2">
-              <img src="images/works/oem/24nianzhongqiu/69f4e228dc3023cccc50614c9cd1c92d.png" alt="">
-              <span class="hero-cube-face-ph">RIGHT</span>
-            </div>
-            <div class="hero-cube-face" data-face="back" data-i="3">
-              <img src="images/works/oem/chaojizongbang/03-01.png" alt="">
-              <span class="hero-cube-face-ph">BACK</span>
-            </div>
-            <div class="hero-cube-face" data-face="left" data-i="4">
-              <img src="images/works/gift/23shunfengduanwu/WechatIMG704.jpg" alt="">
-              <span class="hero-cube-face-ph">LEFT</span>
-            </div>
-            <div class="hero-cube-face" data-face="bottom" data-i="5">
-              <img src="images/works/gift/anjier/1.1新.jpg" alt="">
-              <span class="hero-cube-face-ph">BOTTOM</span>
-            </div>
+            <div class="hero-cube-face" data-face="top" data-i="0"></div>
+            <div class="hero-cube-face" data-face="front" data-i="1"></div>
+            <div class="hero-cube-face" data-face="right" data-i="2"></div>
+            <div class="hero-cube-face" data-face="back" data-i="3"></div>
+            <div class="hero-cube-face" data-face="left" data-i="4"></div>
+            <div class="hero-cube-face" data-face="bottom" data-i="5"></div>
           </div>
-        </div>
-
-        <div class="hero-cube-hud" aria-hidden="true">
-          <div class="hero-cube-percent" id="hero-cube-percent">000%</div>
-          <div class="hero-cube-progress">
-            <span class="hero-cube-progress-fill" id="hero-cube-progress-fill"></span>
-          </div>
-          <div class="hero-cube-scene-name" id="hero-cube-scene-name">STRUCTURE</div>
-        </div>
-
-        <div class="hero-cube-strip" id="hero-cube-strip" aria-label="Packaging cube faces">
-          <button class="hero-cube-dot is-active" type="button" data-cube-stop="0" aria-label="Cube face 1"></button>
-          <button class="hero-cube-dot" type="button" data-cube-stop="1" aria-label="Cube face 2"></button>
-          <button class="hero-cube-dot" type="button" data-cube-stop="2" aria-label="Cube face 3"></button>
-          <button class="hero-cube-dot" type="button" data-cube-stop="3" aria-label="Cube face 4"></button>
-          <button class="hero-cube-dot" type="button" data-cube-stop="4" aria-label="Cube face 5"></button>
-          <button class="hero-cube-dot" type="button" data-cube-stop="5" aria-label="Cube face 6"></button>
-        </div>
-
-        <div class="hero-cube-caption" aria-hidden="true">
-          <div class="hero-cube-caption-num" id="hero-cube-caption-num">01</div>
-          <div class="hero-cube-caption-name" id="hero-cube-caption-name">STRUCTURE</div>
         </div>
       </div>
 
@@ -306,10 +280,10 @@
       </div>
       <div class="works-transition-copy" aria-hidden="true">
         <section class="works-transition-line">
-          <span class="works-transition-line-text" data-i18n="works_transition_line_1">不是把包装做漂亮，</span>
+          <span class="works-transition-line-text" data-i18n="works_transition_line_1">不是把包装做漂亮</span>
         </section>
         <section class="works-transition-line">
-          <span class="works-transition-line-text" data-i18n="works_transition_line_2">而是把包装做对。</span>
+          <span class="works-transition-line-text" data-i18n="works_transition_line_2">而是把包装做对</span>
         </section>
         <p class="works-transition-note" data-i18n="works_transition_note">Lucian J. Yang 聚焦 OEM、礼赠渠道、系列礼盒与品牌升级项目。比起单纯制造风格，我更关心包装如何在真实约束中成立。</p>
       </div>
@@ -637,49 +611,40 @@
   </nav>
 
   <script src="site-data.js"></script>
-  <script src="scripts/hero-card-config.js"></script>
-  <script src="scripts/hero-card-layout.js"></script>
-  <script src="scripts/audio-feedback.js"></script>
+  <script src="scripts/audio-feedback.js?v=20260515-bgm1"></script>
   <script src="scripts/hero-wireframe.js"></script>
-  <script src="scripts/hero-focus-runtime.js"></script>
   <script src="scripts/hero-water-surface.js"></script>
   <script src="scripts/hero-state-runtime.js"></script>
-  <script src="scripts/hero-actions-runtime.js"></script>
-  <script src="scripts/hero-card-animation.js"></script>
-  <script src="scripts/hero-step-runtime.js"></script>
   <script src="scripts/hero-sequence-runtime.js"></script>
-  <script src="scripts/runtime-bridge.js?v=20260512-pointer-frame2"></script>
+  <script src="scripts/runtime-bridge.js?v=20260515-bgm1"></script>
   <script src="scripts/app-bootstrap.js"></script>
   <script src="scripts/static-text-runtime.js"></script>
   <script src="scripts/language-runtime.js"></script>
   <script src="scripts/flip-text.js"></script>
   <script src="scripts/particle-canvas.js"></script>
   <script src="script.js"></script>
-  <script src="scripts/hero-packaging-cube.js?v=20260514-cube1"></script>
-  <script src="scripts/services-entry-grid-scan.js"></script>
-  <script src="scripts/service-panel-shaders.js"></script>
-  <script src="scripts/services-scroll-story.js"></script>
+  <script src="components/hero-cube/hero-cube.js?v=20260516-module1"></script>
+  <script src="scripts/services-entry-grid-scan.js?v=20260515-nav-speed1"></script>
+  <script src="scripts/service-panel-shaders.js?v=20260515-nav-speed1"></script>
+  <script src="scripts/services-scroll-story.js?v=20260515-nav-speed1"></script>
   <script src="scripts/work-gallery.js?v=20260514-detail-works1"></script>
   <script src="scripts/works-side-rail.js?v=20260514-avatar-work-menu1"></script>
   <script src="scripts/scrambled-text.js"></script>
-  <script src="scripts/header-controls.js?v=20260514-footer-meta1"></script>
+  <script src="scripts/header-controls.js?v=20260515-bgm1"></script>
   <script src="scripts/language-controls.js"></script>
   <script src="scripts/contact-interactions.js"></script>
-  <script src="scripts/scroll-type-effects.js"></script>
+  <script src="scripts/scroll-type-effects.js?v=20260515-nav-speed1"></script>
   <script src="scripts/reveal-effects.js"></script>
-  <script src="scripts/site-navigation.js"></script>
   <script src="scripts/precision-cursor.js?v=20260512-target-cursor1"></script>
   <script src="scripts/services-image-trail.js"></script>
-  <script src="scripts/hero-card-events.js"></script>
   <script src="scripts/works-hover-preview.js?v=20260514-detail-works1"></script>
   <script src="scripts/works-transition-motion.js"></script>
   <script src="scripts/site-clock.js"></script>
-  <script src="scripts/bottom-nav-scroll-spy.js?v=20260514-nav-lockfix1"></script>
+  <script src="scripts/bottom-nav-scroll-spy.js?v=20260515-nav-speed1"></script>
   <script src="scripts/clients-marquee.js"></script>
   <script src="scripts/clients-title-interaction.js"></script>
   <script src="scripts/portrait-motion.js"></script>
   <script src="scripts/hero-ripples.js"></script>
-  <script src="scripts/hero-steps.js"></script>
-  <script src="scripts/entry.js"></script>
+  <script src="scripts/entry.js?v=20260515-bgm1"></script>
 </body>
 </html>

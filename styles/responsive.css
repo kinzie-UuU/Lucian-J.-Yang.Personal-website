@@ -4,9 +4,6 @@
     grid-template-columns: 1fr;
   }
 
-  .hero-focus-panel {
-    width: min(420px, calc(100vw - 48px));
-  }
 }
 
 @media (max-width: 760px) {
@@ -43,22 +40,6 @@
   .entry-box-trigger {
     width: 172px;
     height: 172px;
-  }
-
-  .hero-stage-intro {
-    top: 148px;
-    left: 18px;
-    right: 18px;
-    max-width: none;
-  }
-
-  .hero-focus-panel {
-    left: 50%;
-    top: 50%;
-    right: auto;
-    bottom: auto;
-    width: min(calc(100vw - 32px), 92vw);
-    padding: 24px 22px;
   }
 
   .section-head h2 {

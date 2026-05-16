@@ -13,7 +13,6 @@
     "select",
     "[role='button']",
     ".cursor-target",
-    ".hero-card",
     ".work-card",
     ".work-gallery-close",
     ".work-gallery-back",

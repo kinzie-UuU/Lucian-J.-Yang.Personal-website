@@ -4,10 +4,9 @@
   width: 100%;
   min-height: 100svh;
   margin-top: 0;
-  padding-top: clamp(112px, 17svh, 210px);
+  padding-top: 0;
   color: var(--warm-ink);
-  background:
-    linear-gradient(180deg, #000 0%, rgba(7, 8, 11, 0.86) 12%, var(--warm-paper-deep) 34%, var(--warm-paper) 100%);
+  background: var(--warm-paper);
   overflow: hidden;
   border-top: 0;
   scroll-snap-align: start;
@@ -23,9 +22,8 @@
   z-index: 0;
   height: clamp(220px, 36svh, 420px);
   pointer-events: none;
-  background:
-    radial-gradient(ellipse at 50% 100%, rgba(255, 98, 104, 0.09), transparent 58%),
-    linear-gradient(180deg, rgba(0, 0, 0, 0), rgba(247, 244, 238, 0.92) 86%);
+  background: none;
+  opacity: 0;
 }
 
 .clients-particles {
@@ -36,7 +34,7 @@
   position: relative;
   z-index: 1;
   width: 100%;
-  min-height: calc(100svh - clamp(112px, 17svh, 210px));
+  min-height: 100svh;
   padding: 0 0 clamp(224px, 22svh, 292px);
 }
 
@@ -278,9 +276,7 @@ html[lang="en"] .clients-intro {
   padding: clamp(72px, 10svh, 132px) clamp(28px, 4.4vw, 86px) clamp(62px, 9svh, 118px);
   overflow: hidden;
   border-bottom: 1px solid rgba(20, 20, 20, 0.08);
-  background:
-    radial-gradient(ellipse at 50% 54%, rgba(255, 98, 104, 0.11), transparent 56%),
-    linear-gradient(180deg, rgba(247, 244, 238, 0.42) 0%, rgba(247, 244, 238, 0.78) 52%, var(--warm-paper) 100%);
+  background: var(--warm-paper);
 }
 
 .clients-title-band::before,
@@ -293,15 +289,11 @@ html[lang="en"] .clients-intro {
 }
 
 .clients-title-band::before {
-  top: 0;
-  height: 34%;
-  background: linear-gradient(180deg, rgba(247, 244, 238, 0.82) 0%, rgba(247, 244, 238, 0) 100%);
+  display: none;
 }
 
 .clients-title-band::after {
-  bottom: 0;
-  height: 28%;
-  background: linear-gradient(180deg, rgba(247, 244, 238, 0), var(--warm-paper) 100%);
+  display: none;
 }
 
 .clients-title-lockup {
@@ -423,11 +415,11 @@ html[lang="en"] .clients-intro {
 @media (max-width: 760px) {
   .clients-section {
     margin-top: 0;
-    padding-top: 92px;
+    padding-top: 0;
   }
 
   .clients-content {
-    min-height: calc(100svh - 92px);
+    min-height: 100svh;
     padding-bottom: 214px;
   }
 

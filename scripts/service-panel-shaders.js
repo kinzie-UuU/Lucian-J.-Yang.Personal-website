@@ -160,6 +160,11 @@
 
     let raf = 0;
     const render = (now) => {
+      if (document.hidden || document.body.classList.contains("nav-transition-active")) {
+        raf = requestAnimationFrame(render);
+        return;
+      }
+
       resize();
       renderers.forEach((item, index) => {
         const { canvas, gl, program, resolution, time, colorLow, colorMid, colorHigh, palette } = item;
