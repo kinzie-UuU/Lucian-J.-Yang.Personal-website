@@ -545,11 +545,13 @@ body.has-entered .entry-screen {
 
 .hero-cube {
   --cube-size: min(58vw, 62vh, 560px);
+  --cube-face-bleed: 1.5px;
+  --cube-face-depth: calc(var(--cube-size) / 2 + var(--cube-face-bleed));
   position: relative;
   width: var(--cube-size);
   height: var(--cube-size);
   transform-style: preserve-3d;
-  transform: rotateX(90deg) rotateY(0deg);
+  transform: rotateX(0deg) rotateY(0deg);
   filter:
     drop-shadow(0 36px 58px rgba(0, 0, 0, 0.58))
     drop-shadow(0 0 36px rgba(87, 219, 202, 0.12));
@@ -557,20 +559,15 @@ body.has-entered .entry-screen {
 }
 
 .hero-cube::before {
-  content: "";
-  position: absolute;
-  inset: -2px;
-  border: 1px solid rgba(236, 248, 244, 0.18);
-  transform: translateZ(calc(var(--cube-size) / -2 - 1px));
-  pointer-events: none;
+  content: none;
 }
 
 .hero-cube-face {
   position: absolute;
-  inset: 0;
+  inset: calc(0px - var(--cube-face-bleed));
   overflow: hidden;
   backface-visibility: hidden;
-  border: 1px solid rgba(238, 245, 240, 0.18);
+  border: 0;
   background:
     repeating-linear-gradient(
       0deg,
@@ -588,8 +585,12 @@ body.has-entered .entry-screen {
     ),
     #111614;
   box-shadow:
-    inset 0 0 0 1px rgba(255, 255, 255, 0.035),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.04),
     inset 0 0 60px rgba(8, 18, 18, 0.4);
+}
+
+.hero-cube.is-flat-start .hero-cube-face:not([data-face="front"]) {
+  opacity: 0;
 }
 
 .hero-cube-face::after {
@@ -630,27 +631,27 @@ body.has-entered .entry-screen {
 }
 
 .hero-cube-face[data-face="front"] {
-  transform: translateZ(calc(var(--cube-size) / 2));
+  transform: translateZ(var(--cube-face-depth));
 }
 
 .hero-cube-face[data-face="back"] {
-  transform: rotateY(180deg) translateZ(calc(var(--cube-size) / 2));
+  transform: rotateY(180deg) translateZ(var(--cube-face-depth));
 }
 
 .hero-cube-face[data-face="right"] {
-  transform: rotateY(90deg) translateZ(calc(var(--cube-size) / 2));
+  transform: rotateY(90deg) translateZ(var(--cube-face-depth));
 }
 
 .hero-cube-face[data-face="left"] {
-  transform: rotateY(-90deg) translateZ(calc(var(--cube-size) / 2));
+  transform: rotateY(-90deg) translateZ(var(--cube-face-depth));
 }
 
 .hero-cube-face[data-face="top"] {
-  transform: rotateX(-90deg) translateZ(calc(var(--cube-size) / 2));
+  transform: rotateX(-90deg) translateZ(var(--cube-face-depth));
 }
 
 .hero-cube-face[data-face="bottom"] {
-  transform: rotateX(90deg) translateZ(calc(var(--cube-size) / 2));
+  transform: rotateX(90deg) translateZ(var(--cube-face-depth));
 }
 
 .hero-cube-hud {

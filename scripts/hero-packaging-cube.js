@@ -12,12 +12,12 @@
   if (!section || !stage || !cube) return;
 
   const stops = [
-    { rx: 90, ry: 0 },
     { rx: 0, ry: 0 },
-    { rx: 0, ry: -90 },
-    { rx: 0, ry: -180 },
-    { rx: 0, ry: -270 },
-    { rx: -90, ry: -360 },
+    { rx: 0, ry: -72 },
+    { rx: 0, ry: -144 },
+    { rx: 0, ry: -216 },
+    { rx: 0, ry: -288 },
+    { rx: 0, ry: -360 },
   ];
   const names = ["STRUCTURE", "FRONT PANEL", "SIDE VIEW", "BACK PANEL", "BRAND FACE", "BOTTOM"];
   let currentStop = -1;
@@ -46,6 +46,7 @@
     const ry = from.ry + (to.ry - from.ry) * local;
 
     cube.style.transform = `rotateX(${rx.toFixed(3)}deg) rotateY(${ry.toFixed(3)}deg)`;
+    cube.classList.toggle("is-flat-start", progress < 0.015);
   };
 
   const setHud = (progress) => {

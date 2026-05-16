@@ -694,16 +694,13 @@ html[lang="zh-CN"] .contact-title {
 
 /* Warm contact surface ------------------------------------------------------ */
 .contact-section {
-  background:
-    linear-gradient(180deg, var(--warm-paper) 0%, #fbf8f2 54%, var(--warm-paper-deep) 100%);
+  background: var(--warm-paper);
   color: rgba(20, 20, 20, 0.9);
 }
 
 .contact-section::before {
-  background:
-    radial-gradient(ellipse at 50% 45%, rgba(255, 98, 104, 0.08), transparent 48%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.34), rgba(20, 20, 20, 0.035));
-  opacity: calc(0.32 + var(--contact-paper-place) * 0.18);
+  background: none;
+  opacity: 0;
 }
 
 .contact-layout {

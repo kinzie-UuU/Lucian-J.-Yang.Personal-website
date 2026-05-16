@@ -330,6 +330,7 @@ html[lang="zh-CN"] .service-index {
 
 .services-entry-title {
   display: flex;
+  align-items: center;
   justify-content: center;
   gap: 0.14em;
   margin: 0;
@@ -354,13 +355,13 @@ html[lang="zh-CN"] .services-entry-title {
 
 .services-entry-title span:first-child {
   transform:
-    translate3d(calc(var(--services-open) * -26vw), calc(var(--services-open) * -3vh), 0)
+    translate3d(calc(var(--services-open) * -26vw), 0, 0)
     scale(calc(1 + var(--services-open) * 0.9));
 }
 
 .services-entry-title span:last-child {
   transform:
-    translate3d(calc(var(--services-open) * 26vw), calc(var(--services-open) * 3vh), 0)
+    translate3d(calc(var(--services-open) * 26vw), 0, 0)
     scale(calc(1 + var(--services-open) * 0.9));
 }
 
