@@ -206,6 +206,20 @@
     };
 
     const render = () => {
+      if (document.body.classList.contains("nav-transition-active")) {
+        requestAnimationFrame(render);
+        return;
+      }
+
+      if (
+        !servicesInView
+        && Math.abs(targetProgress - currentProgress) < 0.0001
+        && Math.abs(serviceVelocity) < 0.0001
+      ) {
+        requestAnimationFrame(render);
+        return;
+      }
+
       serviceVelocity *= 0.9;
       const inertialTarget = clamp01(targetProgress + serviceVelocity);
       currentProgress += (inertialTarget - currentProgress) * 0.15;

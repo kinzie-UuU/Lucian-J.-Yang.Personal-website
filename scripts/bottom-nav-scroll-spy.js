@@ -9,11 +9,15 @@
   const clientsSection = document.getElementById("clients");
   const anchorLinks = document.querySelectorAll('a[href^="#"]:not([href="#"])');
   let navTransition = null;
-  let navTransitionCopy = null;
   let navTransitionLabel = null;
   let transitionTimers = [];
   let transitionActive = false;
   let transitionToken = 0;
+  const transitionTiming = {
+    scroll: 48,
+    leave: 150,
+    cleanup: 300,
+  };
 
   const clearTransitionTimers = () => {
     transitionTimers.forEach((timer) => clearTimeout(timer));
@@ -65,19 +69,21 @@
     if (navTransition) return navTransition;
 
     navTransition = document.createElement("div");
-    navTransition.className = "nav-water-transition";
+    navTransition.className = "nav-paper-transition";
     navTransition.setAttribute("aria-hidden", "true");
-    const membrane = document.createElement("div");
-    navTransitionCopy = document.createElement("div");
+    const sheet = document.createElement("div");
     navTransitionLabel = document.createElement("span");
-    membrane.className = "nav-water-membrane";
-    navTransitionCopy.className = "nav-water-copy";
-    navTransitionLabel.className = "nav-water-label";
+    sheet.className = "nav-paper-sheet";
+    navTransitionLabel.className = "nav-paper-label";
+    ["h1", "h2", "v1", "v2"].forEach((line) => {
+      const marker = document.createElement("i");
+      marker.className = `nav-paper-line nav-paper-line--${line}`;
+      sheet.append(marker);
+    });
     navTransition.hidden = true;
-    navTransitionCopy.hidden = true;
-    navTransitionCopy.append(navTransitionLabel);
-    navTransition.append(membrane);
-    document.body.append(navTransition, navTransitionCopy);
+    sheet.append(navTransitionLabel);
+    navTransition.append(sheet);
+    document.body.append(navTransition);
     return navTransition;
   };
 
@@ -88,34 +94,39 @@
   const resetTransitionLayers = ({ removeNodes = false, clearTimers = true } = {}) => {
     if (clearTimers) clearTransitionTimers();
     navTransition?.classList.remove("is-active", "is-leaving");
-    navTransitionCopy?.classList.remove("is-active", "is-leaving");
-    navTransitionCopy?.style.removeProperty("opacity");
     if (navTransition) navTransition.hidden = true;
-    if (navTransitionCopy) navTransitionCopy.hidden = true;
     document.body.classList.remove("nav-transition-active");
     transitionActive = false;
 
     if (removeNodes) {
       navTransition?.remove();
-      navTransitionCopy?.remove();
       navTransition = null;
-      navTransitionCopy = null;
       navTransitionLabel = null;
     }
   };
 
   const finishTransition = () => {
     navTransition?.classList.add("is-leaving");
-    navTransitionCopy?.classList.add("is-leaving");
     navTransition?.classList.remove("is-active");
-    navTransitionCopy?.classList.remove("is-active");
-    navTransitionCopy?.style.removeProperty("opacity");
     document.body.classList.remove("nav-transition-active");
     transitionActive = false;
   };
 
+  const jumpToTop = (top) => {
+    document.documentElement.classList.add("nav-jump-instant");
+    window.scrollTo({ top, left: 0, behavior: "auto" });
+    document.documentElement.scrollTop = top;
+    document.body.scrollTop = top;
+    window.requestAnimationFrame(() => {
+      document.documentElement.classList.remove("nav-jump-instant");
+    });
+  };
+
   const scrollToTarget = (target, { forceInstant = false, withTransition = true } = {}) => {
-    if (transitionActive && withTransition) {
+    if (!withTransition) {
+      transitionToken += 1;
+      resetTransitionLayers({ removeNodes: true });
+    } else if (transitionActive) {
       transitionToken += 1;
       resetTransitionLayers({ removeNodes: true });
     }
@@ -125,11 +136,13 @@
     const runScroll = () => {
       const top = getReadableTop(target);
       const longAnimatedSection = target.id === "services" || target.id === "works";
+      const instant = forceInstant || withTransition || longAnimatedSection || runtime?.reducedMotion;
 
-      window.scrollTo({
-        top,
-        behavior: forceInstant || withTransition || longAnimatedSection || runtime?.reducedMotion ? "auto" : "smooth",
-      });
+      if (instant) {
+        jumpToTop(top);
+      } else {
+        window.scrollTo({ top, left: 0, behavior: "smooth" });
+      }
 
       updateActiveNav();
     };
@@ -144,39 +157,27 @@
     const overlay = getTransitionOverlay();
     setTransitionText(target);
     overlay.hidden = false;
-    if (navTransitionCopy) navTransitionCopy.hidden = false;
     document.body.classList.add("nav-transition-active");
     overlay.classList.remove("is-leaving");
-    navTransitionCopy?.classList.remove("is-leaving");
     overlay.classList.remove("is-active");
-    navTransitionCopy?.classList.remove("is-active");
     window.requestAnimationFrame(() => {
       if (token !== transitionToken) return;
       overlay.classList.add("is-active");
-      navTransitionCopy?.classList.add("is-active");
     });
 
     transitionTimers.push(setTimeout(() => {
       if (token !== transitionToken) return;
       runScroll();
-    }, 180));
+    }, transitionTiming.scroll));
     transitionTimers.push(setTimeout(() => {
       if (token !== transitionToken) return;
       finishTransition();
-    }, 560));
-
-    transitionTimers.push(setTimeout(() => {
-      if (token !== transitionToken) return;
-      overlay.classList.remove("is-leaving");
-      navTransitionCopy?.classList.remove("is-leaving");
-      navTransitionCopy?.style.removeProperty("opacity");
-      resetTransitionLayers({ clearTimers: false });
-    }, 820));
+    }, transitionTiming.leave));
 
     transitionTimers.push(setTimeout(() => {
       if (token !== transitionToken) return;
       resetTransitionLayers({ removeNodes: true, clearTimers: false });
-    }, 1400));
+    }, transitionTiming.cleanup));
   };
 
   const updateActiveNav = () => {
@@ -221,7 +222,10 @@
       if (!target) return;
 
       event.preventDefault();
-      scrollToTarget(target);
+      const isBottomNavItem = item.classList.contains("bottom-nav-item");
+      scrollToTarget(target, isBottomNavItem
+        ? { forceInstant: true, withTransition: true }
+        : undefined);
     });
   });
 

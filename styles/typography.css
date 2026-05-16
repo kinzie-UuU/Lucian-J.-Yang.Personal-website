@@ -1,33 +1,25 @@
 /* Shared typography and section headings */
 .section-head h2,
-.hero-focus-title,
 .service-item h3 {
   font-family: "Satoshi", "Cabinet Grotesk", "MiSans", Georgia, serif;
   font-weight: 800;
 }
 
-.hero-kicker,
 .section-kicker,
 .works-label,
-.hero-focus-kicker,
-.service-index,
-.hero-focus-meta span {
+.service-index {
   margin: 0;
   font-size: 0.68rem;
   letter-spacing: 0.22em;
   text-transform: uppercase;
 }
 
-.hero-kicker,
-.section-kicker,
-.hero-focus-kicker {
+.section-kicker {
   color: rgba(236, 232, 225, 0.38);
   font-size: 0.72rem;
   letter-spacing: 0.28em;
 }
 
-.hero-text,
-.hero-note,
 .about-lead,
 .about-detail,
 .service-item p,
@@ -35,18 +27,6 @@
 .contact-section .section-intro {
   margin: 0;
   line-height: 1.9;
-}
-
-.hero-text {
-  max-width: 42ch;
-  color: rgba(235, 231, 224, 0.78);
-  font-size: 1rem;
-}
-
-.hero-note {
-  max-width: 54ch;
-  color: rgba(235, 231, 224, 0.5);
-  font-size: 0.9rem;
 }
 
 .section-head {
