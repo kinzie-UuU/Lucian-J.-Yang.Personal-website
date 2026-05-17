@@ -221,12 +221,12 @@ html[lang="zh-CN"] .works-statement-title {
   display: block;
   width: max-content;
   max-width: calc(100vw - 104px);
-  font-family: "MiSans", "PingFang SC", "Microsoft YaHei", sans-serif;
-  font-size: clamp(3rem, 6.9vw, 7.45rem);
-  font-weight: 680;
-  line-height: 1.06;
-  letter-spacing: 0;
-  color: rgba(238, 233, 223, 0.9);
+  font-family: "SkyHeart Clear Serif SC", "Playfair Display", "Songti SC", "STSong", serif;
+  font-size: clamp(3rem, 6.35vw, 7rem);
+  font-weight: 400;
+  line-height: 1.12;
+  letter-spacing: 0.035em;
+  color: rgba(238, 233, 223, 0.88);
   text-align: center;
   white-space: normal;
   word-break: keep-all;
@@ -244,9 +244,10 @@ html[lang="zh-CN"] .works-statement-title {
 }
 
 html[lang="zh-CN"] .works-transition-line-text {
-  font-size: clamp(3.1rem, 6.75vw, 7.25rem);
-  font-weight: 660;
-  line-height: 1.08;
+  font-size: clamp(3rem, 6.1vw, 6.8rem);
+  font-weight: 400;
+  line-height: 1.14;
+  letter-spacing: 0.055em;
 }
 
 .works-transition-note {

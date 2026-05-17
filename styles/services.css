@@ -217,7 +217,7 @@ html[lang="zh-CN"] .service-index {
     translate(-50%, -50%)
     translateZ(calc(var(--services-open) * 260px))
     scale(calc(1 + var(--services-open) * 1.65));
-  opacity: max(calc(1 - var(--services-open) * 0.9), calc((1 - var(--services-gallery)) * 0.34));
+  opacity: calc((1 - var(--services-open)) * (1 - var(--service-to-works-outro)));
   filter: blur(calc(var(--services-open) * 3px));
   transform-origin: center;
   will-change: transform, opacity, filter;
