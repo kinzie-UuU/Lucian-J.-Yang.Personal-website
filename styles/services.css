@@ -217,53 +217,10 @@ html[lang="zh-CN"] .service-index {
     translate(-50%, -50%)
     translateZ(calc(var(--services-open) * 260px))
     scale(calc(1 + var(--services-open) * 1.65));
-  opacity: max(calc(1 - var(--services-open) * 0.9), calc((1 - var(--services-gallery)) * 0.34));
+  opacity: calc((1 - var(--services-open)) * (1 - var(--service-to-works-outro)));
   filter: blur(calc(var(--services-open) * 3px));
   transform-origin: center;
   will-change: transform, opacity, filter;
-}
-
-.services-image-trail.content {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  width: 100%;
-  height: 100%;
-  overflow: visible;
-  border-radius: 0;
-  background: transparent;
-  pointer-events: none;
-  perspective: 900px;
-}
-
-.services-image-trail .content__img {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: clamp(108px, 8.8vw, 190px);
-  aspect-ratio: 1.12;
-  overflow: hidden;
-  border: 1px solid rgba(224, 255, 247, 0.16);
-  border-radius: 10px;
-  opacity: 0;
-  box-shadow:
-    0 18px 50px rgba(0, 0, 0, 0.42),
-    0 0 32px rgba(45, 206, 180, 0.12);
-  transform: translate3d(-999px, -999px, 0) scale(0.72);
-  will-change: transform, opacity, filter;
-}
-
-.services-image-trail .content__img-inner {
-  position: absolute;
-  top: -10px;
-  left: -10px;
-  width: calc(100% + 20px);
-  height: calc(100% + 20px);
-  background-position: 50% 50%;
-  background-size: cover;
-  filter: saturate(0.88) contrast(1.04) brightness(0.88);
-  transform: scale(1.08);
-  will-change: transform, filter;
 }
 
 .services-entry-gridscan {
@@ -330,6 +287,7 @@ html[lang="zh-CN"] .service-index {
 
 .services-entry-title {
   display: flex;
+  align-items: center;
   justify-content: center;
   gap: 0.14em;
   margin: 0;
@@ -337,12 +295,12 @@ html[lang="zh-CN"] .service-index {
   font-size: clamp(3.15rem, 6.2vw, 5.95rem);
   line-height: 0.94;
   letter-spacing: 0;
-  font-weight: 720;
+  font-weight: 700;
 }
 
 html[lang="zh-CN"] .services-entry-title {
   font-family: "MiSans", "PingFang SC", "Microsoft YaHei", sans-serif;
-  font-weight: 520;
+  font-weight: 500;
   font-size: clamp(3rem, 5.25vw, 5.05rem);
   letter-spacing: 0.035em;
 }
@@ -354,13 +312,13 @@ html[lang="zh-CN"] .services-entry-title {
 
 .services-entry-title span:first-child {
   transform:
-    translate3d(calc(var(--services-open) * -26vw), calc(var(--services-open) * -3vh), 0)
+    translate3d(calc(var(--services-open) * -26vw), 0, 0)
     scale(calc(1 + var(--services-open) * 0.9));
 }
 
 .services-entry-title span:last-child {
   transform:
-    translate3d(calc(var(--services-open) * 26vw), calc(var(--services-open) * 3vh), 0)
+    translate3d(calc(var(--services-open) * 26vw), 0, 0)
     scale(calc(1 + var(--services-open) * 0.9));
 }
 
@@ -415,12 +373,12 @@ html[lang="zh-CN"] .services-entry-intro {
   font-size: clamp(3.4rem, 8.8vw, 7.6rem);
   line-height: 0.94;
   letter-spacing: -0.02em;
-  font-weight: 720;
+  font-weight: 700;
 }
 
 html[lang="zh-CN"] .service-text-title {
   font-family: "MiSans", "PingFang SC", "Microsoft YaHei", sans-serif;
-  font-weight: 620;
+  font-weight: 600;
   font-size: clamp(3rem, 7.4vw, 6.5rem);
   letter-spacing: 0.01em;
 }
@@ -437,7 +395,7 @@ html[lang="zh-CN"] .service-text-title {
 
 html[lang="zh-CN"] .service-text-body {
   font-family: "MiSans", "PingFang SC", "Microsoft YaHei", sans-serif;
-  font-weight: 460;
+  font-weight: 500;
   max-width: 28ch;
   letter-spacing: 0.02em;
   word-break: keep-all;
@@ -549,11 +507,6 @@ html[lang="zh-CN"] .service-text-body {
 
   .service-text-panel {
     width: calc(100vw - 44px);
-  }
-
-  .services-image-trail .content__img {
-    width: clamp(82px, 24vw, 128px);
-    border-radius: 8px;
   }
 
   .service-text-title {
@@ -980,7 +933,7 @@ html[lang="zh-CN"] .service-text-title {
   font-size: clamp(2.25rem, 4.6vw, 4.9rem);
   line-height: 0.94;
   letter-spacing: 0;
-  font-weight: 720;
+  font-weight: 700;
 }
 
 html[lang="zh-CN"] .services-scroll-story .service-text-title {
@@ -1000,7 +953,7 @@ html[lang="zh-CN"] .services-scroll-story .service-text-title {
 html[lang="zh-CN"] .services-scroll-story .service-text-body {
   max-width: 28ch;
   letter-spacing: 0.02em;
-  font-weight: 460;
+  font-weight: 500;
 }
 
 @media (max-width: 760px) {
@@ -1030,7 +983,7 @@ html[lang="zh-CN"] .services-scroll-story .service-text-body {
 
 /* Services gallery stage ---------------------------------------------------- */
 .services-scroll-story {
-  min-height: 540svh;
+  min-height: 430svh;
 }
 
 .services-scroll-story .services-sticky {
@@ -1049,8 +1002,13 @@ html[lang="zh-CN"] .services-scroll-story .service-text-body {
 }
 
 .services-scroll-story .services-sticky::after {
-  background: #000;
-  opacity: 0;
+  background:
+    radial-gradient(ellipse at 50% 54%, rgba(218, 255, 248, 0.08), transparent 34%),
+    radial-gradient(ellipse at 18% 86%, rgba(58, 201, 184, 0.16), transparent 54%),
+    radial-gradient(ellipse at 84% 84%, rgba(58, 201, 184, 0.13), transparent 52%),
+    linear-gradient(180deg, transparent 0%, rgba(0, 46, 42, 0.14) 62%, rgba(0, 92, 82, 0.20) 100%);
+  mix-blend-mode: screen;
+  opacity: calc((0.24 + var(--services-gallery, 0) * 0.14) * (1 - var(--service-to-works-outro) * 0.72));
 }
 
 .services-scroll-story .services-text-track {

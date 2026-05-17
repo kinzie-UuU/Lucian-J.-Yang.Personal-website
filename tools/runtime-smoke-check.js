@@ -297,19 +297,47 @@ const main = async () => {
     assert(musicState?.exists, `Background music audio node was not created: ${JSON.stringify(musicState)}`);
     assert(musicState?.src?.includes("audio/liquid-light-loop.mp3"), `Background music source is wrong: ${JSON.stringify(musicState)}`);
     assert(musicState?.loop, `Background music should loop: ${JSON.stringify(musicState)}`);
-    assert(await evaluate(client, "Boolean(document.querySelector('#hero-cube'))"), "Packaging cube was not rendered.");
     assert(await evaluate(client, "document.querySelectorAll('.hero-card').length === 0"), "Legacy hero cards are still present.");
-    const cubeState = await evaluate(client, `(() => {
-      const cube = document.querySelector('#hero-cube');
-      const style = cube ? getComputedStyle(cube) : null;
+
+    let modelState = null;
+    for (let attempt = 0; attempt < 80; attempt += 1) {
+      modelState = await evaluate(client, `(() => {
+        const host = document.querySelector('#hero-model-scene');
+        const canvas = document.querySelector('#hero-model-canvas');
+        const rect = canvas?.getBoundingClientRect();
+        const ready = document.body.classList.contains('hero-model-ready');
+        const model = window.LucianHeroModel || null;
+        return {
+          exists: Boolean(host),
+          ready,
+          source: host?.dataset.modelSrc || '',
+          canvasWidth: Math.round(rect?.width || 0),
+          canvasHeight: Math.round(rect?.height || 0),
+          runtimeSource: model?.source || '',
+          cubeNodes: document.querySelectorAll('#hero-cube, .hero-cube-scene, .hero-cube-face').length
+        };
+      })()`);
+      if (modelState.exists && modelState.ready && modelState.canvasWidth > 0) break;
+      await delay(100);
+    }
+    assert(modelState.exists, `Hero model scene was not rendered: ${JSON.stringify(modelState)}`);
+    assert(modelState.ready, `Hero model did not become ready: ${JSON.stringify(modelState)}`);
+    assert(modelState.source.includes("/models/lion_head/lion_head_2k.gltf"), `Hero model source is wrong: ${JSON.stringify(modelState)}`);
+    assert(modelState.runtimeSource.includes("/models/lion_head/lion_head_2k.gltf"), `Hero model runtime source is wrong: ${JSON.stringify(modelState)}`);
+    assert(modelState.cubeNodes === 0, `Old cube nodes should be removed: ${JSON.stringify(modelState)}`);
+
+    const heroModelCanvasState = await evaluate(client, `(() => {
+      const canvas = document.querySelector('#hero-model-canvas');
+      const style = canvas ? getComputedStyle(canvas) : null;
+      const rect = canvas?.getBoundingClientRect();
       return {
-        faces: document.querySelectorAll('#hero-cube .hero-cube-face').length,
-        transformStyle: style?.transformStyle || null,
-        transform: style?.transform || null
+        display: style?.display || null,
+        pointerEvents: style?.pointerEvents || null,
+        width: Math.round(rect?.width || 0),
+        height: Math.round(rect?.height || 0)
       };
     })()`);
-    assert(cubeState.faces === 6, `Packaging cube does not have 6 faces: ${JSON.stringify(cubeState)}`);
-    assert(cubeState.transformStyle === "preserve-3d", `Packaging cube is not preserving 3D: ${JSON.stringify(cubeState)}`);
+    assert(heroModelCanvasState.width > 0 && heroModelCanvasState.height > 0, `Hero model canvas is not visible: ${JSON.stringify(heroModelCanvasState)}`);
 
     const beforeWheel = await evaluate(client, "Math.round(window.scrollY)");
     const viewport = await evaluate(client, "({ x: Math.round(window.innerWidth / 2), y: Math.round(window.innerHeight / 2) })");
@@ -434,8 +462,9 @@ const main = async () => {
         visiblePaperTransitions: [...document.querySelectorAll('.nav-paper-transition')]
           .filter((el) => !el.hidden && getComputedStyle(el).display !== 'none' && getComputedStyle(el).visibility !== 'hidden').length,
         legacyHeroCards: document.querySelectorAll('.hero-card').length,
-        cubeFaces: document.querySelectorAll('#hero-cube .hero-cube-face').length,
-        cubeImageNodes: document.querySelectorAll('#hero-cube img, #hero-cube picture, .hero-cube-image, .hero-cube-panel').length,
+        heroModelReady: document.body.classList.contains('hero-model-ready'),
+        heroModelCanvas: Boolean(document.querySelector('#hero-model-canvas')),
+        oldCubeNodes: document.querySelectorAll('#hero-cube, .hero-cube-scene, .hero-cube-face').length,
         brokenImages: [...document.images].filter((img) => img.currentSrc && img.complete && img.naturalWidth === 0).map((img) => img.currentSrc),
         bottomNavVisible: Boolean(bottomNav && navRect.width > 0 && navRect.height > 0 && navStyle.opacity !== '0' && navStyle.visibility !== 'hidden'),
         bottomItems,
@@ -461,7 +490,8 @@ const main = async () => {
     assert(!desktopHealth.entryVisible, `Entry screen remained visible after entering: ${JSON.stringify(desktopHealth)}`);
     assert(desktopHealth.visiblePaperTransitions === 0, `Paper transition remained visible: ${JSON.stringify(desktopHealth)}`);
     assert(desktopHealth.legacyHeroCards === 0, `Legacy hero cards remained in DOM: ${JSON.stringify(desktopHealth)}`);
-    assert(desktopHealth.cubeFaces === 6 && desktopHealth.cubeImageNodes === 0, `Cube should be pure 6 faces: ${JSON.stringify(desktopHealth)}`);
+    assert(desktopHealth.heroModelReady && desktopHealth.heroModelCanvas, `Hero model should remain active: ${JSON.stringify(desktopHealth)}`);
+    assert(desktopHealth.oldCubeNodes === 0, `Old cube nodes remained in DOM: ${JSON.stringify(desktopHealth)}`);
     assert(desktopHealth.brokenImages.length === 0, `Broken images detected: ${JSON.stringify(desktopHealth)}`);
     assert(desktopHealth.bottomNavVisible, `Bottom nav is not visible on desktop: ${JSON.stringify(desktopHealth)}`);
 
@@ -486,7 +516,8 @@ const main = async () => {
       ok: true,
       localizedText,
       musicState,
-      cubeState,
+      modelState,
+      heroModelCanvasState,
       navSequence,
       railOpen,
       railClosed,

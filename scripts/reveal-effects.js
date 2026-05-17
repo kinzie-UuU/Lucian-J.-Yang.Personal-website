@@ -28,7 +28,8 @@
         const section = entry.target;
         const children = section.querySelectorAll("[data-reveal]");
         children.forEach((element) => {
-          const delay = parseInt(element.dataset.delay || "0", 10);
+          const baseDelay = parseInt(element.dataset.delay || "0", 10);
+          const delay = section.id === "works" ? Math.min(Math.round(baseDelay * 0.18), 140) : baseDelay;
           setTimeout(() => {
             element.classList.add("is-revealed");
           }, delay);

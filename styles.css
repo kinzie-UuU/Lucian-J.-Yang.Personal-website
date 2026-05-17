@@ -58,6 +58,10 @@ html {
   overflow-x: clip;
 }
 
+body:not(.has-entered) {
+  overflow: hidden;
+}
+
 html.nav-jump-instant {
   scroll-behavior: auto !important;
 }
@@ -70,8 +74,8 @@ body {
   margin: 0;
   min-height: 100vh;
   font-family: "Satoshi", "MiSans", "PingFang SC", "Microsoft YaHei", sans-serif;
-  color: rgba(235, 231, 224, 0.88);
-  background: #07080b;
+  color: rgba(20, 24, 28, 0.88);
+  background: #f8f6f2;
   overflow-x: clip;
 }
 
@@ -137,15 +141,11 @@ main > section {
   scroll-margin-top: var(--site-top-safe);
 }
 
-.top-meta-inner,
-.hero-focus-panel,
-.entry-box-trigger {
+.top-meta-inner {
   position: relative;
 }
 
-.top-meta-inner::selection,
-.hero-focus-panel::selection,
-.entry-box-trigger::selection {
+.top-meta-inner::selection {
   background: transparent;
 }
 

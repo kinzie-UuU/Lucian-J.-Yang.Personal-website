@@ -14,9 +14,9 @@
   let transitionActive = false;
   let transitionToken = 0;
   const transitionTiming = {
-    scroll: 48,
-    leave: 150,
-    cleanup: 300,
+    scroll: 180,
+    leave: 320,
+    cleanup: 500,
   };
 
   const clearTransitionTimers = () => {
@@ -75,11 +75,6 @@
     navTransitionLabel = document.createElement("span");
     sheet.className = "nav-paper-sheet";
     navTransitionLabel.className = "nav-paper-label";
-    ["h1", "h2", "v1", "v2"].forEach((line) => {
-      const marker = document.createElement("i");
-      marker.className = `nav-paper-line nav-paper-line--${line}`;
-      sheet.append(marker);
-    });
     navTransition.hidden = true;
     sheet.append(navTransitionLabel);
     navTransition.append(sheet);
@@ -123,15 +118,13 @@
   };
 
   const scrollToTarget = (target, { forceInstant = false, withTransition = true } = {}) => {
-    if (!withTransition) {
-      transitionToken += 1;
-      resetTransitionLayers({ removeNodes: true });
-    } else if (transitionActive) {
-      transitionToken += 1;
-      resetTransitionLayers({ removeNodes: true });
+    // Always cancel any in-flight transition immediately
+    transitionToken += 1;
+    clearTransitionTimers();
+    if (transitionActive) {
+      resetTransitionLayers({ removeNodes: true, clearTimers: false });
     }
     runtime?.closeWorkGallery?.();
-    clearTransitionTimers();
 
     const runScroll = () => {
       const top = getReadableTop(target);
