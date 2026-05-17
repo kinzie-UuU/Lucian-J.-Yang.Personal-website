@@ -25,7 +25,7 @@
   position: relative;
   z-index: 3;
   width: 100%;
-  min-height: 178svh;
+  min-height: 124svh;
   margin-top: 0;
   overflow: clip;
   background: #000;
@@ -221,12 +221,12 @@ html[lang="zh-CN"] .works-statement-title {
   display: block;
   width: max-content;
   max-width: calc(100vw - 104px);
-  font-family: "MiSans", "PingFang SC", "Microsoft YaHei", sans-serif;
-  font-size: clamp(3rem, 6.9vw, 7.45rem);
-  font-weight: 680;
-  line-height: 1.06;
-  letter-spacing: 0;
-  color: rgba(238, 233, 223, 0.9);
+  font-family: "SkyHeart Clear Serif SC", "Playfair Display", "Songti SC", "STSong", serif;
+  font-size: clamp(3rem, 6.35vw, 7rem);
+  font-weight: 400;
+  line-height: 1.12;
+  letter-spacing: 0.035em;
+  color: rgba(238, 233, 223, 0.88);
   text-align: center;
   white-space: normal;
   word-break: keep-all;
@@ -244,9 +244,10 @@ html[lang="zh-CN"] .works-statement-title {
 }
 
 html[lang="zh-CN"] .works-transition-line-text {
-  font-size: clamp(3.1rem, 6.75vw, 7.25rem);
-  font-weight: 660;
-  line-height: 1.08;
+  font-size: clamp(3rem, 6.1vw, 6.8rem);
+  font-weight: 400;
+  line-height: 1.14;
+  letter-spacing: 0.055em;
 }
 
 .works-transition-note {
@@ -256,8 +257,8 @@ html[lang="zh-CN"] .works-transition-line-text {
   color: rgba(238, 233, 223, calc(0.34 + var(--works-enter) * 0.42 - var(--works-handoff) * 0.18));
   font-family: "MiSans", "PingFang SC", "Microsoft YaHei", sans-serif;
   font-size: clamp(0.84rem, 0.96vw, 1rem);
-  font-weight: 520;
-  line-height: 1.82;
+  font-weight: 500;
+  line-height: 1.7;
   letter-spacing: 0;
   text-align: center;
   text-wrap: balance;
@@ -282,13 +283,13 @@ html[lang="zh-CN"] .works-transition-line-text {
 
 .works-transition-line:nth-child(odd) .works-transition-line-text {
   transform:
-    translate3d(calc((1 - var(--works-enter)) * -2vw), calc((1 - var(--works-enter)) * 8vh + var(--works-exit) * 4vh), 0)
+    translate3d(calc((1 - var(--works-enter)) * -2vw - min(13vw, 200px)), calc((1 - var(--works-enter)) * 8vh + var(--works-exit) * 4vh), 0)
     scale(calc(0.96 + var(--works-settle) * 0.04 + var(--works-exit) * 0.012));
 }
 
 .works-transition-line:nth-child(even) .works-transition-line-text {
   transform:
-    translate3d(calc((1 - var(--works-enter)) * 2vw), calc((1 - var(--works-enter)) * -8vh + var(--works-exit) * 4vh), 0)
+    translate3d(calc((1 - var(--works-enter)) * 2vw + min(13vw, 200px)), calc((1 - var(--works-enter)) * -8vh + var(--works-exit) * 4vh), 0)
     scale(calc(0.96 + var(--works-settle) * 0.04 + var(--works-exit) * 0.012));
 }
 
@@ -321,34 +322,6 @@ html[lang="zh-CN"] .works-transition-line-text {
   margin: 0 0 0 calc(50% - 50vw);
   padding: 0;
   width: 100vw;
-}
-
-.works-clients-link {
-  position: absolute;
-  right: clamp(28px, 5vw, 80px);
-  bottom: max(clamp(42px, 7vh, 86px), calc(var(--bottom-nav-safe) + 8px));
-  z-index: 2;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 34px;
-  padding: 0 2px;
-  color: rgba(248, 245, 239, 0.44);
-  font-family: "MiSans", "Outfit", "Satoshi", system-ui, sans-serif;
-  font-size: clamp(0.72rem, 0.72vw, 0.84rem);
-  font-weight: 760;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  transition:
-    color 180ms ease,
-    transform 180ms ease;
-}
-
-.works-clients-link:hover,
-.works-clients-link:focus-visible {
-  color: rgba(248, 245, 239, 0.92);
-  outline: none;
-  transform: translate(2px, -2px);
 }
 
 .works-row {
@@ -743,7 +716,7 @@ body .works-row-tags {
 
 @media (max-width: 768px) {
   .service-work-transition {
-    min-height: 142svh;
+    min-height: 112svh;
     margin-top: 0;
   }
 
@@ -788,10 +761,4 @@ body .works-row-tags {
     font-size: clamp(2rem, 13vw, 4rem);
   }
 
-  .works-clients-link {
-    right: 22px;
-    bottom: max(34px, calc(var(--bottom-nav-safe) + 4px));
-    font-size: 0.68rem;
-    letter-spacing: 0.1em;
-  }
 }

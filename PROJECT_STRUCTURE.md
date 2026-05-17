@@ -8,15 +8,15 @@ This project is now split into small CSS and JS modules while keeping `index.htm
 - `styles.css`: global tokens, reset, base body/page rules, and shared global states.
 - `script.js`: one-line application entry that calls `window.initLucianApp()`.
 - `site-data.js`: text, works data, gallery image data, and gallery copy.
-- `three.min.js`: local Three.js dependency used by `scripts/services-entry-grid-scan.js`.
-- `HANDOFF.md`: implementation history, validation notes, and high-risk areas.
+- `three.min.js`: local Three.js dependency used by `scripts/services-entry-grid-scan.js` and 3D model rendering.
 
 ## CSS Modules
 
 - `styles/fonts.css`: font-face declarations and font variables.
 - `styles/cursor.css`: precision cursor and cursor-related states.
 - `styles/typography.css`: shared text effects and typographic utilities.
-- `styles/home.css`: entry, hero, water surface, hero cards, and home-section visuals.
+- `styles/liquid-glass.css`: full-screen Hero liquid field layer.
+- `styles/home.css`: entry, hero, water surface, GLB model stage, and home-section visuals.
 - `styles/about.css`: about and portrait sections.
 - `styles/services.css`: services entry, panels, scroll story, and services effects.
 - `styles/works.css`: works rows, works statements, and works section visuals.
@@ -34,10 +34,10 @@ The JS split is complete for the current static-script architecture. `script.js`
 Key groups:
 
 - App/bootstrap/runtime bridge: `app-bootstrap.js`, `runtime-bridge.js`, `hero-state-runtime.js`.
-- Entry and hero: `entry.js`, `hero-steps.js`, `hero-step-runtime.js`, `hero-actions-runtime.js`, `hero-sequence-runtime.js`, `hero-card-*`, `hero-water-surface.js`, `hero-ripples.js`, `hero-wireframe.js`, `hero-focus-runtime.js`.
-- Services: `services-entry-grid-scan.js`, `service-panel-shaders.js`, `services-scroll-story.js`, `services-image-trail.js`.
+- Entry and hero: `entry.js`, `entry-key-model.js`, `hero-sequence-runtime.js`, `hero-state-runtime.js`, `hero-water-surface.js`, `hero-ripples.js`, `hero-wireframe.js`, `liquid-glass-field.js`, `hero-glb-model.js`.
+- Services: `services-entry-grid-scan.js`, `service-panel-shaders.js`, `services-scroll-story.js`.
 - Works/gallery: `work-gallery.js`, `works-hover-preview.js`, `works-transition-motion.js`.
-- Site UI: `header-controls.js`, `language-controls.js`, `language-runtime.js`, `static-text-runtime.js`, `bottom-nav-scroll-spy.js`, `site-navigation.js`, `site-clock.js`, `precision-cursor.js`.
+- Site UI: `header-controls.js`, `language-controls.js`, `language-runtime.js`, `static-text-runtime.js`, `bottom-nav-scroll-spy.js`, `works-side-rail.js`, `site-clock.js`, `precision-cursor.js`.
 - Effects and supporting modules: `audio-feedback.js`, `scrambled-text.js`, `scroll-type-effects.js`, `reveal-effects.js`, `clients-marquee.js`, `clients-title-interaction.js`, `portrait-motion.js`, `particle-canvas.js`.
 
 ## Audit Notes

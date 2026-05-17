@@ -42,11 +42,10 @@ It is not a React, Vue, Vite, Next, or bundled app. Runtime state is coordinated
 - Bootstrap/runtime: `script.js`, `scripts/app-bootstrap.js`, `scripts/runtime-bridge.js`.
 - Data/language/static text: `site-data.js`, `scripts/static-text-runtime.js`, `scripts/language-runtime.js`, `scripts/language-controls.js`.
 - Entry: `scripts/entry.js`.
-- Hero state/actions/layout/cards: `hero-state-runtime.js`, `hero-actions-runtime.js`, `hero-sequence-runtime.js`, `hero-step-runtime.js`, `hero-steps.js`, `hero-card-config.js`, `hero-card-layout.js`, `hero-card-animation.js`, `hero-card-events.js`, `hero-focus-runtime.js`.
-- Hero visuals: `hero-water-surface.js`, `hero-ripples.js`, `hero-wireframe.js`.
-- Services: `services-scroll-story.js`, `services-entry-grid-scan.js`, `service-panel-shaders.js`, `services-image-trail.js`.
+- Hero state/model/liquid: `hero-state-runtime.js`, `hero-sequence-runtime.js`, `hero-water-surface.js`, `liquid-glass-field.js`, `hero-glb-model.js`, `hero-ripples.js`, `hero-wireframe.js`.
+- Services: `services-scroll-story.js`, `services-entry-grid-scan.js`, `service-panel-shaders.js`.
 - Works/gallery: `work-gallery.js`, `works-hover-preview.js`, `works-transition-motion.js`.
-- Site UI: `bottom-nav-scroll-spy.js`, `site-navigation.js`, `site-clock.js`, `header-controls.js`, `precision-cursor.js`.
+- Site UI: `bottom-nav-scroll-spy.js`, `works-side-rail.js`, `site-clock.js`, `header-controls.js`, `precision-cursor.js`.
 - Text/motion/effects: `scrambled-text.js`, `flip-text.js`, `scroll-type-effects.js`, `reveal-effects.js`, `clients-marquee.js`, `clients-title-interaction.js`, `portrait-motion.js`, `audio-feedback.js`, `particle-canvas.js`.
 
 ## CSS / JS Load Order Analysis
@@ -76,7 +75,7 @@ Do not reorder scripts unless the dependency chain is re-audited.
 - `site-data.js`: large i18n/data/gallery file; text and asset references are coupled to runtime.
 - `scripts/work-gallery.js`: largest runtime file; owns gallery modes, circular/waterfall rendering, detail views, language refresh, and body state.
 - `scripts/hero-water-surface.js`: WebGL water shader and canvas sizing.
-- `scripts/hero-card-animation.js`: hero card transforms and scroll-current state.
+- `scripts/hero-glb-model.js` and `scripts/liquid-glass-field.js`: Hero model orientation and full-screen liquid response.
 - `scripts/runtime-bridge.js` and `scripts/app-bootstrap.js`: global runtime wiring.
 - `scripts/services-scroll-story.js`, `scripts/services-entry-grid-scan.js`, `scripts/service-panel-shaders.js`: sticky scroll and Three.js/WebGL services visuals.
 - `styles/home.css`, `styles/services.css`, `styles/work-gallery.css`, `styles/navigation.css`: large visual systems with many state selectors.

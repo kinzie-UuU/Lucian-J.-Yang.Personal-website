@@ -91,7 +91,6 @@ var i18n = {
     "clients_kicker": "合作客户",
     "clients_title": "合作客户",
     "clients_intro": "部分合作品牌与项目方，覆盖物流、家居、食品、企业福利与消费品渠道。",
-    "works_clients_link": "合作客户 ↗",
     "contact_kicker": "联系",
     "contact_title": "联系",
     "contact_text": "如果你需要把包装方向、成本约束和交付节奏同时理清，我们可以从一个具体项目开始。",
@@ -194,7 +193,6 @@ var i18n = {
     "clients_kicker": "Clients",
     "clients_title": "Clients",
     "clients_intro": "Selected brands and project partners across logistics, home, food, corporate gifting, and consumer channels.",
-    "works_clients_link": "Selected clients ↗",
     "contact_kicker": "Contact",
     "contact_title": "Contact",
     "contact_text": "If you need to clarify packaging direction, cost constraints, and delivery rhythm at the same time, we can start with one concrete project.",
@@ -330,926 +328,854 @@ var worksData = {
 // Work gallery image and text data -------------------------------------------
 var workGalleryImages = {
   "oem": [
-      {
-          "title": "23 ??? / ? 2128",
-          "src": "images/works/oem/23nianduanwu/WechatIMG2128.jpg",
-          "position": "center",
-          "size": "wide"
-      },
-      {
-          "title": "23 ??? / ? 2129",
-          "src": "images/works/oem/23nianduanwu/WechatIMG2129.jpg",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "24 ??? / 2",
-          "src": "images/works/oem/24nianduanwu/2.png",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "24 ??? / 4 1",
-          "src": "images/works/oem/24nianduanwu/4-1.png",
-          "position": "center",
-          "size": "wide"
-      },
-      {
-          "title": "24 ??? / 4",
-          "src": "images/works/oem/24nianduanwu/4.png",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "24 ??? / 5",
-          "src": "images/works/oem/24nianduanwu/5.png",
-          "position": "center",
-          "size": "wide"
-      },
-      {
-          "title": "24 ??? / ? d7e1c0843ad3984dd0f10b377c1e0fa6",
-          "src": "images/works/oem/24nianduanwu/WechatIMGd7e1c0843ad3984dd0f10b377c1e0fa6.png",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "24 ??? / ? edbc9bf09f6b6fe5ff46617c413d261c",
-          "src": "images/works/oem/24nianduanwu/WechatIMGedbc9bf09f6b6fe5ff46617c413d261c.png",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "24 ??? / ? f0e6aae672c6a9fdba536b14f56b8369",
-          "src": "images/works/oem/24nianduanwu/WechatIMGf0e6aae672c6a9fdba536b14f56b8369.png",
-          "position": "center",
-          "size": "wide"
-      },
-      {
-          "title": "24 ??? / 69f4e228dc3023cccc50614c9cd1c92d",
-          "src": "images/works/oem/24nianzhongqiu/69f4e228dc3023cccc50614c9cd1c92d.png",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "24 ??? / 741ec1f70c19da7b0c2e43d93168aac4",
-          "src": "images/works/oem/24nianzhongqiu/741ec1f70c19da7b0c2e43d93168aac4.jpg",
-          "position": "center",
-          "size": "wide"
-      },
-      {
-          "title": "24 ??? / 48568aba65e2869e012c7241157263cd",
-          "src": "images/works/oem/24nianzhongqiu/48568aba65e2869e012c7241157263cd.png",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "24 ??? / 99305b1073245b4e88842a66499d789f",
-          "src": "images/works/oem/24nianzhongqiu/99305b1073245b4e88842a66499d789f.png",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "24 ??? / c3c0c419a463034be778ff965df78227",
-          "src": "images/works/oem/24nianzhongqiu/c3c0c419a463034be778ff965df78227.jpg",
-          "position": "center",
-          "size": "wide"
-      },
-      {
-          "title": "24 ??? / ? 8ab939e6c1ff2264f2e7654412a607f9",
-          "src": "images/works/oem/24nianzhongqiu/WechatIMG8ab939e6c1ff2264f2e7654412a607f9.jpeg",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "24 ??? / ? 7173a7bd5c6fef11a258d3ff90779ef4",
-          "src": "images/works/oem/24nianzhongqiu/WechatIMG7173a7bd5c6fef11a258d3ff90779ef4.jpeg",
-          "position": "center",
-          "size": "wide"
-      },
-      {
-          "title": "24 ??? / ? 9798d144d7bdcf657882930968b4c82d",
-          "src": "images/works/oem/24nianzhongqiu/WechatIMG9798d144d7bdcf657882930968b4c82d.png",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "24 ??? / ? d38a0cd6d006be1773b3f4fd25defa0e",
-          "src": "images/works/oem/24nianzhongqiu/WechatIMGd38a0cd6d006be1773b3f4fd25defa0e.jpeg",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "24 ??? / ? f38a134ba255715232b301358034f7ee",
-          "src": "images/works/oem/24nianzhongqiu/WechatIMGf38a134ba255715232b301358034f7ee.png",
-          "position": "center",
-          "size": "wide"
-      },
-      {
-          "title": "???? / 03 01",
-          "src": "images/works/oem/chaojizongbang/03-01.png",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "???? / 03 02",
-          "src": "images/works/oem/chaojizongbang/03-02.png",
-          "position": "center",
-          "size": "wide"
-      },
-      {
-          "title": "???? / 03 03",
-          "src": "images/works/oem/chaojizongbang/03-03.png",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "???? / 03",
-          "src": "images/works/oem/chaojizongbang/03.jpg",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "???? / 04 01",
-          "src": "images/works/oem/fengweirenjian/04-01.png",
-          "position": "center",
-          "size": "wide"
-      },
-      {
-          "title": "???? / 04 02",
-          "src": "images/works/oem/fengweirenjian/04-02.png",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "???? / 04 03",
-          "src": "images/works/oem/fengweirenjian/04-03.png",
-          "position": "center",
-          "size": "wide"
-      },
-      {
-          "title": "???? / 04 04",
-          "src": "images/works/oem/fengweirenjian/04-04.png",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "???? / 04",
-          "src": "images/works/oem/fengweirenjian/04.png",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "???? / 蛋黄酥效果1",
-          "src": "images/works/oem/gaoshangyoudian/蛋黄酥效果1.jpg",
-          "position": "center",
-          "size": "wide"
-      },
-      {
-          "title": "???? / 鸡蛋仔 蓝1 1",
-          "src": "images/works/oem/gaoshangyoudian/鸡蛋仔-蓝1-1.jpg",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "fenglisu / 0",
-          "src": "images/works/oem/gaoshangyoudian/fenglisu/0.png",
-          "position": "center",
-          "size": "wide"
-      },
-      {
-          "title": "guoba / 锅巴",
-          "src": "images/works/oem/gaoshangyoudian/guoba/锅巴.png",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "lvdougao / 定胜糕",
-          "src": "images/works/oem/gaoshangyoudian/lvdougao/定胜糕.png",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "lvdougao / 原味绿豆糕",
-          "src": "images/works/oem/gaoshangyoudian/lvdougao/原味绿豆糕.png",
-          "position": "center",
-          "size": "wide"
-      },
-      {
-          "title": "???? / ? 563",
-          "src": "images/works/oem/gaoshangyoudian/WechatIMG563.png",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "???? / ? 564",
-          "src": "images/works/oem/gaoshangyoudian/WechatIMG564.png",
-          "position": "center",
-          "size": "wide"
-      },
-      {
-          "title": "???? / ? 711",
-          "src": "images/works/oem/gaoshangyoudian/WechatIMG711.jpg",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "???? / ? 712",
-          "src": "images/works/oem/gaoshangyoudian/WechatIMG712.jpg",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "???? / ? 713",
-          "src": "images/works/oem/gaoshangyoudian/WechatIMG713.jpg",
-          "position": "center",
-          "size": "wide"
-      },
-      {
-          "title": "???? / ? 714",
-          "src": "images/works/oem/gaoshangyoudian/WechatIMG714.jpg",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "???? / ? 715",
-          "src": "images/works/oem/gaoshangyoudian/WechatIMG715.jpg",
-          "position": "center",
-          "size": "wide"
-      },
-      {
-          "title": "??? / ? 572",
-          "src": "images/works/oem/gongfuzong/WechatIMG572.jpeg",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "??? / ? 572",
-          "src": "images/works/oem/gongfuzong/WechatIMG572.jpg",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "????? / 5 1",
-          "src": "images/works/oem/gongfuzongdaizi/5-1.png",
-          "position": "center",
-          "size": "wide"
-      },
-      {
-          "title": "????? / 5 2",
-          "src": "images/works/oem/gongfuzongdaizi/5-2.png",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "????? / 5 3",
-          "src": "images/works/oem/gongfuzongdaizi/5-3.png",
-          "position": "center",
-          "size": "wide"
-      },
-      {
-          "title": "????? / 5 4",
-          "src": "images/works/oem/gongfuzongdaizi/5-4.png",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "????? / 5 5",
-          "src": "images/works/oem/gongfuzongdaizi/5-5.png",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "????? / 5 6",
-          "src": "images/works/oem/gongfuzongdaizi/5-6.png",
-          "position": "center",
-          "size": "wide"
-      },
-      {
-          "title": "????? 01 / 1",
-          "src": "images/works/oem/gongfuzongdaizi01/1.png",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "????? 01 / 2",
-          "src": "images/works/oem/gongfuzongdaizi01/2.png",
-          "position": "center",
-          "size": "wide"
-      },
-      {
-          "title": "????? 01 / 3",
-          "src": "images/works/oem/gongfuzongdaizi01/3.png",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "????? 01 / 4",
-          "src": "images/works/oem/gongfuzongdaizi01/4.png",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "????? 01 / 5",
-          "src": "images/works/oem/gongfuzongdaizi01/5.png",
-          "position": "center",
-          "size": "wide"
-      },
-      {
-          "title": "????? 01 / 6",
-          "src": "images/works/oem/gongfuzongdaizi01/6.png",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "????? 01 / 7",
-          "src": "images/works/oem/gongfuzongdaizi01/7.png",
-          "position": "center",
-          "size": "wide"
-      },
-      {
-          "title": "??? / ? 557",
-          "src": "images/works/oem/kexiaoxiogn/WechatIMG557.jpg",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "??? / ? 557",
-          "src": "images/works/oem/kexiaoxiogn/WechatIMG557.png",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "??? / 效果副本",
-          "src": "images/works/oem/kexiaoxiong/效果副本.jpg",
-          "position": "center",
-          "size": "wide"
-      },
-      {
-          "title": "??? / 枣仁核桃",
-          "src": "images/works/oem/kexiaoxiong/枣仁核桃.jpg",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "??? / ? 709",
-          "src": "images/works/oem/kexiaoxiong/WechatIMG709.jpg",
-          "position": "center",
-          "size": "wide"
-      },
-      {
-          "title": "???? / 02 01",
-          "src": "images/works/oem/lognyuewanfang/02-01.png",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "???? / 02 02",
-          "src": "images/works/oem/lognyuewanfang/02-02.png",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "???? / 02",
-          "src": "images/works/oem/lognyuewanfang/02.jpg",
-          "position": "center",
-          "size": "wide"
-      },
-      {
-          "title": "??????? / 10款集合 2",
-          "src": "images/works/oem/rouroudajuhuidaizi/10款集合 2.jpg",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "??????? / 10款集合",
-          "src": "images/works/oem/rouroudajuhuidaizi/10款集合.jpg",
-          "position": "center",
-          "size": "wide"
-      },
-      {
-          "title": "???? / 05 01",
-          "src": "images/works/oem/shanshuizongyun/05-01.png",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "???? / 05 02",
-          "src": "images/works/oem/shanshuizongyun/05-02.png",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "???? / 05 03",
-          "src": "images/works/oem/shanshuizongyun/05-03.png",
-          "position": "center",
-          "size": "wide"
-      },
-      {
-          "title": "???? / 05",
-          "src": "images/works/oem/shanshuizongyun/05.png",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "???? / 1 1 1",
-          "src": "images/works/oem/wuwunafu/1-1-1.png",
-          "position": "center",
-          "size": "wide"
-      },
-      {
-          "title": "???? / 1",
-          "src": "images/works/oem/wuwunafu/1.png",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "?? / ? 691",
-          "src": "images/works/oem/xiangji/WechatIMG691.jpg",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "?? / ? 692",
-          "src": "images/works/oem/xiangji/WechatIMG692.jpg",
-          "position": "center",
-          "size": "wide"
-      },
-      {
-          "title": "?? / ? 693",
-          "src": "images/works/oem/xiangji/WechatIMG693.jpg",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "???? / 01",
-          "src": "images/works/oem/yanxiangduanyang/01.jpg",
-          "position": "center",
-          "size": "wide"
-      },
-      {
-          "title": "???? / 产品摄影  中秋月饼礼盒 2",
-          "src": "images/works/oem/yuexiashaoguang/产品摄影  中秋月饼礼盒 2.jpg",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "???? / 产品摄影  中秋月饼礼盒 3",
-          "src": "images/works/oem/yuexiashaoguang/产品摄影  中秋月饼礼盒 3.jpg",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "???? / 产品摄影  中秋月饼礼盒 4",
-          "src": "images/works/oem/yuexiashaoguang/产品摄影  中秋月饼礼盒 4.jpg",
-          "position": "center",
-          "size": "wide"
-      },
-      {
-          "title": "???? / 产品摄影  中秋月饼礼盒 5",
-          "src": "images/works/oem/yuexiashaoguang/产品摄影  中秋月饼礼盒 5.jpg",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "???? / 产品摄影  中秋月饼礼盒 6",
-          "src": "images/works/oem/yuexiashaoguang/产品摄影  中秋月饼礼盒 6.jpg",
-          "position": "center",
-          "size": "wide"
-      },
-      {
-          "title": "???? / 产品摄影  中秋月饼礼盒",
-          "src": "images/works/oem/yuexiashaoguang/产品摄影  中秋月饼礼盒.jpg",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "???? / 000",
-          "src": "images/works/oem/zhengliuchuzong/000.png",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "???? / 06 01",
-          "src": "images/works/oem/zhuyingqingfeng/06-01.png",
-          "position": "center",
-          "size": "wide"
-      },
-      {
-          "title": "???? / 06 02",
-          "src": "images/works/oem/zhuyingqingfeng/06-02.png",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "???? / 06 03",
-          "src": "images/works/oem/zhuyingqingfeng/06-03.png",
-          "position": "center",
-          "size": "wide"
-      },
-      {
-          "title": "???? / 06 04",
-          "src": "images/works/oem/zhuyingqingfeng/06-04.png",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "???? / 06",
-          "src": "images/works/oem/zhuyingqingfeng/06.png",
-          "position": "center",
-          "size": "small"
-      }
+    {
+      "title": "23 ??? / ? 2128",
+      "src": "images/works/oem/23nianduanwu/1.jpg",
+      "position": "center",
+      "size": "wide"
+    },
+    {
+      "title": "23 ??? / ? 2129",
+      "src": "images/works/oem/23nianduanwu/2.jpg",
+      "position": "center",
+      "size": "small"
+    },
+    {
+      "title": "24 ??? / 2",
+      "src": "images/works/oem/24nianduanwu/2.png",
+      "position": "center",
+      "size": "small"
+    },
+    {
+      "title": "24 ??? / 4 1",
+      "src": "images/works/oem/24nianduanwu/4-1.png",
+      "position": "center",
+      "size": "wide"
+    },
+    {
+      "title": "24 ??? / 4",
+      "src": "images/works/oem/24nianduanwu/4.png",
+      "position": "center",
+      "size": "small"
+    },
+    {
+      "title": "24 ??? / 5",
+      "src": "images/works/oem/24nianduanwu/5.png",
+      "position": "center",
+      "size": "wide"
+    },
+    {
+      "title": "24 ??? / ? d7e1c0843ad3984dd0f10b377c1e0fa6",
+      "src": "images/works/oem/24nianduanwu/1.png",
+      "position": "center",
+      "size": "small"
+    },
+    {
+      "title": "24 ??? / ? edbc9bf09f6b6fe5ff46617c413d261c",
+      "src": "images/works/oem/24nianduanwu/6.png",
+      "position": "center",
+      "size": "small"
+    },
+    {
+      "title": "24 ??? / ? f0e6aae672c6a9fdba536b14f56b8369",
+      "src": "images/works/oem/24nianduanwu/7.png",
+      "position": "center",
+      "size": "wide"
+    },
+    {
+      "title": "24 ??? / 69f4e228dc3023cccc50614c9cd1c92d",
+      "src": "images/works/oem/24nianzhongqiu/1.png",
+      "position": "center",
+      "size": "small"
+    },
+    {
+      "title": "24 ??? / 741ec1f70c19da7b0c2e43d93168aac4",
+      "src": "images/works/oem/24nianzhongqiu/2.jpg",
+      "position": "center",
+      "size": "wide"
+    },
+    {
+      "title": "24 ??? / 48568aba65e2869e012c7241157263cd",
+      "src": "images/works/oem/24nianzhongqiu/3.png",
+      "position": "center",
+      "size": "small"
+    },
+    {
+      "title": "24 ??? / 99305b1073245b4e88842a66499d789f",
+      "src": "images/works/oem/24nianzhongqiu/4.png",
+      "position": "center",
+      "size": "small"
+    },
+    {
+      "title": "24 ??? / c3c0c419a463034be778ff965df78227",
+      "src": "images/works/oem/24nianzhongqiu/5.jpg",
+      "position": "center",
+      "size": "wide"
+    },
+    {
+      "title": "24 ??? / ? 8ab939e6c1ff2264f2e7654412a607f9",
+      "src": "images/works/oem/24nianzhongqiu/1-1.png",
+      "position": "center",
+      "size": "small"
+    },
+    {
+      "title": "24 ??? / ? 7173a7bd5c6fef11a258d3ff90779ef4",
+      "src": "images/works/oem/24nianzhongqiu/4-4.jpeg",
+      "position": "center",
+      "size": "wide"
+    },
+    {
+      "title": "24 ??? / ? 9798d144d7bdcf657882930968b4c82d",
+      "src": "images/works/oem/24nianzhongqiu/2-2.jpeg",
+      "position": "center",
+      "size": "small"
+    },
+    {
+      "title": "24 ??? / ? d38a0cd6d006be1773b3f4fd25defa0e",
+      "src": "images/works/oem/24nianzhongqiu/5-5.jpeg",
+      "position": "center",
+      "size": "small"
+    },
+    {
+      "title": "24 ??? / ? f38a134ba255715232b301358034f7ee",
+      "src": "images/works/oem/24nianzhongqiu/3-3.png",
+      "position": "center",
+      "size": "wide"
+    },
+    {
+      "title": "???? / 03 01",
+      "src": "images/works/oem/chaojizongbang/03-01.png",
+      "position": "center",
+      "size": "small"
+    },
+    {
+      "title": "???? / 03 02",
+      "src": "images/works/oem/chaojizongbang/03-02.png",
+      "position": "center",
+      "size": "wide"
+    },
+    {
+      "title": "???? / 03 03",
+      "src": "images/works/oem/chaojizongbang/03-03.png",
+      "position": "center",
+      "size": "small"
+    },
+    {
+      "title": "???? / 03",
+      "src": "images/works/oem/chaojizongbang/03.jpg",
+      "position": "center",
+      "size": "small"
+    },
+    {
+      "title": "???? / 04 01",
+      "src": "images/works/oem/fengweirenjian/04-01.png",
+      "position": "center",
+      "size": "wide"
+    },
+    {
+      "title": "???? / 04 02",
+      "src": "images/works/oem/fengweirenjian/04-02.png",
+      "position": "center",
+      "size": "small"
+    },
+    {
+      "title": "???? / 04 03",
+      "src": "images/works/oem/fengweirenjian/04-03.png",
+      "position": "center",
+      "size": "wide"
+    },
+    {
+      "title": "???? / 04 04",
+      "src": "images/works/oem/fengweirenjian/04-04.png",
+      "position": "center",
+      "size": "small"
+    },
+    {
+      "title": "???? / 04",
+      "src": "images/works/oem/fengweirenjian/04.png",
+      "position": "center",
+      "size": "small"
+    },
+    {
+      "title": "???? / 蛋黄酥效果1",
+      "src": "images/works/oem/gaoshangyoudian/蛋黄酥效果1.webp",
+      "position": "center",
+      "size": "wide"
+    },
+    {
+      "title": "???? / 鸡蛋仔 蓝1 1",
+      "src": "images/works/oem/gaoshangyoudian/鸡蛋仔-蓝1-1.webp",
+      "position": "center",
+      "size": "small"
+    },
+    {
+      "title": "fenglisu / 0",
+      "src": "images/works/oem/gaoshangyoudian/fenglisu/0.png",
+      "position": "center",
+      "size": "wide"
+    },
+    {
+      "title": "guoba / 锅巴",
+      "src": "images/works/oem/gaoshangyoudian/guoba/锅巴.png",
+      "position": "center",
+      "size": "small"
+    },
+    {
+      "title": "lvdougao / 定胜糕",
+      "src": "images/works/oem/gaoshangyoudian/lvdougao/定胜糕.png",
+      "position": "center",
+      "size": "small"
+    },
+    {
+      "title": "lvdougao / 原味绿豆糕",
+      "src": "images/works/oem/gaoshangyoudian/lvdougao/原味绿豆糕.png",
+      "position": "center",
+      "size": "wide"
+    },
+    {
+      "title": "???? / ? 563",
+      "src": "images/works/oem/gaoshangyoudian/WechatIMG563.png",
+      "position": "center",
+      "size": "small"
+    },
+    {
+      "title": "???? / ? 564",
+      "src": "images/works/oem/gaoshangyoudian/WechatIMG564.png",
+      "position": "center",
+      "size": "wide"
+    },
+    {
+      "title": "???? / ? 711",
+      "src": "images/works/oem/gaoshangyoudian/WechatIMG711.jpg",
+      "position": "center",
+      "size": "small"
+    },
+    {
+      "title": "???? / ? 712",
+      "src": "images/works/oem/gaoshangyoudian/WechatIMG712.jpg",
+      "position": "center",
+      "size": "small"
+    },
+    {
+      "title": "???? / ? 713",
+      "src": "images/works/oem/gaoshangyoudian/WechatIMG713.jpg",
+      "position": "center",
+      "size": "wide"
+    },
+    {
+      "title": "???? / ? 714",
+      "src": "images/works/oem/gaoshangyoudian/WechatIMG714.jpg",
+      "position": "center",
+      "size": "small"
+    },
+    {
+      "title": "???? / ? 715",
+      "src": "images/works/oem/gaoshangyoudian/WechatIMG715.jpg",
+      "position": "center",
+      "size": "wide"
+    },
+    {
+      "title": "??? / ? 572",
+      "src": "images/works/oem/gongfuzong/WechatIMG572.jpeg",
+      "position": "center",
+      "size": "small"
+    },
+    {
+      "title": "??? / ? 572",
+      "src": "images/works/oem/gongfuzong/WechatIMG572.jpeg",
+      "position": "center",
+      "size": "small"
+    },
+    {
+      "title": "????? / 5 1",
+      "src": "images/works/oem/gongfuzongdaizi/5-1.png",
+      "position": "center",
+      "size": "wide"
+    },
+    {
+      "title": "????? / 5 2",
+      "src": "images/works/oem/gongfuzongdaizi/5-2.png",
+      "position": "center",
+      "size": "small"
+    },
+    {
+      "title": "????? / 5 3",
+      "src": "images/works/oem/gongfuzongdaizi/5-3.png",
+      "position": "center",
+      "size": "wide"
+    },
+    {
+      "title": "????? / 5 4",
+      "src": "images/works/oem/gongfuzongdaizi/5-4.png",
+      "position": "center",
+      "size": "small"
+    },
+    {
+      "title": "????? / 5 5",
+      "src": "images/works/oem/gongfuzongdaizi/5-5.png",
+      "position": "center",
+      "size": "small"
+    },
+    {
+      "title": "????? / 5 6",
+      "src": "images/works/oem/gongfuzongdaizi/5-6.png",
+      "position": "center",
+      "size": "wide"
+    },
+    {
+      "title": "????? 01 / 1",
+      "src": "images/works/oem/gongfuzongdaizi01/1.png",
+      "position": "center",
+      "size": "small"
+    },
+    {
+      "title": "????? 01 / 2",
+      "src": "images/works/oem/gongfuzongdaizi01/2.png",
+      "position": "center",
+      "size": "wide"
+    },
+    {
+      "title": "????? 01 / 3",
+      "src": "images/works/oem/gongfuzongdaizi01/3.png",
+      "position": "center",
+      "size": "small"
+    },
+    {
+      "title": "????? 01 / 4",
+      "src": "images/works/oem/gongfuzongdaizi01/4.png",
+      "position": "center",
+      "size": "small"
+    },
+    {
+      "title": "????? 01 / 5",
+      "src": "images/works/oem/gongfuzongdaizi01/5.png",
+      "position": "center",
+      "size": "wide"
+    },
+    {
+      "title": "????? 01 / 6",
+      "src": "images/works/oem/gongfuzongdaizi01/6.png",
+      "position": "center",
+      "size": "small"
+    },
+    {
+      "title": "????? 01 / 7",
+      "src": "images/works/oem/gongfuzongdaizi01/7.png",
+      "position": "center",
+      "size": "wide"
+    },
+    {
+      "title": "??? / ? 557",
+      "src": "images/works/oem/kexiaoxiogn/WechatIMG557.jpg",
+      "position": "center",
+      "size": "small"
+    },
+    {
+      "title": "??? / ? 557",
+      "src": "images/works/oem/kexiaoxiogn/WechatIMG557.jpg",
+      "position": "center",
+      "size": "small"
+    },
+    {
+      "title": "??? / 效果副本",
+      "src": "images/works/oem/kexiaoxiong/嗨吃鸭卤味鸭.webp",
+      "position": "center",
+      "size": "wide"
+    },
+    {
+      "title": "??? / 枣仁核桃",
+      "src": "images/works/oem/kexiaoxiong/枣仁核桃.webp",
+      "position": "center",
+      "size": "small"
+    },
+    {
+      "title": "??? / ? 709",
+      "src": "images/works/oem/kexiaoxiong/WechatIMG709.jpg",
+      "position": "center",
+      "size": "wide"
+    },
+    {
+      "title": "???? / 02 01",
+      "src": "images/works/oem/lognyuewanfang/02-01.png",
+      "position": "center",
+      "size": "small"
+    },
+    {
+      "title": "???? / 02 02",
+      "src": "images/works/oem/lognyuewanfang/02-02.png",
+      "position": "center",
+      "size": "small"
+    },
+    {
+      "title": "???? / 02",
+      "src": "images/works/oem/lognyuewanfang/02.webp",
+      "position": "center",
+      "size": "wide"
+    },
+    {
+      "title": "??????? / 10款集合 2",
+      "src": "images/works/oem/rouroudajuhuidaizi/10款集合 2.webp",
+      "position": "center",
+      "size": "small"
+    },
+    {
+      "title": "??????? / 10款集合",
+      "src": "images/works/oem/rouroudajuhuidaizi/10款集合.webp",
+      "position": "center",
+      "size": "wide"
+    },
+    {
+      "title": "???? / 05 01",
+      "src": "images/works/oem/shanshuizongyun/05-01.png",
+      "position": "center",
+      "size": "small"
+    },
+    {
+      "title": "???? / 05 02",
+      "src": "images/works/oem/shanshuizongyun/05-02.png",
+      "position": "center",
+      "size": "small"
+    },
+    {
+      "title": "???? / 05 03",
+      "src": "images/works/oem/shanshuizongyun/05-03.png",
+      "position": "center",
+      "size": "wide"
+    },
+    {
+      "title": "???? / 05",
+      "src": "images/works/oem/shanshuizongyun/05.png",
+      "position": "center",
+      "size": "small"
+    },
+    {
+      "title": "???? / 1 1 1",
+      "src": "images/works/oem/wuwunafu/1-1-1.png",
+      "position": "center",
+      "size": "wide"
+    },
+    {
+      "title": "???? / 1",
+      "src": "images/works/oem/wuwunafu/1.png",
+      "position": "center",
+      "size": "small"
+    },
+    {
+      "title": "?? / ? 691",
+      "src": "images/works/oem/xiangji/WechatIMG691.jpg",
+      "position": "center",
+      "size": "small"
+    },
+    {
+      "title": "?? / ? 692",
+      "src": "images/works/oem/xiangji/WechatIMG692.jpg",
+      "position": "center",
+      "size": "wide"
+    },
+    {
+      "title": "?? / ? 693",
+      "src": "images/works/oem/xiangji/WechatIMG693.jpg",
+      "position": "center",
+      "size": "small"
+    },
+    {
+      "title": "???? / 01",
+      "src": "images/works/oem/yanxiangduanyang/01.jpg",
+      "position": "center",
+      "size": "wide"
+    },
+    {
+      "title": "???? / 产品摄影  中秋月饼礼盒 2",
+      "src": "images/works/oem/yuexiashaoguang/产品摄影  中秋月饼礼盒 2.jpg",
+      "position": "center",
+      "size": "small"
+    },
+    {
+      "title": "???? / 产品摄影  中秋月饼礼盒 3",
+      "src": "images/works/oem/yuexiashaoguang/产品摄影  中秋月饼礼盒 3.jpg",
+      "position": "center",
+      "size": "small"
+    },
+    {
+      "title": "???? / 产品摄影  中秋月饼礼盒 4",
+      "src": "images/works/oem/yuexiashaoguang/产品摄影  中秋月饼礼盒 4.jpg",
+      "position": "center",
+      "size": "wide"
+    },
+    {
+      "title": "???? / 产品摄影  中秋月饼礼盒 5",
+      "src": "images/works/oem/yuexiashaoguang/产品摄影  中秋月饼礼盒 5.jpg",
+      "position": "center",
+      "size": "small"
+    },
+    {
+      "title": "???? / 产品摄影  中秋月饼礼盒 6",
+      "src": "images/works/oem/yuexiashaoguang/产品摄影  中秋月饼礼盒 6.jpg",
+      "position": "center",
+      "size": "wide"
+    },
+    {
+      "title": "???? / 产品摄影  中秋月饼礼盒",
+      "src": "images/works/oem/yuexiashaoguang/产品摄影  中秋月饼礼盒.jpg",
+      "position": "center",
+      "size": "small"
+    },
+    {
+      "title": "???? / 000",
+      "src": "images/works/oem/zhengliuchuzong/000.png",
+      "position": "center",
+      "size": "small"
+    },
+    {
+      "title": "???? / 06 01",
+      "src": "images/works/oem/zhuyingqingfeng/06-01.png",
+      "position": "center",
+      "size": "wide"
+    },
+    {
+      "title": "???? / 06 02",
+      "src": "images/works/oem/zhuyingqingfeng/06-02.png",
+      "position": "center",
+      "size": "small"
+    },
+    {
+      "title": "???? / 06 03",
+      "src": "images/works/oem/zhuyingqingfeng/06-03.png",
+      "position": "center",
+      "size": "wide"
+    },
+    {
+      "title": "???? / 06 04",
+      "src": "images/works/oem/zhuyingqingfeng/06-04.png",
+      "position": "center",
+      "size": "small"
+    },
+    {
+      "title": "???? / 06",
+      "src": "images/works/oem/zhuyingqingfeng/06.png",
+      "position": "center",
+      "size": "small"
+    }
   ],
   "gift": [
-      {
-          "title": "23 ???? / ? 704",
-          "src": "images/works/gift/23shunfengduanwu/WechatIMG704.jpg",
-          "position": "center",
-          "size": "wide"
-      },
-      {
-          "title": "23 ???? / ? 705",
-          "src": "images/works/gift/23shunfengduanwu/WechatIMG705.jpg",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "??? / 1.1新",
-          "src": "images/works/gift/anjier/1.1新.jpg",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "??? / 固德威1",
-          "src": "images/works/gift/gudewei/固德威1.jpg",
-          "position": "center",
-          "size": "wide"
-      },
-      {
-          "title": "??? / 固德威31",
-          "src": "images/works/gift/gudewei/固德威31.jpg",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "?? / 方案2效果q",
-          "src": "images/works/gift/gujia/方案2效果q.jpg",
-          "position": "center",
-          "size": "wide"
-      },
-      {
-          "title": "?? / 效果2",
-          "src": "images/works/gift/gujia/效果2.jpg",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "?? / 效果211副本",
-          "src": "images/works/gift/gujia/效果211副本.jpg",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "?? / ? 706",
-          "src": "images/works/gift/shentong/WechatIMG706.jpg",
-          "position": "center",
-          "size": "wide"
-      },
-      {
-          "title": "?? / ? 707",
-          "src": "images/works/gift/shentong/WechatIMG707.jpg",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "?? / ? 708",
-          "src": "images/works/gift/shentong/WechatIMG708.jpg",
-          "position": "center",
-          "size": "wide"
-      },
-      {
-          "title": "gift / ? 120",
-          "src": "images/works/gift/WechatIMG120.jpg",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "gift / ? 121",
-          "src": "images/works/gift/WechatIMG121.jpg",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "gift / ? 122",
-          "src": "images/works/gift/WechatIMG122.jpg",
-          "position": "center",
-          "size": "wide"
-      },
-      {
-          "title": "gift / ? 123",
-          "src": "images/works/gift/WechatIMG123.jpg",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "gift / ? 124",
-          "src": "images/works/gift/WechatIMG124.jpg",
-          "position": "center",
-          "size": "wide"
-      },
-      {
-          "title": "gift / ? 125",
-          "src": "images/works/gift/WechatIMG125.jpg",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "gift / ? 126",
-          "src": "images/works/gift/WechatIMG126.jpg",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "gift / ? 127",
-          "src": "images/works/gift/WechatIMG127.jpg",
-          "position": "center",
-          "size": "wide"
-      },
-      {
-          "title": "gift / ? 128",
-          "src": "images/works/gift/WechatIMG128.jpg",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "gift / ? 129",
-          "src": "images/works/gift/WechatIMG129.jpg",
-          "position": "center",
-          "size": "wide"
-      },
-      {
-          "title": "gift / ? 130",
-          "src": "images/works/gift/WechatIMG130.jpg",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "gift / ? 131",
-          "src": "images/works/gift/WechatIMG131.jpg",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "gift / ? 132",
-          "src": "images/works/gift/WechatIMG132.jpg",
-          "position": "center",
-          "size": "wide"
-      },
-      {
-          "title": "gift / ? 133",
-          "src": "images/works/gift/WechatIMG133.jpg",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "gift / ? 134",
-          "src": "images/works/gift/WechatIMG134.jpg",
-          "position": "center",
-          "size": "wide"
-      },
-      {
-          "title": "gift / ? 135",
-          "src": "images/works/gift/WechatIMG135.jpg",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "gift / ? 136",
-          "src": "images/works/gift/WechatIMG136.jpg",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "gift / ? 137",
-          "src": "images/works/gift/WechatIMG137.jpg",
-          "position": "center",
-          "size": "wide"
-      },
-      {
-          "title": "gift / ? 138",
-          "src": "images/works/gift/WechatIMG138.jpg",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "gift / ? 139",
-          "src": "images/works/gift/WechatIMG139.jpg",
-          "position": "center",
-          "size": "wide"
-      },
-      {
-          "title": "gift / ? 140",
-          "src": "images/works/gift/WechatIMG140.jpg",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "gift / ? 141",
-          "src": "images/works/gift/WechatIMG141.jpg",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "gift / ? 142",
-          "src": "images/works/gift/WechatIMG142.jpg",
-          "position": "center",
-          "size": "wide"
-      },
-      {
-          "title": "gift / ? 143",
-          "src": "images/works/gift/WechatIMG143.jpg",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "gift / ? 144",
-          "src": "images/works/gift/WechatIMG144.jpg",
-          "position": "center",
-          "size": "wide"
-      },
-      {
-          "title": "gift / ? 145",
-          "src": "images/works/gift/WechatIMG145.jpg",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "gift / ? 146",
-          "src": "images/works/gift/WechatIMG146.jpg",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "gift / ? 147",
-          "src": "images/works/gift/WechatIMG147.jpg",
-          "position": "center",
-          "size": "wide"
-      },
-      {
-          "title": "gift / ? 148",
-          "src": "images/works/gift/WechatIMG148.jpg",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "gift / ? 149",
-          "src": "images/works/gift/WechatIMG149.jpg",
-          "position": "center",
-          "size": "wide"
-      },
-      {
-          "title": "gift / ? 150",
-          "src": "images/works/gift/WechatIMG150.jpg",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "gift / ? 151",
-          "src": "images/works/gift/WechatIMG151.jpg",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "gift / ? 152",
-          "src": "images/works/gift/WechatIMG152.jpg",
-          "position": "center",
-          "size": "wide"
-      },
-      {
-          "title": "gift / ? 153",
-          "src": "images/works/gift/WechatIMG153.jpg",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "gift / ? 154",
-          "src": "images/works/gift/WechatIMG154.jpg",
-          "position": "center",
-          "size": "wide"
-      },
-      {
-          "title": "gift / ? 155",
-          "src": "images/works/gift/WechatIMG155.jpg",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "gift / ? 156",
-          "src": "images/works/gift/WechatIMG156.jpg",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "gift / ? 157",
-          "src": "images/works/gift/WechatIMG157.jpg",
-          "position": "center",
-          "size": "wide"
-      },
-      {
-          "title": "gift / ? 158",
-          "src": "images/works/gift/WechatIMG158.jpg",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "gift / ? 159",
-          "src": "images/works/gift/WechatIMG159.jpg",
-          "position": "center",
-          "size": "wide"
-      },
-      {
-          "title": "gift / ? 160",
-          "src": "images/works/gift/WechatIMG160.jpg",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "gift / ? 161",
-          "src": "images/works/gift/WechatIMG161.jpg",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "gift / ? 162",
-          "src": "images/works/gift/WechatIMG162.jpg",
-          "position": "center",
-          "size": "wide"
-      },
-      {
-          "title": "gift / ? 163",
-          "src": "images/works/gift/WechatIMG163.jpg",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "gift / ? 164",
-          "src": "images/works/gift/WechatIMG164.jpg",
-          "position": "center",
-          "size": "wide"
-      },
-      {
-          "title": "gift / ? 165",
-          "src": "images/works/gift/WechatIMG165.jpg",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "gift / ? 166",
-          "src": "images/works/gift/WechatIMG166.jpg",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "gift / ? 167",
-          "src": "images/works/gift/WechatIMG167.jpg",
-          "position": "center",
-          "size": "wide"
-      },
-      {
-          "title": "?? / ? 703",
-          "src": "images/works/gift/zhaoyin/WechatIMG703.jpg",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "?? / ? 872",
-          "src": "images/works/gift/zhaoyin/WechatIMG872.jpg",
-          "position": "center",
-          "size": "wide"
-      },
-      {
-          "title": "?? / ? 873",
-          "src": "images/works/gift/zhaoyin/WechatIMG873.jpg",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "?? / 8888",
-          "src": "images/works/gift/zhuimi/8888.jpg",
-          "position": "center",
-          "size": "small"
-      },
-      {
-          "title": "?? / 袋子11",
-          "src": "images/works/gift/zhuimi/袋子11.jpg",
-          "position": "center",
-          "size": "wide"
-      },
-      {
-          "title": "?? / 袋子6671",
-          "src": "images/works/gift/zhuimi/袋子6671.jpg",
-          "position": "center",
-          "size": "small"
-      }
+    {
+      "title": "23 ???? / ? 704",
+      "src": "images/works/gift/23shunfengduanwu/1.jpg",
+      "position": "center",
+      "size": "wide"
+    },
+    {
+      "title": "23 ???? / ? 705",
+      "src": "images/works/gift/23shunfengduanwu/2.jpg",
+      "position": "center",
+      "size": "small"
+    },
+    {
+      "title": "??? / 1.1新",
+      "src": "images/works/gift/anjier/1.1新.jpg",
+      "position": "center",
+      "size": "small"
+    },
+    {
+      "title": "??? / 固德威1",
+      "src": "images/works/gift/gudewei/固德威1.webp",
+      "position": "center",
+      "size": "wide"
+    },
+    {
+      "title": "??? / 固德威31",
+      "src": "images/works/gift/gudewei/固德威31.webp",
+      "position": "center",
+      "size": "small"
+    },
+    {
+      "title": "?? / 方案2效果q",
+      "src": "images/works/gift/gujia/方案2效果q.webp",
+      "position": "center",
+      "size": "wide"
+    },
+    {
+      "title": "?? / 效果2",
+      "src": "images/works/gift/gujia/效果2.webp",
+      "position": "center",
+      "size": "small"
+    },
+    {
+      "title": "?? / 效果211副本",
+      "src": "images/works/gift/gujia/效果211副本.webp",
+      "position": "center",
+      "size": "small"
+    },
+    {
+      "title": "?? / ? 706",
+      "src": "images/works/gift/shentong/WechatIMG706.jpg",
+      "position": "center",
+      "size": "wide"
+    },
+    {
+      "title": "?? / ? 707",
+      "src": "images/works/gift/shentong/WechatIMG707.jpg",
+      "position": "center",
+      "size": "small"
+    },
+    {
+      "title": "?? / ? 708",
+      "src": "images/works/gift/shentong/WechatIMG708.jpg",
+      "position": "center",
+      "size": "wide"
+    },
+    {
+      "title": "gift / ? 121",
+      "src": "images/works/gift/顺丰端午04/WechatIMG121.webp",
+      "position": "center",
+      "size": "small"
+    },
+    {
+      "title": "gift / ? 122",
+      "src": "images/works/gift/顺丰端午04/WechatIMG122.webp",
+      "position": "center",
+      "size": "wide"
+    },
+    {
+      "title": "gift / ? 123",
+      "src": "images/works/gift/顺丰端午04/WechatIMG123.webp",
+      "position": "center",
+      "size": "small"
+    },
+    {
+      "title": "gift / ? 124",
+      "src": "images/works/gift/顺丰端午04/WechatIMG124.webp",
+      "position": "center",
+      "size": "wide"
+    },
+    {
+      "title": "gift / ? 125",
+      "src": "images/works/gift/顺丰端午04/WechatIMG125.webp",
+      "position": "center",
+      "size": "small"
+    },
+    {
+      "title": "gift / ? 126",
+      "src": "images/works/gift/顺丰端午04/WechatIMG126.webp",
+      "position": "center",
+      "size": "small"
+    },
+    {
+      "title": "gift / ? 127",
+      "src": "images/works/gift/顺丰端午04/WechatIMG127.webp",
+      "position": "center",
+      "size": "wide"
+    },
+    {
+      "title": "gift / ? 129",
+      "src": "images/works/gift/顺丰端午03/WechatIMG129.webp",
+      "position": "center",
+      "size": "wide"
+    },
+    {
+      "title": "gift / ? 130",
+      "src": "images/works/gift/顺丰端午03/WechatIMG130.webp",
+      "position": "center",
+      "size": "small"
+    },
+    {
+      "title": "gift / ? 131",
+      "src": "images/works/gift/顺丰端午03/WechatIMG131.webp",
+      "position": "center",
+      "size": "small"
+    },
+    {
+      "title": "gift / ? 132",
+      "src": "images/works/gift/顺丰端午03/WechatIMG132.webp",
+      "position": "center",
+      "size": "wide"
+    },
+    {
+      "title": "gift / ? 133",
+      "src": "images/works/gift/顺丰端午03/WechatIMG133.webp",
+      "position": "center",
+      "size": "small"
+    },
+    {
+      "title": "gift / ? 134",
+      "src": "images/works/gift/顺丰端午03/WechatIMG134.webp",
+      "position": "center",
+      "size": "wide"
+    },
+    {
+      "title": "gift / ? 135",
+      "src": "images/works/gift/顺丰端午02/WechatIMG135.webp",
+      "position": "center",
+      "size": "small"
+    },
+    {
+      "title": "gift / ? 136",
+      "src": "images/works/gift/顺丰端午02/WechatIMG136.webp",
+      "position": "center",
+      "size": "small"
+    },
+    {
+      "title": "gift / ? 137",
+      "src": "images/works/gift/顺丰端午02/WechatIMG137.webp",
+      "position": "center",
+      "size": "wide"
+    },
+    {
+      "title": "gift / ? 138",
+      "src": "images/works/gift/顺丰端午02/WechatIMG138.webp",
+      "position": "center",
+      "size": "small"
+    },
+    {
+      "title": "gift / ? 139",
+      "src": "images/works/gift/顺丰端午02/WechatIMG139.webp",
+      "position": "center",
+      "size": "wide"
+    },
+    {
+      "title": "gift / ? 140",
+      "src": "images/works/gift/顺丰端午02/WechatIMG140.webp",
+      "position": "center",
+      "size": "small"
+    },
+    {
+      "title": "gift / ? 141",
+      "src": "images/works/gift/顺丰端午02/WechatIMG141.webp",
+      "position": "center",
+      "size": "small"
+    },
+    {
+      "title": "gift / ? 142",
+      "src": "images/works/gift/顺丰端午02/WechatIMG142.webp",
+      "position": "center",
+      "size": "wide"
+    },
+    {
+      "title": "gift / ? 143",
+      "src": "images/works/gift/顺丰端午02/WechatIMG143.webp",
+      "position": "center",
+      "size": "small"
+    },
+    {
+      "title": "gift / ? 144",
+      "src": "images/works/gift/顺丰端午02/WechatIMG144.webp",
+      "position": "center",
+      "size": "wide"
+    },
+    {
+      "title": "gift / ? 145",
+      "src": "images/works/gift/顺丰端午02/WechatIMG145.webp",
+      "position": "center",
+      "size": "small"
+    },
+    {
+      "title": "gift / ? 146",
+      "src": "images/works/gift/顺丰端午02/WechatIMG146.webp",
+      "position": "center",
+      "size": "small"
+    },
+    {
+      "title": "gift / ? 147",
+      "src": "images/works/gift/顺丰端午02/WechatIMG147.webp",
+      "position": "center",
+      "size": "wide"
+    },
+    {
+      "title": "gift / ? 149",
+      "src": "images/works/gift/顺丰端午02/WechatIMG149.webp",
+      "position": "center",
+      "size": "wide"
+    },
+    {
+      "title": "gift / ? 150",
+      "src": "images/works/gift/顺丰端午02/WechatIMG150.webp",
+      "position": "center",
+      "size": "small"
+    },
+    {
+      "title": "gift / ? 160",
+      "src": "images/works/gift/顺丰端午01/WechatIMG160.jpg",
+      "position": "center",
+      "size": "small"
+    },
+    {
+      "title": "gift / ? 161",
+      "src": "images/works/gift/顺丰端午01/WechatIMG161.jpg",
+      "position": "center",
+      "size": "small"
+    },
+    {
+      "title": "gift / ? 162",
+      "src": "images/works/gift/顺丰端午01/WechatIMG162.jpg",
+      "position": "center",
+      "size": "wide"
+    },
+    {
+      "title": "gift / ? 163",
+      "src": "images/works/gift/顺丰端午01/WechatIMG163.jpg",
+      "position": "center",
+      "size": "small"
+    },
+    {
+      "title": "gift / ? 164",
+      "src": "images/works/gift/顺丰端午01/WechatIMG164.jpg",
+      "position": "center",
+      "size": "wide"
+    },
+    {
+      "title": "gift / ? 165",
+      "src": "images/works/gift/顺丰端午01/WechatIMG165.jpg",
+      "position": "center",
+      "size": "small"
+    },
+    {
+      "title": "gift / ? 166",
+      "src": "images/works/gift/顺丰端午01/WechatIMG166.jpg",
+      "position": "center",
+      "size": "small"
+    },
+    {
+      "title": "gift / ? 167",
+      "src": "images/works/gift/顺丰端午01/WechatIMG167.jpg",
+      "position": "center",
+      "size": "wide"
+    },
+    {
+      "title": "?? / ? 703",
+      "src": "images/works/gift/zhaoyin/WechatIMG703.webp",
+      "position": "center",
+      "size": "small"
+    },
+    {
+      "title": "?? / ? 872",
+      "src": "images/works/gift/zhaoyin/WechatIMG872.jpg",
+      "position": "center",
+      "size": "wide"
+    },
+    {
+      "title": "?? / ? 873",
+      "src": "images/works/gift/zhaoyin/WechatIMG873.jpg",
+      "position": "center",
+      "size": "small"
+    },
+    {
+      "title": "?? / 8888",
+      "src": "images/works/gift/zhuimi/8888.jpg",
+      "position": "center",
+      "size": "small"
+    },
+    {
+      "title": "?? / 袋子11",
+      "src": "images/works/gift/zhuimi/袋子11.webp",
+      "position": "center",
+      "size": "wide"
+    },
+    {
+      "title": "?? / 袋子6671",
+      "src": "images/works/gift/zhuimi/袋子6671.webp",
+      "position": "center",
+      "size": "small"
+    }
   ],
   "brand": [
     {
@@ -1327,15 +1253,15 @@ var workGalleryProjects = {
       "projectIndex": 0,
       "categoryIndex": 0,
       "title": "23 年端午",
-      "src": "images/works/oem/23nianduanwu/WechatIMG2128.jpg",
-      "cover": "images/works/oem/23nianduanwu/WechatIMG2128.jpg",
+      "src": "images/works/oem/23nianduanwu/1.jpg",
+      "cover": "images/works/oem/23nianduanwu/1.jpg",
       "position": "center",
       "size": "wide",
       "imageCount": 2,
       "items": [
         {
           "title": "23 年端午 / 图 2128",
-          "src": "images/works/oem/23nianduanwu/WechatIMG2128.jpg",
+          "src": "images/works/oem/23nianduanwu/1.jpg",
           "position": "center",
           "size": "wide",
           "categoryKey": "oem",
@@ -1344,7 +1270,7 @@ var workGalleryProjects = {
         },
         {
           "title": "23 年端午 / 图 2129",
-          "src": "images/works/oem/23nianduanwu/WechatIMG2129.jpg",
+          "src": "images/works/oem/23nianduanwu/2.jpg",
           "position": "center",
           "size": "small",
           "categoryKey": "oem",
@@ -1404,7 +1330,7 @@ var workGalleryProjects = {
         },
         {
           "title": "24 年端午 / 图 d7e1c0843ad3984dd0f10b377c1e0fa6",
-          "src": "images/works/oem/24nianduanwu/WechatIMGd7e1c0843ad3984dd0f10b377c1e0fa6.png",
+          "src": "images/works/oem/24nianduanwu/1.png",
           "position": "center",
           "size": "small",
           "categoryKey": "oem",
@@ -1413,7 +1339,7 @@ var workGalleryProjects = {
         },
         {
           "title": "24 年端午 / 图 edbc9bf09f6b6fe5ff46617c413d261c",
-          "src": "images/works/oem/24nianduanwu/WechatIMGedbc9bf09f6b6fe5ff46617c413d261c.png",
+          "src": "images/works/oem/24nianduanwu/6.png",
           "position": "center",
           "size": "wide",
           "categoryKey": "oem",
@@ -1422,7 +1348,7 @@ var workGalleryProjects = {
         },
         {
           "title": "24 年端午 / 图 f0e6aae672c6a9fdba536b14f56b8369",
-          "src": "images/works/oem/24nianduanwu/WechatIMGf0e6aae672c6a9fdba536b14f56b8369.png",
+          "src": "images/works/oem/24nianduanwu/7.png",
           "position": "center",
           "size": "small",
           "categoryKey": "oem",
@@ -1438,15 +1364,15 @@ var workGalleryProjects = {
       "projectIndex": 2,
       "categoryIndex": 2,
       "title": "24 年中秋",
-      "src": "images/works/oem/24nianzhongqiu/69f4e228dc3023cccc50614c9cd1c92d.png",
-      "cover": "images/works/oem/24nianzhongqiu/69f4e228dc3023cccc50614c9cd1c92d.png",
+      "src": "images/works/oem/24nianzhongqiu/1.png",
+      "cover": "images/works/oem/24nianzhongqiu/1.png",
       "position": "center",
       "size": "small",
       "imageCount": 10,
       "items": [
         {
           "title": "24 年中秋 / 69f4e228dc3023cccc50614c9cd1c92d",
-          "src": "images/works/oem/24nianzhongqiu/69f4e228dc3023cccc50614c9cd1c92d.png",
+          "src": "images/works/oem/24nianzhongqiu/1.png",
           "position": "center",
           "size": "wide",
           "categoryKey": "oem",
@@ -1455,7 +1381,7 @@ var workGalleryProjects = {
         },
         {
           "title": "24 年中秋 / 741ec1f70c19da7b0c2e43d93168aac4",
-          "src": "images/works/oem/24nianzhongqiu/741ec1f70c19da7b0c2e43d93168aac4.jpg",
+          "src": "images/works/oem/24nianzhongqiu/2.jpg",
           "position": "center",
           "size": "small",
           "categoryKey": "oem",
@@ -1464,7 +1390,7 @@ var workGalleryProjects = {
         },
         {
           "title": "24 年中秋 / 48568aba65e2869e012c7241157263cd",
-          "src": "images/works/oem/24nianzhongqiu/48568aba65e2869e012c7241157263cd.png",
+          "src": "images/works/oem/24nianzhongqiu/3.png",
           "position": "center",
           "size": "small",
           "categoryKey": "oem",
@@ -1473,7 +1399,7 @@ var workGalleryProjects = {
         },
         {
           "title": "24 年中秋 / 99305b1073245b4e88842a66499d789f",
-          "src": "images/works/oem/24nianzhongqiu/99305b1073245b4e88842a66499d789f.png",
+          "src": "images/works/oem/24nianzhongqiu/4.png",
           "position": "center",
           "size": "wide",
           "categoryKey": "oem",
@@ -1482,7 +1408,7 @@ var workGalleryProjects = {
         },
         {
           "title": "24 年中秋 / c3c0c419a463034be778ff965df78227",
-          "src": "images/works/oem/24nianzhongqiu/c3c0c419a463034be778ff965df78227.jpg",
+          "src": "images/works/oem/24nianzhongqiu/5.jpg",
           "position": "center",
           "size": "small",
           "categoryKey": "oem",
@@ -1491,7 +1417,7 @@ var workGalleryProjects = {
         },
         {
           "title": "24 年中秋 / 图 8ab939e6c1ff2264f2e7654412a607f9",
-          "src": "images/works/oem/24nianzhongqiu/WechatIMG8ab939e6c1ff2264f2e7654412a607f9.jpeg",
+          "src": "images/works/oem/24nianzhongqiu/1-1.png",
           "position": "center",
           "size": "wide",
           "categoryKey": "oem",
@@ -1500,7 +1426,7 @@ var workGalleryProjects = {
         },
         {
           "title": "24 年中秋 / 图 7173a7bd5c6fef11a258d3ff90779ef4",
-          "src": "images/works/oem/24nianzhongqiu/WechatIMG7173a7bd5c6fef11a258d3ff90779ef4.jpeg",
+          "src": "images/works/oem/24nianzhongqiu/4-4.jpeg",
           "position": "center",
           "size": "small",
           "categoryKey": "oem",
@@ -1509,7 +1435,7 @@ var workGalleryProjects = {
         },
         {
           "title": "24 年中秋 / 图 9798d144d7bdcf657882930968b4c82d",
-          "src": "images/works/oem/24nianzhongqiu/WechatIMG9798d144d7bdcf657882930968b4c82d.png",
+          "src": "images/works/oem/24nianzhongqiu/2-2.jpeg",
           "position": "center",
           "size": "small",
           "categoryKey": "oem",
@@ -1518,7 +1444,7 @@ var workGalleryProjects = {
         },
         {
           "title": "24 年中秋 / 图 d38a0cd6d006be1773b3f4fd25defa0e",
-          "src": "images/works/oem/24nianzhongqiu/WechatIMGd38a0cd6d006be1773b3f4fd25defa0e.jpeg",
+          "src": "images/works/oem/24nianzhongqiu/5-5.jpeg",
           "position": "center",
           "size": "wide",
           "categoryKey": "oem",
@@ -1527,7 +1453,7 @@ var workGalleryProjects = {
         },
         {
           "title": "24 年中秋 / 图 f38a134ba255715232b301358034f7ee",
-          "src": "images/works/oem/24nianzhongqiu/WechatIMGf38a134ba255715232b301358034f7ee.png",
+          "src": "images/works/oem/24nianzhongqiu/3-3.png",
           "position": "center",
           "size": "small",
           "categoryKey": "oem",
@@ -1654,15 +1580,15 @@ var workGalleryProjects = {
       "projectIndex": 5,
       "categoryIndex": 5,
       "title": "糕上有点",
-      "src": "images/works/oem/gaoshangyoudian/蛋黄酥效果1.jpg",
-      "cover": "images/works/oem/gaoshangyoudian/蛋黄酥效果1.jpg",
+      "src": "images/works/oem/gaoshangyoudian/蛋黄酥效果1.webp",
+      "cover": "images/works/oem/gaoshangyoudian/蛋黄酥效果1.webp",
       "position": "center",
       "size": "small",
       "imageCount": 13,
       "items": [
         {
           "title": "糕上有点 / 蛋黄酥效果1",
-          "src": "images/works/oem/gaoshangyoudian/蛋黄酥效果1.jpg",
+          "src": "images/works/oem/gaoshangyoudian/蛋黄酥效果1.webp",
           "position": "center",
           "size": "wide",
           "categoryKey": "oem",
@@ -1671,7 +1597,7 @@ var workGalleryProjects = {
         },
         {
           "title": "糕上有点 / 鸡蛋仔 蓝1 1",
-          "src": "images/works/oem/gaoshangyoudian/鸡蛋仔-蓝1-1.jpg",
+          "src": "images/works/oem/gaoshangyoudian/鸡蛋仔-蓝1-1.webp",
           "position": "center",
           "size": "small",
           "categoryKey": "oem",
@@ -1803,7 +1729,7 @@ var workGalleryProjects = {
         },
         {
           "title": "功夫粽 / 图 572",
-          "src": "images/works/oem/gongfuzong/WechatIMG572.jpg",
+          "src": "images/works/oem/gongfuzong/WechatIMG572.jpeg",
           "position": "center",
           "size": "small",
           "categoryKey": "oem",
@@ -1983,7 +1909,7 @@ var workGalleryProjects = {
         },
         {
           "title": "可小熊 / 图 557",
-          "src": "images/works/oem/kexiaoxiogn/WechatIMG557.png",
+          "src": "images/works/oem/kexiaoxiogn/WechatIMG557.jpg",
           "position": "center",
           "size": "small",
           "categoryKey": "oem",
@@ -1999,15 +1925,15 @@ var workGalleryProjects = {
       "projectIndex": 10,
       "categoryIndex": 10,
       "title": "可小熊",
-      "src": "images/works/oem/kexiaoxiong/效果副本.jpg",
-      "cover": "images/works/oem/kexiaoxiong/效果副本.jpg",
+      "src": "images/works/oem/kexiaoxiong/嗨吃鸭卤味鸭.webp",
+      "cover": "images/works/oem/kexiaoxiong/嗨吃鸭卤味鸭.webp",
       "position": "center",
       "size": "small",
       "imageCount": 3,
       "items": [
         {
           "title": "可小熊 / 效果副本",
-          "src": "images/works/oem/kexiaoxiong/效果副本.jpg",
+          "src": "images/works/oem/kexiaoxiong/嗨吃鸭卤味鸭.webp",
           "position": "center",
           "size": "wide",
           "categoryKey": "oem",
@@ -2016,7 +1942,7 @@ var workGalleryProjects = {
         },
         {
           "title": "可小熊 / 枣仁核桃",
-          "src": "images/works/oem/kexiaoxiong/枣仁核桃.jpg",
+          "src": "images/works/oem/kexiaoxiong/枣仁核桃.webp",
           "position": "center",
           "size": "small",
           "categoryKey": "oem",
@@ -2067,7 +1993,7 @@ var workGalleryProjects = {
         },
         {
           "title": "龙悦万方 / 02",
-          "src": "images/works/oem/lognyuewanfang/02.jpg",
+          "src": "images/works/oem/lognyuewanfang/02.webp",
           "position": "center",
           "size": "small",
           "categoryKey": "oem",
@@ -2083,15 +2009,15 @@ var workGalleryProjects = {
       "projectIndex": 12,
       "categoryIndex": 12,
       "title": "肉肉大聚会袋子",
-      "src": "images/works/oem/rouroudajuhuidaizi/10款集合 2.jpg",
-      "cover": "images/works/oem/rouroudajuhuidaizi/10款集合 2.jpg",
+      "src": "images/works/oem/rouroudajuhuidaizi/10款集合 2.webp",
+      "cover": "images/works/oem/rouroudajuhuidaizi/10款集合 2.webp",
       "position": "center",
       "size": "wide",
       "imageCount": 2,
       "items": [
         {
           "title": "肉肉大聚会袋子 / 10款集合 2",
-          "src": "images/works/oem/rouroudajuhuidaizi/10款集合 2.jpg",
+          "src": "images/works/oem/rouroudajuhuidaizi/10款集合 2.webp",
           "position": "center",
           "size": "wide",
           "categoryKey": "oem",
@@ -2100,7 +2026,7 @@ var workGalleryProjects = {
         },
         {
           "title": "肉肉大聚会袋子 / 10款集合",
-          "src": "images/works/oem/rouroudajuhuidaizi/10款集合.jpg",
+          "src": "images/works/oem/rouroudajuhuidaizi/10款集合.webp",
           "position": "center",
           "size": "small",
           "categoryKey": "oem",
@@ -2421,15 +2347,15 @@ var workGalleryProjects = {
       "projectIndex": 0,
       "categoryIndex": 0,
       "title": "23 顺丰端午",
-      "src": "images/works/gift/23shunfengduanwu/WechatIMG704.jpg",
-      "cover": "images/works/gift/23shunfengduanwu/WechatIMG704.jpg",
+      "src": "images/works/gift/23shunfengduanwu/1.jpg",
+      "cover": "images/works/gift/23shunfengduanwu/1.jpg",
       "position": "center",
       "size": "wide",
       "imageCount": 2,
       "items": [
         {
           "title": "23 顺丰端午 / 图 704",
-          "src": "images/works/gift/23shunfengduanwu/WechatIMG704.jpg",
+          "src": "images/works/gift/23shunfengduanwu/1.jpg",
           "position": "center",
           "size": "wide",
           "categoryKey": "gift",
@@ -2438,7 +2364,7 @@ var workGalleryProjects = {
         },
         {
           "title": "23 顺丰端午 / 图 705",
-          "src": "images/works/gift/23shunfengduanwu/WechatIMG705.jpg",
+          "src": "images/works/gift/23shunfengduanwu/2.jpg",
           "position": "center",
           "size": "small",
           "categoryKey": "gift",
@@ -2478,15 +2404,15 @@ var workGalleryProjects = {
       "projectIndex": 2,
       "categoryIndex": 2,
       "title": "固德威",
-      "src": "images/works/gift/gudewei/固德威1.jpg",
-      "cover": "images/works/gift/gudewei/固德威1.jpg",
+      "src": "images/works/gift/gudewei/固德威1.webp",
+      "cover": "images/works/gift/gudewei/固德威1.webp",
       "position": "center",
       "size": "small",
       "imageCount": 2,
       "items": [
         {
           "title": "固德威 / 固德威1",
-          "src": "images/works/gift/gudewei/固德威1.jpg",
+          "src": "images/works/gift/gudewei/固德威1.webp",
           "position": "center",
           "size": "wide",
           "categoryKey": "gift",
@@ -2495,7 +2421,7 @@ var workGalleryProjects = {
         },
         {
           "title": "固德威 / 固德威31",
-          "src": "images/works/gift/gudewei/固德威31.jpg",
+          "src": "images/works/gift/gudewei/固德威31.webp",
           "position": "center",
           "size": "small",
           "categoryKey": "gift",
@@ -2511,15 +2437,15 @@ var workGalleryProjects = {
       "projectIndex": 3,
       "categoryIndex": 3,
       "title": "顾家",
-      "src": "images/works/gift/gujia/方案2效果q.jpg",
-      "cover": "images/works/gift/gujia/方案2效果q.jpg",
+      "src": "images/works/gift/gujia/方案2效果q.webp",
+      "cover": "images/works/gift/gujia/方案2效果q.webp",
       "position": "center",
       "size": "wide",
       "imageCount": 3,
       "items": [
         {
           "title": "顾家 / 方案2效果q",
-          "src": "images/works/gift/gujia/方案2效果q.jpg",
+          "src": "images/works/gift/gujia/方案2效果q.webp",
           "position": "center",
           "size": "wide",
           "categoryKey": "gift",
@@ -2528,7 +2454,7 @@ var workGalleryProjects = {
         },
         {
           "title": "顾家 / 效果2",
-          "src": "images/works/gift/gujia/效果2.jpg",
+          "src": "images/works/gift/gujia/效果2.webp",
           "position": "center",
           "size": "small",
           "categoryKey": "gift",
@@ -2537,7 +2463,7 @@ var workGalleryProjects = {
         },
         {
           "title": "顾家 / 效果211副本",
-          "src": "images/works/gift/gujia/效果211副本.jpg",
+          "src": "images/works/gift/gujia/效果211副本.webp",
           "position": "center",
           "size": "small",
           "categoryKey": "gift",
@@ -2553,24 +2479,24 @@ var workGalleryProjects = {
       "projectIndex": 4,
       "categoryIndex": 4,
       "title": "礼品散图",
-      "src": "images/works/gift/WechatIMG120.jpg",
-      "cover": "images/works/gift/WechatIMG120.jpg",
+      "src": "images/works/gift/顺丰端午04/WechatIMG121.webp",
+      "cover": "images/works/gift/顺丰端午04/WechatIMG121.webp",
       "position": "center",
       "size": "small",
-      "imageCount": 48,
+      "imageCount": 36,
       "items": [
         {
-          "title": "礼品散图 / 图 120",
-          "src": "images/works/gift/WechatIMG120.jpg",
+          "title": "礼品散图 / 图 121",
+          "src": "images/works/gift/顺丰端午04/WechatIMG121.webp",
           "position": "center",
-          "size": "wide",
+          "size": "small",
           "categoryKey": "gift",
           "projectKey": "root",
           "categoryIndex": 0
         },
         {
-          "title": "礼品散图 / 图 121",
-          "src": "images/works/gift/WechatIMG121.jpg",
+          "title": "礼品散图 / 图 122",
+          "src": "images/works/gift/顺丰端午04/WechatIMG122.webp",
           "position": "center",
           "size": "small",
           "categoryKey": "gift",
@@ -2578,44 +2504,44 @@ var workGalleryProjects = {
           "categoryIndex": 1
         },
         {
-          "title": "礼品散图 / 图 122",
-          "src": "images/works/gift/WechatIMG122.jpg",
+          "title": "礼品散图 / 图 123",
+          "src": "images/works/gift/顺丰端午04/WechatIMG123.webp",
           "position": "center",
-          "size": "small",
+          "size": "wide",
           "categoryKey": "gift",
           "projectKey": "root",
           "categoryIndex": 2
         },
         {
-          "title": "礼品散图 / 图 123",
-          "src": "images/works/gift/WechatIMG123.jpg",
+          "title": "礼品散图 / 图 124",
+          "src": "images/works/gift/顺丰端午04/WechatIMG124.webp",
           "position": "center",
-          "size": "wide",
+          "size": "small",
           "categoryKey": "gift",
           "projectKey": "root",
           "categoryIndex": 3
         },
         {
-          "title": "礼品散图 / 图 124",
-          "src": "images/works/gift/WechatIMG124.jpg",
+          "title": "礼品散图 / 图 125",
+          "src": "images/works/gift/顺丰端午04/WechatIMG125.webp",
           "position": "center",
-          "size": "small",
+          "size": "wide",
           "categoryKey": "gift",
           "projectKey": "root",
           "categoryIndex": 4
         },
         {
-          "title": "礼品散图 / 图 125",
-          "src": "images/works/gift/WechatIMG125.jpg",
+          "title": "礼品散图 / 图 126",
+          "src": "images/works/gift/顺丰端午04/WechatIMG126.webp",
           "position": "center",
-          "size": "wide",
+          "size": "small",
           "categoryKey": "gift",
           "projectKey": "root",
           "categoryIndex": 5
         },
         {
-          "title": "礼品散图 / 图 126",
-          "src": "images/works/gift/WechatIMG126.jpg",
+          "title": "礼品散图 / 图 127",
+          "src": "images/works/gift/顺丰端午04/WechatIMG127.webp",
           "position": "center",
           "size": "small",
           "categoryKey": "gift",
@@ -2623,8 +2549,8 @@ var workGalleryProjects = {
           "categoryIndex": 6
         },
         {
-          "title": "礼品散图 / 图 127",
-          "src": "images/works/gift/WechatIMG127.jpg",
+          "title": "礼品散图 / 图 129",
+          "src": "images/works/gift/顺丰端午03/WechatIMG129.webp",
           "position": "center",
           "size": "small",
           "categoryKey": "gift",
@@ -2632,8 +2558,8 @@ var workGalleryProjects = {
           "categoryIndex": 7
         },
         {
-          "title": "礼品散图 / 图 128",
-          "src": "images/works/gift/WechatIMG128.jpg",
+          "title": "礼品散图 / 图 130",
+          "src": "images/works/gift/顺丰端午03/WechatIMG130.webp",
           "position": "center",
           "size": "wide",
           "categoryKey": "gift",
@@ -2641,8 +2567,8 @@ var workGalleryProjects = {
           "categoryIndex": 8
         },
         {
-          "title": "礼品散图 / 图 129",
-          "src": "images/works/gift/WechatIMG129.jpg",
+          "title": "礼品散图 / 图 131",
+          "src": "images/works/gift/顺丰端午03/WechatIMG131.webp",
           "position": "center",
           "size": "small",
           "categoryKey": "gift",
@@ -2650,26 +2576,26 @@ var workGalleryProjects = {
           "categoryIndex": 9
         },
         {
-          "title": "礼品散图 / 图 130",
-          "src": "images/works/gift/WechatIMG130.jpg",
+          "title": "礼品散图 / 图 132",
+          "src": "images/works/gift/顺丰端午03/WechatIMG132.webp",
           "position": "center",
-          "size": "wide",
+          "size": "small",
           "categoryKey": "gift",
           "projectKey": "root",
           "categoryIndex": 10
         },
         {
-          "title": "礼品散图 / 图 131",
-          "src": "images/works/gift/WechatIMG131.jpg",
+          "title": "礼品散图 / 图 133",
+          "src": "images/works/gift/顺丰端午03/WechatIMG133.webp",
           "position": "center",
-          "size": "small",
+          "size": "wide",
           "categoryKey": "gift",
           "projectKey": "root",
           "categoryIndex": 11
         },
         {
-          "title": "礼品散图 / 图 132",
-          "src": "images/works/gift/WechatIMG132.jpg",
+          "title": "礼品散图 / 图 134",
+          "src": "images/works/gift/顺丰端午03/WechatIMG134.webp",
           "position": "center",
           "size": "small",
           "categoryKey": "gift",
@@ -2677,8 +2603,8 @@ var workGalleryProjects = {
           "categoryIndex": 12
         },
         {
-          "title": "礼品散图 / 图 133",
-          "src": "images/works/gift/WechatIMG133.jpg",
+          "title": "礼品散图 / 图 135",
+          "src": "images/works/gift/顺丰端午02/WechatIMG135.webp",
           "position": "center",
           "size": "wide",
           "categoryKey": "gift",
@@ -2686,8 +2612,8 @@ var workGalleryProjects = {
           "categoryIndex": 13
         },
         {
-          "title": "礼品散图 / 图 134",
-          "src": "images/works/gift/WechatIMG134.jpg",
+          "title": "礼品散图 / 图 136",
+          "src": "images/works/gift/顺丰端午02/WechatIMG136.webp",
           "position": "center",
           "size": "small",
           "categoryKey": "gift",
@@ -2695,26 +2621,26 @@ var workGalleryProjects = {
           "categoryIndex": 14
         },
         {
-          "title": "礼品散图 / 图 135",
-          "src": "images/works/gift/WechatIMG135.jpg",
+          "title": "礼品散图 / 图 137",
+          "src": "images/works/gift/顺丰端午02/WechatIMG137.webp",
           "position": "center",
-          "size": "wide",
+          "size": "small",
           "categoryKey": "gift",
           "projectKey": "root",
           "categoryIndex": 15
         },
         {
-          "title": "礼品散图 / 图 136",
-          "src": "images/works/gift/WechatIMG136.jpg",
+          "title": "礼品散图 / 图 138",
+          "src": "images/works/gift/顺丰端午02/WechatIMG138.webp",
           "position": "center",
-          "size": "small",
+          "size": "wide",
           "categoryKey": "gift",
           "projectKey": "root",
           "categoryIndex": 16
         },
         {
-          "title": "礼品散图 / 图 137",
-          "src": "images/works/gift/WechatIMG137.jpg",
+          "title": "礼品散图 / 图 139",
+          "src": "images/works/gift/顺丰端午02/WechatIMG139.webp",
           "position": "center",
           "size": "small",
           "categoryKey": "gift",
@@ -2722,8 +2648,8 @@ var workGalleryProjects = {
           "categoryIndex": 17
         },
         {
-          "title": "礼品散图 / 图 138",
-          "src": "images/works/gift/WechatIMG138.jpg",
+          "title": "礼品散图 / 图 140",
+          "src": "images/works/gift/顺丰端午02/WechatIMG140.webp",
           "position": "center",
           "size": "wide",
           "categoryKey": "gift",
@@ -2731,8 +2657,8 @@ var workGalleryProjects = {
           "categoryIndex": 18
         },
         {
-          "title": "礼品散图 / 图 139",
-          "src": "images/works/gift/WechatIMG139.jpg",
+          "title": "礼品散图 / 图 141",
+          "src": "images/works/gift/顺丰端午02/WechatIMG141.webp",
           "position": "center",
           "size": "small",
           "categoryKey": "gift",
@@ -2740,26 +2666,26 @@ var workGalleryProjects = {
           "categoryIndex": 19
         },
         {
-          "title": "礼品散图 / 图 140",
-          "src": "images/works/gift/WechatIMG140.jpg",
+          "title": "礼品散图 / 图 142",
+          "src": "images/works/gift/顺丰端午02/WechatIMG142.webp",
           "position": "center",
-          "size": "wide",
+          "size": "small",
           "categoryKey": "gift",
           "projectKey": "root",
           "categoryIndex": 20
         },
         {
-          "title": "礼品散图 / 图 141",
-          "src": "images/works/gift/WechatIMG141.jpg",
+          "title": "礼品散图 / 图 143",
+          "src": "images/works/gift/顺丰端午02/WechatIMG143.webp",
           "position": "center",
-          "size": "small",
+          "size": "wide",
           "categoryKey": "gift",
           "projectKey": "root",
           "categoryIndex": 21
         },
         {
-          "title": "礼品散图 / 图 142",
-          "src": "images/works/gift/WechatIMG142.jpg",
+          "title": "礼品散图 / 图 144",
+          "src": "images/works/gift/顺丰端午02/WechatIMG144.webp",
           "position": "center",
           "size": "small",
           "categoryKey": "gift",
@@ -2767,8 +2693,8 @@ var workGalleryProjects = {
           "categoryIndex": 22
         },
         {
-          "title": "礼品散图 / 图 143",
-          "src": "images/works/gift/WechatIMG143.jpg",
+          "title": "礼品散图 / 图 145",
+          "src": "images/works/gift/顺丰端午02/WechatIMG145.webp",
           "position": "center",
           "size": "wide",
           "categoryKey": "gift",
@@ -2776,8 +2702,8 @@ var workGalleryProjects = {
           "categoryIndex": 23
         },
         {
-          "title": "礼品散图 / 图 144",
-          "src": "images/works/gift/WechatIMG144.jpg",
+          "title": "礼品散图 / 图 146",
+          "src": "images/works/gift/顺丰端午02/WechatIMG146.webp",
           "position": "center",
           "size": "small",
           "categoryKey": "gift",
@@ -2785,17 +2711,17 @@ var workGalleryProjects = {
           "categoryIndex": 24
         },
         {
-          "title": "礼品散图 / 图 145",
-          "src": "images/works/gift/WechatIMG145.jpg",
+          "title": "礼品散图 / 图 147",
+          "src": "images/works/gift/顺丰端午02/WechatIMG147.webp",
           "position": "center",
-          "size": "wide",
+          "size": "small",
           "categoryKey": "gift",
           "projectKey": "root",
           "categoryIndex": 25
         },
         {
-          "title": "礼品散图 / 图 146",
-          "src": "images/works/gift/WechatIMG146.jpg",
+          "title": "礼品散图 / 图 149",
+          "src": "images/works/gift/顺丰端午02/WechatIMG149.webp",
           "position": "center",
           "size": "small",
           "categoryKey": "gift",
@@ -2803,17 +2729,17 @@ var workGalleryProjects = {
           "categoryIndex": 26
         },
         {
-          "title": "礼品散图 / 图 147",
-          "src": "images/works/gift/WechatIMG147.jpg",
+          "title": "礼品散图 / 图 150",
+          "src": "images/works/gift/顺丰端午02/WechatIMG150.webp",
           "position": "center",
-          "size": "small",
+          "size": "wide",
           "categoryKey": "gift",
           "projectKey": "root",
           "categoryIndex": 27
         },
         {
-          "title": "礼品散图 / 图 148",
-          "src": "images/works/gift/WechatIMG148.jpg",
+          "title": "礼品散图 / 图 160",
+          "src": "images/works/gift/顺丰端午01/WechatIMG160.jpg",
           "position": "center",
           "size": "wide",
           "categoryKey": "gift",
@@ -2821,8 +2747,8 @@ var workGalleryProjects = {
           "categoryIndex": 28
         },
         {
-          "title": "礼品散图 / 图 149",
-          "src": "images/works/gift/WechatIMG149.jpg",
+          "title": "礼品散图 / 图 161",
+          "src": "images/works/gift/顺丰端午01/WechatIMG161.jpg",
           "position": "center",
           "size": "small",
           "categoryKey": "gift",
@@ -2830,26 +2756,26 @@ var workGalleryProjects = {
           "categoryIndex": 29
         },
         {
-          "title": "礼品散图 / 图 150",
-          "src": "images/works/gift/WechatIMG150.jpg",
+          "title": "礼品散图 / 图 162",
+          "src": "images/works/gift/顺丰端午01/WechatIMG162.jpg",
           "position": "center",
-          "size": "wide",
+          "size": "small",
           "categoryKey": "gift",
           "projectKey": "root",
           "categoryIndex": 30
         },
         {
-          "title": "礼品散图 / 图 151",
-          "src": "images/works/gift/WechatIMG151.jpg",
+          "title": "礼品散图 / 图 163",
+          "src": "images/works/gift/顺丰端午01/WechatIMG163.jpg",
           "position": "center",
-          "size": "small",
+          "size": "wide",
           "categoryKey": "gift",
           "projectKey": "root",
           "categoryIndex": 31
         },
         {
-          "title": "礼品散图 / 图 152",
-          "src": "images/works/gift/WechatIMG152.jpg",
+          "title": "礼品散图 / 图 164",
+          "src": "images/works/gift/顺丰端午01/WechatIMG164.jpg",
           "position": "center",
           "size": "small",
           "categoryKey": "gift",
@@ -2857,8 +2783,8 @@ var workGalleryProjects = {
           "categoryIndex": 32
         },
         {
-          "title": "礼品散图 / 图 153",
-          "src": "images/works/gift/WechatIMG153.jpg",
+          "title": "礼品散图 / 图 165",
+          "src": "images/works/gift/顺丰端午01/WechatIMG165.jpg",
           "position": "center",
           "size": "wide",
           "categoryKey": "gift",
@@ -2866,8 +2792,8 @@ var workGalleryProjects = {
           "categoryIndex": 33
         },
         {
-          "title": "礼品散图 / 图 154",
-          "src": "images/works/gift/WechatIMG154.jpg",
+          "title": "礼品散图 / 图 166",
+          "src": "images/works/gift/顺丰端午01/WechatIMG166.jpg",
           "position": "center",
           "size": "small",
           "categoryKey": "gift",
@@ -2875,121 +2801,13 @@ var workGalleryProjects = {
           "categoryIndex": 34
         },
         {
-          "title": "礼品散图 / 图 155",
-          "src": "images/works/gift/WechatIMG155.jpg",
+          "title": "礼品散图 / 图 167",
+          "src": "images/works/gift/顺丰端午01/WechatIMG167.jpg",
           "position": "center",
-          "size": "wide",
+          "size": "small",
           "categoryKey": "gift",
           "projectKey": "root",
           "categoryIndex": 35
-        },
-        {
-          "title": "礼品散图 / 图 156",
-          "src": "images/works/gift/WechatIMG156.jpg",
-          "position": "center",
-          "size": "small",
-          "categoryKey": "gift",
-          "projectKey": "root",
-          "categoryIndex": 36
-        },
-        {
-          "title": "礼品散图 / 图 157",
-          "src": "images/works/gift/WechatIMG157.jpg",
-          "position": "center",
-          "size": "small",
-          "categoryKey": "gift",
-          "projectKey": "root",
-          "categoryIndex": 37
-        },
-        {
-          "title": "礼品散图 / 图 158",
-          "src": "images/works/gift/WechatIMG158.jpg",
-          "position": "center",
-          "size": "wide",
-          "categoryKey": "gift",
-          "projectKey": "root",
-          "categoryIndex": 38
-        },
-        {
-          "title": "礼品散图 / 图 159",
-          "src": "images/works/gift/WechatIMG159.jpg",
-          "position": "center",
-          "size": "small",
-          "categoryKey": "gift",
-          "projectKey": "root",
-          "categoryIndex": 39
-        },
-        {
-          "title": "礼品散图 / 图 160",
-          "src": "images/works/gift/WechatIMG160.jpg",
-          "position": "center",
-          "size": "wide",
-          "categoryKey": "gift",
-          "projectKey": "root",
-          "categoryIndex": 40
-        },
-        {
-          "title": "礼品散图 / 图 161",
-          "src": "images/works/gift/WechatIMG161.jpg",
-          "position": "center",
-          "size": "small",
-          "categoryKey": "gift",
-          "projectKey": "root",
-          "categoryIndex": 41
-        },
-        {
-          "title": "礼品散图 / 图 162",
-          "src": "images/works/gift/WechatIMG162.jpg",
-          "position": "center",
-          "size": "small",
-          "categoryKey": "gift",
-          "projectKey": "root",
-          "categoryIndex": 42
-        },
-        {
-          "title": "礼品散图 / 图 163",
-          "src": "images/works/gift/WechatIMG163.jpg",
-          "position": "center",
-          "size": "wide",
-          "categoryKey": "gift",
-          "projectKey": "root",
-          "categoryIndex": 43
-        },
-        {
-          "title": "礼品散图 / 图 164",
-          "src": "images/works/gift/WechatIMG164.jpg",
-          "position": "center",
-          "size": "small",
-          "categoryKey": "gift",
-          "projectKey": "root",
-          "categoryIndex": 44
-        },
-        {
-          "title": "礼品散图 / 图 165",
-          "src": "images/works/gift/WechatIMG165.jpg",
-          "position": "center",
-          "size": "wide",
-          "categoryKey": "gift",
-          "projectKey": "root",
-          "categoryIndex": 45
-        },
-        {
-          "title": "礼品散图 / 图 166",
-          "src": "images/works/gift/WechatIMG166.jpg",
-          "position": "center",
-          "size": "small",
-          "categoryKey": "gift",
-          "projectKey": "root",
-          "categoryIndex": 46
-        },
-        {
-          "title": "礼品散图 / 图 167",
-          "src": "images/works/gift/WechatIMG167.jpg",
-          "position": "center",
-          "size": "small",
-          "categoryKey": "gift",
-          "projectKey": "root",
-          "categoryIndex": 47
         }
       ]
     },
@@ -3042,15 +2860,15 @@ var workGalleryProjects = {
       "projectIndex": 6,
       "categoryIndex": 6,
       "title": "招银",
-      "src": "images/works/gift/zhaoyin/WechatIMG703.jpg",
-      "cover": "images/works/gift/zhaoyin/WechatIMG703.jpg",
+      "src": "images/works/gift/zhaoyin/WechatIMG703.webp",
+      "cover": "images/works/gift/zhaoyin/WechatIMG703.webp",
       "position": "center",
       "size": "wide",
       "imageCount": 3,
       "items": [
         {
           "title": "招银 / 图 703",
-          "src": "images/works/gift/zhaoyin/WechatIMG703.jpg",
+          "src": "images/works/gift/zhaoyin/WechatIMG703.webp",
           "position": "center",
           "size": "wide",
           "categoryKey": "gift",
@@ -3101,7 +2919,7 @@ var workGalleryProjects = {
         },
         {
           "title": "追觅 / 袋子11",
-          "src": "images/works/gift/zhuimi/袋子11.jpg",
+          "src": "images/works/gift/zhuimi/袋子11.webp",
           "position": "center",
           "size": "small",
           "categoryKey": "gift",
@@ -3110,7 +2928,7 @@ var workGalleryProjects = {
         },
         {
           "title": "追觅 / 袋子6671",
-          "src": "images/works/gift/zhuimi/袋子6671.jpg",
+          "src": "images/works/gift/zhuimi/袋子6671.webp",
           "position": "center",
           "size": "small",
           "categoryKey": "gift",

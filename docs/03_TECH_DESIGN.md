@@ -42,7 +42,7 @@
 - Services: `services-*`, `service-panel-shaders.js`.
 - Works/gallery: `work-gallery.js`, `works-hover-preview.js`, `works-transition-motion.js`.
 - Contact: `contact-interactions.js`.
-- Navigation/UI: `bottom-nav-scroll-spy.js`, `site-navigation.js`, `header-controls.js`, `precision-cursor.js`, `site-clock.js`.
+- Navigation/UI: `bottom-nav-scroll-spy.js`, `works-side-rail.js`, `header-controls.js`, `precision-cursor.js`, `site-clock.js`.
 - Text/motion: `scrambled-text.js`, `flip-text.js`, `scroll-type-effects.js`, `reveal-effects.js`, `portrait-motion.js`, `clients-marquee.js`, `clients-title-interaction.js`.
 
 ## `site-data.js` Responsibilities
@@ -84,8 +84,8 @@ All copy/data changes should start here unless the visible text is intentionally
 
 - `work-gallery.js`
 - `hero-water-surface.js`
-- `hero-card-animation.js`
-- `hero-step-runtime.js`
+- `liquid-glass-field.js`
+- `hero-glb-model.js`
 - `hero-sequence-runtime.js`
 - `runtime-bridge.js`
 - `app-bootstrap.js`

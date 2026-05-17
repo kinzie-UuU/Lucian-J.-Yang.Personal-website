@@ -4,7 +4,7 @@
 
 这是 Lucian J. Yang 的个人包装设计作品网站。项目是纯静态站点，以 `index.html` 为唯一页面入口，直接加载模块化 CSS、普通浏览器 JavaScript、静态图片、视频、音频与本地字体。
 
-项目重点不是传统内容页，而是一个带强交互的作品体验：入口 OPEN 动效、Hero 水面与 3D 包装立方体、服务滚动叙事、作品分类与画廊、客户展示、联系表单与微信二维码弹层。
+项目重点不是传统内容页，而是一个带强交互的作品体验：入口 3D 钥匙自动旋转进场、Hero 水面与 GLB 狮头模型、全屏液态场、服务滚动叙事、作品分类与画廊、客户展示、联系表单与微信二维码弹层。
 
 不要把它迁移成 React、Vue、Next、Vite 或其它框架；当前架构有意保持静态、无构建步骤、无包管理器。
 
@@ -62,17 +62,17 @@ node --check scripts/某个文件.js
 node tools/runtime-smoke-check.js
 ```
 
-这个脚本会启动本地 server 和 Chrome/Edge headless，检查入口、背景音乐、Hero 立方体、底部导航、Works 侧栏、Gallery、桌面/移动端横向溢出和控制台错误。它依赖本机 Chrome 或 Edge，以及支持全局 `WebSocket` 的 Node 版本。
+这个脚本会启动本地 server 和 Chrome/Edge headless，检查入口、背景音乐、Hero 狮头模型、底部导航、Works 侧栏、Gallery、桌面/移动端横向溢出和控制台错误。它依赖本机 Chrome 或 Edge，以及支持全局 `WebSocket` 的 Node 版本。
 
 ## 页面结构
 
 `index.html` 内的主要结构：
 
 - 顶部元信息栏：身份、北京时间、语言切换、声音、全屏、联系入口
-- `#entry-screen`：OPEN 入口、canvas、包装封条、dieline 和 wave 层
-- `.hero-section` / `#hero-stage`：Hero 水面、涟漪、wireframe、3D 包装立方体
+- `#entry-screen`：3D 钥匙入口、加载进度文字、底部进度条
+- `.hero-section` / `#hero-stage`：Hero 水面、涟漪、wireframe、全屏液态场、GLB 狮头模型
 - `#about`：头像视频/图片、设计师介绍、工具标签
-- `#services`：服务滚动叙事、Three.js grid scan、服务 panel shader、图片拖尾
+- `#services`：服务滚动叙事、Three.js grid scan、服务 panel shader
 - `#works-transition`：服务到作品之间的滚动转场
 - `#works`：五类作品入口、hover preview
 - `#work-gallery`：作品画廊 overlay、环形/WebGL 或 DOM fallback、详情页、返回/关闭
@@ -89,10 +89,10 @@ CSS 在 `index.html` 中按顺序加载。不要随意调换顺序。
 - `styles.css`：全局 token、reset、body/page 状态、基础变量
 - `styles/cursor.css`：精密光标
 - `styles/typography.css`：共享文字效果和排版
-- `styles/home.css`：入口、Hero、水面等首页视觉
-- `components/hero-cube/hero-cube.css`：Hero 3D 包装立方体的独立样式
+- `styles/liquid-glass.css`：Hero 全屏液态场样式
+- `styles/home.css`：入口、Hero、水面、GLB 模型等首页视觉
 - `styles/about.css`：About / portrait 区域
-- `styles/services.css`：服务区、scroll story、panel、图片拖尾
+- `styles/services.css`：服务区、scroll story、panel
 - `styles/works.css`：Works 列表、转场、hover preview
 - `styles/clients.css`：客户区域与 marquee
 - `styles/work-gallery.css`：画廊 overlay、详情页、gallery chrome
@@ -129,20 +129,20 @@ window.LucianApp = window.initLucianApp?.() || null;
 12. `scripts/flip-text.js`
 13. `scripts/particle-canvas.js`
 14. `script.js`
-15. `components/hero-cube/hero-cube.js`
-16. `scripts/services-entry-grid-scan.js`
-17. `scripts/service-panel-shaders.js`
-18. `scripts/services-scroll-story.js`
-19. `scripts/work-gallery.js`
-20. `scripts/works-side-rail.js`
-21. `scripts/scrambled-text.js`
-22. `scripts/header-controls.js`
-23. `scripts/language-controls.js`
-24. `scripts/contact-interactions.js`
-25. `scripts/scroll-type-effects.js`
-26. `scripts/reveal-effects.js`
-27. `scripts/precision-cursor.js`
-28. `scripts/services-image-trail.js`
+15. `scripts/liquid-glass-field.js`
+16. `scripts/hero-glb-model.js`
+17. `scripts/services-entry-grid-scan.js`
+18. `scripts/service-panel-shaders.js`
+19. `scripts/services-scroll-story.js`
+20. `scripts/work-gallery.js`
+21. `scripts/works-side-rail.js`
+22. `scripts/scrambled-text.js`
+23. `scripts/header-controls.js`
+24. `scripts/language-controls.js`
+25. `scripts/contact-interactions.js`
+26. `scripts/scroll-type-effects.js`
+27. `scripts/reveal-effects.js`
+28. `scripts/precision-cursor.js`
 29. `scripts/works-hover-preview.js`
 30. `scripts/works-transition-motion.js`
 31. `scripts/site-clock.js`
@@ -160,17 +160,18 @@ window.LucianApp = window.initLucianApp?.() || null;
 - `app-bootstrap.js`：创建 app、初始化 runtime bridge、语言、Hero 状态、Hero 水面与 wireframe
 - `runtime-bridge.js`：建立 `window.LucianRuntime`，转发音频、语言、Hero 状态、Gallery 关闭、光标等跨模块能力
 - `audio-feedback.js`：点击声、水滴声、背景音乐 `audio/liquid-light-loop.mp3`、声音开关状态
-- `entry.js`：OPEN 入口、入口 canvas、返回入口、入口滚动锁定
+- `entry.js`：进入网站过渡、滚动/触摸触发、返回入口、滚动锁定
+- `entry-key-model.js`：3D 钥匙 GLB 加载、旋转动画、进度同步、自动进入
 - `hero-state-runtime.js`：Hero 运行态
 - `hero-sequence-runtime.js`：Hero stage 尺寸、强制回顶、序列 reset
 - `hero-water-surface.js`：Hero WebGL 水面
+- `liquid-glass-field.js`：Hero 全屏液态扰动场
+- `hero-glb-model.js`：Hero 狮头 GLB 模型加载、灯光和指针转向
 - `hero-ripples.js`：Hero 点击/指针涟漪
 - `hero-wireframe.js`：Hero SVG wireframe
-- `components/hero-cube/hero-cube.js`：当前 Hero 3D 包装立方体滚动旋转
 - `services-entry-grid-scan.js`：Services 入口 Three.js grid scan
 - `service-panel-shaders.js`：Services panel WebGL shader
 - `services-scroll-story.js`：Services sticky scroll story 与文案重建
-- `services-image-trail.js`：Services 指针图片拖尾
 - `work-gallery.js`：作品画廊、项目详情、语言刷新、Gallery 开关和 WebGL/DOM 展示
 - `works-side-rail.js`：左侧 Works 导航和分类/项目快速进入
 - `works-hover-preview.js`：Works 行 hover preview
@@ -205,8 +206,7 @@ window.LucianApp = window.initLucianApp?.() || null;
 - `images/头像.png`：头像资源
 - `images/9999.png`：About portrait poster / fallback
 - `images/wechat-qr.jpg`：微信二维码
-- `images/works/`：作品图片，当前有 `oem`、`gift`、`brand`、`aigc`、`aigc-video`、`delivery`、`series`
-- `images/trails/services/`：服务区图片拖尾素材
+- `images/works/`：作品图片，当前有 `oem`、`gift`、`brand`、`aigc`、`aigc-video`
 - `videos/Video 8.mp4`：About 视频，HTML 中使用 `videos/Video%208.mp4`
 - `audio/liquid-light-loop.mp3`：背景音乐
 - `fonts/`：Satoshi、MiSans、Cabinet Grotesk、Trench Slab、Outfit、Playfair Display 等本地字体
@@ -221,7 +221,8 @@ window.LucianApp = window.initLucianApp?.() || null;
 - `site-data.js` 的数据结构、图片路径和双语文案
 - `scripts/work-gallery.js`
 - `scripts/hero-water-surface.js`
-- `components/hero-cube/`
+- `scripts/liquid-glass-field.js`
+- `scripts/hero-glb-model.js`
 - `scripts/hero-sequence-runtime.js`
 - `scripts/runtime-bridge.js`
 - `scripts/app-bootstrap.js`
@@ -229,7 +230,7 @@ window.LucianApp = window.initLucianApp?.() || null;
 - `scripts/services-entry-grid-scan.js`
 - `scripts/service-panel-shaders.js`
 - `styles/home.css`
-- `components/hero-cube/`
+- `styles/liquid-glass.css`
 - `styles/services.css`
 - `styles/work-gallery.css`
 - `styles/navigation.css`
@@ -262,15 +263,16 @@ window.LucianApp = window.initLucianApp?.() || null;
 
 - 先读 `index.html` Hero markup
 - `styles/home.css`
-- `components/hero-cube/hero-cube.css`
+- `styles/liquid-glass.css`
 - `scripts/app-bootstrap.js`
 - `scripts/runtime-bridge.js`
 - `scripts/hero-state-runtime.js`
 - `scripts/hero-sequence-runtime.js`
 - `scripts/hero-water-surface.js`
+- `scripts/liquid-glass-field.js`
+- `scripts/hero-glb-model.js`
 - `scripts/hero-ripples.js`
 - `scripts/hero-wireframe.js`
-- `components/hero-cube/hero-cube.js`
 
 修改 Services：
 
@@ -279,7 +281,6 @@ window.LucianApp = window.initLucianApp?.() || null;
 - `scripts/services-scroll-story.js`
 - `scripts/services-entry-grid-scan.js`
 - `scripts/service-panel-shaders.js`
-- `scripts/services-image-trail.js`
 - `three.min.js` 只确认加载，不编辑
 
 修改 Works / Gallery：
@@ -324,9 +325,9 @@ window.LucianApp = window.initLucianApp?.() || null;
 - `node tools/check-project.js` 通过
 - touched JS 文件 `node --check` 通过
 - 本地页面能打开
-- OPEN 能进入网站
+- 钥匙旋转 + 自动进入或滚动进入网站
 - 控制台没有站点 error
-- 如果碰了 Hero，检查 Hero 水面/立方体/滚动
+- 如果碰了 Hero，检查 Hero 水面/液态场/狮头模型/滚动
 - 如果碰了 Services，检查 grid scan、panel shader、scroll story
 - 如果碰了 Works/Gallery，检查 Works 行、侧栏、Gallery 打开/关闭/详情返回
 - 如果碰了语言或文案，检查 `zh-CN` / `en` 切换和打开中的 Gallery 文案刷新

@@ -11,6 +11,7 @@ window.initLanguageRuntime = ({
     window.LucianStaticText?.update?.(currentLang, { langButtons });
     window.LucianFlipText?.refresh?.();
     window.LucianScrambledText?.init?.();
+    window.LucianAboutScrollReveal?.refresh?.();
     window.LucianWorksFlowingMenu?.refresh?.();
     window.rebuildServicesStoryText?.();
     onChange?.(currentLang);
