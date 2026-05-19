@@ -8,3 +8,8 @@ _tmp_*/
 _tmp_*.png
 research/nuageboi.html
 _archive_not_used_by_index_*/
+
+# Local model leftovers that are not referenced by index.html.
+public/
+models/house.glb
+models/nexus_studios-candle-111.glb

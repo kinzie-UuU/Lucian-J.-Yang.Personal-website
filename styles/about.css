@@ -189,7 +189,7 @@
   transform:
     translate3d(0, calc((1 - var(--portrait-text-enter)) * 10vh - var(--portrait-exit) * 10vh), 0)
     scale(calc(0.988 + var(--portrait-text-enter) * 0.012 - var(--portrait-exit) * 0.015));
-  opacity: max(0, min(1, calc(var(--portrait-text-enter) * 1.12 - var(--portrait-exit) * 1.08)));
+  opacity: max(0, min(1, calc(0.18 + var(--portrait-text-enter) * 1.04 - var(--portrait-exit) * 1.08)));
   transform-origin: left bottom;
   will-change: transform, opacity;
 }
@@ -230,7 +230,7 @@ html[lang="zh-CN"] .about-heading {
   font-size: clamp(2.1rem, 3.2vw, 3.8rem);
   line-height: 1.16;
   letter-spacing: 0;
-  font-weight: 560;
+  font-weight: 600;
   max-width: 8ch;
   word-break: keep-all;
 }
@@ -247,7 +247,7 @@ html[lang="zh-CN"] .about-heading {
   color: rgba(246, 242, 234, 0.96);
   font-family: "MiSans", "PingFang SC", "Microsoft YaHei", sans-serif;
   font-size: clamp(4.8rem, 7.4vw, 8.8rem);
-  font-weight: 680;
+  font-weight: 700;
   line-height: 0.98;
   letter-spacing: 0;
   text-shadow:
@@ -262,6 +262,21 @@ html[lang="zh-CN"] .about-heading {
     scale(calc(0.74 + var(--portrait-text-enter) * 0.26), calc(2.15 - var(--portrait-text-enter) * 1.15));
   transform-origin: 50% 0%;
   will-change: opacity, transform;
+}
+
+.about-scroll-reveal-unit {
+  transform-origin: 0% 50%;
+  will-change: opacity, filter, transform;
+}
+
+.about-right .about-scroll-reveal-unit {
+  transform-origin: 100% 50%;
+}
+
+.about-heading .about-scroll-reveal-unit,
+.about-lead .about-scroll-reveal-unit,
+.about-detail .about-scroll-reveal-unit {
+  display: inline-block;
 }
 
 .about-role > span:last-child {
@@ -349,7 +364,7 @@ html[lang="zh-CN"] .about-heading {
 
 html[lang="zh-CN"] .about-lead {
   font-family: "MiSans", "PingFang SC", "Microsoft YaHei", sans-serif;
-  font-weight: 460;
+  font-weight: 500;
   font-size: clamp(1.02rem, 1.05vw, 1.16rem);
   line-height: 1.86;
   letter-spacing: 0.01em;

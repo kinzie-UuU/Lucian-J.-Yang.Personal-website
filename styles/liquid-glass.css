@@ -1,0 +1,46 @@
+/* Hero liquid orbit field -------------------------------------------------- */
+.liquid-glass-field {
+  position: absolute;
+  inset: 0;
+  z-index: 7;
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0;
+  mix-blend-mode: screen;
+  filter: saturate(1.34) contrast(1.02);
+  transition: opacity 520ms ease;
+  contain: strict;
+  transform: translateZ(0);
+}
+
+body.has-entered.liquid-glass-ready .liquid-glass-field {
+  opacity: 0.88;
+}
+
+body.has-entered.liquid-glass-moving .liquid-glass-field {
+  opacity: 0.98;
+}
+
+body.work-gallery-open .liquid-glass-field {
+  opacity: 0.16;
+}
+
+body.is-unfolding .liquid-glass-field,
+body.is-entering .liquid-glass-field,
+body:not(.has-entered) .liquid-glass-field {
+  opacity: 0;
+}
+
+@media (pointer: coarse), (max-width: 768px) {
+  body.has-entered.liquid-glass-ready .liquid-glass-field {
+    opacity: 0.68;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .liquid-glass-field {
+    display: none;
+  }
+}

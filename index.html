@@ -34,17 +34,17 @@
   </script>
   <link rel="stylesheet" href="styles/fonts.css">
   <link rel="stylesheet" href="styles.css?v=20260515-nav-speed1">
+  <link rel="stylesheet" href="styles/liquid-glass.css?v=20260517-fullscreen1">
   <link rel="stylesheet" href="styles/cursor.css?v=20260512-target-cursor1">
   <link rel="stylesheet" href="styles/typography.css">
-  <link rel="stylesheet" href="styles/home.css?v=20260516-cube-module1">
-  <link rel="stylesheet" href="components/hero-cube/hero-cube.css?v=20260516-module1">
+  <link rel="stylesheet" href="styles/home.css?v=20260517-hero-clock-align1">
   <link rel="stylesheet" href="styles/about.css">
-  <link rel="stylesheet" href="styles/services.css">
-  <link rel="stylesheet" href="styles/works.css">
+  <link rel="stylesheet" href="styles/services.css?v=20260517-after-about-flow1">
+  <link rel="stylesheet" href="styles/works.css?v=20260517-after-about-flow1">
   <link rel="stylesheet" href="styles/clients.css?v=20260516-warm-flat1">
   <link rel="stylesheet" href="styles/work-gallery.css?v=20260513-pmg-edgefix2">
-  <link rel="stylesheet" href="styles/contact.css">
-  <link rel="stylesheet" href="styles/navigation.css?v=20260515-nav-speed1">
+  <link rel="stylesheet" href="styles/contact.css?v=20260517-paper-unify1">
+  <link rel="stylesheet" href="styles/navigation.css?v=20260517-menu-signature1">
   <link rel="stylesheet" href="styles/responsive.css">
   <link rel="stylesheet" href="styles/shared-motion.css">
   <script src="three.min.js"></script>
@@ -97,18 +97,12 @@
 
   <main id="top">
     <section class="entry-screen" id="entry-screen" aria-label="Site entry">
-      <canvas class="entry-field-canvas" id="entry-field-canvas" aria-hidden="true"></canvas>
       <div class="entry-atmosphere" aria-hidden="true">
-        <span class="entry-blur-shape entry-blur-shape-a"></span>
-        <span class="entry-blur-shape entry-blur-shape-b"></span>
-        <span class="entry-blur-shape entry-blur-shape-c"></span>
-        <span class="entry-blur-shape entry-blur-shape-d"></span>
-        <span class="entry-blur-shape entry-blur-shape-e"></span>
         <div class="entry-system-readout entry-system-readout-loading">
           <span>[[</span>
           <strong>[loading]</strong>
           <span>]]]</span>
-          <b>[100%]</b>
+          <b id="entry-progress">[0%]</b>
           <span>[[[]]]</span>
         </div>
         <div class="entry-system-readout entry-system-readout-note">
@@ -117,33 +111,18 @@
           <strong>OPEN THE INDEX.</strong>
         </div>
       </div>
-      <div class="entry-grid" aria-hidden="true"></div>
-      <div class="entry-wave-layer" id="entry-wave-layer" aria-hidden="true"></div>
-      <div class="entry-dieline-layer" id="entry-dieline-layer" aria-hidden="true"></div>
 
       <div class="entry-center">
         <div class="entry-box-wrap">
-          <button class="entry-box-trigger" id="entry-go" type="button" aria-label="Open Lucian J. Yang packaging archive">
-            <span class="entry-seal-cover">
-              <span class="entry-go-word" aria-hidden="true"><span>O</span><span>P</span><span>E</span><span>N</span></span>
-              <span class="entry-go-copy">LUCIAN J. YANG</span>
-            </span>
-          </button>
-          <p class="entry-hint">Open / Scroll</p>
+          <canvas class="entry-key-canvas" id="entry-key-canvas" aria-hidden="true"
+                  data-model-src="/models/entry-key.glb"
+                  data-auto-enter-delay="2400"></canvas>
         </div>
       </div>
 
-      <div class="entry-brand-code" aria-hidden="true">
-        <span class="entry-code-word" id="entry-code-word">LUCIAN J. YANG</span>
-        <span class="entry-code-cuts" aria-hidden="true">
-          <i data-text="LUCIAN J. YANG"></i><i data-text="LUCIAN J. YANG"></i><i data-text="LUCIAN J. YANG"></i>
-        </span>
-        <span class="entry-code-pixels">
-          <i></i><i></i><i></i><i></i><i></i><i></i>
-          <i></i><i></i><i></i><i></i><i></i><i></i>
-          <i></i><i></i><i></i><i></i><i></i><i></i>
-          <i></i><i></i><i></i><i></i><i></i><i></i>
-        </span>
+      <!-- Bottom progress bar -->
+      <div class="entry-progress-bar" id="entry-progress-bar" aria-hidden="true">
+        <div class="entry-progress-fill" id="entry-progress-fill"></div>
       </div>
     </section>
 
@@ -160,16 +139,18 @@
           <span class="hero-scroll-cue-wheel"></span>
         </div>
 
-        <div class="hero-cube-scene" id="hero-cube-scene" aria-label="Packaging cube showcase">
-          <div class="hero-cube" id="hero-cube">
-            <div class="hero-cube-face" data-face="top" data-i="0"></div>
-            <div class="hero-cube-face" data-face="front" data-i="1"></div>
-            <div class="hero-cube-face" data-face="right" data-i="2"></div>
-            <div class="hero-cube-face" data-face="back" data-i="3"></div>
-            <div class="hero-cube-face" data-face="left" data-i="4"></div>
-            <div class="hero-cube-face" data-face="bottom" data-i="5"></div>
-          </div>
+        <div class="hero-model-scene" id="hero-model-scene" data-model-src="/models/lion_head/lion_head_2k.gltf" aria-label="Floating Lion Head sculpture showcase">
+          <p class="hero-model-wordmark" aria-hidden="true">LUCIAN J. YANG</p>
+          <canvas class="hero-model-canvas" id="hero-model-canvas" aria-hidden="true"></canvas>
         </div>
+
+        <footer class="hero-footer-meta" aria-label="Hero meta">
+          <span class="hero-footer-clock">
+            <span class="hero-footer-time" data-beijing-time>PM 00:00</span>
+            <span class="hero-footer-separator" aria-hidden="true"></span>
+            <span class="hero-footer-date" data-beijing-date>2026.05.14</span>
+          </span>
+        </footer>
       </div>
 
     </section>
@@ -212,16 +193,6 @@
 
     <section class="services-section services-scroll-story reveal" id="services">
       <div class="services-sticky">
-        <div class="services-image-trail content" aria-hidden="true">
-          <div class="content__img"><div class="content__img-inner" style="background-image: url('images/trails/services/trail-temp-01.jpg')"></div></div>
-          <div class="content__img"><div class="content__img-inner" style="background-image: url('images/trails/services/trail-temp-02.jpg')"></div></div>
-          <div class="content__img"><div class="content__img-inner" style="background-image: url('images/trails/services/trail-temp-03.jpg')"></div></div>
-          <div class="content__img"><div class="content__img-inner" style="background-image: url('images/trails/services/trail-temp-04.jpg')"></div></div>
-          <div class="content__img"><div class="content__img-inner" style="background-image: url('images/trails/services/trail-temp-05.jpg')"></div></div>
-          <div class="content__img"><div class="content__img-inner" style="background-image: url('images/trails/services/trail-temp-06.jpg')"></div></div>
-          <div class="content__img"><div class="content__img-inner" style="background-image: url('images/trails/services/trail-temp-07.jpg')"></div></div>
-          <div class="content__img"><div class="content__img-inner" style="background-image: url('images/trails/services/trail-temp-08.jpg')"></div></div>
-        </div>
         <article class="services-entry-card">
           <canvas class="services-entry-gridscan" id="services-entry-gridscan" aria-hidden="true"></canvas>
           <div class="services-entry-copy">
@@ -337,7 +308,6 @@
           <span class="works-preview-layer works-preview-layer-slice"></span>
         </div>
       </div>
-      <a class="works-clients-link" href="#clients" data-i18n="works_clients_link">合作客户 ↗</a>
     </section>
 
     <aside class="work-gallery" id="work-gallery" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="work-gallery-title">
@@ -578,6 +548,7 @@
           </button>
         </li>
       </ul>
+      <p class="works-side-rail-signature" data-i18n="meta_name">©杨钦鹏</p>
     </div>
   </aside>
 
@@ -623,7 +594,8 @@
   <script src="scripts/flip-text.js"></script>
   <script src="scripts/particle-canvas.js"></script>
   <script src="script.js"></script>
-  <script src="components/hero-cube/hero-cube.js?v=20260516-module1"></script>
+  <script src="scripts/liquid-glass-field.js?v=20260517-fullscreen1"></script>
+  <script src="scripts/hero-glb-model.js?v=20260517-lion-front1"></script>
   <script src="scripts/services-entry-grid-scan.js?v=20260515-nav-speed1"></script>
   <script src="scripts/service-panel-shaders.js?v=20260515-nav-speed1"></script>
   <script src="scripts/services-scroll-story.js?v=20260515-nav-speed1"></script>
@@ -634,9 +606,8 @@
   <script src="scripts/language-controls.js"></script>
   <script src="scripts/contact-interactions.js"></script>
   <script src="scripts/scroll-type-effects.js?v=20260515-nav-speed1"></script>
-  <script src="scripts/reveal-effects.js"></script>
+  <script src="scripts/reveal-effects.js?v=20260517-works-fast-reveal1"></script>
   <script src="scripts/precision-cursor.js?v=20260512-target-cursor1"></script>
-  <script src="scripts/services-image-trail.js"></script>
   <script src="scripts/works-hover-preview.js?v=20260514-detail-works1"></script>
   <script src="scripts/works-transition-motion.js"></script>
   <script src="scripts/site-clock.js"></script>
@@ -645,6 +616,7 @@
   <script src="scripts/clients-title-interaction.js"></script>
   <script src="scripts/portrait-motion.js"></script>
   <script src="scripts/hero-ripples.js"></script>
+  <script src="scripts/entry-key-model.js?v=20260517-key-entry1"></script>
   <script src="scripts/entry.js?v=20260515-bgm1"></script>
 </body>
 </html>

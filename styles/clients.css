@@ -54,7 +54,7 @@
   color: var(--warm-muted);
   font-family: "MiSans", "Outfit", "Satoshi", system-ui, sans-serif;
   font-size: clamp(0.9rem, 1.04vw, 1.08rem);
-  font-weight: 520;
+  font-weight: 500;
   line-height: 1.86;
   letter-spacing: 0.02em;
   text-align: center;
@@ -89,7 +89,7 @@ html[lang="en"] .clients-intro {
   box-shadow: 0 -1px 0 rgba(20, 20, 20, 0.92);
   font-family: "Satoshi", "MiSans", system-ui, sans-serif;
   font-size: clamp(0.62rem, 0.64vw, 0.78rem);
-  font-weight: 520;
+  font-weight: 500;
   line-height: 1;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -109,7 +109,7 @@ html[lang="en"] .clients-intro {
 
 .clients-footer-name {
   justify-content: flex-start;
-  font-weight: 540;
+  font-weight: 500;
   letter-spacing: 0.08em;
   opacity: 0.84;
 }

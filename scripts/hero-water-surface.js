@@ -133,27 +133,29 @@ window.initHeroWaterSurface = (canvas, { reducedMotion = false, getScrollProgres
 
       float ripple = 0.16 + distortion * 0.1 - 0.1 + reflections.r * 0.7;
 
-      // base: near-black with imperceptible teal tint
-      vec3 base = vec3(0.014, 0.022, 0.020);
+      // base: transparent water floor — light gray with subtle depth
+      vec3 baseNear = vec3(0.88, 0.87, 0.85);
+      vec3 baseFar = vec3(0.92, 0.91, 0.89);
+      vec3 base = mix(baseNear, baseFar, smoothstep(0.14, 0.94, v_uv.y));
 
-      // teal palette 閳?only emerges when there is wave energy
-      vec3 tealDim    = vec3(0.0,   0.18,  0.17);
-      vec3 tealMid    = vec3(0.0,   0.48,  0.44);
-      vec3 tealBright = vec3(0.20,  0.82,  0.74);
-      vec3 tealPeak   = vec3(0.55,  0.96,  0.88);
+      // transparent water palette: subtle silver/white highlights on waves
+      vec3 tealDim    = vec3(0.82, 0.81, 0.79);
+      vec3 tealMid    = vec3(0.90, 0.89, 0.87);
+      vec3 tealBright = vec3(0.96, 0.95, 0.93);
+      vec3 tealPeak   = vec3(1.00, 0.99, 0.97);
 
       vec3 tealCol = mix(tealDim,    tealMid,    smoothstep(0.0,  0.35, energy));
       tealCol      = mix(tealCol,    tealBright, smoothstep(0.35, 0.72, energy));
       tealCol      = mix(tealCol,    tealPeak,   smoothstep(0.72, 1.00, energy));
 
-      // blend black 閳?teal driven by energy
-      vec3 col = mix(base, tealCol, energy * 0.90);
+      vec3 col = mix(base, tealCol, energy * 0.86);
 
-      // specular reflection contributes a teal-tinted highlight
-      col += reflections.rgb * vec3(0.22, 0.68, 0.62) * energy;
+      // specular reflection: subtle white highlight
+      col += reflections.rgb * vec3(0.72, 0.70, 0.68) * energy;
+      col += vec3(0.04, 0.03, 0.02) * smoothstep(0.18, 0.92, v_uv.y) * 0.34;
 
       float lights = max(0.0, ripple - 0.5);
-      col += lights * (u_light / 10.0) * vec3(0.30, 1.0, 0.90);
+      col += lights * (u_light / 10.0) * vec3(0.92, 0.90, 0.86);
       float shadow = max(0.0, 1.0 - (ripple + 0.5));
       col -= shadow * (u_shadow / 10.0);
 
@@ -174,12 +176,12 @@ window.initHeroWaterSurface = (canvas, { reducedMotion = false, getScrollProgres
       float gy = h01 - h0m;
       vec2 titleUv = clamp(v_uv + vec2(gx, gy) * hDev * (u_disp * 0.4), 0.001, 0.999);
       vec4 title = texture2D(u_title, titleUv);
-      col = mix(col, title.rgb, title.a * 0.92);
+      col = mix(col, title.rgb, title.a * 0.22);
 
       float vign = 1.0 - smoothstep(0.35, 1.1, length(v_uv - 0.5) * 1.6);
-      col *= vign * 0.88 + 0.12;
+      col *= vign * 0.92 + 0.08;
 
-      float alpha = (1.0 - u_scroll * 0.82) * 0.92;
+      float alpha = (1.0 - u_scroll * 0.82) * 0.72;
       gl_FragColor = vec4(clamp(col, 0.0, 1.0) * alpha, alpha);
     }
   `;
@@ -269,12 +271,12 @@ window.initHeroWaterSurface = (canvas, { reducedMotion = false, getScrollProgres
     titleCanvas2d.height = h;
     const ctx2d = titleCanvas2d.getContext("2d");
     ctx2d.clearRect(0, 0, w, h);
-    const fontSize = Math.round(w * 0.088);
+    const fontSize = Math.round(w * 0.052);
     ctx2d.font = `700 ${fontSize}px "Trench Slab", "Cabinet Grotesk", "Satoshi", system-ui, sans-serif`;
-    ctx2d.fillStyle = "rgba(255,255,255,0.95)";
+    ctx2d.fillStyle = "rgba(255,255,255,0.14)";
     ctx2d.textAlign = "center";
     ctx2d.textBaseline = "middle";
-    ctx2d.fillText("LUCIAN J. YANG", w / 2, h / 2);
+    ctx2d.fillText("LUCIAN J. YANG", w / 2, h * 0.32);
     gl.bindTexture(gl.TEXTURE_2D, titleTex);
     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, titleCanvas2d);
@@ -328,10 +330,25 @@ window.initHeroWaterSurface = (canvas, { reducedMotion = false, getScrollProgres
   let mx = -1.0, my = -0.5, lmx = -1.1, lmy = -0.6;
   let velX = 0, velY = 0;
   let pointerSeeded = false;
+  const clamp01 = (value) => Math.max(0, Math.min(1, value));
 
   const onPointer = (e) => {
-    const nx = e.clientX / window.innerWidth;
-    const ny = 1.0 - e.clientY / window.innerHeight;
+    const rect = canvas.getBoundingClientRect();
+    const surfaceMargin = 48;
+    if (
+      rect.width < 4 ||
+      rect.height < 4 ||
+      e.clientX < rect.left - surfaceMargin ||
+      e.clientX > rect.right + surfaceMargin ||
+      e.clientY < rect.top - surfaceMargin ||
+      e.clientY > rect.bottom + surfaceMargin
+    ) {
+      pointerSeeded = false;
+      return;
+    }
+
+    const nx = clamp01((e.clientX - rect.left) / rect.width);
+    const ny = clamp01(1.0 - ((e.clientY - rect.top) / rect.height));
     if (!pointerSeeded) {
       // first move: seed both positions to avoid a teleport-line across the canvas
       mx = nx; my = ny; lmx = nx; lmy = ny;
@@ -340,8 +357,8 @@ window.initHeroWaterSurface = (canvas, { reducedMotion = false, getScrollProgres
     }
     lmx = mx; lmy = my;
     mx = nx; my = ny;
-    velX = (mx - lmx) * window.innerWidth  / 16;
-    velY = (my - lmy) * window.innerHeight / 16;
+    velX = (mx - lmx) * rect.width / 16;
+    velY = (my - lmy) * rect.height / 16;
   };
   window.addEventListener("pointermove", onPointer, { passive: true });
 
@@ -377,8 +394,8 @@ window.initHeroWaterSurface = (canvas, { reducedMotion = false, getScrollProgres
     gl.uniform2f(uSim.mouse,     mx,   my);
     gl.uniform2f(uSim.lastMouse, lmx,  lmy);
     gl.uniform2f(uSim.velocity,  velX, velY);
-    gl.uniform1f(uSim.viscosity, 7.5);
-    gl.uniform1f(uSim.speed,     5.0);
+    gl.uniform1f(uSim.viscosity, 9.0);
+    gl.uniform1f(uSim.speed,     4.0);
     gl.uniform1f(uSim.size,      1.25);
     gl.uniform1i(uSim.frame,     frame);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
@@ -402,9 +419,9 @@ window.initHeroWaterSurface = (canvas, { reducedMotion = false, getScrollProgres
     gl.uniform1i(uRender.ripple,  0);
     gl.uniform2f(uRender.simRes,  simW, simH);
     gl.uniform1f(uRender.scroll,  sp);
-    gl.uniform1f(uRender.disp,    18.0);
-    gl.uniform1f(uRender.light,   5.0);
-    gl.uniform1f(uRender.shadow,  2.5);
+    gl.uniform1f(uRender.disp,    24.0);
+    gl.uniform1f(uRender.light,   7.0);
+    gl.uniform1f(uRender.shadow,  4.0);
 
     gl.activeTexture(gl.TEXTURE1);
     gl.bindTexture(gl.TEXTURE_2D, titleTex);

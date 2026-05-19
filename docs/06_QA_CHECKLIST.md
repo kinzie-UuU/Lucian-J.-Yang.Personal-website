@@ -23,11 +23,11 @@
 
 - [ ] Water canvas is visible.
 - [ ] Ripple/water surface does not appear blank.
-- [ ] Hero cards render.
-- [ ] Wheel/touch moves through the hero card sequence.
-- [ ] One `.hero-card.is-scroll-current` appears during card sequence.
-- [ ] Hero focus panel updates for active card.
-- [ ] Hero "Enter Works" path reaches Works/Gallery as expected.
+- [ ] Full-screen liquid field responds across the whole Hero, not only near the model.
+- [ ] Lion GLB model loads from `/models/lion_head/lion_head_2k.gltf`.
+- [ ] Lion starts front-facing on first entry.
+- [ ] Lion idle motion stays subtle, with only gentle left/right breathing.
+- [ ] Pointer movement can nudge the lion both left and right without forcing a three-quarter pose.
 
 ## About
 

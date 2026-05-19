@@ -1,0 +1,244 @@
+(() => {
+  const canvas = document.querySelector("#entry-key-canvas");
+  const THREE = window.THREE;
+  if (!canvas || !THREE) return;
+
+  const modelUrl = canvas.dataset.modelSrc;
+  if (!modelUrl) return;
+
+  /* ─── GLB parser (adapted from hero-glb-model.js) ─── */
+  const componentTypes = {
+    5120: { Ctor: Int8Array, size: 1, reader: "getInt8" },
+    5121: { Ctor: Uint8Array, size: 1, reader: "getUint8" },
+    5122: { Ctor: Int16Array, size: 2, reader: "getInt16" },
+    5123: { Ctor: Uint16Array, size: 2, reader: "getUint16" },
+    5125: { Ctor: Uint32Array, size: 4, reader: "getUint32" },
+    5126: { Ctor: Float32Array, size: 4, reader: "getFloat32" },
+  };
+  const accessorSizes = { SCALAR: 1, VEC2: 2, VEC3: 3, VEC4: 4, MAT4: 16 };
+
+  const parseGlb = (buffer) => {
+    const view = new DataView(buffer);
+    if (view.getUint32(0, true) !== 0x46546c67) throw new Error("Invalid GLB");
+    let json = null, bin = null, offset = 12;
+    while (offset < buffer.byteLength) {
+      const length = view.getUint32(offset, true);
+      const type = view.getUint32(offset + 4, true);
+      const start = offset + 8;
+      if (type === 0x4e4f534a) json = JSON.parse(new TextDecoder().decode(buffer.slice(start, start + length)));
+      else if (type === 0x004e4942) bin = buffer.slice(start, start + length);
+      offset = start + length;
+    }
+    if (!json || !bin) throw new Error("GLB missing chunks");
+    return { json, buffers: [bin] };
+  };
+
+  const readAccessor = (json, buffers, index) => {
+    const acc = json.accessors[index];
+    const bv = json.bufferViews[acc.bufferView];
+    const comp = componentTypes[acc.componentType];
+    const itemSize = accessorSizes[acc.type];
+    const buf = buffers[bv.buffer || 0];
+    const start = (bv.byteOffset || 0) + (acc.byteOffset || 0);
+    const stride = bv.byteStride || itemSize * comp.size;
+    const count = acc.count * itemSize;
+    if (stride === itemSize * comp.size) return new comp.Ctor(buf, start, count);
+    const out = new comp.Ctor(count);
+    const dv = new DataView(buf);
+    for (let r = 0; r < acc.count; r++) {
+      for (let c = 0; c < itemSize; c++) {
+        out[r * itemSize + c] = dv[comp.reader](start + r * stride + c * comp.size, true);
+      }
+    }
+    return out;
+  };
+
+  /* ─── Build model ─── */
+  const buildModel = (json, buffers) => {
+    const material = new THREE.MeshStandardMaterial({
+      color: new THREE.Color(0xbda874),
+      roughness: 0.3,
+      metalness: 0.88,
+      envMapIntensity: 1.4,
+      side: THREE.DoubleSide,
+    });
+
+    const root = new THREE.Group();
+    const makeMesh = (meshIndex) => {
+      const meshDef = json.meshes[meshIndex];
+      const group = new THREE.Group();
+      meshDef.primitives.forEach((prim) => {
+        const geo = new THREE.BufferGeometry();
+        geo.setAttribute("position", new THREE.BufferAttribute(readAccessor(json, buffers, prim.attributes.POSITION), 3));
+        if (prim.attributes.NORMAL !== undefined) {
+          geo.setAttribute("normal", new THREE.BufferAttribute(readAccessor(json, buffers, prim.attributes.NORMAL), 3));
+        } else {
+          geo.computeVertexNormals();
+        }
+        if (prim.attributes.TEXCOORD_0 !== undefined) {
+          geo.setAttribute("uv", new THREE.BufferAttribute(readAccessor(json, buffers, prim.attributes.TEXCOORD_0), 2));
+        }
+        if (prim.indices !== undefined) {
+          geo.setIndex(new THREE.BufferAttribute(readAccessor(json, buffers, prim.indices), 1));
+        }
+        geo.computeBoundingSphere();
+        group.add(new THREE.Mesh(geo, material));
+      });
+      return group;
+    };
+
+    const applyTransform = (obj, node) => {
+      if (node.matrix) {
+        const m = new THREE.Matrix4().fromArray(node.matrix);
+        m.decompose(obj.position, obj.quaternion, obj.scale);
+        return;
+      }
+      if (node.translation) obj.position.fromArray(node.translation);
+      if (node.rotation) obj.quaternion.fromArray(node.rotation);
+      if (node.scale) obj.scale.fromArray(node.scale);
+    };
+
+    const makeNode = (i) => {
+      const node = json.nodes[i] || {};
+      const obj = node.mesh !== undefined ? makeMesh(node.mesh) : new THREE.Group();
+      applyTransform(obj, node);
+      (node.children || []).forEach((c) => obj.add(makeNode(c)));
+      return obj;
+    };
+
+    const scene = json.scenes?.[json.scene || 0] || json.scenes?.[0];
+    (scene?.nodes || [0]).forEach((i) => root.add(makeNode(i)));
+    root.updateMatrixWorld(true);
+
+    // Normalize to unit box
+    const box = new THREE.Box3().setFromObject(root);
+    const center = box.getCenter(new THREE.Vector3());
+    const size = box.getSize(new THREE.Vector3());
+    const maxDim = Math.max(size.x, size.y, size.z, 0.001);
+    const wrapper = new THREE.Group();
+    root.position.sub(center);
+    wrapper.add(root);
+    wrapper.scale.setScalar(2.0 / maxDim);
+    return wrapper;
+  };
+
+  /* ─── Studio environment (procedural) ─── */
+  const makeEnvironment = () => {
+    const pmrem = new THREE.PMREMGenerator(renderer);
+    const envScene = new THREE.Scene();
+    envScene.background = new THREE.Color(0x111111);
+    const light1 = new THREE.DirectionalLight(0xffead0, 3);
+    light1.position.set(3, 4, 2);
+    envScene.add(light1);
+    const light2 = new THREE.DirectionalLight(0xd0e8ff, 1.5);
+    light2.position.set(-2, 2, -3);
+    envScene.add(light2);
+    envScene.add(new THREE.AmbientLight(0x404040, 0.5));
+    const envMap = pmrem.fromScene(envScene, 0.04).texture;
+    pmrem.dispose();
+    return envMap;
+  };
+
+  /* ─── Scene setup ─── */
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 50);
+  camera.position.set(0, 0, 3.6);
+
+  const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+  renderer.setClearColor(0x000000, 0);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  if (renderer.outputColorSpace !== undefined) renderer.outputColorSpace = "srgb";
+  else if (renderer.outputEncoding !== undefined) renderer.outputEncoding = THREE.sRGBEncoding;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.1;
+
+  // Lighting
+  scene.add(new THREE.AmbientLight(0x53605d, 0.5));
+  const keyLight = new THREE.DirectionalLight(0xffead0, 2.4);
+  keyLight.position.set(3, 4, 3);
+  scene.add(keyLight);
+  const fillLight = new THREE.DirectionalLight(0xd0e8ff, 0.8);
+  fillLight.position.set(-2, 1, -2);
+  scene.add(fillLight);
+  scene.add(new THREE.HemisphereLight(0xd9d2c0, 0x07100e, 0.6));
+
+  // Environment map
+  scene.environment = makeEnvironment();
+
+  /* ─── Load and animate ─── */
+  let model = null;
+  let raf = null;
+  const startTime = performance.now();
+
+  const animate = () => {
+    if (document.body.classList.contains("has-entered")) {
+      renderer.dispose();
+      return;
+    }
+    raf = requestAnimationFrame(animate);
+
+    const elapsed = (performance.now() - startTime) * 0.001;
+    const rect = canvas.getBoundingClientRect();
+    const w = rect.width || 280;
+    const h = rect.height || 280;
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+
+    if (model) {
+      // Accelerating rotation
+      const speed = 0.6 + elapsed * 0.25;
+      model.rotation.y = elapsed * speed;
+      model.rotation.x = Math.sin(elapsed * 0.8) * 0.12;
+      // Gentle float
+      model.position.y = Math.sin(elapsed * 1.4) * 0.04;
+    }
+
+    renderer.render(scene, camera);
+  };
+
+  const init = async () => {
+    const response = await fetch(modelUrl);
+    if (!response.ok) throw new Error(`Key model fetch failed: ${response.status}`);
+    const { json, buffers } = parseGlb(await response.arrayBuffer());
+    model = buildModel(json, buffers);
+    scene.add(model);
+
+    // Signal ready — hide decorations
+    document.body.classList.add("entry-key-ready");
+
+    // Start render loop
+    animate();
+
+    // Drive progress counter and bar in sync with auto-enter delay
+    const delay = parseInt(canvas.dataset.autoEnterDelay || "2400", 10);
+    const progressEl = document.getElementById("entry-progress");
+    const progressFill = document.getElementById("entry-progress-fill");
+    const progressStart = performance.now();
+
+    const updateProgress = () => {
+      const elapsed = performance.now() - progressStart;
+      const pct = Math.min(Math.round((elapsed / delay) * 100), 100);
+      if (progressEl) progressEl.textContent = `[${pct}%]`;
+      if (progressFill) progressFill.style.width = `${pct}%`;
+      if (pct < 100) {
+        requestAnimationFrame(updateProgress);
+      } else {
+        // 100% reached — trigger enter
+        window.dispatchEvent(new CustomEvent("entry-key-ready"));
+      }
+    };
+    requestAnimationFrame(updateProgress);
+  };
+
+  init().catch((err) => {
+    console.warn("[entry-key-model] Failed:", err.message);
+    // Fallback: don't hide OPEN button, user can still click manually
+  });
+
+  // Cleanup on page hide
+  window.addEventListener("pagehide", () => {
+    cancelAnimationFrame(raf);
+    renderer.dispose();
+  }, { once: true });
+})();
