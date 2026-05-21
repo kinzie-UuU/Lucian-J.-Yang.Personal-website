@@ -1361,7 +1361,14 @@
   };
 
   const close = () => {
-    if (!workGallery || !galleryOpen) return;
+    if (!workGallery) return;
+    if (!galleryOpen) {
+      workGallery.classList.remove("is-open", "is-detail", "is-project-detail", "is-circular");
+      workGallery.setAttribute("aria-hidden", "true");
+      document.body.classList.remove("work-gallery-open");
+      document.documentElement.classList.remove("work-gallery-open");
+      return;
+    }
     galleryOpen = false;
     galleryMode = "projects";
     galleryCurrentProject = null;

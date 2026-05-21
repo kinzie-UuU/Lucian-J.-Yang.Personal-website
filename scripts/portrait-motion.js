@@ -113,7 +113,7 @@
   };
 
   const renderMotion = () => {
-    currentEnter += (targetEnter - currentEnter) * 0.16;
+    currentEnter += (targetEnter - currentEnter) * 0.22;
     currentTextEnter += (targetTextEnter - currentTextEnter) * 0.075;
     currentProgressValue += (targetProgressValue - currentProgressValue) * 0.07;
     currentExit += (targetExit - currentExit) * 0.085;
@@ -136,15 +136,13 @@
     // progress: 0 = section just entered, 1 = section fully scrolled through
     const progress = clamp01(-rect.top / scrollable);
 
-    // Reveal window 0 → 0.40 of section progress (≈64vh of scroll on the
-     // 160vh spacer). Cubic smoothstep instead of quintic smootherstep —
-     // cubic has a far shorter flat tail at t=0, so motion is visible from
-     // the very first frame after the curtain.
-    const enterRaw = clamp01(progress / 0.40);
+    // Reveal window 0 → 0.24 of section progress. The portrait should be
+    // legible within the first couple of scroll gestures, then keep breathing.
+    const enterRaw = clamp01(progress / 0.24);
     targetEnter = enterRaw * enterRaw * (3 - 2 * enterRaw);
 
-    // Text reveal starts after portrait is fully visible.
-    targetTextEnter = smootherStep(clamp01((progress - 0.42) / 0.32));
+    // Text reveal starts after the portrait has clearly appeared.
+    targetTextEnter = smootherStep(clamp01((progress - 0.32) / 0.34));
 
     targetProgressValue = progress;
 
@@ -153,9 +151,9 @@
     targetExit = smootherStep(clamp01((progress - 0.82) / 0.22));
 
     if (video && Number.isFinite(video.duration) && video.duration > 0) {
-      // Video scrub spans 0.32 → 0.90 — overlaps the tail of the reveal
-      // (94% revealed at 0.32) so the two sensations cross-fade.
-      const rawVideoProgress = clamp01((progress - 0.32) / 0.58);
+      // Video scrub overlaps the portrait reveal tail so the face turn feels
+      // connected instead of waiting for a separate later phase.
+      const rawVideoProgress = clamp01((progress - 0.24) / 0.60);
       const videoProgress = smootherStep(rawVideoProgress);
       targetVideoTime = video.duration * videoProgress;
     }

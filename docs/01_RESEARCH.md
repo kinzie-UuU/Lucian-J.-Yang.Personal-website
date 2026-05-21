@@ -4,7 +4,7 @@
 
 The site presents Lucian J. Yang as a packaging-focused designer with a strong emphasis on judgment under real constraints. The message is less about decorative style and more about whether packaging can survive budget, process, channel, production, and delivery realities.
 
-The current project reads as a personal portfolio, service introduction, work archive, and contact funnel in one static experience.
+The current project reads as a personal portfolio, service introduction, work archive, client trust signal, and contact funnel in one static experience.
 
 ## Target User Judgment
 
@@ -16,7 +16,7 @@ Likely audiences:
 - Teams exploring AIGC-assisted proposal or motion workflows.
 - Potential collaborators who want to inspect past visual work before contacting.
 
-【待确认】Primary buyer role, budget range, geographic market, and whether the English version targets international clients or is mainly a presentation layer.
+[TBD] Primary buyer role, budget range, geographic market, and whether the English version targets international clients or is mainly a presentation layer.
 
 ## Core Value
 
@@ -27,17 +27,17 @@ Likely audiences:
 
 ## Current Page Narrative
 
-1. Entry creates a deliberate archive/opening ritual.
-2. Hero introduces five work categories through a water/card interaction.
-3. About explains the designer identity and toolkit.
+1. Entry creates a deliberate archive/opening ritual through a 3D key and progress sequence.
+2. Hero establishes taste and technical fluency through water, liquid glass, lion-head model, and brand wordmark.
+3. About explains the designer identity and toolkit with a portrait reveal.
 4. Services explains method and decision value.
 5. Works moves into project categories and gallery browsing.
-6. Clients adds credibility through selected brand names.
-7. Contact turns the experience into a concrete inquiry path.
+6. Contact turns the experience into a concrete inquiry path.
+7. Clients adds credibility through selected brand names as a final trust signal.
 
 ## Current Content Strengths
 
-- Strong point of view: "not just beautiful, but right".
+- Strong point of view: not just beautiful, but right for real conditions.
 - Clear service logic around cost, process, delivery, channel, and judgment.
 - Rich work imagery and gallery depth.
 - Bilingual structure is already present.
@@ -51,7 +51,7 @@ Likely audiences:
 - Contact path exists, but expected inquiry information and response process are still light.
 - The site relies heavily on interaction; users who do not scroll or click correctly may miss content.
 - English copy is functional but may need more market-specific polish.
-- 【待确认】Whether all client names can be publicly shown.
+- [TBD] Whether all client names can be publicly shown.
 
 ## Most Impactful Conversion Problems
 
@@ -64,7 +64,7 @@ Likely audiences:
 
 - Which service line is the highest commercial priority: OEM packaging, gifting, brand/type, AIGC workflow, or AIGC video?
 - Which audience should the first 10 seconds optimize for?
-- Are client logos/names approved for public display?
+- Are client names approved for public display?
 - Should each work category eventually become a proper case-study page?
 - Is English meant for real client acquisition or just bilingual completeness?
 - What is the expected contact method: email, WeChat, Instagram, X, or form first?

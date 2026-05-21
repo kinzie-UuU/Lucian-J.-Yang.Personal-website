@@ -157,8 +157,7 @@ main > section {
   background: transparent;
 }
 
-.top-meta-inner > *,
-.hero-focus-panel > * {
+.top-meta-inner > * {
   position: relative;
   z-index: 1;
 }

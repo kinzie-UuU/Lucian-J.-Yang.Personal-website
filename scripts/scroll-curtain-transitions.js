@@ -11,7 +11,35 @@
     return Number.isFinite(parsed) ? parsed : fallback;
   };
 
+  const svgNamespace = "http://www.w3.org/2000/svg";
   const easeOutExpo = (value) => (value >= 1 ? 1 : 1 - Math.pow(2, -10 * value));
+
+  const makeSheetPath = (edgeY, centerY) => {
+    const edge = edgeY.toFixed(2);
+    const center = centerY.toFixed(2);
+    return `M0 1024V${edge}C240 ${center} 480 ${center} 720 ${center}C960 ${center} 1200 ${center} 1440 ${edge}V1024H0Z`;
+  };
+
+  const createVisualSheet = (root, surface) => {
+    const color = surface.style.getPropertyValue("--curtain-color").trim() || "#000";
+    root.style.setProperty("--curtain-color", color);
+
+    const svg = document.createElementNS(svgNamespace, "svg");
+    svg.setAttribute("class", "scroll-curtain-transition__visual");
+    svg.setAttribute("viewBox", "0 0 1440 1024");
+    svg.setAttribute("preserveAspectRatio", "none");
+    svg.setAttribute("aria-hidden", "true");
+    svg.setAttribute("focusable", "false");
+
+    const path = document.createElementNS(svgNamespace, "path");
+    path.setAttribute("class", "scroll-curtain-transition__visual-path");
+    path.setAttribute("d", makeSheetPath(1024, 1024));
+    svg.append(path);
+    root.append(svg);
+    root.classList.add("is-svg-driven");
+
+    return { svg, path };
+  };
 
   const configs = roots.map((root) => {
     const targetSelector = root.dataset.target || "";
@@ -21,13 +49,23 @@
     const maskPath = root.querySelector(".scroll-curtain-transition__mask-path");
     const startShape = root.querySelector(".scroll-curtain-transition__shape-start");
     const endShape = root.querySelector(".scroll-curtain-transition__shape-end");
+    const surface = root.querySelector(".scroll-curtain-transition__surface");
+    const clipDriven = Boolean(root.dataset.curveEdge && root.dataset.curveCenter);
+    const visual = clipDriven && surface ? createVisualSheet(root, surface) : null;
 
     return {
       root,
+      surface,
+      visualSvg: visual?.svg || null,
+      visualPath: visual?.path || null,
       target,
       maskPath,
       startShape,
       endShape,
+      clipDriven,
+      curveState: { amount: 0 },
+      curveEdge: parseNumber(root.dataset.curveEdge, 150),
+      curveCenter: parseNumber(root.dataset.curveCenter, 54),
       closedPath: maskPath?.getAttribute("d") || "",
       durationIn: parseNumber(root.dataset.durationIn, 0.7),
       durationOut: parseNumber(root.dataset.durationOut, 0.92),
@@ -43,6 +81,7 @@
     };
   }).filter((config) => (
     config.target
+    && config.surface
     && config.maskPath
     && config.startShape
     && config.endShape
@@ -120,7 +159,19 @@
     config.timeline?.kill();
     config.timeline = null;
     config.maskPath.setAttribute("d", config.closedPath);
+    config.curveState.amount = 0;
+    if (config.visualPath) config.visualPath.setAttribute("d", makeSheetPath(1024, 1024));
+    if (config.visualSvg && gsap) gsap.set(config.visualSvg, { clearProps: "transform" });
     config.root.classList.remove("is-active");
+  };
+
+  const renderCurve = (config) => {
+    if (!config.visualPath) return;
+
+    const amount = Math.max(0, Math.min(1, config.curveState.amount));
+    const edge = 1024 + (config.curveEdge - 1024) * amount;
+    const center = 1024 + (config.curveCenter - 1024) * amount;
+    config.visualPath.setAttribute("d", makeSheetPath(edge, center));
   };
 
   const resetAll = () => {
@@ -142,7 +193,6 @@
     config.root.classList.add("is-active");
     document.body.classList.add("scroll-curtain-active");
 
-    const surface = config.root.querySelector(".scroll-curtain-transition__surface");
     const settleAt = config.settleTarget
       ? Math.max(0.24, config.overlap + 0.1)
       : null;
@@ -162,41 +212,58 @@
       },
     });
 
-    config.timeline
-      .set(surface, {
-        yPercent: 108,
-        borderTopLeftRadius: "48%",
-        borderTopRightRadius: "48%",
-      }, 0)
-      .to(config.maskPath, {
-        duration: config.durationIn,
-        morphSVG: config.startShape,
-        ease: "power1.in",
-      }, 0)
-      .to(surface, {
-        duration: config.durationIn + 0.18,
-        yPercent: 0,
-        borderTopLeftRadius: "20%",
-        borderTopRightRadius: "20%",
-        ease: "expo.out",
-      }, 0)
-      .to(config.maskPath, {
-        duration: config.durationOut,
-        morphSVG: config.endShape,
-        ease: "power1.out",
-      }, config.overlap);
+    if (config.clipDriven) {
+      config.timeline
+        .set(config.visualSvg, { yPercent: 0 }, 0)
+        .to(config.curveState, {
+          amount: 1,
+          duration: config.durationIn,
+          ease: "power2.inOut",
+          onUpdate: () => renderCurve(config),
+        }, 0)
+        .to(config.visualSvg, {
+          duration: config.durationOut,
+          yPercent: -108,
+          ease: "power2.inOut",
+        }, config.overlap + 0.26);
+    } else {
+      config.timeline
+        .set(config.surface, {
+          yPercent: 108,
+          borderTopLeftRadius: "48%",
+          borderTopRightRadius: "48%",
+        }, 0)
+        .to(config.maskPath, {
+          duration: config.durationIn,
+          morphSVG: config.startShape,
+          ease: "power2.inOut",
+        }, 0)
+        .to(config.surface, {
+          duration: config.durationIn + 0.18,
+          yPercent: 0,
+          borderTopLeftRadius: "20%",
+          borderTopRightRadius: "20%",
+          ease: "power2.inOut",
+        }, 0)
+        .to(config.maskPath, {
+          duration: config.durationOut,
+          morphSVG: config.endShape,
+          ease: "power2.inOut",
+        }, config.overlap)
+        .to(config.surface, {
+          duration: config.durationOut,
+          yPercent: -108,
+          borderTopLeftRadius: "0%",
+          borderTopRightRadius: "0%",
+          ease: "power2.inOut",
+        }, config.overlap + 0.26);
+    }
+
     if (config.settleTarget) {
       config.timeline.call(() => {
         settleScroll(config, () => unlockScroll({ restore: false }));
       }, null, settleAt);
     }
-    config.timeline.to(surface, {
-      duration: config.durationOut,
-      yPercent: -108,
-      borderTopLeftRadius: "0%",
-      borderTopRightRadius: "0%",
-      ease: "expo.inOut",
-    }, config.overlap + 0.26);
   };
 
   const update = () => {
@@ -234,13 +301,13 @@
   };
 
   try {
-    supported = Boolean(gsap && MorphSVGPlugin);
+    supported = Boolean(gsap);
     if (!supported) {
       roots.forEach((root) => root.classList.remove("is-active"));
       return;
     }
 
-    gsap.registerPlugin(MorphSVGPlugin);
+    if (MorphSVGPlugin) gsap.registerPlugin(MorphSVGPlugin);
     resetAll();
     window.addEventListener("scroll", requestUpdate, { passive: true });
     window.addEventListener("resize", requestUpdate, { passive: true });

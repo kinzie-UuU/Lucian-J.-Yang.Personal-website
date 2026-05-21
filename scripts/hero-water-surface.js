@@ -5,14 +5,14 @@ window.initHeroWaterSurface = (canvas, { reducedMotion = false, getScrollProgres
   const gl = canvas.getContext("webgl", { alpha: true, antialias: false, premultipliedAlpha: false });
   if (!gl) return;
 
-  // 閳光偓閳光偓 shared quad 閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓
+  // Shared full-screen quad shader.
   const quadVert = `
     attribute vec2 a_pos;
     varying vec2 v_uv;
     void main() { v_uv = a_pos * 0.5 + 0.5; gl_Position = vec4(a_pos, 0.0, 1.0); }
   `;
 
-  // 閳光偓閳光偓 Pass 1: wave-equation simulation (ping-pong FBO) 閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓
+  // Pass 1: wave-equation simulation (ping-pong FBO).
   const simFrag = `
     precision highp float;
     uniform sampler2D u_prev;
@@ -73,7 +73,7 @@ window.initHeroWaterSurface = (canvas, { reducedMotion = false, getScrollProgres
     }
   `;
 
-  // 閳光偓閳光偓 Pass 2: render water surface 閳?black base, teal from ripple energy, unified displacement 閳光偓閳光偓
+  // Pass 2: render water surface with ripple energy and unified displacement.
   const renderFrag = `
     precision highp float;
     uniform sampler2D u_ripple;
@@ -242,8 +242,8 @@ window.initHeroWaterSurface = (canvas, { reducedMotion = false, getScrollProgres
       // explicit trough darkening from signed ripple — adds visible "depth"
       col -= max(-signedRipple, 0.0) * vec3(0.18, 0.22, 0.28) * 0.6;
 
-      // title: wide-kernel blur of ripple height 閳?smooth 2D displacement
-      // height deviation from 0.5 is unipolar (no sign flip) 閳?text floats with waves, no oscillation
+      // Title displacement uses a wide-kernel blur of ripple height.
+      // Height deviation from 0.5 is unipolar, so text floats with waves without oscillation.
       vec2 px = vec2(1.0) / u_sim_res;
       float h00 = texture2D(u_ripple, v_uv).r;
       float h10 = texture2D(u_ripple, v_uv + vec2( px.x * 8.0, 0.0)).r;
@@ -254,7 +254,7 @@ window.initHeroWaterSurface = (canvas, { reducedMotion = false, getScrollProgres
       float hSmooth = h00 * 0.36 + (h10 + hm1 + h01 + h0m) * 0.16;
       // deviation from neutral 0.5 drives displacement magnitude and direction
       float hDev = hSmooth - 0.5;
-      // direction: tilt toward the wave 閳?use local gradient of the smooth field
+      // Direction tilts toward the wave using the local gradient of the smooth field.
       float gx = h10 - hm1;
       float gy = h01 - h0m;
       vec2 titleUv = clamp(v_uv + vec2(gx, gy) * hDev * (u_disp * 0.4), 0.001, 0.999);
@@ -276,7 +276,7 @@ window.initHeroWaterSurface = (canvas, { reducedMotion = false, getScrollProgres
     }
   `;
 
-  // 閳光偓閳光偓 compile helper 閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓
+  // Compile helper.
   const compile = (type, src) => {
     const sh = gl.createShader(type);
     gl.shaderSource(sh, src);
@@ -312,11 +312,11 @@ window.initHeroWaterSurface = (canvas, { reducedMotion = false, getScrollProgres
     gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
   };
 
-  // 閳光偓閳光偓 FBO helpers 閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓
+  // FBO helpers.
   const makeFBO = (w, h) => {
     const tex = gl.createTexture();
     gl.bindTexture(gl.TEXTURE_2D, tex);
-    // init to neutral 0.5 (=0x80) 閳?wave equation resting state is r=0.5, g=0.5
+    // Initialize to neutral 0.5 (=0x80); resting wave equation state is r=0.5, g=0.5.
     const init = new Uint8Array(w * h * 4).fill(0x80);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, w, h, 0, gl.RGBA, gl.UNSIGNED_BYTE, init);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
@@ -344,7 +344,7 @@ window.initHeroWaterSurface = (canvas, { reducedMotion = false, getScrollProgres
     read = fboA; write = fboB;
   };
 
-  // 閳光偓閳光偓 title texture 閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓
+  // Title texture.
   const titleTex = gl.createTexture();
   gl.bindTexture(gl.TEXTURE_2D, titleTex);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
@@ -373,7 +373,7 @@ window.initHeroWaterSurface = (canvas, { reducedMotion = false, getScrollProgres
     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
   };
 
-  // 閳光偓閳光偓 resize 閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓
+  // Resize.
   // Sim runs at half resolution for performance; render pass upscales via LINEAR
   const SIM_SCALE = 0.5;
   const resize = () => {
@@ -394,7 +394,7 @@ window.initHeroWaterSurface = (canvas, { reducedMotion = false, getScrollProgres
     updateTitleTexture();
   }).catch(() => {});
 
-  // 閳光偓閳光偓 cache uniform locations 閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓
+  // Cache uniform locations.
   const uSim = {
     prev:       gl.getUniformLocation(simProg, "u_prev"),
     res:        gl.getUniformLocation(simProg, "u_res"),
@@ -418,7 +418,7 @@ window.initHeroWaterSurface = (canvas, { reducedMotion = false, getScrollProgres
     time:     gl.getUniformLocation(renderProg, "u_time"),
   };
 
-  // 閳光偓閳光偓 mouse state 閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓
+  // Mouse state.
   let mx = -1.0, my = -0.5, lmx = -1.1, lmy = -0.6;
   let velX = 0, velY = 0;
   let pointerSeeded = false;
@@ -454,7 +454,7 @@ window.initHeroWaterSurface = (canvas, { reducedMotion = false, getScrollProgres
   };
   window.addEventListener("pointermove", onPointer, { passive: true });
 
-  // 閳光偓閳光偓 render loop 閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓
+  // Render loop.
   let frame = 0;
   let raf;
 
@@ -473,7 +473,7 @@ window.initHeroWaterSurface = (canvas, { reducedMotion = false, getScrollProgres
       updateTitleTexture();
     }
 
-    // 閳光偓閳光偓 sim pass 閳光偓閳光偓
+    // Sim pass.
     gl.bindFramebuffer(gl.FRAMEBUFFER, write.fb);
     gl.viewport(0, 0, simW, simH);
     gl.useProgram(simProg);
@@ -497,7 +497,7 @@ window.initHeroWaterSurface = (canvas, { reducedMotion = false, getScrollProgres
     velX *= 0.88;
     velY *= 0.88;
 
-    // 閳光偓閳光偓 render pass 閳光偓閳光偓
+    // Render pass.
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
     gl.viewport(0, 0, canvas.width, canvas.height);
     gl.enable(gl.BLEND);

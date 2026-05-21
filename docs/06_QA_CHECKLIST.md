@@ -4,45 +4,48 @@
 
 - [ ] Start a local static server with `python -m http.server 4180`.
 - [ ] Open `http://127.0.0.1:4180/index.html`.
-- [ ] If port `4180` is already in use, start another local port such as `python -m http.server 4181` and open `http://127.0.0.1:4181/index.html`.
-- [ ] Confirm the chosen port only affects local runtime and does not require project code changes.
 - [ ] Page loads without a blank screen.
 - [ ] Fonts load acceptably.
-- [ ] No missing image/video icons are visible.
+- [ ] No missing image/video/model icons or network 404s are visible.
 - [ ] Browser console has no site `error`.
 
 ## Entry
 
-- [ ] OPEN trigger is visible.
-- [ ] Clicking/tapping OPEN enters the site.
-- [ ] Entry transition completes.
-- [ ] `body.has-entered` is applied after entry.
-- [ ] Pixel avatar can return to entry.
+- [ ] 3D key canvas is visible.
+- [ ] Progress text and bottom progress bar advance.
+- [ ] Auto-enter fires when key progress reaches 100%.
+- [ ] Scroll/touch on entry can also enter the site.
+- [ ] Entry curtain transition completes and `body.has-entered` is applied.
+- [ ] Pixel avatar returns to entry.
+- [ ] Returning to entry closes Works rail and gallery state.
+- [ ] Entry key replay starts again and auto-enters again.
 
 ## Hero
 
-- [ ] Water canvas is visible.
-- [ ] Ripple/water surface does not appear blank.
-- [ ] Full-screen liquid field responds across the whole Hero, not only near the model.
-- [ ] Lion GLB model loads from `/models/lion_head/lion_head_2k.gltf`.
-- [ ] Lion starts front-facing on first entry.
-- [ ] Lion idle motion stays subtle, with only gentle left/right breathing.
-- [ ] Pointer movement can nudge the lion both left and right without forcing a three-quarter pose.
+- [ ] Water canvas is visible and nonblank.
+- [ ] Liquid glass field is visible after entry and does not block interaction.
+- [ ] Hero lion model loads from `/models/lion_head/lion_head_2k.gltf`.
+- [ ] Hero wordmark and model are visible and centered on desktop/mobile.
+- [ ] Pointer movement can nudge/orbit the lion without breaking the layout.
+- [ ] Hero-to-About black curtain triggers on scroll.
 
-## About
+## About / Portrait
 
 - [ ] Portrait video or fallback image displays.
-- [ ] About text is readable.
+- [ ] Portrait reveal progresses from dark/blurred to visible.
+- [ ] Video scrub follows scroll without obvious jumps.
+- [ ] About text becomes readable after portrait reveal.
 - [ ] Toolkit tags wrap without overflow.
-- [ ] Scroll motion does not hide key copy.
+- [ ] About-to-Services curtain triggers near the end of the section.
 
 ## Services
 
-- [ ] Services entry card appears.
+- [ ] Services section appears after About.
 - [ ] `#services-entry-gridscan` canvas displays.
 - [ ] Service panel shader canvases initialize.
 - [ ] Scroll story progresses through services.
 - [ ] Service copy rebuilds after language switch.
+- [ ] Services-to-Works scroll curtain does not leave scroll locked.
 
 ## Works / Gallery
 
@@ -50,6 +53,7 @@
 - [ ] Hover preview does not block clicking.
 - [ ] Keyboard activation opens a works row.
 - [ ] Mouse/touch click opens a works row.
+- [ ] Works side rail opens, closes, and launches categories.
 - [ ] Gallery opens with items.
 - [ ] Gallery back button works.
 - [ ] Gallery close button works.
@@ -58,16 +62,16 @@
 
 ## Clients
 
-- [ ] Clients section appears between Works and Contact.
-- [ ] Works hidden link reaches Clients.
+- [ ] Clients section appears after Contact in the current document flow.
 - [ ] Client marquee moves unless reduced motion is active.
-- [ ] Clients text is readable on warm background.
+- [ ] Clients text is readable.
 - [ ] Clients is not shown in bottom navigation.
 
 ## Contact
 
-- [ ] Contact section appears after Clients.
+- [ ] Contact section appears after Works/Gallery overlay markup.
 - [ ] Top-right arrow reaches Contact.
+- [ ] Bottom nav Contact reaches Contact.
 - [ ] Contact form fields are usable.
 - [ ] Submit opens Gmail compose or expected compose target.
 - [ ] WeChat QR trigger opens modal.
@@ -80,7 +84,6 @@
 - [ ] English button sets `html lang="en"`.
 - [ ] Bottom nav labels update.
 - [ ] Works rows update.
-- [ ] Hero focus text updates.
 - [ ] Services text updates.
 - [ ] Clients intro updates.
 - [ ] Contact copy updates.
@@ -89,9 +92,9 @@
 ## Mobile
 
 - [ ] Entry is usable.
-- [ ] Bottom nav fits.
+- [ ] Bottom nav fits four items.
 - [ ] Top controls do not overlap.
-- [ ] Hero card sequence remains usable.
+- [ ] Hero model/water/wordmark fit without horizontal overflow.
 - [ ] About text does not overflow.
 - [ ] Services story remains scrollable.
 - [ ] Works rows are readable.
@@ -99,7 +102,7 @@
 - [ ] Clients marquee/text does not overflow.
 - [ ] Contact form stacks cleanly.
 
-## Checks
+## Automated Checks
 
 ```bash
 node tools/check-project.js
@@ -107,4 +110,10 @@ node --check script.js
 node --check site-data.js
 ```
 
-Run `node --check` for touched `scripts/*.js` files after every JS edit.
+Run `node --check` for every touched `scripts/*.js` file after JS edits.
+
+For broader browser smoke QA:
+
+```bash
+node tools/runtime-smoke-check.js
+```

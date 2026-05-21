@@ -1,11 +1,4 @@
 /* Cross-section responsive refinements */
-@media (max-width: 1120px) {
-  .services-grid {
-    grid-template-columns: 1fr;
-  }
-
-}
-
 @media (max-width: 760px) {
   :root {
     --page-width: min(100vw - 28px, 100%);
@@ -30,16 +23,6 @@
   .services-sticky::before {
     width: calc(100vw - 36px);
     margin-bottom: 42px;
-  }
-
-  .entry-grid {
-    --entry-grid-x: 96px;
-    --entry-grid-y: 78px;
-  }
-
-  .entry-box-trigger {
-    width: 172px;
-    height: 172px;
   }
 
   .section-head h2 {

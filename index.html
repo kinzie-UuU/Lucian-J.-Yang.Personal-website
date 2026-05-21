@@ -39,16 +39,16 @@
   <link rel="stylesheet" href="styles/liquid-glass.css?v=20260517-fullscreen1">
   <link rel="stylesheet" href="styles/cursor.css?v=20260512-target-cursor1">
   <link rel="stylesheet" href="styles/typography.css">
-  <link rel="stylesheet" href="styles/home.css?v=20260521-spacer22-1">
-  <link rel="stylesheet" href="styles/about.css?v=20260521-about-curtain2">
+  <link rel="stylesheet" href="styles/home.css?v=20260521-curtain-grammar1">
+  <link rel="stylesheet" href="styles/about.css?v=20260521-about-reveal1">
   <link rel="stylesheet" href="styles/services.css?v=20260517-after-about-flow1">
   <link rel="stylesheet" href="styles/works.css?v=20260521-scroll-curtains1">
   <link rel="stylesheet" href="styles/clients.css?v=20260518-no-footer">
   <link rel="stylesheet" href="styles/work-gallery.css?v=20260513-pmg-edgefix2">
   <link rel="stylesheet" href="styles/contact.css?v=20260517-paper-unify1">
-  <link rel="stylesheet" href="styles/navigation.css?v=20260518-avatar-white1">
+  <link rel="stylesheet" href="styles/navigation.css?v=20260521-rail-close-return3">
   <link rel="stylesheet" href="styles/responsive.css">
-  <link rel="stylesheet" href="styles/shared-motion.css?v=20260521-scroll-curtains2">
+  <link rel="stylesheet" href="styles/shared-motion.css?v=20260521-curved-sheets2">
   <script src="three.min.js"></script>
 </head>
 <body>
@@ -256,18 +256,20 @@
       class="scroll-curtain-transition scroll-curtain-transition--pink"
       id="curtain-services-works"
       data-target="#works-transition"
-      data-duration-in="0.62"
-      data-duration-out="0.82"
-      data-overlap="0.48"
+      data-duration-in="0.86"
+      data-duration-out="0.72"
+      data-overlap="0.7"
+      data-curve-edge="170"
+      data-curve-center="46"
       aria-hidden="true"
     >
-      <div class="scroll-curtain-transition__surface" style="--curtain-color: #ff5f68;"></div>
+      <div class="scroll-curtain-transition__surface" style="--curtain-color: #ff5f68; clip-path: url('#curtain-services-works-clip');"></div>
       <svg class="scroll-curtain-transition__mask" width="1440" height="1024" viewBox="0 0 1440 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
         <clipPath id="curtain-services-works-clip" clipPathUnits="objectBoundingBox" transform="scale(0.000694444444444,0.0009765625)">
-          <path class="scroll-curtain-transition__mask-path" fill-rule="evenodd" clip-rule="evenodd" d="M0 1023H1440V1024H0V1023Z" fill="#D9D9D9" />
+          <path class="scroll-curtain-transition__mask-path" fill-rule="evenodd" clip-rule="evenodd" d="M0 1024V1024C240 1024 480 1024 720 1024C960 1024 1200 1024 1440 1024V1024H0Z" fill="#D9D9D9" />
         </clipPath>
-        <path class="scroll-curtain-transition__shape scroll-curtain-transition__shape-start" d="M0 1024V0C170 112 430 166 720 166C1010 166 1270 112 1440 0V1024H0Z" fill="#D9D9D9" />
-        <path class="scroll-curtain-transition__shape scroll-curtain-transition__shape-end" d="M0 0H1440V1H0V0Z" fill="#D9D9D9" />
+        <path class="scroll-curtain-transition__shape scroll-curtain-transition__shape-start" d="M0 1024V170C240 92 480 46 720 46C960 46 1200 92 1440 170V1024H0Z" fill="#D9D9D9" />
+        <path class="scroll-curtain-transition__shape scroll-curtain-transition__shape-end" d="M0 0V0C240 0 480 0 720 0C960 0 1200 0 1440 0V0H0Z" fill="#D9D9D9" />
       </svg>
     </div>
 
@@ -344,18 +346,20 @@
       class="scroll-curtain-transition scroll-curtain-transition--paper"
       id="curtain-works-contact"
       data-target="#contact"
-      data-duration-in="0.72"
-      data-duration-out="0.98"
-      data-overlap="0.58"
+      data-duration-in="0.96"
+      data-duration-out="0.84"
+      data-overlap="0.78"
+      data-curve-edge="112"
+      data-curve-center="34"
       aria-hidden="true"
     >
-      <div class="scroll-curtain-transition__surface" style="--curtain-color: #f7f4ee;"></div>
+      <div class="scroll-curtain-transition__surface" style="--curtain-color: #f7f4ee; clip-path: url('#curtain-works-contact-clip');"></div>
       <svg class="scroll-curtain-transition__mask" width="1440" height="1024" viewBox="0 0 1440 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
         <clipPath id="curtain-works-contact-clip" clipPathUnits="objectBoundingBox" transform="scale(0.000694444444444,0.0009765625)">
-          <path class="scroll-curtain-transition__mask-path" fill-rule="evenodd" clip-rule="evenodd" d="M0 1023H1440V1024H0V1023Z" fill="#D9D9D9" />
+          <path class="scroll-curtain-transition__mask-path" fill-rule="evenodd" clip-rule="evenodd" d="M0 1024V1024C240 1024 480 1024 720 1024C960 1024 1200 1024 1440 1024V1024H0Z" fill="#D9D9D9" />
         </clipPath>
-        <path class="scroll-curtain-transition__shape scroll-curtain-transition__shape-start" d="M0 1024V0C210 54 468 92 720 92C972 92 1230 54 1440 0V1024H0Z" fill="#D9D9D9" />
-        <path class="scroll-curtain-transition__shape scroll-curtain-transition__shape-end" d="M0 0H1440V1H0V0Z" fill="#D9D9D9" />
+        <path class="scroll-curtain-transition__shape scroll-curtain-transition__shape-start" d="M0 1024V112C240 62 480 34 720 34C960 34 1200 62 1440 112V1024H0Z" fill="#D9D9D9" />
+        <path class="scroll-curtain-transition__shape scroll-curtain-transition__shape-end" d="M0 0V0C240 0 480 0 720 0C960 0 1200 0 1440 0V0H0Z" fill="#D9D9D9" />
       </svg>
     </div>
 
@@ -642,7 +646,7 @@
   <script src="scripts/service-panel-shaders.js?v=20260515-nav-speed1"></script>
   <script src="scripts/services-scroll-story.js?v=20260515-nav-speed1"></script>
   <script src="scripts/work-gallery.js?v=20260514-detail-works1"></script>
-  <script src="scripts/works-side-rail.js?v=20260519-entry-replay2"></script>
+  <script src="scripts/works-side-rail.js?v=20260521-rail-close-return3"></script>
   <script src="scripts/scrambled-text.js"></script>
   <script src="scripts/header-controls.js?v=20260515-bgm1"></script>
   <script src="scripts/language-controls.js"></script>
@@ -656,12 +660,12 @@
   <script src="scripts/bottom-nav-scroll-spy.js?v=20260515-nav-speed1"></script>
   <script src="scripts/clients-marquee.js"></script>
   <script src="scripts/clients-title-interaction.js"></script>
-  <script src="scripts/portrait-motion.js?v=20260521-cubic-smooth1"></script>
-  <script src="scripts/about-curtain.js?v=20260521-hero-copy2"></script>
+  <script src="scripts/portrait-motion.js?v=20260521-fast-reveal1"></script>
+  <script src="scripts/about-curtain.js?v=20260521-hero-copy3"></script>
   <script src="scripts/hero-ripples.js"></script>
   <script src="scripts/vendor/gsap/gsap.min.js?v=3.13.0"></script>
   <script src="scripts/vendor/gsap/MorphSVGPlugin.min.js?v=3.13.0"></script>
-  <script src="scripts/scroll-curtain-transitions.js?v=20260521-scroll-curtains2"></script>
+  <script src="scripts/scroll-curtain-transitions.js?v=20260521-curved-sheets2"></script>
   <script src="scripts/entry-key-model.js?v=20260519-entry-replay2"></script>
   <script src="scripts/entry.js?v=20260520-key-turn1"></script>
 </body>

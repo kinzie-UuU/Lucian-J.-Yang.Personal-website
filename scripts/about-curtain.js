@@ -13,8 +13,8 @@
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   let raised = false;
 
-  const TRIGGER = 0.84;
-  const RESET = 0.72;
+  const TRIGGER = 0.86;
+  const RESET = 0.74;
 
   const update = () => {
     const rect = aboutSection.getBoundingClientRect();
@@ -23,7 +23,7 @@
     const progress = Math.min(1, Math.max(0, -rect.top / travel));
 
     if (reducedMotion) {
-      stage.classList.toggle("is-about-curtain-down", progress > 0.8);
+      stage.classList.toggle("is-about-curtain-down", progress > 0.82);
       return;
     }
 

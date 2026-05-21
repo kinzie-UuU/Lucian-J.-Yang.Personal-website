@@ -14,98 +14,104 @@ Create a high-trust personal portfolio for Lucian J. Yang that communicates pack
 
 ## Core Conversion Path
 
-Entry -> Hero category impression -> About/Services credibility -> Works/Gallery proof -> Clients trust signal -> Contact inquiry.
+Entry -> Hero impression -> About/Services credibility -> Works/Gallery proof -> Contact inquiry -> Clients trust signal by scroll.
 
-Secondary path: Hero card -> matching gallery category -> Contact.
+Secondary path: Works side rail or Works rows -> matching gallery category/project -> Contact.
 
 ## Page Structure
 
 - Entry
 - Hero
-- About
+- About / Portrait
 - Services
+- Services-to-Works curtain
 - Works transition
 - Works list
+- Works-to-Contact curtain
 - Work gallery overlay
-- Clients
 - Contact
+- Clients
 - Top meta controls
+- Works side rail
 - Bottom primary navigation
 
 ## Entry Requirements
 
-- Show a deliberate OPEN interaction before entering the site.
-- Preserve entry canvas, dieline, wave, and seal effects.
-- Clicking/tapping OPEN must set the entered state and reveal site navigation.
-- Pixel avatar must return to entry after the user has entered.
+- Show a deliberate 3D key entry ritual before entering the site.
+- Progress text and progress bar should advance with key loading/entry timing.
+- Auto-enter should trigger when the key progress reaches 100%.
+- Scroll/touch should also be able to enter.
+- Entry-to-Hero should use the horizontal stage curtain transition.
+- Pixel avatar must return to entry after the user has entered and replay the key sequence.
 - Entry should still work with reduced motion.
 
 ## Hero Requirements
 
-- Show five work categories as cards: packaging, gift packaging, brand/type, AIGC workflow, AIGC video.
-- Maintain water surface, ripples, wireframe, scroll cue, and focus panel.
-- Wheel/touch input should progress through intro and card sequence.
-- Hero focus panel should update copy and metadata based on active card.
-- Enter Works should go to the Works section or matching gallery path.
+- Maintain Hero water surface, ripples, wireframe, liquid glass field, lion-head GLB model, and large wordmark.
+- Lion model should load from `/models/lion_head/lion_head_2k.gltf`.
+- Pointer interaction should nudge/orbit the lion without breaking layout.
+- Hero-to-About should use the black vertical curtain handoff.
+- Hero must not depend on the old five-card sequence.
 
 ## About Requirements
 
 - Present the designer identity as packaging-focused.
-- Use portrait video/image and sticky motion as the main visual.
+- Use portrait video/image and scroll reveal as the main visual.
 - Explain judgment-first design approach and AIGC as a tool, not replacement.
 - Show toolkit tags without making the section feel like a resume.
+- About-to-Services curtain should hand off cleanly near the end of the section.
 
 ## Services Requirements
 
 - Explain why to work with the designer.
-- Keep the six service panels and scroll-story interaction.
-- Maintain services grid scan and panel shader visuals.
+- Maintain services grid scan, panel shader visuals, and scroll-story interaction.
 - Copy should emphasize packaging judgment within price, process, delivery, and channel constraints.
+- Service copy should refresh after language switch.
 
 ## Works / Gallery Requirements
 
-- Keep five main work categories in the Works list.
-- Works rows must open the correct gallery category.
+- Keep five main work categories in the Works list and Works side rail.
+- Works rows and rail items must open the correct gallery category.
 - Gallery must support category browsing, project cards, detail view, back/close, progress, and language refresh.
 - Gallery should keep keyboard accessibility for opening rows and closing overlays.
 - Gallery asset references must remain stable.
 
 ## Clients Requirements
 
-- Clients section exists as a hidden-but-not-isolated trust signal.
+- Clients section remains a trust signal.
 - It should not appear in bottom navigation.
-- It should be reachable through natural scroll and the low-key Works link.
 - It should show selected client names and short credibility copy.
+- It should remain reachable through natural scroll.
 
 ## Contact Requirements
 
-- Contact remains a dedicated final section.
-- Top-right arrow navigates to Contact.
+- Contact remains a dedicated inquiry section.
+- Top-right arrow and bottom nav Contact navigate to Contact.
 - Gmail compose flow should use form fields to build subject/body.
 - Social links and WeChat QR modal remain available.
 - Contact copy should ask for project type, timing, and budget range.
 
 ## Language Switching Requirements
 
-- Chinese and English modes must update static text, pill labels, hero focus text, services text, gallery text, and open gallery language.
+- Chinese and English modes must update static text, pill labels, services text, gallery text, Works rows, Contact copy, Clients copy, and open gallery language.
 - `html lang` must switch between `zh-CN` and `en`.
-- New visible copy must be added to both languages.
+- New visible copy must be added to both languages unless it is purely decorative.
 
 ## Mobile Requirements
 
 - Site must remain scrollable and readable on mobile.
 - Large hero/about/contact/clients type must not overflow horizontally.
-- Bottom navigation must fit within viewport.
+- Bottom navigation must fit four items within the viewport.
 - Contact form and social links must stack cleanly.
 - Heavy effects should degrade acceptably under reduced motion.
 
 ## Performance Requirements
 
 - Keep static loading model.
-- Do not add new runtime dependencies.
-- Do not modify `three.min.js`.
+- Do not introduce a package manager, bundler, or framework.
+- Do not modify `three.min.js` or vendor minified files casually.
 - Avoid unnecessary asset path changes.
-- Heavy WebGL/canvas modules must only initialize after their DOM targets exist.
+- Heavy WebGL/canvas/model modules must only initialize after their DOM targets exist.
 
 ## Non-Goals
 
@@ -118,11 +124,11 @@ Secondary path: Hero card -> matching gallery category -> Contact.
 
 ## Acceptance Criteria
 
-- `index.html` opens locally.
-- OPEN enters the site.
-- Hero water and cards work.
-- About, Services, Works, Clients, Contact sections are reachable.
-- Works rows open Gallery.
+- `index.html` opens locally through a static server.
+- Entry key appears and enters the site.
+- Hero water, liquid field, and lion model render.
+- About, Services, Works, Contact, and Clients sections are reachable.
+- Works rows and side rail open Gallery.
 - Gallery detail/back/close paths work.
 - Chinese/English switching works.
 - Contact form opens a compose target.

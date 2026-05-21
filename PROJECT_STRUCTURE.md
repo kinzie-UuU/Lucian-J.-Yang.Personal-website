@@ -1,48 +1,57 @@
 # Project Structure
 
-This project is now split into small CSS and JS modules while keeping `index.html` as the static page entry.
+This is a pure static personal packaging-design portfolio. It keeps `index.html` as the only page entry and loads modular CSS, plain browser JavaScript, local models, images, video, audio, and fonts directly. There is no package manager, framework, bundler, or build step.
 
 ## Root Files
 
-- `index.html`: page markup and ordered stylesheet/script references.
-- `styles.css`: global tokens, reset, base body/page rules, and shared global states.
+- `index.html`: page markup plus ordered stylesheet/script references.
+- `styles.css`: global tokens, reset, document/body states, and shared base rules.
 - `script.js`: one-line application entry that calls `window.initLucianApp()`.
-- `site-data.js`: text, works data, gallery image data, and gallery copy.
-- `three.min.js`: local Three.js dependency used by `scripts/services-entry-grid-scan.js` and 3D model rendering.
+- `site-data.js`: bilingual text, work taxonomy, gallery image data, project data, and gallery copy.
+- `three.min.js`: local Three.js dependency.
+
+## Asset Directories
+
+- `images/`: portrait image, QR code, favicons, work images, and image README files.
+- `models/`: entry key GLB and Hero lion-head GLTF/bin/textures.
+- `videos/`: About portrait video.
+- `audio/`: background music.
+- `fonts/`: local web fonts.
 
 ## CSS Modules
 
-- `styles/fonts.css`: font-face declarations and font variables.
-- `styles/cursor.css`: precision cursor and cursor-related states.
-- `styles/typography.css`: shared text effects and typographic utilities.
-- `styles/liquid-glass.css`: full-screen Hero liquid field layer.
-- `styles/home.css`: entry, hero, water surface, GLB model stage, and home-section visuals.
-- `styles/about.css`: about and portrait sections.
-- `styles/services.css`: services entry, panels, scroll story, and services effects.
-- `styles/works.css`: works rows, works statements, and works section visuals.
-- `styles/clients.css`: client marquee/title section and particle/client effects.
-- `styles/work-gallery.css`: gallery overlay, horizontal gallery, and detail page.
-- `styles/contact.css`: contact form, social links, and QR modal.
-- `styles/navigation.css`: header controls and bottom navigation.
-- `styles/responsive.css`: current responsive overrides.
-- `styles/shared-motion.css`: shared reveal and motion helpers.
+- `styles/fonts.css`: font-face declarations.
+- `styles.css`: global tokens/base document states.
+- `styles/liquid-glass.css`: fixed full-viewport liquid glass field.
+- `styles/cursor.css`: precision cursor.
+- `styles/typography.css`: shared text effects and section typography.
+- `styles/home.css`: entry screen, 3D key entry transition, Hero stage, water, GLB model, Hero curtain.
+- `styles/about.css`: portrait reveal, About copy, About-to-Services curtain.
+- `styles/services.css`: services scroll story, grid scan, panel shaders, service-to-works handoff.
+- `styles/works.css`: works rows, works transition, hover preview, clients link.
+- `styles/clients.css`: clients title and marquee.
+- `styles/work-gallery.css`: gallery overlay, category/project browsing, details.
+- `styles/contact.css`: contact grid, Gmail form, social links, QR modal.
+- `styles/navigation.css`: top controls, bottom nav, Works side rail.
+- `styles/responsive.css`: cross-section responsive corrections.
+- `styles/shared-motion.css`: reveal helpers and scroll curtain transition styles.
 
 ## JS Modules
 
-The JS split is complete for the current static-script architecture. `script.js` only starts the app; behavior lives under `scripts/`.
-
-Key groups:
-
-- App/bootstrap/runtime bridge: `app-bootstrap.js`, `runtime-bridge.js`, `hero-state-runtime.js`.
-- Entry and hero: `entry.js`, `entry-key-model.js`, `hero-sequence-runtime.js`, `hero-state-runtime.js`, `hero-water-surface.js`, `hero-ripples.js`, `hero-wireframe.js`, `liquid-glass-field.js`, `hero-glb-model.js`.
+- Bootstrap/runtime: `app-bootstrap.js`, `runtime-bridge.js`, `script.js`.
+- Entry: `entry.js`, `entry-key-model.js`.
+- Hero: `hero-wireframe.js`, `hero-water-surface.js`, `hero-curtain.js`, `hero-state-runtime.js`, `hero-sequence-runtime.js`, `liquid-glass-field.js`, `hero-glb-model.js`, `hero-ripples.js`.
+- About: `portrait-motion.js`, `about-curtain.js`.
 - Services: `services-entry-grid-scan.js`, `service-panel-shaders.js`, `services-scroll-story.js`.
-- Works/gallery: `work-gallery.js`, `works-hover-preview.js`, `works-transition-motion.js`.
-- Site UI: `header-controls.js`, `language-controls.js`, `language-runtime.js`, `static-text-runtime.js`, `bottom-nav-scroll-spy.js`, `works-side-rail.js`, `site-clock.js`, `precision-cursor.js`.
-- Effects and supporting modules: `audio-feedback.js`, `scrambled-text.js`, `scroll-type-effects.js`, `reveal-effects.js`, `clients-marquee.js`, `clients-title-interaction.js`, `portrait-motion.js`, `particle-canvas.js`.
+- Works/gallery: `work-gallery.js`, `works-side-rail.js`, `works-hover-preview.js`, `works-transition-motion.js`.
+- Navigation/UI: `header-controls.js`, `bottom-nav-scroll-spy.js`, `site-clock.js`, `precision-cursor.js`.
+- Language/text/motion: `static-text-runtime.js`, `language-runtime.js`, `language-controls.js`, `flip-text.js`, `scrambled-text.js`, `scroll-type-effects.js`, `reveal-effects.js`.
+- Clients/contact/audio: `clients-marquee.js`, `clients-title-interaction.js`, `contact-interactions.js`, `audio-feedback.js`, `particle-canvas.js`.
+- Vendor: `scripts/vendor/gsap/gsap.min.js`, `scripts/vendor/gsap/MorphSVGPlugin.min.js` for scroll curtain morphing.
 
 ## Audit Notes
 
-- Keep `three.min.js`; it is an active local dependency.
-- Keep the script order in `index.html` unless a dependency is intentionally changed.
-- After structural edits, run missing-reference checks plus JS/CSS syntax checks before visual QA.
-- Temporary verification files should not be written into the project root.
+- Keep script order in `index.html` unless the dependency chain is re-audited.
+- Keep `three.min.js` as a local dependency and do not hand-edit it.
+- Do not rename or move existing assets without checking `site-data.js`, `index.html`, and CSS references.
+- After structural edits, run `node tools/check-project.js`, JS syntax checks for touched files, and browser smoke QA when interaction or layout changes.

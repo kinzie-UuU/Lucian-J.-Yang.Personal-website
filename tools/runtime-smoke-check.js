@@ -462,6 +462,16 @@ const main = async () => {
     assert(replayState.entered, `Entry key replay did not auto-enter after avatar click: ${JSON.stringify(replayState)}`);
     assert(!replayState.entryScrollLocked, `Entry key replay left scroll locked after avatar click: ${JSON.stringify(replayState)}`);
 
+    for (let attempt = 0; attempt < 12; attempt += 1) {
+      const navReady = await evaluate(client, `(() => {
+        const nav = document.querySelector('.bottom-nav');
+        const style = nav ? getComputedStyle(nav) : null;
+        return Boolean(nav && style && style.opacity !== '0' && style.visibility !== 'hidden');
+      })()`);
+      if (navReady) break;
+      await delay(100);
+    }
+
     const readViewportHealth = async (label) => evaluate(client, `(() => {
       const bottomNav = document.querySelector('.bottom-nav');
       const navRect = bottomNav?.getBoundingClientRect();

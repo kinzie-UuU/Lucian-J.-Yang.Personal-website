@@ -1,13 +1,11 @@
 /* Shared typography and section headings */
-.section-head h2,
-.service-item h3 {
+.section-head h2 {
   font-family: "Satoshi", "Cabinet Grotesk", "MiSans", Georgia, serif;
   font-weight: 800;
 }
 
 .section-kicker,
-.works-label,
-.service-index {
+.works-label {
   margin: 0;
   font-size: 0.68rem;
   letter-spacing: 0.22em;
@@ -22,7 +20,6 @@
 
 .about-lead,
 .about-detail,
-.service-item p,
 .section-intro,
 .contact-section .section-intro {
   margin: 0;

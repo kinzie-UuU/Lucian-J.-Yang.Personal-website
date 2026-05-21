@@ -1,15 +1,11 @@
-# Image Asset Organization
+# Image Asset Notes
 
-Use this structure as the site goes deeper into visual details:
+Current top-level image assets:
 
-- `hero/`: first-screen hero assets, rotating material samples, large atmospheric visuals.
-- `logo/`: brand marks, personal marks, icon variants.
-- `materials/`: packaging textures, paper, bamboo, fabric, foil, printing effects.
-- `contact/`: QR codes and contact-specific images.
-- `works/`: project case images, product photos, mockups, process images.
+- `头像.png`: pixel/avatar image used by the Works side rail and entry replay button.
+- `9999.png`: About portrait poster/fallback.
+- `wechat-qr.jpg`: WeChat QR image used by the Contact modal.
+- `favicons/`: favicon and Apple touch icon files referenced by `index.html`.
+- `works/`: gallery and project imagery referenced through `site-data.js`.
 
-Current notes:
-- `hero/bamboo-effect.png` is used on the homepage hero as a rotating 3D material sample.
-- `竹子效果.png` is the original uploaded source copy.
-- `wechat-qr.png` and `wechat-qr.jpg` are contact assets.
-- `kinzie-logo.png.png` is currently unused after removing the HOME logo.
+Do not rename or move work images casually. Gallery data and HTML/CSS references depend on the current paths.

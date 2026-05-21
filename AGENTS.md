@@ -1,48 +1,43 @@
 # AGENTS.md
 
-## 项目概览
+## Project Overview
 
-这是 Lucian J. Yang 的个人包装设计作品网站。项目是纯静态站点，以 `index.html` 为唯一页面入口，直接加载模块化 CSS、普通浏览器 JavaScript、静态图片、视频、音频与本地字体。
+This is Lucian J. Yang's personal packaging-design portfolio. It is a pure static site with `index.html` as the only page entry. The site directly loads modular CSS, plain browser JavaScript, local images, GLB/GLTF models, video, audio, and fonts.
 
-项目重点不是传统内容页，而是一个带强交互的作品体验：入口 3D 钥匙自动旋转进场、Hero 水面与 GLB 狮头模型、全屏液态场、服务滚动叙事、作品分类与画廊、客户展示、联系表单与微信二维码弹层。
+Do not migrate it to React, Vue, Next, Vite, or any other framework. There is no package manager, bundler, or install step.
 
-不要把它迁移成 React、Vue、Next、Vite 或其它框架；当前架构有意保持静态、无构建步骤、无包管理器。
+## Current Stack
 
-## 当前技术栈
+- HTML: `index.html`
+- CSS: `styles.css` plus modules under `styles/`
+- JavaScript: ordered plain `<script>` tags with `window.*` runtime bridges
+- Data: `site-data.js`
+- 3D/WebGL: local `three.min.js`, raw WebGL canvases, local model files under `models/`
+- Vendor: local GSAP files under `scripts/vendor/gsap/` for scroll curtain morphing
+- Assets: `images/`, `models/`, `videos/`, `audio/`, `fonts/`
+- Tools: `tools/check-project.js`, `tools/runtime-smoke-check.js`, `tools/local-proxy-server.js`
 
-- HTML：`index.html`
-- CSS：根样式 `styles.css` 加 `styles/` 下的分区模块
-- JavaScript：普通 `<script>` 顺序加载，使用 `window.*` 全局桥接
-- 数据：`site-data.js`
-- 3D / WebGL：本地 `three.min.js`，以及若干原生 WebGL canvas
-- 资源：`images/`、`videos/`、`audio/`、`fonts/`
-- 工具脚本：`tools/check-project.js`、`tools/runtime-smoke-check.js`、`tools/local-proxy-server.js`
+## Local Run
 
-没有 `package.json`，没有 bundler，也没有安装依赖流程。
-
-## 本地运行
-
-优先用本地静态服务器访问，不建议直接用 `file://` 打开。
+Prefer a local static server:
 
 ```bash
 python -m http.server 4180
 ```
 
-然后打开：
+Open:
 
 ```text
 http://127.0.0.1:4180/index.html
 ```
 
-项目里也有一个 Node 静态代理：
+The Node local proxy is also available:
 
 ```bash
 node tools/local-proxy-server.js
 ```
 
-默认会尝试 `http://127.0.0.1:4180/index.html`，端口占用时会向后寻找可用端口。
-
-## 常用检查命令
+## Checks
 
 ```bash
 node tools/check-project.js
@@ -50,404 +45,104 @@ node --check script.js
 node --check site-data.js
 ```
 
-修改 JS 后，对 touched 文件逐个运行：
+After JS edits, run `node --check` on every touched `scripts/*.js` file.
 
-```bash
-node --check scripts/某个文件.js
-```
-
-较完整的浏览器冒烟检查：
+For fuller browser smoke QA:
 
 ```bash
 node tools/runtime-smoke-check.js
 ```
 
-这个脚本会启动本地 server 和 Chrome/Edge headless，检查入口、背景音乐、Hero 狮头模型、底部导航、Works 侧栏、Gallery、桌面/移动端横向溢出和控制台错误。它依赖本机 Chrome 或 Edge，以及支持全局 `WebSocket` 的 Node 版本。
+## Current Page Systems
 
-## 页面结构
+- Top meta header: identity, Beijing clock, language switch, sound, fullscreen, contact arrow.
+- Entry: `#entry-screen`, 3D key canvas, progress text/bar, auto-enter, scroll/touch enter, replay from avatar.
+- Hero: water canvas, ripples, wireframe, fixed liquid field, GLB lion-head model, wordmark layers, Hero-to-About curtain.
+- About/Portrait: portrait video/fallback, scroll reveal, video scrub, About-to-Services curtain.
+- Services: sticky scroll story, Three.js grid scan, panel shaders.
+- Works: five category rows, hover preview, Works side rail, gallery entry.
+- Scroll curtains: Services-to-Works and Works-to-Contact handoffs.
+- Gallery: overlay, category/project browsing, detail page, back/close.
+- Contact: Gmail compose form, social links, WeChat QR modal, toast.
+- Clients: selected-client marquee and credibility copy.
+- Bottom nav: About / Services / Works / Contact.
 
-`index.html` 内的主要结构：
+## CSS Modules
 
-- 顶部元信息栏：身份、北京时间、语言切换、声音、全屏、联系入口
-- `#entry-screen`：3D 钥匙入口、加载进度文字、底部进度条
-- `.hero-section` / `#hero-stage`：Hero 水面、涟漪、wireframe、全屏液态场、GLB 狮头模型
-- `#about`：头像视频/图片、设计师介绍、工具标签
-- `#services`：服务滚动叙事、Three.js grid scan、服务 panel shader
-- `#works-transition`：服务到作品之间的滚动转场
-- `#works`：五类作品入口、hover preview
-- `#work-gallery`：作品画廊 overlay、环形/WebGL 或 DOM fallback、详情页、返回/关闭
-- `#contact`：联系文案、Gmail compose 表单、社交链接、微信二维码 modal、toast
-- `#clients`：客户展示与 marquee
-- `#works-side-rail`：作品侧边导航，可直接进入某个类别或项目
-- `.bottom-nav`：底部主导航，指向 About / Services / Works / Contact
+- `styles/fonts.css`: local font declarations.
+- `styles.css`: global tokens, reset, body/page states.
+- `styles/liquid-glass.css`: fixed liquid field layer.
+- `styles/cursor.css`: precision cursor.
+- `styles/typography.css`: shared type and section styles.
+- `styles/home.css`: Entry and Hero.
+- `styles/about.css`: About/Portrait.
+- `styles/services.css`: Services.
+- `styles/works.css`: Works and transition.
+- `styles/clients.css`: Clients.
+- `styles/work-gallery.css`: Gallery.
+- `styles/contact.css`: Contact.
+- `styles/navigation.css`: top controls, bottom nav, Works side rail.
+- `styles/responsive.css`: cross-section responsive corrections.
+- `styles/shared-motion.css`: reveal helpers and scroll curtain styles.
 
-## CSS 结构
+## JS Load Order
 
-CSS 在 `index.html` 中按顺序加载。不要随意调换顺序。
-
-- `styles/fonts.css`：本地字体声明
-- `styles.css`：全局 token、reset、body/page 状态、基础变量
-- `styles/cursor.css`：精密光标
-- `styles/typography.css`：共享文字效果和排版
-- `styles/liquid-glass.css`：Hero 全屏液态场样式
-- `styles/home.css`：入口、Hero、水面、GLB 模型等首页视觉
-- `styles/about.css`：About / portrait 区域
-- `styles/services.css`：服务区、scroll story、panel
-- `styles/works.css`：Works 列表、转场、hover preview
-- `styles/clients.css`：客户区域与 marquee
-- `styles/work-gallery.css`：画廊 overlay、详情页、gallery chrome
-- `styles/contact.css`：联系区、表单、社交链接、微信二维码弹层
-- `styles/navigation.css`：顶部控制、底部导航、nav 转场、Works side rail
-- `styles/responsive.css`：跨区响应式修正
-- `styles/shared-motion.css`：reveal、scroll motion 等共享动效
-
-样式设计语言偏深色、纸张质感、细线、包装结构感、低调但有触感。避免大范围换色、重排版或把局部修正塞进不对应的 CSS 模块。
-
-## JS 结构与真实加载顺序
-
-当前 `script.js` 只有一行：
-
-```js
-window.LucianApp = window.initLucianApp?.() || null;
-```
-
-实际启动逻辑在 `scripts/app-bootstrap.js`，共享运行时桥接在 `scripts/runtime-bridge.js`。
-
-`index.html` 当前脚本顺序以文件自身为准，核心顺序如下：
+Keep the order in `index.html` unless the dependency chain is re-audited. Key order:
 
 1. `three.min.js`
 2. `site-data.js`
-3. `scripts/audio-feedback.js`
-4. `scripts/hero-wireframe.js`
-5. `scripts/hero-water-surface.js`
-6. `scripts/hero-state-runtime.js`
-7. `scripts/hero-sequence-runtime.js`
-8. `scripts/runtime-bridge.js`
-9. `scripts/app-bootstrap.js`
-10. `scripts/static-text-runtime.js`
-11. `scripts/language-runtime.js`
-12. `scripts/flip-text.js`
-13. `scripts/particle-canvas.js`
-14. `script.js`
-15. `scripts/liquid-glass-field.js`
-16. `scripts/hero-glb-model.js`
-17. `scripts/services-entry-grid-scan.js`
-18. `scripts/service-panel-shaders.js`
-19. `scripts/services-scroll-story.js`
-20. `scripts/work-gallery.js`
-21. `scripts/works-side-rail.js`
-22. `scripts/scrambled-text.js`
-23. `scripts/header-controls.js`
-24. `scripts/language-controls.js`
-25. `scripts/contact-interactions.js`
-26. `scripts/scroll-type-effects.js`
-27. `scripts/reveal-effects.js`
-28. `scripts/precision-cursor.js`
-29. `scripts/works-hover-preview.js`
-30. `scripts/works-transition-motion.js`
-31. `scripts/site-clock.js`
-32. `scripts/bottom-nav-scroll-spy.js`
-33. `scripts/clients-marquee.js`
-34. `scripts/clients-title-interaction.js`
-35. `scripts/portrait-motion.js`
-36. `scripts/hero-ripples.js`
-37. `scripts/entry.js`
+3. Hero water/curtain/state/sequence scripts
+4. `runtime-bridge.js`
+5. `app-bootstrap.js`
+6. language/static text/effect helpers
+7. `script.js`
+8. liquid field and Hero model
+9. Services scripts
+10. Gallery and Works side rail
+11. UI controls, contact, reveal, cursor, Works hover/transition, clock/nav, clients
+12. portrait/about curtain/ripples
+13. GSAP vendor and `scroll-curtain-transitions.js`
+14. `entry-key-model.js`
+15. `entry.js`
 
-脚本顺序是项目最脆的部分之一。新增、删除或移动脚本前，先确认依赖链和浏览器行为。
+## High-Risk Areas
 
-## 转场系统（三段式）
+- `index.html` structure, IDs, and script order.
+- `site-data.js` data schema and image paths.
+- `scripts/work-gallery.js`.
+- Hero WebGL/model/liquid scripts.
+- Curtain scripts: `hero-curtain.js`, `about-curtain.js`, `scroll-curtain-transitions.js`.
+- Services WebGL/scroll scripts.
+- Large visual CSS modules: `home.css`, `about.css`, `services.css`, `work-gallery.css`, `navigation.css`, `shared-motion.css`.
+- `three.min.js` and minified vendor files.
 
-网站有三段连续的转场，方向和手法各不相同，形成节奏感。
-
-### 第一段：入口 → Hero（舞台幕布，水平）
-
-**触发：** 用户在 `#entry-screen` 滚动/触摸，或 3D 钥匙动画完成后自动触发。
-
-**时序（`scripts/entry.js`）：**
-
-1. **Phase 1（0ms）** — `body.is-unfolding`：钥匙旋转 + 亮闪 CSS 动画（480ms）
-2. **Phase 2（380ms）** — 切换到 `body.is-entering`：左右两块幕布向两侧收起（900ms，`easeInOutQuint cubic-bezier(0.83, 0, 0.17, 1)`），Hero 从"幕后"以 `heroStageReveal` 动画淡入（scale 1.04→1.0，blur 4px→0）
-3. **Phase 3（1280ms）** — 切换到 `body.has-entered`：转场完成，解锁滚动
-
-**关键 CSS（`styles/home.css`）：**
-
-- `.entry-stage-curtains`：`position: fixed; inset: 0; z-index: 9999`，放在 body 顶层（`</header>` 之后，`<main>` 之前）
-- 幕布用 `translateX` 向左/右退出，不用 `scaleX`（避免首帧黑块）
-- `body.is-unfolding, body.is-entering { background: #000 }`（`styles.css`）防止米白底色在转场中露出
-
-### 第二段：Hero → Portrait（黑幕弹起，垂直）
-
-**触发：** 用户滚动超过 Hero 区域约 10vh（`TRIGGER = 0.10`）。
-
-**机制（`scripts/hero-curtain.js`）：**
-
-- `.hero-section` 高度 `calc(100vh + 22vh)`，其中 22vh 是 sticky 锁定区（spacer）
-- `.hero-stage` 是 `position: sticky; top: 0; height: 100vh`，在 spacer 内保持固定
-- 当 `(-heroSection.getBoundingClientRect().top) / vh > TRIGGER` 时，给 `.hero-stage` 加 `is-curtain-down`
-- `.hero-curtain` 平时 `translateY(108%)`（在视口下方），触发后 `translateY(0)` 铺满全屏
-- 过渡曲线：`1320ms cubic-bezier(0.16, 1, 0.3, 1)`（easeOutExpo），一次性果冻弹起
-- 重置阈值 `RESET = 0.02`，防止在触发点附近抖动
-
-**z-index 层级：**
-
-- `.hero-section { z-index: 3 }`（高于 portrait 的 z-index: 2），防止 portrait 黑色背景从 hero 底部渗出
-- `.hero-curtain` 在 `.hero-stage` 内，随 sticky 一起覆盖 portrait
-
-### 第三段：Portrait 暗房显影（从中心渐显）
-
-**机制（`scripts/portrait-motion.js` + `styles/about.css`）：**
-
-- `.portrait-about-wrapper` 是普通流元素（无 sticky），`.portrait-spacer { height: 160vh }` 提供滚动行程
-- `progress = clamp01(-rect.top / scrollable)`，0 = 刚进入，1 = 完全滚过
-- **人物显现（0 → 0.40）：** 用三次 smoothstep（cubic，比五次 smootherstep 起步更快）
-  ```js
-  const enterRaw = clamp01(progress / 0.40);
-  targetEnter = enterRaw * enterRaw * (3 - 2 * enterRaw);
-  ```
-- **视频 scrub（0.32 → 0.90）：** 与显现末段交叉淡入，人物转脸
-  ```js
-  const rawVideoProgress = clamp01((progress - 0.32) / 0.58);
-  targetVideoTime = video.duration * smootherStep(rawVideoProgress);
-  ```
-- **文字显现（0.42 → 0.74）：** 人物完全显现后，About 文案逐字淡入
-- **退出（0.78 → 0.96）：** 人物和文字淡出，为下一区域让路
-
-**阻尼系数（`renderMotion()`）：**
-
-| 变量 | 系数 | 约追赶时间 |
-|---|---|---|
-| `currentEnter` | 0.16 | ~220ms |
-| `currentTextEnter` | 0.075 | ~450ms |
-| `currentProgressValue` | 0.07 | ~480ms |
-| `currentExit` | 0.085 | ~420ms |
-| `smoothedVideoTime`（scrub） | 0.12 | ~300ms |
-
-**CSS 变量（`styles/about.css`）：**
-
-- `--portrait-enter`：控制 opacity、brightness、blur（暗房显影感）
-- `--portrait-text-enter`：控制文案 reveal
-- `--portrait-progress`：通用进度
-- `--portrait-exit`：退出淡出
-
-### 转场方向原则
-
-入口→Hero 用**水平**（幕布左右收），Hero→Portrait 用**垂直**（黑幕向上弹），Portrait 内部用**原地渐显**（无方向感）。三段方向不重复，形成节奏层次。
-
-### 修改转场系统的入口文件
-
-- `scripts/entry.js`：入口→Hero 时序
-- `scripts/hero-curtain.js`：Hero→Portrait 触发逻辑
-- `scripts/portrait-motion.js`：Portrait 显现公式和阻尼
-- `styles/home.css`：幕布 CSS、Hero sticky 结构、`@keyframes`
-- `styles/about.css`：Portrait CSS 变量消费、spacer 高度
-- `styles.css`：`body.is-unfolding / is-entering` 背景色
-
----
-
-## 关键 JS 模块职责
-
-- `app-bootstrap.js`：创建 app、初始化 runtime bridge、语言、Hero 状态、Hero 水面与 wireframe
-- `runtime-bridge.js`：建立 `window.LucianRuntime`，转发音频、语言、Hero 状态、Gallery 关闭、光标等跨模块能力
-- `audio-feedback.js`：点击声、水滴声、背景音乐 `audio/liquid-light-loop.mp3`、声音开关状态
-- `entry.js`：进入网站过渡、滚动/触摸触发、返回入口、滚动锁定
-- `entry-key-model.js`：3D 钥匙 GLB 加载、旋转动画、进度同步、自动进入
-- `hero-state-runtime.js`：Hero 运行态
-- `hero-sequence-runtime.js`：Hero stage 尺寸、强制回顶、序列 reset
-- `hero-water-surface.js`：Hero WebGL 水面
-- `liquid-glass-field.js`：Hero 全屏液态扰动场
-- `hero-glb-model.js`：Hero 狮头 GLB 模型加载、灯光和指针转向
-- `hero-ripples.js`：Hero 点击/指针涟漪
-- `hero-curtain.js`：Hero→Portrait 黑幕弹起触发（sticky 锁定 + is-curtain-down 类切换）
-- `hero-wireframe.js`：Hero SVG wireframe
-- `services-entry-grid-scan.js`：Services 入口 Three.js grid scan
-- `service-panel-shaders.js`：Services panel WebGL shader
-- `services-scroll-story.js`：Services sticky scroll story 与文案重建
-- `work-gallery.js`：作品画廊、项目详情、语言刷新、Gallery 开关和 WebGL/DOM 展示
-- `works-side-rail.js`：左侧 Works 导航和分类/项目快速进入
-- `works-hover-preview.js`：Works 行 hover preview
-- `works-transition-motion.js`：Services 到 Works 的滚动转场变量
-- `bottom-nav-scroll-spy.js`：底部导航、锚点滚动、纸张转场、active section
-- `header-controls.js`：声音、全屏、顶部控制状态
-- `language-runtime.js`：中英文切换编排
-- `static-text-runtime.js`：`[data-i18n]` 静态文本刷新
-- `language-controls.js`：语言按钮绑定
-- `contact-interactions.js`：联系表单、复制、微信 QR modal
-- `scroll-type-effects.js`、`scrambled-text.js`、`flip-text.js`、`reveal-effects.js`：文字和 reveal 动效
-- `clients-marquee.js`、`clients-title-interaction.js`：客户区 marquee 和标题交互
-- `portrait-motion.js`：About portrait 暗房显影（opacity/brightness/blur CSS 变量驱动）、视频 scrub 阻尼、About 文案逐字 reveal
-- `precision-cursor.js`：全局精密光标与 Hero field pointer
-
-## 数据与文案
-
-`site-data.js` 是主要数据源，包含：
-
-- `i18n`：中英文 UI 和页面文案
-- `worksData`：作品分类、Hero/Works 元数据
-- `workGalleryImages`：画廊图片条目
-- `workGalleryProjects`：画廊项目聚合
-- `galleryText`：画廊 chrome、详情、分类说明
-
-可见文案优先从 `site-data.js` 改。新增用户可见文本时，通常要同时补 `zh` 和 `en`，并确认 `language-runtime.js` 或 `static-text-runtime.js` 能刷新到对应 DOM。
-
-注意：在某些 PowerShell 输出里，中文可能显示成乱码，这是终端编码问题。编辑文件时要保持 UTF-8，不要因为终端显示异常就机械“修复”大量中文。
-
-## 资源目录
-
-- `images/头像.png`：头像资源
-- `images/9999.png`：About portrait poster / fallback
-- `images/wechat-qr.jpg`：微信二维码
-- `images/works/`：作品图片，当前有 `oem`、`gift`、`brand`、`aigc`、`aigc-video`
-- `videos/Video 8.mp4`：About 视频，HTML 中使用 `videos/Video%208.mp4`
-- `audio/liquid-light-loop.mp3`：背景音乐
-- `fonts/`：Satoshi、MiSans、Cabinet Grotesk、Trench Slab、Outfit、Playfair Display 等本地字体
-
-不要随意重命名、移动或删除资源文件。Gallery 数据和 HTML/CSS 引用高度依赖当前路径。
-
-## 高风险区域
-
-改动这些地方前，要先读相关文件并规划 QA：
-
-- `index.html` 的结构、ID 和脚本顺序
-- `site-data.js` 的数据结构、图片路径和双语文案
-- `scripts/work-gallery.js`
-- `scripts/hero-water-surface.js`
-- `scripts/hero-curtain.js`
-- `scripts/liquid-glass-field.js`
-- `scripts/hero-glb-model.js`
-- `scripts/hero-sequence-runtime.js`
-- `scripts/runtime-bridge.js`
-- `scripts/app-bootstrap.js`
-- `scripts/services-scroll-story.js`
-- `scripts/services-entry-grid-scan.js`
-- `scripts/service-panel-shaders.js`
-- `styles/home.css`
-- `styles/liquid-glass.css`
-- `styles/services.css`
-- `styles/work-gallery.css`
-- `styles/navigation.css`
-- `three.min.js`，这个文件只当依赖，不手改
-
-## 相对安全的改动区域
+## Safer Areas
 
 - `docs/`
 - `tools/`
-- 小范围文案改动，优先在 `site-data.js`
-- 和某个页面系统严格对应的局部 CSS
-- 小范围可访问性标签或按钮状态修正
+- Small copy changes in `site-data.js`
+- Small section-local CSS changes in the matching module
+- Small accessibility labels that preserve DOM contracts
 
-即便是安全区域，也要检查引用和视觉影响。
+## Collaboration Rules
 
-## 协作规则
+- Start by checking `git status --short`.
+- Do not revert or delete changes you did not make unless explicitly requested.
+- Do not commit or push unless explicitly requested.
+- Change one system at a time.
+- Before edits, say which files will be touched and which high-risk areas will not be touched.
+- If a code change affects structure, behavior, dependencies, asset paths, or QA standards, update the relevant docs.
+- Do not put temporary verification files in the project root.
 
-- 开始前先看 `git status --short`。当前仓库可能已有用户或其它代理留下的未提交改动。
-- 不要回滚、删除或重排自己没改的内容。
-- 不要 commit / push，除非用户明确要求。
-- 每次只改一个系统，例如 Entry、Hero、Services、Works/Gallery、Contact、Navigation、Language/Copy、Global QA/Tooling。
-- 修改前先说明会碰哪些文件，以及不会碰哪些高风险区域。
-- 修改 JS 后运行 touched 文件的 `node --check`。
-- 修改资源引用、HTML 结构、脚本顺序、数据 schema、交互行为或 QA 标准时，同步更新相关文档。
-- 临时验证文件不要写到项目根目录；如需临时文件，使用被忽略的 `_tmp_*` 或系统临时目录。
+## Minimum QA After Code Changes
 
-## 针对不同任务的入口文件
-
-修改 Hero：
-
-- 先读 `index.html` Hero markup
-- `styles/home.css`
-- `styles/liquid-glass.css`
-- `scripts/app-bootstrap.js`
-- `scripts/runtime-bridge.js`
-- `scripts/hero-state-runtime.js`
-- `scripts/hero-sequence-runtime.js`
-- `scripts/hero-water-surface.js`
-- `scripts/hero-curtain.js`（Hero→Portrait 黑幕触发）
-- `scripts/liquid-glass-field.js`
-- `scripts/hero-glb-model.js`
-- `scripts/hero-ripples.js`
-- `scripts/hero-wireframe.js`
-
-修改入口转场（Entry → Hero）：
-
-- `scripts/entry.js`
-- `styles/home.css`（幕布 CSS、`@keyframes`）
-- `styles.css`（`body.is-unfolding / is-entering` 背景色）
-- `index.html`（`.entry-stage-curtains` DOM 位置）
-
-修改 Portrait 显现（Hero → Portrait）：
-
-- `scripts/hero-curtain.js`
-- `scripts/portrait-motion.js`
-- `styles/home.css`（`.hero-section` sticky 结构）
-- `styles/about.css`（CSS 变量消费、spacer 高度）
-
-修改 Services：
-
-- 先读 `index.html` Services markup
-- `styles/services.css`
-- `scripts/services-scroll-story.js`
-- `scripts/services-entry-grid-scan.js`
-- `scripts/service-panel-shaders.js`
-- `three.min.js` 只确认加载，不编辑
-
-修改 Works / Gallery：
-
-- 先读 `index.html` Works 和 Gallery markup
-- `site-data.js`
-- `styles/works.css`
-- `styles/work-gallery.css`
-- `styles/navigation.css` 中的 Works side rail
-- `scripts/work-gallery.js`
-- `scripts/works-side-rail.js`
-- `scripts/works-hover-preview.js`
-- `scripts/works-transition-motion.js`
-
-修改语言 / 文案：
-
-- 先读 `site-data.js`
-- `scripts/language-runtime.js`
-- `scripts/static-text-runtime.js`
-- `scripts/language-controls.js`
-- 必要时检查 `index.html` 里的 fallback 文案和 `data-i18n`
-
-修改 Contact：
-
-- 先读 `index.html` Contact markup
-- `styles/contact.css`
-- `scripts/contact-interactions.js`
-- `images/wechat-qr.jpg`
-
-修改导航：
-
-- 先读 `index.html` 顶部控制与底部导航 markup
-- `styles/navigation.css`
-- `scripts/header-controls.js`
-- `scripts/bottom-nav-scroll-spy.js`
-- `scripts/works-side-rail.js`
-
-## 最低交付自检
-
-完成代码改动后，至少确认：
-
-- `node tools/check-project.js` 通过
-- touched JS 文件 `node --check` 通过
-- 本地页面能打开
-- 钥匙旋转 + 自动进入或滚动进入网站
-- 控制台没有站点 error
-- 如果碰了 Hero，检查 Hero 水面/液态场/狮头模型/滚动
-- 如果碰了 Services，检查 grid scan、panel shader、scroll story
-- 如果碰了 Works/Gallery，检查 Works 行、侧栏、Gallery 打开/关闭/详情返回
-- 如果碰了语言或文案，检查 `zh-CN` / `en` 切换和打开中的 Gallery 文案刷新
-- 如果碰了布局，检查桌面和移动端没有横向溢出
-
-## 现有文档
-
-- `PROJECT_STRUCTURE.md`：项目结构说明，但可能有旧模块名残留
-- `HANDOFF.md`：历史拆分和验证记录，内容很多，适合追踪背景
-- `docs/00_PROJECT_AUDIT.md`：项目审计
-- `docs/02_PRD.md`：产品需求
-- `docs/03_TECH_DESIGN.md`：技术设计
-- `docs/05_MODULE_MAP.md`：模块映射，但需和当前 `index.html` 交叉验证
-- `docs/06_QA_CHECKLIST.md`：人工 QA 清单
-- `docs/07_BUILD_PLAN.md`：后续构建计划
-
-如果文档与实际文件冲突，以当前 `index.html`、`rg --files` 和真实源码为准，再决定是否同步更新文档。
+- `node tools/check-project.js` passes.
+- Touched JS files pass `node --check`.
+- Page opens through a local server.
+- Entry key enters and replays.
+- Console has no site errors.
+- If Hero changed, verify water/liquid/lion model/scroll.
+- If Services changed, verify grid scan, panel shader, and scroll story.
+- If Works/Gallery changed, verify Works rows, side rail, Gallery open/close/detail/back.
+- If copy/language changed, verify `zh-CN` / `en` switching and open Gallery text refresh.
+- If layout changed, verify desktop/mobile horizontal overflow.
