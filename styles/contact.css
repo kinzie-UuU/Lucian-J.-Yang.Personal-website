@@ -10,7 +10,7 @@
   overflow: clip;
   perspective: 1600px;
   perspective-origin: 50% 42%;
-  background: #030303;
+  background: var(--warm-paper);
   color: rgba(248, 245, 239, 0.92);
   scroll-snap-align: start;
   scroll-snap-stop: always;
@@ -271,6 +271,18 @@ html[lang="zh-CN"] .contact-title {
   padding: clamp(36px, 4vw, 64px) clamp(28px, 3.3vw, 56px);
   border-left: 1px solid rgba(248, 245, 239, 0.32);
   border-bottom: 1px solid rgba(248, 245, 239, 0.32);
+}
+
+.contact-section .contact-cell-heading[data-reveal],
+.contact-section .contact-cell-intro[data-reveal] {
+  opacity: calc(var(--contact-paper-settle) * (0.72 + var(--contact-paper-place) * 0.28));
+  transform: translateY(calc((1 - var(--contact-paper-settle)) * 18px));
+}
+
+.contact-section .contact-cell-heading[data-reveal].is-revealed,
+.contact-section .contact-cell-intro[data-reveal].is-revealed {
+  opacity: 1;
+  transform: none;
 }
 
 .contact-headline {

@@ -1,4 +1,65 @@
 /* Shared reveal and scroll motion */
+.scroll-curtain-transition {
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  display: none;
+  pointer-events: none;
+  contain: layout paint;
+}
+
+.scroll-curtain-transition.is-active {
+  display: block;
+}
+
+.scroll-curtain-transition__surface {
+  --curtain-color: #000;
+  --curtain-accent: transparent;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 100svh;
+  overflow: hidden;
+  background: var(--curtain-color);
+  border-radius: 48% 48% 0 0 / 9% 9% 0 0;
+  transform: translate3d(0, 108%, 0);
+  transform-origin: center top;
+  will-change: transform, border-radius;
+}
+
+.scroll-curtain-transition--scan .scroll-curtain-transition__surface {
+  background:
+    linear-gradient(
+      180deg,
+      var(--curtain-color) 0%,
+      var(--curtain-color) 82%,
+      color-mix(in srgb, var(--curtain-accent) 64%, var(--curtain-color)) 100%
+    );
+}
+
+.scroll-curtain-transition--pink .scroll-curtain-transition__surface,
+.scroll-curtain-transition--paper .scroll-curtain-transition__surface {
+  background: var(--curtain-color);
+}
+
+html.scroll-curtain-locking,
+body.scroll-curtain-locking {
+  overflow: hidden;
+}
+
+.scroll-curtain-transition__mask {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.scroll-curtain-transition__shape {
+  visibility: hidden;
+}
+
 .reveal {
   opacity: 0;
   transform: translateY(22px);

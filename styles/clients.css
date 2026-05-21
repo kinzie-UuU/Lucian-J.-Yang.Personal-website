@@ -35,7 +35,7 @@
   z-index: 1;
   width: 100%;
   min-height: 100svh;
-  padding: 0 0 clamp(224px, 22svh, 292px);
+  padding: 0 0 max(clamp(80px, 10svh, 120px), calc(var(--bottom-nav-safe) + 40px));
 }
 
 .clients-section .section-head {
@@ -72,77 +72,6 @@ html[lang="en"] .clients-intro {
   margin-top: clamp(68px, 10svh, 132px);
 }
 
-.clients-footer-meta {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 3;
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: clamp(20px, 3.8vw, 68px);
-  min-height: clamp(58px, 7.2svh, 76px);
-  padding: 0 clamp(28px, 5.2vw, 92px) max(17px, env(safe-area-inset-bottom));
-  color: rgba(232, 228, 222, 0.56);
-  background: #000;
-  box-shadow: 0 -1px 0 rgba(20, 20, 20, 0.92);
-  font-family: "Satoshi", "MiSans", system-ui, sans-serif;
-  font-size: clamp(0.62rem, 0.64vw, 0.78rem);
-  font-weight: 500;
-  line-height: 1;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  pointer-events: none;
-  font-feature-settings: "tnum" 1, "case" 1;
-  font-variant-numeric: tabular-nums;
-}
-
-.clients-footer-name,
-.clients-footer-clock,
-.clients-footer-time,
-.clients-footer-date {
-  display: inline-flex;
-  align-items: center;
-  min-width: 0;
-}
-
-.clients-footer-name {
-  justify-content: flex-start;
-  font-weight: 500;
-  letter-spacing: 0.08em;
-  opacity: 0.84;
-}
-
-.clients-footer-clock {
-  justify-content: flex-end;
-  gap: clamp(10px, 1.05vw, 18px);
-  text-align: right;
-}
-
-.clients-footer-separator {
-  flex: 0 0 auto;
-  width: 4px;
-  height: 4px;
-  border: 1px solid currentColor;
-  border-radius: 50%;
-  opacity: 0.26;
-}
-
-.clients-footer-time {
-  min-width: 7.7ch;
-  justify-content: flex-end;
-}
-
-.clients-footer-date {
-  min-width: 9.4ch;
-  justify-content: flex-end;
-}
-
-.clients-footer-meta .top-meta-period {
-  margin-right: 0.42em;
-  opacity: 0.42;
-}
 
 .logoloop {
   position: relative;
@@ -211,59 +140,6 @@ html[lang="en"] .clients-intro {
 .logoloop--fade::after {
   right: 0;
   background: linear-gradient(to left, var(--logoloop-fadeColor) 0%, rgba(247, 244, 238, 0) 100%);
-}
-
-.clients-logo-grid {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 2px;
-  margin-top: 48px;
-  padding: 0 clamp(24px, 4vw, 64px);
-}
-
-.client-logo-item {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 28px 20px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  min-height: 88px;
-  transition: background 0.25s ease;
-}
-
-.client-logo-item:hover {
-  background: rgba(255, 255, 255, 0.04);
-}
-
-.client-logo-item img {
-  max-width: 110px;
-  max-height: 44px;
-  width: auto;
-  height: auto;
-  object-fit: contain;
-  filter: grayscale(1) brightness(0.55) invert(1);
-  opacity: 0.55;
-  transition: filter 0.3s ease, opacity 0.3s ease;
-}
-
-.client-logo-item:hover img {
-  filter: grayscale(0) brightness(1) invert(0);
-  opacity: 1;
-}
-
-.client-logo-text,
-.client-logo-text-fallback {
-  font-size: 0.72rem;
-  letter-spacing: 0.08em;
-  color: rgba(20, 20, 20, 0.28);
-  font-weight: 500;
-  text-align: center;
-  transition: color 0.25s ease;
-}
-
-.client-logo-text:hover,
-.client-logo-text-fallback:hover {
-  color: rgba(20, 20, 20, 0.66);
 }
 
 /* Client title band --------------------------------------------------------- */
@@ -336,59 +212,9 @@ html[lang="en"] .clients-intro {
   text-transform: lowercase;
 }
 
-.clients-title-float {
-  display: none;
-}
-
-.clients-title-float-item {
-  position: absolute;
-  color: rgba(20, 20, 20, 0.34);
-  font-family: "Playfair Display", Georgia, "Times New Roman", serif;
-  font-size: clamp(1.05rem, 2.4vw, 2.2rem);
-  font-style: italic;
-  font-weight: 520;
-  letter-spacing: -0.04em;
-  line-height: 1;
-  opacity: 0;
-  white-space: nowrap;
-  filter: blur(16px);
-  transform: translate3d(0, 12px, 0) scale(0.96) rotate(var(--float-rotate, 0deg));
-  animation:
-    clientsFloatIn 1.45s ease forwards,
-    clientsFloatOut 1.7s ease 4s forwards;
-}
-
-@keyframes clientsFloatIn {
-  from {
-    opacity: 0;
-    filter: blur(18px);
-    transform: translate3d(0, 12px, 0) scale(0.96) rotate(var(--float-rotate, 0deg));
-  }
-  to {
-    opacity: 0.46;
-    filter: blur(0);
-    transform: translate3d(var(--float-drift-x, 0px), 0, 0) scale(1) rotate(var(--float-rotate, 0deg));
-  }
-}
-
-@keyframes clientsFloatOut {
-  from {
-    opacity: 0.46;
-    filter: blur(0);
-    transform: translate3d(var(--float-drift-x, 0px), 0, 0) scale(1) rotate(var(--float-rotate, 0deg));
-  }
-  to {
-    opacity: 0;
-    filter: blur(18px);
-    transform: translate3d(calc(var(--float-drift-x, 0px) * 1.8), -16px, 0) scale(1.04) rotate(var(--float-rotate, 0deg));
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .clients-title-char,
-  .clients-title-float-item {
+  .clients-title-char {
     transition: none;
-    animation: none;
   }
 
   .logoloop__track {
@@ -406,12 +232,6 @@ html[lang="en"] .clients-intro {
   }
 }
 
-@media (max-width: 900px) {
-  .clients-logo-grid {
-    grid-template-columns: repeat(4, 1fr);
-  }
-}
-
 @media (max-width: 760px) {
   .clients-section {
     margin-top: 0;
@@ -420,7 +240,7 @@ html[lang="en"] .clients-intro {
 
   .clients-content {
     min-height: 100svh;
-    padding-bottom: 214px;
+    padding-bottom: 100px;
   }
 
   .clients-title-band {
@@ -438,30 +258,6 @@ html[lang="en"] .clients-intro {
     --logoloop-logoHeight: clamp(1.5rem, 8.4vw, 2.8rem);
     margin-top: 56px;
   }
-
-  .clients-footer-meta {
-    left: 0;
-    right: 0;
-    bottom: 0;
-    align-items: center;
-    min-height: 104px;
-    padding: 0 18px max(82px, env(safe-area-inset-bottom));
-    font-size: 0.58rem;
-    letter-spacing: 0.07em;
-  }
-
-  .clients-footer-clock {
-    gap: 7px;
-  }
-
-  .clients-footer-time {
-    min-width: 7.1ch;
-  }
-
-  .clients-footer-date {
-    min-width: 8.8ch;
-  }
-
   .clients-section .section-head {
     margin-top: 48px;
   }
@@ -469,16 +265,5 @@ html[lang="en"] .clients-intro {
   .clients-intro {
     width: min(34ch, calc(100vw - 36px));
     font-size: 0.86rem;
-  }
-}
-
-@media (max-width: 560px) {
-  .clients-logo-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-
-  .client-logo-item {
-    padding: 20px 12px;
-    min-height: 72px;
   }
 }

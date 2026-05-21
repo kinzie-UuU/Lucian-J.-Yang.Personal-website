@@ -292,8 +292,8 @@
     const factor = pbr.baseColorFactor || [1, 1, 1, 1];
     const material = new THREE.MeshStandardMaterial({
       color: new THREE.Color(factor[0], factor[1], factor[2]).multiplyScalar(0.9),
-      roughness: pbr.roughnessFactor ?? 0.18,
-      metalness: Math.max(pbr.metallicFactor ?? 0, 0.94),
+      roughness: pbr.roughnessFactor ?? 0.08,
+      metalness: Math.max(pbr.metallicFactor ?? 0, 0.98),
       transparent: materialDef.alphaMode === "BLEND" || factor[3] < 1,
       opacity: factor[3] ?? 1,
       side: materialDef.doubleSided ? THREE.DoubleSide : THREE.FrontSide,
@@ -303,10 +303,10 @@
       const map = await loadTexture(json, buffers, pbr.baseColorTexture, { color: true });
       if (map) {
         material.map = map;
-        material.color = new THREE.Color(0x1a2a2e);
+        material.color = new THREE.Color(0x0a0c10);
       }
     } else {
-      material.color = new THREE.Color(0x1a2a2e);
+      material.color = new THREE.Color(0x0a0c10);
     }
 
     if (materialDef.normalTexture) {
@@ -448,9 +448,46 @@
     const target = { x: 0, y: 0, distance: 5.2 };
     const current = { x: 0, y: 0, distance: 5.2 };
     const hover = { x: 0, y: 0, active: false };
+    const wordmark = host.querySelector(".hero-model-wordmark:not(.hero-model-wordmark-intersection)");
     let activePointerId = null;
     let lastX = 0;
     let lastY = 0;
+
+    const setWordmarkHover = (event) => {
+      if (!wordmark || activePointerId !== null) return;
+
+      const rect = wordmark.getBoundingClientRect();
+      if (!rect.width || !rect.height) return;
+
+      const edgePadding = Math.max(24, Math.min(48, rect.height * 0.36));
+      const localX = clamp(((event.clientX - rect.left) / rect.width - 0.5) * 2, -1, 1);
+      const localY = clamp(((event.clientY - rect.top) / rect.height - 0.5) * 2, -1, 1);
+      const dx = event.clientX < rect.left
+        ? rect.left - event.clientX
+        : event.clientX > rect.right
+          ? event.clientX - rect.right
+          : 0;
+      const dy = event.clientY < rect.top
+        ? rect.top - event.clientY
+        : event.clientY > rect.bottom
+          ? event.clientY - rect.bottom
+          : 0;
+      const distance = Math.hypot(dx, dy);
+      const active = distance <= edgePadding;
+      const strength = active ? 1 - clamp(distance / edgePadding, 0, 1) : 0;
+
+      host.classList.toggle("is-wordmark-hovering", active);
+      host.style.setProperty("--wordmark-hover", strength.toFixed(3));
+      host.style.setProperty("--wordmark-hover-x", localX.toFixed(3));
+      host.style.setProperty("--wordmark-hover-y", localY.toFixed(3));
+    };
+
+    const resetWordmarkHover = () => {
+      host.classList.remove("is-wordmark-hovering");
+      host.style.setProperty("--wordmark-hover", "0");
+      host.style.setProperty("--wordmark-hover-x", "0");
+      host.style.setProperty("--wordmark-hover-y", "0");
+    };
 
     const endDrag = (event) => {
       if (activePointerId !== event.pointerId) return;
@@ -464,6 +501,7 @@
     element.addEventListener("pointerdown", (event) => {
       if (event.pointerType === "mouse" && event.button !== 0) return;
       activePointerId = event.pointerId;
+      resetWordmarkHover();
       lastX = event.clientX;
       lastY = event.clientY;
       document.body.classList.add("hero-model-orbiting");
@@ -481,6 +519,7 @@
         hover.y = nx >= 0 ? nx * rightHoverRange : nx * leftHoverRange;
         hover.x = clamp(ny * 0.018, modelPitch.min - modelPitch.base, modelPitch.max - modelPitch.base);
         hover.active = true;
+        setWordmarkHover(event);
         return;
       }
       const dx = event.clientX - lastX;
@@ -507,11 +546,13 @@
     element.addEventListener("lostpointercapture", () => {
       activePointerId = null;
       document.body.classList.remove("hero-model-orbiting");
+      resetWordmarkHover();
     });
     element.addEventListener("pointerleave", () => {
       hover.active = false;
       hover.x = 0;
       hover.y = 0;
+      resetWordmarkHover();
     });
 
     element.addEventListener("dblclick", () => {
@@ -539,32 +580,77 @@
     };
   };
 
-  const makeStudioEnvironment = () => {
+  const makeStudioEnvironment = (renderer) => {
+    const SIZE = 256;
     const faces = ["px", "nx", "py", "ny", "pz", "nz"].map((face) => {
       const envCanvas = document.createElement("canvas");
-      envCanvas.width = 64;
-      envCanvas.height = 64;
+      envCanvas.width = SIZE;
+      envCanvas.height = SIZE;
       const ctx = envCanvas.getContext("2d");
-      const gradient = ctx.createLinearGradient(0, 0, 64, 64);
-      gradient.addColorStop(0, face === "py" ? "#ffffff" : "#e8e6e2");
-      gradient.addColorStop(0.42, "#d4d0c8");
-      gradient.addColorStop(1, face === "nx" || face === "pz" ? "#f8f6f2" : "#c8c4bc");
+
+      // Base gradient: studio light dome
+      const gradient = ctx.createLinearGradient(0, 0, 0, SIZE);
+      if (face === "py") {
+        // Top: bright key light (sky)
+        gradient.addColorStop(0, "#ffffff");
+        gradient.addColorStop(0.5, "#f5f3ee");
+        gradient.addColorStop(1, "#e8e6e0");
+      } else if (face === "ny") {
+        // Bottom: soft warm bounce
+        gradient.addColorStop(0, "#c8c4bc");
+        gradient.addColorStop(1, "#a8a49c");
+      } else {
+        // Sides: horizon line transition
+        gradient.addColorStop(0, "#f0eee8");
+        gradient.addColorStop(0.4, "#d4d0c8");
+        gradient.addColorStop(0.65, "#b8b4ac");
+        gradient.addColorStop(1, "#988e80");
+      }
       ctx.fillStyle = gradient;
-      ctx.fillRect(0, 0, 64, 64);
-      ctx.fillStyle = "rgba(255, 255, 255, 0.6)";
-      ctx.fillRect(face === "px" ? 42 : 10, 8, 10, 48);
+      ctx.fillRect(0, 0, SIZE, SIZE);
+
+      // Soft light bars (studio softbox highlights)
+      if (face !== "ny") {
+        const barGradient = ctx.createLinearGradient(0, 0, SIZE, 0);
+        barGradient.addColorStop(0, "rgba(255, 255, 255, 0)");
+        barGradient.addColorStop(0.5, "rgba(255, 250, 240, 0.5)");
+        barGradient.addColorStop(1, "rgba(255, 255, 255, 0)");
+        ctx.fillStyle = barGradient;
+        const barX = face === "px" ? SIZE * 0.65 : face === "nx" ? SIZE * 0.1 : SIZE * 0.4;
+        const barH = SIZE * 0.42;
+        ctx.fillRect(barX, SIZE * 0.12, SIZE * 0.18, barH);
+      }
+
+      // Subtle horizon glow on side faces
+      if (face === "pz" || face === "nx") {
+        const glow = ctx.createRadialGradient(SIZE * 0.5, SIZE * 0.55, 0, SIZE * 0.5, SIZE * 0.55, SIZE * 0.4);
+        glow.addColorStop(0, "rgba(255, 240, 220, 0.18)");
+        glow.addColorStop(1, "rgba(255, 240, 220, 0)");
+        ctx.fillStyle = glow;
+        ctx.fillRect(0, 0, SIZE, SIZE);
+      }
       return envCanvas;
     });
-    const texture = new THREE.CubeTexture(faces);
-    texture.needsUpdate = true;
-    if ("colorSpace" in texture && THREE.SRGBColorSpace) texture.colorSpace = THREE.SRGBColorSpace;
-    if ("encoding" in texture && THREE.sRGBEncoding) texture.encoding = THREE.sRGBEncoding;
-    return texture;
+
+    const cubeTexture = new THREE.CubeTexture(faces);
+    cubeTexture.needsUpdate = true;
+    if ("colorSpace" in cubeTexture && THREE.SRGBColorSpace) cubeTexture.colorSpace = THREE.SRGBColorSpace;
+    if ("encoding" in cubeTexture && THREE.sRGBEncoding) cubeTexture.encoding = THREE.sRGBEncoding;
+
+    // Use PMREMGenerator for proper PBR roughness-mapped reflections
+    if (THREE.PMREMGenerator && renderer) {
+      const pmrem = new THREE.PMREMGenerator(renderer);
+      pmrem.compileCubemapShader();
+      const envMap = pmrem.fromCubemap(cubeTexture).texture;
+      pmrem.dispose();
+      cubeTexture.dispose();
+      return envMap;
+    }
+    return cubeTexture;
   };
 
   const init = async () => {
     const scene = new THREE.Scene();
-    scene.environment = makeStudioEnvironment();
 
     const camera = new THREE.PerspectiveCamera(32, 1, 0.1, 100);
     camera.position.set(0.12, 1.8, 5.2);
@@ -578,6 +664,7 @@
     renderer.setClearColor(0x000000, 0);
     if (renderer.shadowMap) {
       renderer.shadowMap.enabled = true;
+      // PCFSoft — VSM caused the ShadowMaterial plane to flash as an opaque card.
       renderer.shadowMap.type = THREE.PCFSoftShadowMap || renderer.shadowMap.type;
     }
     if ("outputColorSpace" in renderer && THREE.SRGBColorSpace) renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -585,32 +672,31 @@
     if ("toneMapping" in renderer && THREE.ACESFilmicToneMapping) renderer.toneMapping = THREE.ACESFilmicToneMapping;
     if ("toneMappingExposure" in renderer) renderer.toneMappingExposure = 1.3;
 
+    // PMREM-processed environment map for proper PBR reflections
+    scene.environment = makeStudioEnvironment(renderer);
+
     scene.add(new THREE.AmbientLight(0xe8e4de, 0.6));
     scene.add(new THREE.HemisphereLight(0xffffff, 0xd4d0c8, 0.9));
 
+    // Key light only illuminates — does NOT cast shadow, so no oblique stretched shadow.
     const key = new THREE.DirectionalLight(0xfff8f0, 2.8);
     key.position.set(4.4, 5.2, 3.6);
-    key.castShadow = true;
-    if (key.shadow?.mapSize) {
-      key.shadow.mapSize.width = 2048;
-      key.shadow.mapSize.height = 2048;
-      key.shadow.camera.near = 0.5;
-      key.shadow.camera.far = 12;
-      key.shadow.camera.left = -4;
-      key.shadow.camera.right = 4;
-      key.shadow.camera.top = 4;
-      key.shadow.camera.bottom = -4;
-    }
+    key.castShadow = false;
     scene.add(key);
 
     const rim = new THREE.SpotLight(0xd0e8ff, 1.8, 8.5, 0.42, 0.88, 1.2);
     rim.position.set(-3.9, 3.4, 4.7);
-    rim.castShadow = true;
+    rim.castShadow = false;
     scene.add(rim);
 
     const back = new THREE.PointLight(0xc8d8e8, 0.9, 7.5);
     back.position.set(0.6, 1.8, -3.6);
     scene.add(back);
+
+    // WebGL cast shadows disabled — they produce a uniformly-soft edge that
+    // can't fake the near-sharp / far-melt falloff of a real photo shadow.
+    // The contact shadow is drawn as a layered CSS radial gradient on
+    // .hero-model-scene::after instead (see styles/home.css).
 
     const { json, buffers } = await loadGltf();
     const { object: model, size, scale, pedestalFacesRemoved } = await buildModel(json, buffers);

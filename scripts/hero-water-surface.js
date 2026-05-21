@@ -24,6 +24,7 @@ window.initHeroWaterSurface = (canvas, { reducedMotion = false, getScrollProgres
     uniform float u_speed;
     uniform float u_size;
     uniform int   u_frame;
+    uniform float u_time;
     varying vec2 v_uv;
 
     float sdLine(vec2 p, vec2 a, vec2 b) {
@@ -33,6 +34,13 @@ window.initHeroWaterSurface = (canvas, { reducedMotion = false, getScrollProgres
       if (len2 < 0.000001) return length(pa) / vel;
       float h = clamp(dot(pa,ba)/len2, 0.0, 1.0);
       return length(pa - ba*h) / vel;
+    }
+
+    // hash for pseudo-random ambient excitation
+    float hash21(vec2 p) {
+      p = fract(p * vec2(123.34, 456.21));
+      p += dot(p, p + 45.32);
+      return fract(p.x * p.y);
     }
 
     void main() {
@@ -51,6 +59,14 @@ window.initHeroWaterSurface = (canvas, { reducedMotion = false, getScrollProgres
       d += -(self.g - 0.5) * 2.0 + (top + right + bottom + left - 2.0);
       d *= 0.99;
       d *= float(u_frame > 5);
+
+      // Ambient breathing — sparse random impulses so water keeps gently moving
+      // when the pointer is idle. Very low amplitude so it never overpowers the
+      // pointer-driven ripples.
+      vec2 nseed = floor(v_uv * 14.0) + floor(u_time * 0.7);
+      float impulse = step(0.988, hash21(nseed));
+      d += impulse * 0.42;
+
       d = d * 0.5 + 0.5;
 
       gl_FragColor = vec4(d, self.r, 0.0, 1.0);
@@ -67,6 +83,7 @@ window.initHeroWaterSurface = (canvas, { reducedMotion = false, getScrollProgres
     uniform float u_disp;
     uniform float u_light;
     uniform float u_shadow;
+    uniform float u_time;
     varying vec2 v_uv;
 
     const float bias  = 0.2;
@@ -82,8 +99,33 @@ window.initHeroWaterSurface = (canvas, { reducedMotion = false, getScrollProgres
       return c;
     }
 
+    float studioWaveBands(vec2 uv) {
+      float t = u_time;
+      float w1 = sin(uv.y * 34.0 + sin(uv.x * 7.0 + t * 0.16) * 1.8 - t * 0.54);
+      float w2 = sin(uv.y * 64.0 + uv.x * 7.5 + sin(uv.x * 12.0 - t * 0.22) * 0.9 + t * 0.38);
+      float w3 = sin(uv.y * 112.0 - uv.x * 4.6 - t * 0.24);
+      float broad = sin(uv.y * 13.0 + sin(uv.x * 4.8 + t * 0.08) * 1.1 + t * 0.16);
+      float bands = w1 * 0.36 + w2 * 0.25 + w3 * 0.12 + broad * 0.27;
+      return bands * 0.5 + 0.5;
+    }
+
+    float studioGlints(vec2 uv) {
+      float bands = studioWaveBands(uv);
+      float brokenStrands = sin(uv.x * 10.0 + sin(uv.y * 19.0) * 1.5 + u_time * 0.18) * 0.5 + 0.5;
+      float broadPatch = sin(uv.x * 5.2 + sin(uv.y * 8.0 + u_time * 0.08) * 1.7 - u_time * 0.1) * 0.5 + 0.5;
+      float soft = smoothstep(0.55, 0.92, bands);
+      float sharp = smoothstep(0.82, 0.995, bands);
+      float foregroundBloom = smoothstep(0.62, 0.0, uv.y);
+      float glassyPatches = smoothstep(0.58, 0.96, broadPatch) * foregroundBloom;
+      return (soft * 0.3 + sharp * 0.66) * mix(0.72, 1.22, foregroundBloom) * mix(0.58, 1.0, brokenStrands)
+        + glassyPatches * 0.26;
+    }
+
     float bumpMap(vec2 uv, float h) {
-      return 1.0 - blurRipple(uv).r * h;
+      float pointerRipple = blurRipple(uv).r;
+      float ambientRipple = studioWaveBands(uv);
+      float height = mix(0.5, pointerRipple, 0.52) + (ambientRipple - 0.5) * 0.34;
+      return 1.0 - height * h;
     }
 
     vec4 renderPass(vec2 uv, inout float distortion) {
@@ -123,41 +165,82 @@ window.initHeroWaterSurface = (canvas, { reducedMotion = false, getScrollProgres
       return vec4(color, 1.0);
     }
 
+    // Procedural caustics — light focusing from rippling water surface
+    // Produces the bright criss-cross light bands you see at the bottom of a pool
+    float caustics(vec2 uv, float t) {
+      vec2 p = uv * 5.5;
+      vec2 i = vec2(p);
+      float c = 1.0;
+      float inten = 0.0045;
+      for (int n = 0; n < 4; n++) {
+        float tn = t * 0.45 + float(n);
+        i = p + vec2(cos(tn - i.x) + sin(tn + i.y),
+                     sin(tn - i.y) + cos(tn + i.x));
+        c += 1.0 / length(vec2(p.x / (sin(i.x + tn) / inten),
+                               p.y / (cos(i.y + tn) / inten)));
+      }
+      c /= 4.0;
+      c = 1.17 - pow(c, 1.4);
+      return clamp(pow(c, 8.0), 0.0, 1.0);
+    }
+
     void main() {
       float distortion;
       vec4 reflections = renderPass(v_uv, distortion);
 
       float rippleVal = blurRipple(v_uv).r;
-      // wave energy: deviation from neutral 0.5 閳?0 at rest, 1 at peak
-      float energy = clamp(abs(rippleVal - 0.5) * 3.2, 0.0, 1.0);
+      // wave energy: deviation from neutral 0.5 — 0 at rest, 1 at peak
+      float energy = clamp(abs(rippleVal - 0.5) * 3.6, 0.0, 1.0);
+      // signed ripple: positive = crest, negative = trough
+      float signedRipple = (rippleVal - 0.5) * 2.0;
 
       float ripple = 0.16 + distortion * 0.1 - 0.1 + reflections.r * 0.7;
 
-      // base: transparent water floor — light gray with subtle depth
-      vec3 baseNear = vec3(0.88, 0.87, 0.85);
-      vec3 baseFar = vec3(0.92, 0.91, 0.89);
+      float ambientWave = studioWaveBands(v_uv);
+      float glints = studioGlints(v_uv);
+
+      // base: cool aqua-tinted water — tinted enough to read against warm cream background
+      // brand background is #f7f4ee, so we lean cool (blue-cyan) to maximize contrast
+      vec3 baseNear = vec3(0.74, 0.82, 0.86);
+      vec3 baseFar = vec3(0.88, 0.93, 0.95);
       vec3 base = mix(baseNear, baseFar, smoothstep(0.14, 0.94, v_uv.y));
 
-      // transparent water palette: subtle silver/white highlights on waves
-      vec3 tealDim    = vec3(0.82, 0.81, 0.79);
-      vec3 tealMid    = vec3(0.90, 0.89, 0.87);
-      vec3 tealBright = vec3(0.96, 0.95, 0.93);
-      vec3 tealPeak   = vec3(1.00, 0.99, 0.97);
+      // ripple palette: deep teal troughs through aqua to bright white crests
+      // Heavy cyan tint at peaks reads as "wet light" against cream base
+      vec3 tealDim    = vec3(0.22, 0.42, 0.55);   // deep trough — cool teal shadow
+      vec3 tealMid    = vec3(0.55, 0.82, 0.92);   // mid wave — light aqua
+      vec3 tealBright = vec3(0.86, 0.98, 1.00);   // crest — pale cyan
+      vec3 tealPeak   = vec3(1.00, 1.00, 1.00);   // peak — white
 
       vec3 tealCol = mix(tealDim,    tealMid,    smoothstep(0.0,  0.35, energy));
       tealCol      = mix(tealCol,    tealBright, smoothstep(0.35, 0.72, energy));
       tealCol      = mix(tealCol,    tealPeak,   smoothstep(0.72, 1.00, energy));
 
-      vec3 col = mix(base, tealCol, energy * 0.86);
+      // ripple emerges sharply from base — boosted blend
+      vec3 col = mix(base, tealCol, clamp(energy * 1.55, 0.0, 1.0));
+      col += (ambientWave - 0.5) * vec3(0.022, 0.030, 0.038);
 
-      // specular reflection: subtle white highlight
-      col += reflections.rgb * vec3(0.72, 0.70, 0.68) * energy;
-      col += vec3(0.04, 0.03, 0.02) * smoothstep(0.18, 0.92, v_uv.y) * 0.34;
+      // CAUSTICS: light bands focused by water ripples — concentrated where water is active
+      float caust = caustics(v_uv * vec2(1.6, 1.0) + vec2(distortion * 0.1, u_time * 0.04), u_time);
+      // caustics gated by ripple energy + ambient — so they appear in active water + with subtle base shimmer
+      float causticMask = clamp(energy * 1.4 + 0.18, 0.0, 1.0);
+      col += vec3(0.65, 0.92, 1.00) * caust * causticMask * 0.55;
 
+      col = mix(col, vec3(1.0, 1.0, 1.0), glints * 0.78);
+      col += vec3(0.95, 1.00, 1.00) * pow(glints, 2.4) * 0.48;
+
+      // specular reflection — bright cyan-white highlights on crests
+      col += reflections.rgb * vec3(1.04, 1.14, 1.22) * (energy * 0.95 + glints * 0.55);
+      col -= vec3(0.028, 0.030, 0.034) * smoothstep(0.18, 0.92, v_uv.y) * 0.18;
+
+      // bipolar light/shadow — boosted shadow with cool tint to push troughs visibly below the base plane
       float lights = max(0.0, ripple - 0.5);
-      col += lights * (u_light / 10.0) * vec3(0.92, 0.90, 0.86);
+      col += lights * (u_light / 6.0) * vec3(0.98, 1.00, 1.00);
       float shadow = max(0.0, 1.0 - (ripple + 0.5));
-      col -= shadow * (u_shadow / 10.0);
+      // deeper, cooler trough shadows — main contrast driver against cream background
+      col -= shadow * (u_shadow / 3.0) * vec3(0.55, 0.62, 0.72);
+      // explicit trough darkening from signed ripple — adds visible "depth"
+      col -= max(-signedRipple, 0.0) * vec3(0.18, 0.22, 0.28) * 0.6;
 
       // title: wide-kernel blur of ripple height 閳?smooth 2D displacement
       // height deviation from 0.5 is unipolar (no sign flip) 閳?text floats with waves, no oscillation
@@ -178,10 +261,17 @@ window.initHeroWaterSurface = (canvas, { reducedMotion = false, getScrollProgres
       vec4 title = texture2D(u_title, titleUv);
       col = mix(col, title.rgb, title.a * 0.22);
 
-      float vign = 1.0 - smoothstep(0.35, 1.1, length(v_uv - 0.5) * 1.6);
-      col *= vign * 0.92 + 0.08;
+      float vign = 1.0 - smoothstep(0.45, 1.1, length(v_uv - vec2(0.5, 0.48)) * 1.35);
+      col *= vign * 0.22 + 0.78;
 
-      float alpha = (1.0 - u_scroll * 0.82) * 0.72;
+      float bottomBleach = smoothstep(0.02, 0.24, v_uv.y);
+      col = mix(vec3(0.985, 0.99, 0.995), col, bottomBleach);
+
+      // alpha modulated by activity — clear water at rest, denser at active ripples
+      // boosts visible "wetness" wherever pointer is moving
+      float activity = clamp(energy * 1.6 + caust * 0.4 + glints * 0.3, 0.0, 1.0);
+      float baseAlpha = (1.0 - u_scroll * 0.82) * 0.94 * mix(0.10, 1.0, bottomBleach);
+      float alpha = baseAlpha * mix(0.55, 1.0, activity);
       gl_FragColor = vec4(clamp(col, 0.0, 1.0) * alpha, alpha);
     }
   `;
@@ -315,6 +405,7 @@ window.initHeroWaterSurface = (canvas, { reducedMotion = false, getScrollProgres
     speed:      gl.getUniformLocation(simProg, "u_speed"),
     size:       gl.getUniformLocation(simProg, "u_size"),
     frame:      gl.getUniformLocation(simProg, "u_frame"),
+    time:       gl.getUniformLocation(simProg, "u_time"),
   };
   const uRender = {
     ripple:   gl.getUniformLocation(renderProg, "u_ripple"),
@@ -324,6 +415,7 @@ window.initHeroWaterSurface = (canvas, { reducedMotion = false, getScrollProgres
     disp:     gl.getUniformLocation(renderProg, "u_disp"),
     light:    gl.getUniformLocation(renderProg, "u_light"),
     shadow:   gl.getUniformLocation(renderProg, "u_shadow"),
+    time:     gl.getUniformLocation(renderProg, "u_time"),
   };
 
   // 閳光偓閳光偓 mouse state 閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓閳光偓
@@ -394,10 +486,11 @@ window.initHeroWaterSurface = (canvas, { reducedMotion = false, getScrollProgres
     gl.uniform2f(uSim.mouse,     mx,   my);
     gl.uniform2f(uSim.lastMouse, lmx,  lmy);
     gl.uniform2f(uSim.velocity,  velX, velY);
-    gl.uniform1f(uSim.viscosity, 9.0);
+    gl.uniform1f(uSim.viscosity, 12.0);
     gl.uniform1f(uSim.speed,     4.0);
-    gl.uniform1f(uSim.size,      1.25);
+    gl.uniform1f(uSim.size,      1.85);
     gl.uniform1i(uSim.frame,     frame);
+    gl.uniform1f(uSim.time,      performance.now() * 0.001);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 
     const tmp = read; read = write; write = tmp;
@@ -419,9 +512,10 @@ window.initHeroWaterSurface = (canvas, { reducedMotion = false, getScrollProgres
     gl.uniform1i(uRender.ripple,  0);
     gl.uniform2f(uRender.simRes,  simW, simH);
     gl.uniform1f(uRender.scroll,  sp);
-    gl.uniform1f(uRender.disp,    24.0);
-    gl.uniform1f(uRender.light,   7.0);
-    gl.uniform1f(uRender.shadow,  4.0);
+    gl.uniform1f(uRender.disp,    36.0);
+    gl.uniform1f(uRender.light,   11.0);
+    gl.uniform1f(uRender.shadow,  4.5);
+    gl.uniform1f(uRender.time,    performance.now() * 0.001);
 
     gl.activeTexture(gl.TEXTURE1);
     gl.bindTexture(gl.TEXTURE_2D, titleTex);

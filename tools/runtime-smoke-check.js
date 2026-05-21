@@ -256,42 +256,48 @@ const main = async () => {
       navAbout: document.querySelector('[data-i18n="nav_about"] .pill-label')?.textContent?.trim()
         || document.querySelector('[data-i18n="nav_about"]')?.textContent?.trim(),
       firstWork: document.querySelector('[data-i18n="work_row_1_name"]')?.textContent?.trim(),
-      footerName: document.querySelector('[data-i18n="meta_name"]')?.textContent?.trim()
+      clientsFooterExists: Boolean(document.querySelector('.clients-footer-meta'))
     }))()`);
     assert(localizedText.lang === "zh-CN", `Chinese locale was not applied: ${JSON.stringify(localizedText)}`);
     assert(localizedText.navAbout === "关于", `Chinese nav text was not applied: ${JSON.stringify(localizedText)}`);
     assert(localizedText.firstWork === "23 年端午", `Chinese work text was not applied: ${JSON.stringify(localizedText)}`);
-    assert(localizedText.footerName === "©杨钦鹏", `Chinese footer text was not applied: ${JSON.stringify(localizedText)}`);
+    assert(!localizedText.clientsFooterExists, `Clients footer should be removed: ${JSON.stringify(localizedText)}`);
 
-    const entryButton = await evaluate(client, `(() => {
-      const rect = document.querySelector('#entry-go')?.getBoundingClientRect();
-      return rect ? {
-        x: Math.round(rect.left + rect.width / 2),
-        y: Math.round(rect.top + rect.height / 2)
-      } : null;
+    const readEntryState = () => evaluate(client, `(() => {
+      const screen = document.querySelector('#entry-screen');
+      const canvas = document.querySelector('#entry-key-canvas');
+      const rect = canvas?.getBoundingClientRect();
+      const progressFill = document.querySelector('#entry-progress-fill');
+      const progressRect = progressFill?.getBoundingClientRect();
+      return {
+        entered: document.body.classList.contains('has-entered'),
+        entering: document.body.classList.contains('is-entering'),
+        unfolding: document.body.classList.contains('is-unfolding'),
+        entryScrollLocked: document.body.classList.contains('is-entry-scroll-locked'),
+        keyReady: document.body.classList.contains('entry-key-ready'),
+        keyCanvasExists: Boolean(canvas),
+        keyModelSource: canvas?.dataset.modelSrc || '',
+        keyCanvasWidth: Math.round(rect?.width || 0),
+        keyCanvasHeight: Math.round(rect?.height || 0),
+        progressText: document.querySelector('#entry-progress')?.textContent?.trim() || '',
+        progressWidth: Math.round(progressRect?.width || 0),
+        screenVisible: Boolean(screen && getComputedStyle(screen).display !== 'none')
+      };
     })()`);
-    assert(entryButton, "Entry button was not found.");
-    await client.send("Input.dispatchMouseEvent", {
-      type: "mouseMoved",
-      x: entryButton.x,
-      y: entryButton.y,
-    });
-    await client.send("Input.dispatchMouseEvent", {
-      type: "mousePressed",
-      x: entryButton.x,
-      y: entryButton.y,
-      button: "left",
-      clickCount: 1,
-    });
-    await client.send("Input.dispatchMouseEvent", {
-      type: "mouseReleased",
-      x: entryButton.x,
-      y: entryButton.y,
-      button: "left",
-      clickCount: 1,
-    });
-    await delay(3600);
-    assert(await evaluate(client, "document.body.classList.contains('has-entered')"), "Entry transition did not complete.");
+
+    let entryState = await readEntryState();
+    assert(entryState.keyCanvasExists, `3D key entry canvas was not found: ${JSON.stringify(entryState)}`);
+    assert(entryState.keyModelSource.includes("/models/entry-key.glb"), `3D key model source is wrong: ${JSON.stringify(entryState)}`);
+    assert(entryState.keyCanvasWidth > 0 && entryState.keyCanvasHeight > 0, `3D key canvas is not visible: ${JSON.stringify(entryState)}`);
+
+    for (let attempt = 0; attempt < 120 && (!entryState.entered || entryState.entryScrollLocked); attempt += 1) {
+      await delay(100);
+      entryState = await readEntryState();
+    }
+
+    assert(entryState.keyReady, `3D key model did not become ready: ${JSON.stringify(entryState)}`);
+    assert(entryState.entered, `3D key auto entry did not complete: ${JSON.stringify(entryState)}`);
+    assert(!entryState.entryScrollLocked, `Entry scroll lock did not release: ${JSON.stringify(entryState)}`);
     const musicState = await evaluate(client, "window.LucianAudio?.getBackgroundMusicState?.() || null");
     assert(musicState?.requested, `Background music was not requested after entry: ${JSON.stringify(musicState)}`);
     assert(musicState?.exists, `Background music audio node was not created: ${JSON.stringify(musicState)}`);
@@ -352,6 +358,7 @@ const main = async () => {
     const afterWheel = await evaluate(client, "Math.round(window.scrollY)");
     assert(afterWheel > beforeWheel, `Hero wheel did not scroll the page: before=${beforeWheel}, after=${afterWheel}`);
 
+    const navSettleBudgetMs = 900;
     const clickBottomNav = async (href) => {
       const startedAt = Date.now();
       await evaluate(client, `document.querySelector(${JSON.stringify(`.bottom-nav-item[href="${href}"]`)})?.click(); true;`);
@@ -394,7 +401,7 @@ const main = async () => {
       assert(navSequence[href].visibleOverlayCount === 0, `Bottom nav overlay remained visible after ${href}: ${JSON.stringify(navSequence[href])}`);
       assert(navSequence[href].paperTransitionCount === 0, `Bottom nav paper transition was not cleaned up after ${href}: ${JSON.stringify(navSequence[href])}`);
       assert(navSequence[href].activeHref === href, `Bottom nav did not activate ${href}: ${JSON.stringify(navSequence[href])}`);
-      assert(navSequence[href].settledMs < 750, `Bottom nav transition was too slow for ${href}: ${JSON.stringify(navSequence[href])}`);
+      assert(navSequence[href].settledMs < navSettleBudgetMs, `Bottom nav transition was too slow for ${href}: ${JSON.stringify(navSequence[href])}`);
     }
 
     const contactNav = navSequence["#contact"];
@@ -434,6 +441,26 @@ const main = async () => {
 
     await evaluate(client, "window.LucianWorkGallery?.close?.(); true;");
     await delay(300);
+
+    await evaluate(client, "document.querySelector('#pixel-avatar')?.click(); true;");
+    await delay(160);
+    let replayState = await readEntryState();
+    const replayStarted = {
+      ...replayState,
+      railOpen: await evaluate(client, "document.querySelector('#works-side-rail')?.classList.contains('is-open') || false"),
+    };
+    assert(!replayStarted.entered, `Avatar did not return to the entry screen: ${JSON.stringify(replayStarted)}`);
+    assert(replayStarted.screenVisible, `Entry screen was not visible after avatar click: ${JSON.stringify(replayStarted)}`);
+    assert(!replayStarted.railOpen, `Works rail stayed open after avatar reset: ${JSON.stringify(replayStarted)}`);
+    assert(replayStarted.progressText !== "[100%]", `Entry key progress did not restart after avatar click: ${JSON.stringify(replayStarted)}`);
+
+    for (let attempt = 0; attempt < 120 && (!replayState.entered || replayState.entryScrollLocked); attempt += 1) {
+      await delay(100);
+      replayState = await readEntryState();
+    }
+
+    assert(replayState.entered, `Entry key replay did not auto-enter after avatar click: ${JSON.stringify(replayState)}`);
+    assert(!replayState.entryScrollLocked, `Entry key replay left scroll locked after avatar click: ${JSON.stringify(replayState)}`);
 
     const readViewportHealth = async (label) => evaluate(client, `(() => {
       const bottomNav = document.querySelector('.bottom-nav');

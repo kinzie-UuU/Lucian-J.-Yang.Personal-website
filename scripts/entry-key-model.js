@@ -167,17 +167,35 @@
 
   /* ─── Load and animate ─── */
   let model = null;
-  let raf = null;
-  const startTime = performance.now();
+  let raf = 0;
+  let progressRaf = 0;
+  let progressRun = 0;
+  let animationStartedAt = performance.now();
+  let modelLoaded = false;
+  let disposed = false;
+
+  const delay = parseInt(canvas.dataset.autoEnterDelay || "2400", 10);
+  const progressEl = document.getElementById("entry-progress");
+  const progressFill = document.getElementById("entry-progress-fill");
+
+  const setProgress = (pct) => {
+    const clamped = Math.max(0, Math.min(100, Math.round(pct)));
+    if (progressEl) progressEl.textContent = `[${clamped}%]`;
+    if (progressFill) progressFill.style.width = `${clamped}%`;
+  };
+
+  const cancelProgress = () => {
+    progressRun += 1;
+    if (progressRaf) cancelAnimationFrame(progressRaf);
+    progressRaf = 0;
+  };
 
   const animate = () => {
-    if (document.body.classList.contains("has-entered")) {
-      renderer.dispose();
-      return;
-    }
+    raf = 0;
+    if (disposed || document.body.classList.contains("has-entered")) return;
     raf = requestAnimationFrame(animate);
 
-    const elapsed = (performance.now() - startTime) * 0.001;
+    const elapsed = (performance.now() - animationStartedAt) * 0.001;
     const rect = canvas.getBoundingClientRect();
     const w = rect.width || 280;
     const h = rect.height || 280;
@@ -197,38 +215,68 @@
     renderer.render(scene, camera);
   };
 
+  const startAnimation = () => {
+    if (disposed || raf || !modelLoaded) return;
+    animationStartedAt = performance.now();
+    raf = requestAnimationFrame(animate);
+  };
+
+  const playProgress = () => {
+    if (disposed) return;
+    cancelProgress();
+    setProgress(0);
+    if (!modelLoaded) return;
+
+    document.body.classList.add("entry-key-ready");
+    startAnimation();
+
+    const run = ++progressRun;
+    const progressStart = performance.now();
+
+    const updateProgress = () => {
+      if (disposed || run !== progressRun) return;
+      if (document.body.classList.contains("has-entered")) {
+        progressRaf = 0;
+        return;
+      }
+
+      const elapsed = performance.now() - progressStart;
+      const pct = Math.min(Math.round((elapsed / delay) * 100), 100);
+      setProgress(pct);
+
+      if (pct < 100) {
+        progressRaf = requestAnimationFrame(updateProgress);
+        return;
+      }
+
+      progressRaf = 0;
+      window.dispatchEvent(new CustomEvent("entry-key-ready"));
+    };
+
+    progressRaf = requestAnimationFrame(updateProgress);
+  };
+
+  window.LucianEntryKey = {
+    replay: playProgress,
+    reset: playProgress,
+    isReady() {
+      return modelLoaded;
+    },
+  };
+
   const init = async () => {
     const response = await fetch(modelUrl);
     if (!response.ok) throw new Error(`Key model fetch failed: ${response.status}`);
     const { json, buffers } = parseGlb(await response.arrayBuffer());
     model = buildModel(json, buffers);
     scene.add(model);
+    modelLoaded = true;
 
     // Signal ready — hide decorations
     document.body.classList.add("entry-key-ready");
 
     // Start render loop
-    animate();
-
-    // Drive progress counter and bar in sync with auto-enter delay
-    const delay = parseInt(canvas.dataset.autoEnterDelay || "2400", 10);
-    const progressEl = document.getElementById("entry-progress");
-    const progressFill = document.getElementById("entry-progress-fill");
-    const progressStart = performance.now();
-
-    const updateProgress = () => {
-      const elapsed = performance.now() - progressStart;
-      const pct = Math.min(Math.round((elapsed / delay) * 100), 100);
-      if (progressEl) progressEl.textContent = `[${pct}%]`;
-      if (progressFill) progressFill.style.width = `${pct}%`;
-      if (pct < 100) {
-        requestAnimationFrame(updateProgress);
-      } else {
-        // 100% reached — trigger enter
-        window.dispatchEvent(new CustomEvent("entry-key-ready"));
-      }
-    };
-    requestAnimationFrame(updateProgress);
+    playProgress();
   };
 
   init().catch((err) => {
@@ -238,7 +286,9 @@
 
   // Cleanup on page hide
   window.addEventListener("pagehide", () => {
-    cancelAnimationFrame(raf);
+    disposed = true;
+    cancelProgress();
+    if (raf) cancelAnimationFrame(raf);
     renderer.dispose();
   }, { once: true });
 })();

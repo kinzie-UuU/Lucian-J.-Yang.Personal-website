@@ -155,6 +155,95 @@ window.LucianApp = window.initLucianApp?.() || null;
 
 脚本顺序是项目最脆的部分之一。新增、删除或移动脚本前，先确认依赖链和浏览器行为。
 
+## 转场系统（三段式）
+
+网站有三段连续的转场，方向和手法各不相同，形成节奏感。
+
+### 第一段：入口 → Hero（舞台幕布，水平）
+
+**触发：** 用户在 `#entry-screen` 滚动/触摸，或 3D 钥匙动画完成后自动触发。
+
+**时序（`scripts/entry.js`）：**
+
+1. **Phase 1（0ms）** — `body.is-unfolding`：钥匙旋转 + 亮闪 CSS 动画（480ms）
+2. **Phase 2（380ms）** — 切换到 `body.is-entering`：左右两块幕布向两侧收起（900ms，`easeInOutQuint cubic-bezier(0.83, 0, 0.17, 1)`），Hero 从"幕后"以 `heroStageReveal` 动画淡入（scale 1.04→1.0，blur 4px→0）
+3. **Phase 3（1280ms）** — 切换到 `body.has-entered`：转场完成，解锁滚动
+
+**关键 CSS（`styles/home.css`）：**
+
+- `.entry-stage-curtains`：`position: fixed; inset: 0; z-index: 9999`，放在 body 顶层（`</header>` 之后，`<main>` 之前）
+- 幕布用 `translateX` 向左/右退出，不用 `scaleX`（避免首帧黑块）
+- `body.is-unfolding, body.is-entering { background: #000 }`（`styles.css`）防止米白底色在转场中露出
+
+### 第二段：Hero → Portrait（黑幕弹起，垂直）
+
+**触发：** 用户滚动超过 Hero 区域约 10vh（`TRIGGER = 0.10`）。
+
+**机制（`scripts/hero-curtain.js`）：**
+
+- `.hero-section` 高度 `calc(100vh + 22vh)`，其中 22vh 是 sticky 锁定区（spacer）
+- `.hero-stage` 是 `position: sticky; top: 0; height: 100vh`，在 spacer 内保持固定
+- 当 `(-heroSection.getBoundingClientRect().top) / vh > TRIGGER` 时，给 `.hero-stage` 加 `is-curtain-down`
+- `.hero-curtain` 平时 `translateY(108%)`（在视口下方），触发后 `translateY(0)` 铺满全屏
+- 过渡曲线：`1320ms cubic-bezier(0.16, 1, 0.3, 1)`（easeOutExpo），一次性果冻弹起
+- 重置阈值 `RESET = 0.02`，防止在触发点附近抖动
+
+**z-index 层级：**
+
+- `.hero-section { z-index: 3 }`（高于 portrait 的 z-index: 2），防止 portrait 黑色背景从 hero 底部渗出
+- `.hero-curtain` 在 `.hero-stage` 内，随 sticky 一起覆盖 portrait
+
+### 第三段：Portrait 暗房显影（从中心渐显）
+
+**机制（`scripts/portrait-motion.js` + `styles/about.css`）：**
+
+- `.portrait-about-wrapper` 是普通流元素（无 sticky），`.portrait-spacer { height: 160vh }` 提供滚动行程
+- `progress = clamp01(-rect.top / scrollable)`，0 = 刚进入，1 = 完全滚过
+- **人物显现（0 → 0.40）：** 用三次 smoothstep（cubic，比五次 smootherstep 起步更快）
+  ```js
+  const enterRaw = clamp01(progress / 0.40);
+  targetEnter = enterRaw * enterRaw * (3 - 2 * enterRaw);
+  ```
+- **视频 scrub（0.32 → 0.90）：** 与显现末段交叉淡入，人物转脸
+  ```js
+  const rawVideoProgress = clamp01((progress - 0.32) / 0.58);
+  targetVideoTime = video.duration * smootherStep(rawVideoProgress);
+  ```
+- **文字显现（0.42 → 0.74）：** 人物完全显现后，About 文案逐字淡入
+- **退出（0.78 → 0.96）：** 人物和文字淡出，为下一区域让路
+
+**阻尼系数（`renderMotion()`）：**
+
+| 变量 | 系数 | 约追赶时间 |
+|---|---|---|
+| `currentEnter` | 0.16 | ~220ms |
+| `currentTextEnter` | 0.075 | ~450ms |
+| `currentProgressValue` | 0.07 | ~480ms |
+| `currentExit` | 0.085 | ~420ms |
+| `smoothedVideoTime`（scrub） | 0.12 | ~300ms |
+
+**CSS 变量（`styles/about.css`）：**
+
+- `--portrait-enter`：控制 opacity、brightness、blur（暗房显影感）
+- `--portrait-text-enter`：控制文案 reveal
+- `--portrait-progress`：通用进度
+- `--portrait-exit`：退出淡出
+
+### 转场方向原则
+
+入口→Hero 用**水平**（幕布左右收），Hero→Portrait 用**垂直**（黑幕向上弹），Portrait 内部用**原地渐显**（无方向感）。三段方向不重复，形成节奏层次。
+
+### 修改转场系统的入口文件
+
+- `scripts/entry.js`：入口→Hero 时序
+- `scripts/hero-curtain.js`：Hero→Portrait 触发逻辑
+- `scripts/portrait-motion.js`：Portrait 显现公式和阻尼
+- `styles/home.css`：幕布 CSS、Hero sticky 结构、`@keyframes`
+- `styles/about.css`：Portrait CSS 变量消费、spacer 高度
+- `styles.css`：`body.is-unfolding / is-entering` 背景色
+
+---
+
 ## 关键 JS 模块职责
 
 - `app-bootstrap.js`：创建 app、初始化 runtime bridge、语言、Hero 状态、Hero 水面与 wireframe
@@ -168,6 +257,7 @@ window.LucianApp = window.initLucianApp?.() || null;
 - `liquid-glass-field.js`：Hero 全屏液态扰动场
 - `hero-glb-model.js`：Hero 狮头 GLB 模型加载、灯光和指针转向
 - `hero-ripples.js`：Hero 点击/指针涟漪
+- `hero-curtain.js`：Hero→Portrait 黑幕弹起触发（sticky 锁定 + is-curtain-down 类切换）
 - `hero-wireframe.js`：Hero SVG wireframe
 - `services-entry-grid-scan.js`：Services 入口 Three.js grid scan
 - `service-panel-shaders.js`：Services panel WebGL shader
@@ -184,7 +274,7 @@ window.LucianApp = window.initLucianApp?.() || null;
 - `contact-interactions.js`：联系表单、复制、微信 QR modal
 - `scroll-type-effects.js`、`scrambled-text.js`、`flip-text.js`、`reveal-effects.js`：文字和 reveal 动效
 - `clients-marquee.js`、`clients-title-interaction.js`：客户区 marquee 和标题交互
-- `portrait-motion.js`：About portrait sticky motion 和视频 scrub
+- `portrait-motion.js`：About portrait 暗房显影（opacity/brightness/blur CSS 变量驱动）、视频 scrub 阻尼、About 文案逐字 reveal
 - `precision-cursor.js`：全局精密光标与 Hero field pointer
 
 ## 数据与文案
@@ -221,6 +311,7 @@ window.LucianApp = window.initLucianApp?.() || null;
 - `site-data.js` 的数据结构、图片路径和双语文案
 - `scripts/work-gallery.js`
 - `scripts/hero-water-surface.js`
+- `scripts/hero-curtain.js`
 - `scripts/liquid-glass-field.js`
 - `scripts/hero-glb-model.js`
 - `scripts/hero-sequence-runtime.js`
@@ -269,10 +360,25 @@ window.LucianApp = window.initLucianApp?.() || null;
 - `scripts/hero-state-runtime.js`
 - `scripts/hero-sequence-runtime.js`
 - `scripts/hero-water-surface.js`
+- `scripts/hero-curtain.js`（Hero→Portrait 黑幕触发）
 - `scripts/liquid-glass-field.js`
 - `scripts/hero-glb-model.js`
 - `scripts/hero-ripples.js`
 - `scripts/hero-wireframe.js`
+
+修改入口转场（Entry → Hero）：
+
+- `scripts/entry.js`
+- `styles/home.css`（幕布 CSS、`@keyframes`）
+- `styles.css`（`body.is-unfolding / is-entering` 背景色）
+- `index.html`（`.entry-stage-curtains` DOM 位置）
+
+修改 Portrait 显现（Hero → Portrait）：
+
+- `scripts/hero-curtain.js`
+- `scripts/portrait-motion.js`
+- `styles/home.css`（`.hero-section` sticky 结构）
+- `styles/about.css`（CSS 变量消费、spacer 高度）
 
 修改 Services：
 

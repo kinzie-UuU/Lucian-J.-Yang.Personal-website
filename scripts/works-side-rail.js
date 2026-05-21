@@ -61,5 +61,9 @@
     close({ restoreFocus: true });
   });
 
+  window.addEventListener("lucian:return-to-entry", () => {
+    close();
+  });
+
   setOpen(false);
 })();

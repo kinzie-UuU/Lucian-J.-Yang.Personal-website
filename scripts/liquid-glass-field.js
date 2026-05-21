@@ -10,7 +10,7 @@
     canvas.id = "liquid-glass-field";
     canvas.className = "liquid-glass-field";
     canvas.setAttribute("aria-hidden", "true");
-    stage.append(canvas);
+    document.body.append(canvas);
 
     const glState = getWebGLContext(canvas);
     if (!glState) {
@@ -21,14 +21,14 @@
     const { gl, ext, isWebGL2 } = glState;
     const config = {
       textureDownsample: 1,
-      densityDissipation: 0.982,
-      velocityDissipation: 0.991,
-      pressureDissipation: 0.82,
-      pressureIterations: 22,
-      curl: 18,
-      pointerRadius: 0.0032,
-      orbitRadius: 0.0038,
-      distortionPower: 0.18,
+      densityDissipation: 0.962,
+      velocityDissipation: 0.986,
+      pressureDissipation: 0.86,
+      pressureIterations: 26,
+      curl: 5,
+      pointerRadius: 0.00165,
+      orbitRadius: 0.0026,
+      distortionPower: 0.105,
     };
 
     let textureWidth = 1;
@@ -510,15 +510,15 @@
       ctx.lineCap = "round";
       ctx.lineJoin = "round";
 
-      ctx.fillStyle = "rgba(23, 193, 178, 0.040)";
+      ctx.fillStyle = "rgba(236, 238, 235, 0.018)";
       ctx.fillRect(0, 0, textureWidthCanvas, textureHeightCanvas);
 
       const wash = ctx.createLinearGradient(0, 0, textureWidthCanvas, textureHeightCanvas);
-      wash.addColorStop(0, "rgba(63, 242, 225, 0.092)");
-      wash.addColorStop(0.28, "rgba(0, 160, 150, 0.044)");
-      wash.addColorStop(0.55, "rgba(255, 72, 96, 0.038)");
-      wash.addColorStop(0.78, "rgba(0, 184, 169, 0.054)");
-      wash.addColorStop(1, "rgba(74, 255, 231, 0.088)");
+      wash.addColorStop(0, "rgba(246, 248, 244, 0.070)");
+      wash.addColorStop(0.28, "rgba(210, 214, 210, 0.036)");
+      wash.addColorStop(0.55, "rgba(255, 244, 232, 0.030)");
+      wash.addColorStop(0.78, "rgba(216, 220, 216, 0.040)");
+      wash.addColorStop(1, "rgba(250, 252, 248, 0.066)");
       ctx.fillStyle = wash;
       ctx.fillRect(0, 0, textureWidthCanvas, textureHeightCanvas);
 
@@ -530,9 +530,9 @@
         textureHeightCanvas * 0.48,
         textureWidthCanvas * 0.72
       );
-      film.addColorStop(0, "rgba(72, 245, 224, 0.110)");
-      film.addColorStop(0.46, "rgba(0, 178, 162, 0.060)");
-      film.addColorStop(1, "rgba(0, 92, 84, 0.036)");
+      film.addColorStop(0, "rgba(250, 252, 248, 0.092)");
+      film.addColorStop(0.46, "rgba(222, 224, 220, 0.050)");
+      film.addColorStop(1, "rgba(138, 136, 128, 0.026)");
       ctx.fillStyle = film;
       ctx.fillRect(0, 0, textureWidthCanvas, textureHeightCanvas);
       ctx.globalCompositeOperation = "lighter";
@@ -574,55 +574,55 @@
       strokeCurve({
         width: 36,
         blur: 18,
-        color: "rgba(0, 226, 204, 0.24)",
+        color: "rgba(236, 240, 236, 0.18)",
         points: [[-0.08, 0.26], [0.18, 0.10], [0.46, 0.05], [0.72, 0.18], [0.98, 0.30], [1.10, 0.58], [0.82, 0.86]],
       });
       strokeCurve({
         width: 34,
         blur: 16,
-        color: "rgba(72, 255, 231, 0.18)",
+        color: "rgba(250, 252, 248, 0.14)",
         points: [[-0.10, 0.03], [0.16, 0.20], [0.34, 0.28], [0.52, 0.20], [0.74, 0.10], [0.90, 0.18], [1.12, 0.36]],
       });
       strokeCurve({
         width: 26,
         blur: 12,
-        color: "rgba(255, 77, 96, 0.24)",
+        color: "rgba(255, 238, 224, 0.14)",
         points: [[1.08, 0.12], [0.86, 0.34], [0.86, 0.56], [0.68, 0.78], [0.50, 1.02], [0.20, 0.92], [-0.06, 0.72]],
       });
       strokeCurve({
         width: 16,
         blur: 6,
-        color: "rgba(215, 255, 248, 0.30)",
+        color: "rgba(252, 254, 250, 0.24)",
         points: [[0.00, 0.62], [0.22, 0.48], [0.40, 0.42], [0.58, 0.50], [0.76, 0.60], [0.92, 0.38], [1.05, 0.24]],
       });
       strokeCurve({
         width: 10,
         blur: 3,
-        color: "rgba(94, 255, 230, 0.30)",
+        color: "rgba(238, 242, 238, 0.22)",
         points: [[0.06, 0.18], [0.24, 0.30], [0.38, 0.22], [0.54, 0.15], [0.74, 0.08], [0.88, 0.18], [1.02, 0.42]],
       });
       strokeCurve({
         width: 9,
         blur: 4,
-        color: "rgba(255, 151, 166, 0.22)",
+        color: "rgba(255, 244, 232, 0.13)",
         points: [[-0.06, 0.84], [0.16, 0.72], [0.30, 0.86], [0.46, 0.78], [0.62, 0.70], [0.80, 0.82], [1.06, 0.72]],
       });
       strokeCurve({
         width: 18,
         blur: 9,
-        color: "rgba(173, 255, 246, 0.20)",
+        color: "rgba(236, 240, 236, 0.14)",
         points: [[0.12, -0.08], [0.04, 0.18], [0.14, 0.34], [0.30, 0.48], [0.46, 0.62], [0.44, 0.84], [0.24, 1.08]],
       });
       strokeCurve({
         width: 22,
         blur: 11,
-        color: "rgba(0, 202, 190, 0.18)",
+        color: "rgba(218, 222, 218, 0.13)",
         points: [[0.92, -0.06], [0.72, 0.18], [0.80, 0.36], [0.96, 0.50], [1.12, 0.66], [0.86, 0.86], [0.70, 1.06]],
       });
-      strokeEllipse({ rotation: 0.02, width: 24, color: "rgba(0, 190, 178, 0.24)", blur: 10, start: -3.20, end: 0.12, scaleX: 0.92, scaleY: 0.84 });
-      strokeEllipse({ rotation: 0.18, width: 18, color: "rgba(255, 67, 86, 0.22)", blur: 8, start: -0.30, end: 2.15, scaleX: 0.78, scaleY: 0.90 });
-      strokeEllipse({ rotation: -0.42, width: 16, color: "rgba(90, 255, 232, 0.18)", blur: 8, start: 1.80, end: 5.42, x: -textureWidthCanvas * 0.34, y: -textureHeightCanvas * 0.22, scaleX: 0.82, scaleY: 0.50 });
-      strokeEllipse({ rotation: 0.50, width: 18, color: "rgba(255, 99, 124, 0.16)", blur: 9, start: -1.28, end: 2.80, x: textureWidthCanvas * 0.34, y: textureHeightCanvas * 0.24, scaleX: 0.88, scaleY: 0.54 });
+      strokeEllipse({ rotation: 0.02, width: 24, color: "rgba(230, 234, 230, 0.16)", blur: 10, start: -3.20, end: 0.12, scaleX: 0.92, scaleY: 0.84 });
+      strokeEllipse({ rotation: 0.18, width: 18, color: "rgba(255, 238, 224, 0.13)", blur: 8, start: -0.30, end: 2.15, scaleX: 0.78, scaleY: 0.90 });
+      strokeEllipse({ rotation: -0.42, width: 16, color: "rgba(238, 242, 238, 0.12)", blur: 8, start: 1.80, end: 5.42, x: -textureWidthCanvas * 0.34, y: -textureHeightCanvas * 0.22, scaleX: 0.82, scaleY: 0.50 });
+      strokeEllipse({ rotation: 0.50, width: 18, color: "rgba(255, 244, 232, 0.10)", blur: 9, start: -1.28, end: 2.80, x: textureWidthCanvas * 0.34, y: textureHeightCanvas * 0.24, scaleX: 0.88, scaleY: 0.54 });
 
       imageRatio = textureCanvas.width / textureCanvas.height;
       gl.activeTexture(gl.TEXTURE8);
@@ -637,9 +637,8 @@
     };
 
     const resize = () => {
-      const rect = stage.getBoundingClientRect();
-      width = Math.max(1, Math.round(rect.width || window.innerWidth || 1));
-      height = Math.max(1, Math.round(rect.height || window.innerHeight || 1));
+      width = Math.max(1, Math.round(window.innerWidth || document.documentElement.clientWidth || 1));
+      height = Math.max(1, Math.round(window.innerHeight || document.documentElement.clientHeight || 1));
       const dpr = Math.min(window.devicePixelRatio || 1, 1.35);
       const nextWidth = Math.max(1, Math.floor(width * dpr));
       const nextHeight = Math.max(1, Math.floor(height * dpr));
@@ -676,17 +675,17 @@
 
     const seedOrbit = (time) => {
       const compact = width < 760;
-      const speed = compact ? 1.04 : 1.24;
+      const speed = compact ? 1.18 : 1.38;
       const edge = compact ? 0.04 : 0.025;
       const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
       const routes = [
-        { cx: 0.18, cy: 0.18, rx: 0.30, ry: 0.20, skew: 0.08, phase: 0.00, rate: 0.30, radius: 1.16, energy: 0.075 },
-        { cx: 0.78, cy: 0.20, rx: 0.28, ry: 0.24, skew: -0.10, phase: 1.42, rate: -0.34, radius: 1.10, energy: 0.070 },
-        { cx: 0.24, cy: 0.72, rx: 0.34, ry: 0.22, skew: -0.06, phase: 2.68, rate: -0.28, radius: 1.22, energy: 0.078 },
-        { cx: 0.76, cy: 0.76, rx: 0.30, ry: 0.22, skew: 0.10, phase: 3.72, rate: 0.31, radius: 1.22, energy: 0.080 },
-        { cx: 0.50, cy: 0.46, rx: 0.50, ry: 0.36, skew: 0.04, phase: 4.60, rate: 0.22, radius: 1.42, energy: 0.066 },
-        { cx: 0.50, cy: 0.10, rx: 0.46, ry: 0.16, skew: 0.12, phase: 5.30, rate: -0.26, radius: 1.08, energy: 0.062 },
-        { cx: 0.50, cy: 0.90, rx: 0.46, ry: 0.15, skew: -0.12, phase: 0.84, rate: 0.24, radius: 1.12, energy: 0.064 },
+        { cx: 0.18, cy: 0.18, rx: 0.30, ry: 0.20, skew: 0.08, phase: 0.00, rate: 0.34, radius: 0.86, energy: 0.040 },
+        { cx: 0.78, cy: 0.20, rx: 0.28, ry: 0.24, skew: -0.10, phase: 1.42, rate: -0.38, radius: 0.82, energy: 0.038 },
+        { cx: 0.24, cy: 0.72, rx: 0.34, ry: 0.22, skew: -0.06, phase: 2.68, rate: -0.32, radius: 0.90, energy: 0.042 },
+        { cx: 0.76, cy: 0.76, rx: 0.30, ry: 0.22, skew: 0.10, phase: 3.72, rate: 0.36, radius: 0.90, energy: 0.043 },
+        { cx: 0.50, cy: 0.46, rx: 0.50, ry: 0.36, skew: 0.04, phase: 4.60, rate: 0.26, radius: 1.04, energy: 0.035 },
+        { cx: 0.50, cy: 0.10, rx: 0.46, ry: 0.16, skew: 0.12, phase: 5.30, rate: -0.30, radius: 0.80, energy: 0.033 },
+        { cx: 0.50, cy: 0.90, rx: 0.46, ry: 0.15, skew: -0.12, phase: 0.84, rate: 0.28, radius: 0.84, energy: 0.034 },
       ];
 
       const activeRoutes = compact ? routes.slice(0, 5) : routes;
@@ -700,11 +699,11 @@
         const y = clamp(height * route.cy + sin * ry + Math.cos(phase * 0.62 + index) * height * 0.055, height * edge, height * (1 - edge));
         const dx = (-sin * rx + cos * height * route.skew) * speed;
         const dy = cos * ry * speed;
-        const intensity = route.energy + Math.sin(phase + index * 0.4) * 0.014;
+        const intensity = route.energy + Math.sin(phase + index * 0.4) * 0.007;
         splat(x, y, dx, dy, intensity, config.orbitRadius * route.radius);
       });
 
-      if (frame % 6 === 0) {
+      if (frame % 9 === 0) {
         const phase = -time * 0.24 + 1.4;
         const x = width * (0.50 + Math.sin(phase * 0.73) * 0.46);
         const y = height * (0.50 + Math.cos(phase) * 0.42);
@@ -713,27 +712,26 @@
           clamp(y, height * edge, height * (1 - edge)),
           Math.cos(phase * 1.2) * width * 0.68,
           -Math.sin(phase) * height * 0.58,
-          0.058,
-          config.orbitRadius * 1.72
+          0.030,
+          config.orbitRadius * 1.28
         );
       }
     };
 
     const updatePointer = (event) => {
       if (event.pointerType === "touch") return;
-      const rect = stage.getBoundingClientRect();
       if (
-        event.clientX < rect.left ||
-        event.clientX > rect.right ||
-        event.clientY < rect.top ||
-        event.clientY > rect.bottom
+        event.clientX < 0 ||
+        event.clientX > width ||
+        event.clientY < 0 ||
+        event.clientY > height
       ) {
         pointer.energy *= 0.86;
         return;
       }
 
-      const x = event.clientX - rect.left;
-      const y = event.clientY - rect.top;
+      const x = event.clientX;
+      const y = event.clientY;
       if (!pointer.seeded) {
         pointer.x = x;
         pointer.y = y;
@@ -743,16 +741,16 @@
         return;
       }
 
-      const dx = (x - pointer.x) * 9.0;
-      const dy = (y - pointer.y) * 9.0;
+      const dx = (x - pointer.x) * 5.2;
+      const dy = (y - pointer.y) * 5.2;
       const speed = Math.hypot(dx, dy);
       pointer.lastX = pointer.x;
       pointer.lastY = pointer.y;
       pointer.x = x;
       pointer.y = y;
-      pointer.energy = Math.min(1, pointer.energy + speed / 2300);
+      pointer.energy = Math.min(1, pointer.energy + speed / 4100);
       if (speed > 0.8) {
-        splat(x, y, dx, dy, 0.16, config.pointerRadius);
+        splat(x, y, dx, dy, 0.052, config.pointerRadius);
       }
     };
 
@@ -834,7 +832,7 @@
       gl.uniform1f(displayProgram.uniforms.ratio, canvas.width / Math.max(canvas.height, 1));
       gl.uniform1f(displayProgram.uniforms.imageRatio, imageRatio);
       gl.uniform1f(displayProgram.uniforms.disturbPower, config.distortionPower);
-      gl.uniform1f(displayProgram.uniforms.opacity, 0.96);
+      gl.uniform1f(displayProgram.uniforms.opacity, 0.70);
       blit(null);
     };
 
@@ -845,11 +843,11 @@
 
       const dt = Math.min(0.016, Math.max(0.001, (time - lastTime) / 1000));
       lastTime = time;
-      pointer.energy *= Math.pow(0.92, dt * 60);
+      pointer.energy *= Math.pow(0.86, dt * 60);
       frame += 1;
       step(dt, time * 0.001);
       render();
-      document.body.classList.toggle("liquid-glass-moving", pointer.energy > 0.035);
+      document.body.classList.toggle("liquid-glass-moving", pointer.energy > 0.025);
     };
 
     try {
@@ -879,7 +877,7 @@
     window.LucianLiquidField = {
       mode: "fluid-orbit",
       source: "output-texture-distortion",
-      coverage: "full-hero",
+      coverage: "global-viewport",
     };
 
     return true;

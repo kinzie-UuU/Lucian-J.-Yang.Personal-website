@@ -34,6 +34,18 @@
     entryTransitionReleaseTimer = window.setTimeout(releaseEntryTransitionScroll, delay);
   };
 
+  const completeEntryTransition = () => {
+    document.body.classList.remove("is-entering");
+    document.body.classList.add("has-entered");
+    forceScrollTop();
+    requestAnimationFrame(() => {
+      forceScrollTop();
+      resizeStage();
+      resetHeroSequenceState({ resetScroll: false });
+      scheduleEntryTransitionRelease(420);
+    });
+  };
+
   // ── entry-to-site transition ───────────────────────────────────────
   const enterSite = () => {
     if (runtime.isEntered()) return;
@@ -54,28 +66,18 @@
       return;
     }
 
-    // Phase 1: entry screen fades out
+    // Phase 1: key turns + flashes (480ms via CSS animation)
     runtime.setCursorVisible(false);
     document.body.classList.add("is-unfolding");
 
-    // Phase 2: hero fades in
+    // Phase 2: curtains retract, hero eases in from "behind" them
     window.setTimeout(() => {
       document.body.classList.remove("is-unfolding");
       document.body.classList.add("is-entering");
-    }, 400);
+    }, 380);
 
-    // Phase 3: complete entry
-    window.setTimeout(() => {
-      document.body.classList.remove("is-entering");
-      document.body.classList.add("has-entered");
-      forceScrollTop();
-      requestAnimationFrame(() => {
-        forceScrollTop();
-        resizeStage();
-        resetHeroSequenceState({ resetScroll: false });
-        scheduleEntryTransitionRelease(420);
-      });
-    }, 900);
+    // Phase 3: complete entry (380ms key turn + 900ms curtain transition)
+    window.setTimeout(completeEntryTransition, 1280);
   };
 
   // ── user-initiated entry (scroll / touch swipe) ────────────────────
@@ -102,12 +104,16 @@
   // ── pixel avatar: reset to entry ───────────────────────────────────
   document.getElementById("pixel-avatar")?.addEventListener("click", () => {
     if (!document.body.classList.contains("has-entered")) return;
+    runtime.closeWorkGallery?.();
+    window.dispatchEvent(new CustomEvent("lucian:return-to-entry"));
     document.body.classList.remove("has-entered", "is-entering", "is-unfolding", "is-entry-scroll-locked");
     runtime.setEntered(false);
     entryTransitionLocked = false;
+    window.clearTimeout(entryTransitionReleaseTimer);
     resetHeroSequenceState({ resetScroll: true });
     requestAnimationFrame(forceScrollTop);
     entryScreen?.style.removeProperty("display");
+    window.LucianEntryKey?.replay?.();
   });
 
   // ── lock scroll during transition ──────────────────────────────────
@@ -133,5 +139,5 @@
   // ── auto-enter when 3D key progress reaches 100% ───────────────────
   window.addEventListener("entry-key-ready", () => {
     if (!runtime.isEntered()) enterSite();
-  }, { once: true });
+  });
 })();

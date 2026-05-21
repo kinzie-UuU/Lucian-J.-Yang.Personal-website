@@ -4,7 +4,9 @@
 .portrait-about-wrapper {
   position: relative;
   z-index: 2;
-  margin-top: -8svh;
+  /* No negative margin — hero-section's spacer is now sized to match the
+     curtain trigger threshold so portrait section starts immediately
+     after the curtain finishes covering. */
   background: #000;
   --portrait-enter: 0;
   --portrait-text-enter: 0;
@@ -21,8 +23,8 @@
   z-index: 3;
   height: 36svh;
   pointer-events: none;
-  background:
-    linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.46) 48%, #000 100%);
+  background: none;
+  opacity: 0;
 }
 
 .portrait-canvas {
@@ -35,20 +37,7 @@
 }
 
 .portrait-canvas::after {
-  content: "";
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  z-index: 1;
-  width: min(36vw, 620px);
-  height: min(44vh, 420px);
-  pointer-events: none;
-  background:
-    radial-gradient(ellipse at 100% 100%, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.42) 42%, transparent 72%),
-    linear-gradient(135deg, transparent 0%, rgba(0, 0, 0, 0.54) 74%, rgba(0, 0, 0, 0.92) 100%);
-  -webkit-backdrop-filter: blur(16px);
-  backdrop-filter: blur(16px);
-  mask-image: radial-gradient(ellipse at 100% 100%, #000 0 44%, rgba(0, 0, 0, 0.72) 62%, transparent 82%);
+  display: none;
 }
 
 .portrait-video,
@@ -60,32 +49,37 @@
   height: min(94vh, 960px);
   object-fit: contain;
   object-position: center;
-  opacity: max(0, calc(0.02 + var(--portrait-enter) * 0.98 - var(--portrait-exit) * 0.98));
+  /* Darkness reveal: opacity + brightness + blur all wake from 0,
+     no vertical translate. Reads as a print developing in a tray. */
+  opacity: max(0, calc(var(--portrait-enter) * 1.0 - var(--portrait-exit) * 0.98));
   filter:
     saturate(0.94)
-    contrast(1.12)
-    brightness(calc(0.52 + var(--portrait-enter) * 0.31 - var(--portrait-exit) * 0.22))
-    blur(calc((1 - var(--portrait-enter)) * 4px + var(--portrait-exit) * 12px));
+    contrast(1.14)
+    brightness(calc(var(--portrait-enter) * 0.92 - var(--portrait-exit) * 0.22))
+    blur(calc((1 - var(--portrait-enter)) * 14px + var(--portrait-exit) * 12px));
+  /* No vertical lift — keep the framed portrait at geometric center.
+     Source frame's face already sits close enough to center; pushing up
+     was overshooting and reading "too high." */
   transform:
-    translate3d(calc(-50% + (0.5 - var(--portrait-progress)) * 0.5vw), calc(-50% + (1 - var(--portrait-enter)) * 3vh - var(--portrait-exit) * 6vh), 0)
-    scale(calc(0.982 + var(--portrait-enter) * 0.014 - var(--portrait-exit) * 0.02));
+    translate3d(-50%, calc(-50% + 3vh), 0)
+    scale(calc(1.04 - var(--portrait-enter) * 0.04 - var(--portrait-exit) * 0.02));
   transform-origin: 50% 50%;
-  will-change: transform;
+  will-change: transform, filter, opacity;
 }
 
 .portrait-video {
   z-index: 0;
-  opacity: max(0, calc(0.02 + var(--portrait-enter) * 0.98 - var(--portrait-exit) * 1));
+  opacity: max(0, calc(var(--portrait-enter) * 1.0 - var(--portrait-exit) * 1));
   filter:
     saturate(0.96)
-    contrast(1.12)
-    brightness(calc(0.52 + var(--portrait-enter) * 0.31 - var(--portrait-exit) * 0.25))
-    blur(calc((1 - var(--portrait-enter)) * 4px + var(--portrait-exit) * 16px));
+    contrast(1.14)
+    brightness(calc(var(--portrait-enter) * 0.92 - var(--portrait-exit) * 0.25))
+    blur(calc((1 - var(--portrait-enter)) * 14px + var(--portrait-exit) * 16px));
 }
 
 .portrait-image {
   z-index: 0;
-  opacity: max(0, calc(0.04 + var(--portrait-enter) * 0.94 - var(--portrait-exit) * 0.98));
+  opacity: max(0, calc(var(--portrait-enter) * 0.96 - var(--portrait-exit) * 0.98));
 }
 
 .portrait-about-wrapper.is-portrait-video-ready .portrait-image {
@@ -93,74 +87,14 @@
 }
 
 .portrait-overlay {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  background:
-    radial-gradient(circle at 62% 42%, rgba(0, 148, 54, 0.12), transparent 30%),
-    linear-gradient(90deg, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.48) 34%, rgba(0, 0, 0, 0.12) 62%, rgba(0, 0, 0, 0.42) 100%),
-    linear-gradient(180deg, rgba(0, 0, 0, 0.38) 0%, transparent 40%, rgba(0, 0, 0, 0.84) 100%);
-  opacity: calc(1 - var(--portrait-exit) * 0.34);
-  pointer-events: none;
+  display: none;
 }
 
-.portrait-text {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  align-items: flex-start;
-  padding: 0 clamp(22px, 3.8vw, 62px) clamp(52px, 7vh, 92px);
-  color: rgba(246, 242, 234, 0.98);
-  transform:
-    translate3d(0, calc(var(--portrait-progress) * -36vh), 0)
-    scale(calc(1 + var(--portrait-progress) * 0.08));
-  transform-origin: left bottom;
-  opacity: calc(1 - var(--portrait-exit) * 0.34);
-  will-change: transform, opacity;
-}
-
-.portrait-location {
-  margin: 0 0 12px;
-  font-size: clamp(0.72rem, 0.95vw, 0.9rem);
-  font-weight: 700;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: rgba(246, 242, 234, 0.62);
-}
-
-.portrait-title {
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-  max-width: min(62vw, 900px);
-}
-
-.portrait-title-line {
-  display: block;
-  font-family: "MiSans", "PingFang SC", "Microsoft YaHei", sans-serif;
-  font-size: clamp(4rem, 10vw, 11rem);
-  font-weight: 700;
-  line-height: 0.92;
-  letter-spacing: -0.02em;
-  color: currentColor;
-  text-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.18),
-    0 30px 90px rgba(0, 0, 0, 0.78);
-  white-space: nowrap;
-  word-break: keep-all;
-}
-
-.portrait-title-line:nth-child(2) {
-  margin-left: clamp(0px, 3.2vw, 58px);
-}
-
-/* ── About rows (scrolls over portrait video) ── */
+/* ── About rows (scrolls over portrait video) ──
+   Spacer length = total scroll distance for the about scene. The portrait
+   reveal/face-turn/text reveal all map onto this travel. */
 .portrait-spacer {
-  height: 260vh;
+  height: 160vh;
 }
 
 .about-rows {
@@ -175,6 +109,25 @@
   border-radius: 0;
   box-shadow: none;
   pointer-events: none;
+}
+
+.about-curtain {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 100%;
+  z-index: 12;
+  pointer-events: none;
+  background: #000;
+  transform: translateY(108%);
+  opacity: 1;
+  transition: transform 1500ms cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+
+.portrait-canvas.is-about-curtain-down .about-curtain {
+  transform: translateY(0);
 }
 
 .about-layout {

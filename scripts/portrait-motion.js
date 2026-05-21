@@ -21,12 +21,12 @@
   const refreshAboutReveal = () => {
     const leftSelectors = [
       ".about-left .section-kicker",
-      ".about-heading .scramble-char",
+      ".about-heading",
       ".about-role",
     ];
     const rightSelectors = [
-      ".about-right .about-lead .scramble-char",
-      ".about-right .about-detail .scramble-char",
+      ".about-right .about-lead",
+      ".about-right .about-detail",
       ".about-skills-label",
       ".about-skills-list span",
     ];
@@ -50,13 +50,14 @@
       const index = sideIndexes[unit.side]++;
       const count = Math.max(1, sideCounts[unit.side]);
       const isBlockRole = unit.node.classList.contains("about-role");
+      const isHeading = unit.node.classList.contains("about-heading");
       unit.node.classList.add("about-scroll-reveal-unit");
       unit.node.style.setProperty("--about-reveal-index", String(index));
       return {
         ...unit,
         index,
         count,
-        canTransform: !isBlockRole,
+        canTransform: !isBlockRole && !isHeading,
       };
     });
   };
@@ -97,17 +98,22 @@
     });
   };
 
+  let smoothedVideoTime = 0;
   const scrubVideo = () => {
     scrubRaf = requestAnimationFrame(scrubVideo);
     if (!video || !Number.isFinite(video.duration) || video.duration <= 0) return;
-    const delta = targetVideoTime - video.currentTime;
-    if (Math.abs(delta) < 0.006) return;
-    const step = Math.sign(delta) * Math.min(Math.abs(delta) * 0.14, 0.045);
-    video.currentTime += step;
+    // Critically-damped chase — same easing model as the CSS variables.
+    // No dead zone, no stepped jumps; the face turn reads as silk.
+    smoothedVideoTime += (targetVideoTime - smoothedVideoTime) * 0.12;
+    // Only seek if the visible delta is meaningful, to avoid hammering
+    // the decoder with sub-frame seeks (~1/80s threshold).
+    if (Math.abs(smoothedVideoTime - video.currentTime) > 0.012) {
+      video.currentTime = smoothedVideoTime;
+    }
   };
 
   const renderMotion = () => {
-    currentEnter += (targetEnter - currentEnter) * 0.085;
+    currentEnter += (targetEnter - currentEnter) * 0.16;
     currentTextEnter += (targetTextEnter - currentTextEnter) * 0.075;
     currentProgressValue += (targetProgressValue - currentProgressValue) * 0.07;
     currentExit += (targetExit - currentExit) * 0.085;
@@ -127,22 +133,29 @@
     const scrollable = rect.height - window.innerHeight;
     if (scrollable <= 0) return;
 
-    // enter: starts before the sticky portrait locks, so the scene can drift in.
-    const enter = clamp01((window.innerHeight - rect.top) / (window.innerHeight * 1.35));
-
     // progress: 0 = section just entered, 1 = section fully scrolled through
     const progress = clamp01(-rect.top / scrollable);
 
-    // exit starts before the sticky stage releases, so the next scene can catch it.
-    const exit = smootherStep(clamp01((progress - 0.78) / 0.18));
+    // Reveal window 0 → 0.40 of section progress (≈64vh of scroll on the
+     // 160vh spacer). Cubic smoothstep instead of quintic smootherstep —
+     // cubic has a far shorter flat tail at t=0, so motion is visible from
+     // the very first frame after the curtain.
+    const enterRaw = clamp01(progress / 0.40);
+    targetEnter = enterRaw * enterRaw * (3 - 2 * enterRaw);
 
-    targetEnter = smootherStep(enter);
-    targetTextEnter = smootherStep(clamp01((progress - 0.08) / 0.34));
+    // Text reveal starts after portrait is fully visible.
+    targetTextEnter = smootherStep(clamp01((progress - 0.42) / 0.32));
+
     targetProgressValue = progress;
-    targetExit = exit;
+
+    // Exit starts later and takes longer, so the About scene breathes before
+    // the copied Hero-style curtain hands off to Services.
+    targetExit = smootherStep(clamp01((progress - 0.82) / 0.22));
 
     if (video && Number.isFinite(video.duration) && video.duration > 0) {
-      const rawVideoProgress = Math.max(0, Math.min(1, progress / 0.9));
+      // Video scrub spans 0.32 → 0.90 — overlaps the tail of the reveal
+      // (94% revealed at 0.32) so the two sensations cross-fade.
+      const rawVideoProgress = clamp01((progress - 0.32) / 0.58);
       const videoProgress = smootherStep(rawVideoProgress);
       targetVideoTime = video.duration * videoProgress;
     }

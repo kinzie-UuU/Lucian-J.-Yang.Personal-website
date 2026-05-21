@@ -1,10 +1,12 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Lucian J. Yang | Packaging Judged In Reality</title>
-  <link rel="icon" href='data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"%3E%3Crect width="64" height="64" fill="%23050605"/%3E%3Cpath d="M15 17h34v30H15z" fill="none" stroke="%23dfe8e2" stroke-width="3"/%3E%3Cpath d="M23 25h18v14H23z" fill="none" stroke="%23dfe8e2" stroke-width="2"/%3E%3Cpath d="M15 17 23 25M49 17 41 25M15 47 23 39M49 47 41 39" stroke="%23dfe8e2" stroke-width="2"/%3E%3C/svg%3E'>
+  <link rel="icon" type="image/png" sizes="32x32" href="images/favicons/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="64x64" href="images/favicons/favicon-64.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="images/favicons/apple-touch-icon.png">
   <meta
     name="description"
     content="Lucian J. Yang portfolio site for OEM, gifting, series packaging, and brand-upgrade projects built under real production constraints."
@@ -33,20 +35,20 @@
     })();
   </script>
   <link rel="stylesheet" href="styles/fonts.css">
-  <link rel="stylesheet" href="styles.css?v=20260515-nav-speed1">
+  <link rel="stylesheet" href="styles.css?v=20260520-body-transition-bg1">
   <link rel="stylesheet" href="styles/liquid-glass.css?v=20260517-fullscreen1">
   <link rel="stylesheet" href="styles/cursor.css?v=20260512-target-cursor1">
   <link rel="stylesheet" href="styles/typography.css">
-  <link rel="stylesheet" href="styles/home.css?v=20260517-hero-clock-align1">
-  <link rel="stylesheet" href="styles/about.css">
+  <link rel="stylesheet" href="styles/home.css?v=20260521-spacer22-1">
+  <link rel="stylesheet" href="styles/about.css?v=20260521-about-curtain2">
   <link rel="stylesheet" href="styles/services.css?v=20260517-after-about-flow1">
-  <link rel="stylesheet" href="styles/works.css?v=20260517-after-about-flow1">
-  <link rel="stylesheet" href="styles/clients.css?v=20260516-warm-flat1">
+  <link rel="stylesheet" href="styles/works.css?v=20260521-scroll-curtains1">
+  <link rel="stylesheet" href="styles/clients.css?v=20260518-no-footer">
   <link rel="stylesheet" href="styles/work-gallery.css?v=20260513-pmg-edgefix2">
   <link rel="stylesheet" href="styles/contact.css?v=20260517-paper-unify1">
-  <link rel="stylesheet" href="styles/navigation.css?v=20260517-menu-signature1">
+  <link rel="stylesheet" href="styles/navigation.css?v=20260518-avatar-white1">
   <link rel="stylesheet" href="styles/responsive.css">
-  <link rel="stylesheet" href="styles/shared-motion.css">
+  <link rel="stylesheet" href="styles/shared-motion.css?v=20260521-scroll-curtains2">
   <script src="three.min.js"></script>
 </head>
 <body>
@@ -95,6 +97,11 @@
     </div>
   </header>
 
+  <div class="entry-stage-curtains" aria-hidden="true">
+    <div class="entry-stage-curtain entry-stage-curtain-left"></div>
+    <div class="entry-stage-curtain entry-stage-curtain-right"></div>
+  </div>
+
   <main id="top">
     <section class="entry-screen" id="entry-screen" aria-label="Site entry">
       <div class="entry-atmosphere" aria-hidden="true">
@@ -142,6 +149,7 @@
         <div class="hero-model-scene" id="hero-model-scene" data-model-src="/models/lion_head/lion_head_2k.gltf" aria-label="Floating Lion Head sculpture showcase">
           <p class="hero-model-wordmark" aria-hidden="true">LUCIAN J. YANG</p>
           <canvas class="hero-model-canvas" id="hero-model-canvas" aria-hidden="true"></canvas>
+          <p class="hero-model-wordmark hero-model-wordmark-intersection" aria-hidden="true">LUCIAN J. YANG</p>
         </div>
 
         <footer class="hero-footer-meta" aria-label="Hero meta">
@@ -151,6 +159,8 @@
             <span class="hero-footer-date" data-beijing-date>2026.05.14</span>
           </span>
         </footer>
+
+        <div class="hero-curtain" aria-hidden="true"></div>
       </div>
 
     </section>
@@ -165,7 +175,7 @@
           <div class="about-layout">
             <div class="about-left">
               <p class="section-kicker" data-reveal data-delay="0">ABOUT</p>
-              <h2 class="about-heading js-scrambled-text" data-i18n="about_heading" data-reveal data-delay="60">关于
+              <h2 class="about-heading" data-i18n="about_heading" data-reveal data-delay="60">关于
 我</h2>
               <p class="about-role js-flip-text" data-reveal data-delay="90">
                 <span data-i18n="about_role_1">包装</span>
@@ -173,8 +183,8 @@
               </p>
             </div>
             <div class="about-right">
-              <p class="about-lead js-scrambled-text" data-i18n="about_text_1" data-reveal data-delay="120">我是一名以包装设计为主的设计师，主要方向是 OEM / 贴牌包装，以及礼品与福利渠道设计。我关注的，不只是包装是否好看，而是它在真实条件下是否成立。</p>
-              <p class="about-detail js-scrambled-text" data-i18n="about_text_2" data-reveal data-delay="200">对我来说，设计不是先讨论风格，而是先判断什么该做、什么该省、什么最适合当前条件。AIGC 是我提高效率与比较方案的工具，但真正有价值的，仍然是判断本身。</p>
+              <p class="about-lead" data-i18n="about_text_1" data-reveal data-delay="120">我是一名以包装设计为主的设计师，主要方向是 OEM / 贴牌包装，以及礼品与福利渠道设计。我关注的，不只是包装是否好看，而是它在真实条件下是否成立。</p>
+              <p class="about-detail" data-i18n="about_text_2" data-reveal data-delay="200">对我来说，设计不是先讨论风格，而是先判断什么该做、什么该省、什么最适合当前条件。AIGC 是我提高效率与比较方案的工具，但真正有价值的，仍然是判断本身。</p>
               <div class="about-skills" data-reveal data-delay="300">
                 <p class="about-skills-label" data-i18n="about_skills_label">掌握技能</p>
                 <div class="about-skills-list">
@@ -187,6 +197,7 @@
             </div>
           </div>
         </div>
+        <div class="about-curtain" aria-hidden="true"></div>
       </div>
       <div class="portrait-spacer"></div>
     </section>
@@ -240,6 +251,25 @@
         <div class="services-story-progress" aria-hidden="true"><span></span></div>
       </div>
     </section>
+
+    <div
+      class="scroll-curtain-transition scroll-curtain-transition--pink"
+      id="curtain-services-works"
+      data-target="#works-transition"
+      data-duration-in="0.62"
+      data-duration-out="0.82"
+      data-overlap="0.48"
+      aria-hidden="true"
+    >
+      <div class="scroll-curtain-transition__surface" style="--curtain-color: #ff5f68;"></div>
+      <svg class="scroll-curtain-transition__mask" width="1440" height="1024" viewBox="0 0 1440 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <clipPath id="curtain-services-works-clip" clipPathUnits="objectBoundingBox" transform="scale(0.000694444444444,0.0009765625)">
+          <path class="scroll-curtain-transition__mask-path" fill-rule="evenodd" clip-rule="evenodd" d="M0 1023H1440V1024H0V1023Z" fill="#D9D9D9" />
+        </clipPath>
+        <path class="scroll-curtain-transition__shape scroll-curtain-transition__shape-start" d="M0 1024V0C170 112 430 166 720 166C1010 166 1270 112 1440 0V1024H0Z" fill="#D9D9D9" />
+        <path class="scroll-curtain-transition__shape scroll-curtain-transition__shape-end" d="M0 0H1440V1H0V0Z" fill="#D9D9D9" />
+      </svg>
+    </div>
 
     <section class="service-work-transition reveal" id="works-transition" aria-hidden="true">
       <div class="works-transition-gear" aria-hidden="true">
@@ -310,6 +340,25 @@
       </div>
     </section>
 
+    <div
+      class="scroll-curtain-transition scroll-curtain-transition--paper"
+      id="curtain-works-contact"
+      data-target="#contact"
+      data-duration-in="0.72"
+      data-duration-out="0.98"
+      data-overlap="0.58"
+      aria-hidden="true"
+    >
+      <div class="scroll-curtain-transition__surface" style="--curtain-color: #f7f4ee;"></div>
+      <svg class="scroll-curtain-transition__mask" width="1440" height="1024" viewBox="0 0 1440 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <clipPath id="curtain-works-contact-clip" clipPathUnits="objectBoundingBox" transform="scale(0.000694444444444,0.0009765625)">
+          <path class="scroll-curtain-transition__mask-path" fill-rule="evenodd" clip-rule="evenodd" d="M0 1023H1440V1024H0V1023Z" fill="#D9D9D9" />
+        </clipPath>
+        <path class="scroll-curtain-transition__shape scroll-curtain-transition__shape-start" d="M0 1024V0C210 54 468 92 720 92C972 92 1230 54 1440 0V1024H0Z" fill="#D9D9D9" />
+        <path class="scroll-curtain-transition__shape scroll-curtain-transition__shape-end" d="M0 0H1440V1H0V0Z" fill="#D9D9D9" />
+      </svg>
+    </div>
+
     <aside class="work-gallery" id="work-gallery" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="work-gallery-title">
       <div class="work-gallery-topbar">
         <p class="work-gallery-index" id="work-gallery-index">01</p>
@@ -354,8 +403,8 @@
         </div>
 
         <div class="contact-cell contact-cell-intro" data-reveal data-delay="140">
-          <p class="contact-headline js-scrambled-text" data-i18n="contact_text">如果你需要把包装方向、成本约束和交付节奏同时理清，我们可以从一个具体项目开始。</p>
-          <p class="contact-collab js-scrambled-text" data-i18n="contact_collab">OEM / 贴牌包装 · 礼品与福利渠道设计 · 系列包装 · 节庆礼盒 · 包装升级 · 包装提案与方向判断支持</p>
+          <p class="contact-headline" data-i18n="contact_text">如果你需要把包装方向、成本约束和交付节奏同时理清，我们可以从一个具体项目开始。</p>
+          <p class="contact-collab" data-i18n="contact_collab">OEM / 贴牌包装 · 礼品与福利渠道设计 · 系列包装 · 节庆礼盒 · 包装升级 · 包装提案与方向判断支持</p>
         </div>
 
         <form class="contact-form contact-cell" id="contact-form" action="https://mail.google.com/mail/" method="get" target="_blank" data-reveal data-delay="220">
@@ -487,14 +536,6 @@
             </ul>
           </div>
         </div>
-        <footer class="clients-footer-meta" aria-label="Site footer">
-          <span class="clients-footer-name" data-i18n="meta_name">©杨钦鹏</span>
-          <span class="clients-footer-clock">
-            <span class="clients-footer-time" id="beijing-time">PM 00:00</span>
-            <span class="clients-footer-separator" aria-hidden="true"></span>
-            <span class="clients-footer-date" id="beijing-date">2026.05.14</span>
-          </span>
-        </footer>
       </div>
     </section>
   </main>
@@ -584,7 +625,8 @@
   <script src="site-data.js"></script>
   <script src="scripts/audio-feedback.js?v=20260515-bgm1"></script>
   <script src="scripts/hero-wireframe.js"></script>
-  <script src="scripts/hero-water-surface.js"></script>
+  <script src="scripts/hero-water-surface.js?v=20260520-caustics-aqua1"></script>
+  <script src="scripts/hero-curtain.js?v=20260520-curtain7"></script>
   <script src="scripts/hero-state-runtime.js"></script>
   <script src="scripts/hero-sequence-runtime.js"></script>
   <script src="scripts/runtime-bridge.js?v=20260515-bgm1"></script>
@@ -595,12 +637,12 @@
   <script src="scripts/particle-canvas.js"></script>
   <script src="script.js"></script>
   <script src="scripts/liquid-glass-field.js?v=20260517-fullscreen1"></script>
-  <script src="scripts/hero-glb-model.js?v=20260517-lion-front1"></script>
+  <script src="scripts/hero-glb-model.js?v=20260518-obsidian1"></script>
   <script src="scripts/services-entry-grid-scan.js?v=20260515-nav-speed1"></script>
   <script src="scripts/service-panel-shaders.js?v=20260515-nav-speed1"></script>
   <script src="scripts/services-scroll-story.js?v=20260515-nav-speed1"></script>
   <script src="scripts/work-gallery.js?v=20260514-detail-works1"></script>
-  <script src="scripts/works-side-rail.js?v=20260514-avatar-work-menu1"></script>
+  <script src="scripts/works-side-rail.js?v=20260519-entry-replay2"></script>
   <script src="scripts/scrambled-text.js"></script>
   <script src="scripts/header-controls.js?v=20260515-bgm1"></script>
   <script src="scripts/language-controls.js"></script>
@@ -614,9 +656,13 @@
   <script src="scripts/bottom-nav-scroll-spy.js?v=20260515-nav-speed1"></script>
   <script src="scripts/clients-marquee.js"></script>
   <script src="scripts/clients-title-interaction.js"></script>
-  <script src="scripts/portrait-motion.js"></script>
+  <script src="scripts/portrait-motion.js?v=20260521-cubic-smooth1"></script>
+  <script src="scripts/about-curtain.js?v=20260521-hero-copy2"></script>
   <script src="scripts/hero-ripples.js"></script>
-  <script src="scripts/entry-key-model.js?v=20260517-key-entry1"></script>
-  <script src="scripts/entry.js?v=20260515-bgm1"></script>
+  <script src="scripts/vendor/gsap/gsap.min.js?v=3.13.0"></script>
+  <script src="scripts/vendor/gsap/MorphSVGPlugin.min.js?v=3.13.0"></script>
+  <script src="scripts/scroll-curtain-transitions.js?v=20260521-scroll-curtains2"></script>
+  <script src="scripts/entry-key-model.js?v=20260519-entry-replay2"></script>
+  <script src="scripts/entry.js?v=20260520-key-turn1"></script>
 </body>
 </html>
