@@ -410,6 +410,8 @@ body.has-entered .entry-screen {
   --wordmark-hover: 0;
   --wordmark-hover-x: 0;
   --wordmark-hover-y: 0;
+  --wordmark-hover-pos-x: 50%;
+  --wordmark-hover-pos-y: 50%;
   pointer-events: none;
   opacity: 0;
   transform: translate3d(0, 0, 0);
@@ -496,8 +498,7 @@ body.hero-model-orbiting .hero-model-canvas {
   text-transform: uppercase;
   -webkit-text-stroke: 0.45px rgba(0, 0, 0, 0.18);
   text-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.22),
-    0 20px 44px rgba(0, 0, 0, 0.14);
+    0 1px 0 rgba(255, 255, 255, 0.18);
   transform:
     translate3d(
       calc(-50% + var(--wordmark-hover-x) * var(--wordmark-hover) * -7px),
@@ -513,19 +514,142 @@ body.hero-model-orbiting .hero-model-canvas {
   animation: heroModelWordmarkBreathe 7.2s ease-in-out infinite;
   transition:
     color 180ms ease,
-    letter-spacing 180ms ease,
     opacity 180ms ease,
     text-shadow 180ms ease,
     transform 220ms cubic-bezier(0.16, 1, 0.3, 1);
-  will-change: opacity, transform, letter-spacing;
+  will-change: opacity, transform;
+}
+
+.hero-model-wordmark::before,
+.hero-model-wordmark::after {
+  content: "LUCIAN J. YANG";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  line-height: inherit;
+  text-align: inherit;
+  white-space: inherit;
+  text-transform: inherit;
+  opacity: 0;
+  transform-origin: var(--wordmark-hover-pos-x) var(--wordmark-hover-pos-y);
+  -webkit-mask-image:
+    radial-gradient(
+      ellipse 18% 86% at var(--wordmark-hover-pos-x) var(--wordmark-hover-pos-y),
+      #000 0 26%,
+      rgba(0, 0, 0, 0.78) 42%,
+      rgba(0, 0, 0, 0.30) 62%,
+      transparent 78%
+    );
+  mask-image:
+    radial-gradient(
+      ellipse 18% 86% at var(--wordmark-hover-pos-x) var(--wordmark-hover-pos-y),
+      #000 0 26%,
+      rgba(0, 0, 0, 0.78) 42%,
+      rgba(0, 0, 0, 0.30) 62%,
+      transparent 78%
+    );
+  transition:
+    opacity 180ms ease,
+    transform 240ms cubic-bezier(0.16, 1, 0.3, 1),
+    filter 180ms ease;
+  will-change: opacity, transform, filter;
+}
+
+.hero-model-wordmark::before {
+  color: rgba(0, 0, 0, 0.84);
+  text-shadow:
+    calc(var(--wordmark-hover-x) * 2px) 1px 0 rgba(0, 0, 0, 0.28),
+    calc(var(--wordmark-hover-x) * -2px) -1px 0 rgba(255, 255, 255, 0.10);
+  transform:
+    translate3d(
+      calc(var(--wordmark-hover-x) * var(--wordmark-hover) * -20px),
+      calc(var(--wordmark-hover-y) * var(--wordmark-hover) * 4px),
+      0
+    )
+    skewX(calc(var(--wordmark-hover-x) * var(--wordmark-hover) * -9deg))
+    scaleX(calc(1 + var(--wordmark-hover) * 0.08))
+    scaleY(calc(1 - var(--wordmark-hover) * 0.08));
+  filter: blur(calc(var(--wordmark-hover) * 0.22px));
+  mix-blend-mode: multiply;
+}
+
+.hero-model-wordmark::after {
+  color: rgba(226, 246, 246, 0.18);
+  text-shadow:
+    calc(var(--wordmark-hover-x) * -3px) -1px 0 rgba(238, 255, 255, 0.20),
+    calc(var(--wordmark-hover-x) * 3px) 1px 0 rgba(0, 0, 0, 0.24);
+  transform:
+    translate3d(
+      calc(var(--wordmark-hover-x) * var(--wordmark-hover) * 13px),
+      calc(var(--wordmark-hover-y) * var(--wordmark-hover) * -3px),
+      0
+    )
+    skewX(calc(var(--wordmark-hover-x) * var(--wordmark-hover) * 6deg))
+    scaleX(calc(1 - var(--wordmark-hover) * 0.055))
+    scaleY(calc(1 + var(--wordmark-hover) * 0.035));
+  filter: blur(calc(0.12px + var(--wordmark-hover) * 0.18px));
+  mix-blend-mode: soft-light;
 }
 
 .hero-model-scene.is-wordmark-hovering .hero-model-wordmark:not(.hero-model-wordmark-intersection) {
   color: rgba(0, 0, 0, 0.98);
-  letter-spacing: 0.012em;
+  letter-spacing: 0;
   text-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.26),
-    0 18px 38px rgba(0, 0, 0, 0.16);
+    0 1px 0 rgba(255, 255, 255, 0.18);
+}
+
+.hero-model-scene.is-wordmark-rippling .hero-model-wordmark:not(.hero-model-wordmark-intersection) {
+  -webkit-mask-image:
+    radial-gradient(
+      ellipse 18% 78% at var(--wordmark-hover-pos-x) var(--wordmark-hover-pos-y),
+      rgba(0, 0, 0, 0.10) 0 28%,
+      rgba(0, 0, 0, 0.38) 45%,
+      rgba(0, 0, 0, 0.78) 64%,
+      #000 82%
+    );
+  mask-image:
+    radial-gradient(
+      ellipse 18% 78% at var(--wordmark-hover-pos-x) var(--wordmark-hover-pos-y),
+      rgba(0, 0, 0, 0.10) 0 28%,
+      rgba(0, 0, 0, 0.38) 45%,
+      rgba(0, 0, 0, 0.78) 64%,
+      #000 82%
+    );
+}
+
+.hero-model-scene.is-wordmark-hovering .hero-model-wordmark:not(.hero-model-wordmark-intersection)::before {
+  opacity: 0;
+}
+
+.hero-model-scene.is-wordmark-hovering .hero-model-wordmark:not(.hero-model-wordmark-intersection)::after {
+  opacity: 0;
+}
+
+.hero-wordmark-ripple-canvas {
+  position: absolute;
+  z-index: 3;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+  opacity: 0;
+  mix-blend-mode: normal;
+  filter: contrast(1.1);
+  transition: opacity 180ms ease;
+  will-change: opacity;
+}
+
+.hero-model-scene.is-wordmark-rippling .hero-wordmark-ripple-canvas {
+  opacity: 0.96;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-wordmark-ripple-canvas {
+    display: none;
+  }
 }
 
 .hero-model-wordmark-intersection {
@@ -536,12 +660,8 @@ body.hero-model-orbiting .hero-model-canvas {
   clip-path: none;
   text-shadow:
     -1px -1px 0 rgba(235, 250, 248, 0.08),
-    1px 1px 0 rgba(0, 0, 0, 0.42),
-    0 5px 12px rgba(0, 0, 0, 0.30);
-  filter:
-    blur(0.08px)
-    drop-shadow(0 -1px 1px rgba(236, 255, 255, 0.12))
-    drop-shadow(0 3px 5px rgba(0, 0, 0, 0.34));
+    1px 1px 0 rgba(0, 0, 0, 0.34);
+  filter: blur(0.08px);
   mix-blend-mode: multiply;
   opacity: 0.84;
   -webkit-mask-image:
@@ -550,28 +670,21 @@ body.hero-model-orbiting .hero-model-canvas {
     radial-gradient(ellipse 35% 70% at 50% 51%, #000 0 44%, rgba(0, 0, 0, 0.74) 57%, rgba(0, 0, 0, 0.30) 70%, transparent 86%);
 }
 
+.hero-model-wordmark-intersection::before,
+.hero-model-wordmark-intersection::after {
+  display: none;
+}
+
 .hero-model-scene.is-wordmark-hovering .hero-model-wordmark-intersection {
-  color: rgba(8, 14, 16, 0.62);
-  -webkit-text-fill-color: rgba(8, 14, 16, 0.58);
-  -webkit-text-stroke-color: rgba(244, 255, 255, 0.24);
-  opacity: calc(0.80 + var(--wordmark-hover) * 0.08);
+  color: rgba(12, 18, 20, 0.56);
+  -webkit-text-fill-color: rgba(12, 18, 20, 0.52);
+  -webkit-text-stroke-color: rgba(244, 255, 255, 0.18);
+  letter-spacing: 0;
+  opacity: 0.84;
   text-shadow:
-    calc(var(--wordmark-hover-x) * -1px) -1px 0 rgba(240, 255, 255, 0.12),
-    calc(var(--wordmark-hover-x) * 1.4px) 1px 0 rgba(0, 0, 0, 0.48),
-    0 6px 14px rgba(0, 0, 0, 0.34);
-  filter:
-    blur(calc(var(--wordmark-hover) * 0.18px))
-    drop-shadow(0 -1px 1px rgba(240, 255, 255, 0.13))
-    drop-shadow(calc(var(--wordmark-hover-x) * -4px) 3px 6px rgba(0, 0, 0, 0.30));
-  transform:
-    translate3d(
-      calc(-50% + var(--wordmark-hover-x) * var(--wordmark-hover) * -10px),
-      calc(-50% + var(--wordmark-hover-y) * var(--wordmark-hover) * 4px),
-      0
-    )
-    skewX(calc(var(--wordmark-hover-x) * var(--wordmark-hover) * -3.2deg))
-    scaleX(calc(0.86 + var(--wordmark-hover) * 0.048))
-    scaleY(calc(1 - var(--wordmark-hover) * 0.035));
+    -1px -1px 0 rgba(235, 250, 248, 0.08),
+    1px 1px 0 rgba(0, 0, 0, 0.34);
+  filter: blur(0.08px);
 }
 
 @keyframes heroModelWordmarkBreathe {

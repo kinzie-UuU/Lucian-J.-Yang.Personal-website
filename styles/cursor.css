@@ -11,13 +11,7 @@ body.cursor-active .work-gallery * {
 }
 
 body.has-entered,
-body.has-entered a,
-body.has-entered button,
-body.has-entered input,
-body.has-entered textarea,
-body.has-entered select,
-body.has-entered .work-gallery,
-body.has-entered .work-gallery * {
+body.has-entered * {
   cursor: none !important;
 }
 

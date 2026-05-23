@@ -578,16 +578,28 @@
         points: [[-0.08, 0.26], [0.18, 0.10], [0.46, 0.05], [0.72, 0.18], [0.98, 0.30], [1.10, 0.58], [0.82, 0.86]],
       });
       strokeCurve({
-        width: 34,
-        blur: 16,
-        color: "rgba(250, 252, 248, 0.14)",
+        width: 18,
+        blur: 5,
+        color: "rgba(70, 240, 220, 0.16)",
         points: [[-0.10, 0.03], [0.16, 0.20], [0.34, 0.28], [0.52, 0.20], [0.74, 0.10], [0.90, 0.18], [1.12, 0.36]],
       });
       strokeCurve({
-        width: 26,
-        blur: 12,
-        color: "rgba(255, 238, 224, 0.14)",
+        width: 14,
+        blur: 5,
+        color: "rgba(255, 86, 138, 0.12)",
         points: [[1.08, 0.12], [0.86, 0.34], [0.86, 0.56], [0.68, 0.78], [0.50, 1.02], [0.20, 0.92], [-0.06, 0.72]],
+      });
+      strokeCurve({
+        width: 5,
+        blur: 1.4,
+        color: "rgba(95, 255, 235, 0.20)",
+        points: [[0.02, 0.58], [0.22, 0.46], [0.42, 0.47], [0.60, 0.54], [0.76, 0.63], [0.92, 0.40], [1.04, 0.28]],
+      });
+      strokeCurve({
+        width: 4,
+        blur: 1.2,
+        color: "rgba(255, 78, 150, 0.14)",
+        points: [[0.96, 0.18], [0.82, 0.36], [0.86, 0.54], [0.70, 0.72], [0.54, 0.92], [0.28, 0.88], [0.02, 0.74]],
       });
       strokeCurve({
         width: 16,
@@ -602,9 +614,9 @@
         points: [[0.06, 0.18], [0.24, 0.30], [0.38, 0.22], [0.54, 0.15], [0.74, 0.08], [0.88, 0.18], [1.02, 0.42]],
       });
       strokeCurve({
-        width: 9,
+        width: 12,
         blur: 4,
-        color: "rgba(255, 244, 232, 0.13)",
+        color: "rgba(255, 222, 170, 0.075)",
         points: [[-0.06, 0.84], [0.16, 0.72], [0.30, 0.86], [0.46, 0.78], [0.62, 0.70], [0.80, 0.82], [1.06, 0.72]],
       });
       strokeCurve({
@@ -620,7 +632,7 @@
         points: [[0.92, -0.06], [0.72, 0.18], [0.80, 0.36], [0.96, 0.50], [1.12, 0.66], [0.86, 0.86], [0.70, 1.06]],
       });
       strokeEllipse({ rotation: 0.02, width: 24, color: "rgba(230, 234, 230, 0.16)", blur: 10, start: -3.20, end: 0.12, scaleX: 0.92, scaleY: 0.84 });
-      strokeEllipse({ rotation: 0.18, width: 18, color: "rgba(255, 238, 224, 0.13)", blur: 8, start: -0.30, end: 2.15, scaleX: 0.78, scaleY: 0.90 });
+      strokeEllipse({ rotation: 0.18, width: 13, color: "rgba(255, 115, 135, 0.07)", blur: 5, start: -0.30, end: 2.15, scaleX: 0.78, scaleY: 0.90 });
       strokeEllipse({ rotation: -0.42, width: 16, color: "rgba(238, 242, 238, 0.12)", blur: 8, start: 1.80, end: 5.42, x: -textureWidthCanvas * 0.34, y: -textureHeightCanvas * 0.22, scaleX: 0.82, scaleY: 0.50 });
       strokeEllipse({ rotation: 0.50, width: 18, color: "rgba(255, 244, 232, 0.10)", blur: 9, start: -1.28, end: 2.80, x: textureWidthCanvas * 0.34, y: textureHeightCanvas * 0.24, scaleX: 0.88, scaleY: 0.54 });
 
@@ -832,7 +844,7 @@
       gl.uniform1f(displayProgram.uniforms.ratio, canvas.width / Math.max(canvas.height, 1));
       gl.uniform1f(displayProgram.uniforms.imageRatio, imageRatio);
       gl.uniform1f(displayProgram.uniforms.disturbPower, config.distortionPower);
-      gl.uniform1f(displayProgram.uniforms.opacity, 0.70);
+      gl.uniform1f(displayProgram.uniforms.opacity, 0.80);
       blit(null);
     };
 

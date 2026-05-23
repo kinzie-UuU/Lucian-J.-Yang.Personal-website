@@ -10,18 +10,22 @@
   pointer-events: none;
   opacity: 0;
   mix-blend-mode: normal;
-  filter: saturate(1.22) contrast(1.04);
+  filter:
+    saturate(1.42)
+    contrast(1.14)
+    drop-shadow(0 0 10px rgba(80, 220, 205, 0.08))
+    drop-shadow(0 0 14px rgba(255, 98, 132, 0.055));
   transition: opacity 520ms ease;
   contain: strict;
   transform: translateZ(0);
 }
 
 body.has-entered.liquid-glass-ready .liquid-glass-field {
-  opacity: 0.34;
+  opacity: 0.42;
 }
 
 body.has-entered.liquid-glass-moving .liquid-glass-field {
-  opacity: 0.46;
+  opacity: 0.58;
 }
 
 body.has-entered.work-gallery-open .liquid-glass-field,

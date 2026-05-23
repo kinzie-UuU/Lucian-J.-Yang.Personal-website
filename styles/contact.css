@@ -5,12 +5,12 @@
   --contact-paper-exit: 0;
   --contact-paper-bg: 0;
   min-height: 100svh;
-  padding: clamp(116px, 13svh, 168px) clamp(10px, 1.2vw, 22px) max(clamp(136px, 16svh, 196px), calc(var(--bottom-nav-safe) + 56px));
+  padding: 0;
   position: relative;
   overflow: clip;
-  perspective: 1600px;
-  perspective-origin: 50% 42%;
-  background: var(--warm-paper);
+  perspective: none;
+  perspective-origin: 50% 50%;
+  background: #030303;
   color: rgba(248, 245, 239, 0.92);
   scroll-snap-align: start;
   scroll-snap-stop: always;
@@ -24,18 +24,14 @@
 }
 
 .contact-section::before {
-  background: radial-gradient(
-    ellipse at 50% 52%,
-    transparent 46%,
-    rgba(0, 0, 0, calc(0.22 + var(--contact-paper-exit) * 0.16)) 100%
-  );
-  opacity: calc(0.12 + var(--contact-paper-place) * 0.28);
+  background: none;
+  opacity: 0;
 }
 
 .contact-layout {
-  width: min(100%, 1960px);
-  min-height: calc(100svh - clamp(204px, 23svh, 284px));
-  margin: 0 auto;
+  width: 100%;
+  min-height: 100svh;
+  margin: 0;
   position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1.35fr) minmax(340px, 0.72fr);
@@ -47,20 +43,11 @@
       rgba(248, 245, 239, calc(0.025 + var(--contact-paper-settle) * 0.025)),
       transparent 46%
     ),
-    rgba(255, 255, 255, calc(0.006 + var(--contact-paper-settle) * 0.016));
-  transform:
-    translate3d(
-      0,
-      calc((1 - var(--contact-paper-place)) * 15vh - var(--contact-paper-exit) * 7vh),
-      calc((1 - var(--contact-paper-place)) * -120px)
-    )
-    rotateX(calc((1 - var(--contact-paper-place)) * 7deg - var(--contact-paper-exit) * 3deg))
-    scale(calc(0.925 + var(--contact-paper-settle) * 0.075 - var(--contact-paper-exit) * 0.035));
+    #030303;
+  transform: none;
   transform-origin: 50% 44%;
-  opacity: calc(0.28 + var(--contact-paper-place) * 0.72 - var(--contact-paper-exit) * 0.18);
-  box-shadow:
-    0 calc(34px + var(--contact-paper-settle) * 28px) calc(78px + var(--contact-paper-settle) * 44px)
-      rgba(0, 0, 0, calc(0.46 + var(--contact-paper-settle) * 0.18));
+  opacity: 1;
+  box-shadow: none;
   will-change: transform, opacity;
 }
 
@@ -75,7 +62,7 @@
 
 .contact-layout::before {
   border: 1px solid rgba(248, 245, 239, calc(var(--contact-paper-settle) * 0.16));
-  transform: scale(calc(1 + (1 - var(--contact-paper-settle)) * 0.018));
+  transform: none;
   opacity: calc(var(--contact-paper-place) * (1 - var(--contact-paper-exit) * 0.52));
 }
 
@@ -569,11 +556,11 @@ html[lang="zh-CN"] .contact-title {
 
 @media (max-width: 980px) {
   .contact-section {
-    padding: 104px 16px max(156px, calc(var(--bottom-nav-safe) + 48px));
+    padding: 0;
   }
 
   .contact-layout {
-    min-height: auto;
+    min-height: 100svh;
     grid-template-columns: 1fr;
     grid-template-rows: auto;
   }
@@ -673,7 +660,7 @@ html[lang="zh-CN"] .contact-title {
 
 @media (max-width: 560px) {
   .contact-section {
-    padding-inline: 12px;
+    padding-inline: 0;
   }
 
   .contact-cell-heading {
@@ -706,7 +693,7 @@ html[lang="zh-CN"] .contact-title {
 
 /* Warm contact surface ------------------------------------------------------ */
 .contact-section {
-  background: var(--warm-paper);
+  background: #030303;
   color: rgba(248, 245, 239, 0.92);
 }
 
@@ -720,9 +707,7 @@ html[lang="zh-CN"] .contact-title {
   background:
     linear-gradient(90deg, rgba(248, 245, 239, 0.045), transparent 46%),
     #030303;
-  box-shadow:
-    inset 0 1px 0 rgba(248, 245, 239, 0.06),
-    0 18px 36px rgba(0, 0, 0, 0.2);
+  box-shadow: none;
 }
 
 .contact-layout::before {

@@ -13,6 +13,31 @@
 
   const svgNamespace = "http://www.w3.org/2000/svg";
   const easeOutExpo = (value) => (value >= 1 ? 1 : 1 - Math.pow(2, -10 * value));
+  const slowFastSoft = (() => {
+    const x1 = 0.62;
+    const y1 = 0;
+    const x2 = 0.24;
+    const y2 = 1;
+    const sample = (a, b, value) => (
+      3 * a * (1 - value) * (1 - value) * value
+      + 3 * b * (1 - value) * value * value
+      + value * value * value
+    );
+
+    return (progress) => {
+      let lower = 0;
+      let upper = 1;
+      let t = progress;
+
+      for (let index = 0; index < 8; index += 1) {
+        t = (lower + upper) / 2;
+        if (sample(x1, x2, t) < progress) lower = t;
+        else upper = t;
+      }
+
+      return sample(y1, y2, t);
+    };
+  })();
 
   const makeSheetPath = (edgeY, centerY) => {
     const edge = edgeY.toFixed(2);
@@ -43,8 +68,10 @@
 
   const configs = roots.map((root) => {
     const targetSelector = root.dataset.target || "";
+    const sourceSelector = root.dataset.source || "";
     const settleTargetSelector = root.dataset.settleTarget || "";
     const target = targetSelector ? document.querySelector(targetSelector) : null;
+    const source = sourceSelector ? document.querySelector(sourceSelector) : null;
     const settleTarget = settleTargetSelector ? document.querySelector(settleTargetSelector) : null;
     const maskPath = root.querySelector(".scroll-curtain-transition__mask-path");
     const startShape = root.querySelector(".scroll-curtain-transition__shape-start");
@@ -58,6 +85,8 @@
       surface,
       visualSvg: visual?.svg || null,
       visualPath: visual?.path || null,
+      kind: root.dataset.kind || "curtain",
+      source,
       target,
       maskPath,
       startShape,
@@ -78,6 +107,8 @@
       settleDuration: parseNumber(root.dataset.settleDuration, 920),
       played: false,
       timeline: null,
+      previews: [],
+      lastTop: null,
     };
   }).filter((config) => (
     config.target
@@ -108,11 +139,11 @@
   };
 
   const unlockScroll = ({ restore = true } = {}) => {
+    document.documentElement.classList.remove("scroll-curtain-locking");
+    document.body.classList.remove("scroll-curtain-locking");
     if (!locked) return;
     locked = false;
     targetLockY = null;
-    document.documentElement.classList.remove("scroll-curtain-locking");
-    document.body.classList.remove("scroll-curtain-locking");
     if (restore) window.scrollTo(0, lockedY);
   };
 
@@ -155,14 +186,17 @@
     settleFrame = window.requestAnimationFrame(renderSettle);
   };
 
-  const reset = (config) => {
+  const reset = (config, { keepTop = false } = {}) => {
     config.timeline?.kill();
     config.timeline = null;
     config.maskPath.setAttribute("d", config.closedPath);
     config.curveState.amount = 0;
     if (config.visualPath) config.visualPath.setAttribute("d", makeSheetPath(1024, 1024));
     if (config.visualSvg && gsap) gsap.set(config.visualSvg, { clearProps: "transform" });
+    config.previews.forEach((preview) => preview.remove());
+    config.previews = [];
     config.root.classList.remove("is-active");
+    if (!keepTop) config.lastTop = null;
   };
 
   const renderCurve = (config) => {
@@ -174,7 +208,88 @@
     config.visualPath.setAttribute("d", makeSheetPath(edge, center));
   };
 
-  const resetAll = () => {
+  const preparePageClone = (element, { alignToViewport = false } = {}) => {
+    const preview = document.createElement("div");
+    preview.className = "scroll-curtain-transition__page-preview";
+    preview.setAttribute("aria-hidden", "true");
+    if ("inert" in preview) preview.inert = true;
+
+    const clone = element.cloneNode(true);
+    clone.removeAttribute("id");
+    clone.classList.add("is-visible");
+    clone.querySelectorAll("[id]").forEach((node) => node.removeAttribute("id"));
+    clone.querySelectorAll("[data-reveal]").forEach((node) => node.classList.add("is-revealed"));
+    clone.querySelectorAll("video").forEach((video) => {
+      video.pause?.();
+      video.removeAttribute("autoplay");
+    });
+    clone.style.pointerEvents = "none";
+
+    if (alignToViewport) {
+      const rect = element.getBoundingClientRect();
+      clone.style.transform = `translate3d(0, ${rect.top.toFixed(2)}px, 0)`;
+    }
+
+    preview.append(clone);
+    return preview;
+  };
+
+  const playPageReveal = (config) => {
+    const source = config.source || document.querySelector(".works-section");
+    if (!source || !config.target) return false;
+
+    const currentPreview = preparePageClone(source, { alignToViewport: true });
+    const nextPreview = preparePageClone(config.target);
+    nextPreview.classList.add("scroll-curtain-transition__page-preview--next");
+    if (config.target.id === "contact") {
+      nextPreview.classList.add("scroll-curtain-transition__page-preview--contact");
+    }
+
+    config.root.append(currentPreview, nextPreview);
+    config.previews = [currentPreview, nextPreview];
+
+    const contactRevealDelay = Math.max(0.56, config.durationOut * 0.86);
+    const contactRevealHold = { progress: 0 };
+
+    config.timeline
+      .set(currentPreview, {
+        y: 0,
+        scale: 1,
+        opacity: 1,
+        force3D: true,
+      }, 0)
+      .set(nextPreview, {
+        clipPath: "inset(100% 0% 0% 0%)",
+        opacity: 1,
+        force3D: true,
+      }, 0)
+      .to(currentPreview, {
+        y: "-30vh",
+        scale: 0.8,
+        opacity: 0.4,
+        duration: config.durationIn,
+        ease: slowFastSoft,
+        force3D: true,
+      }, 0)
+      .to(nextPreview, {
+        clipPath: "inset(0% 0% 0% 0%)",
+        duration: config.durationOut,
+        ease: slowFastSoft,
+        force3D: true,
+      }, 0)
+      .call(() => {
+        nextPreview.classList.add("is-copy-visible");
+      }, null, contactRevealDelay)
+      .to(contactRevealHold, {
+        progress: 1,
+        duration: 1.06,
+        ease: "none",
+      }, contactRevealDelay);
+
+    return true;
+  };
+
+  const resetAll = ({ restore = true } = {}) => {
     configs.forEach((config) => {
       config.played = false;
       reset(config);
@@ -182,11 +297,11 @@
     document.body.classList.remove("scroll-curtain-active");
     window.cancelAnimationFrame(settleFrame);
     settling = false;
-    unlockScroll();
+    unlockScroll({ restore });
   };
 
   const play = (config) => {
-    if (!supported || config.timeline || locked) return;
+    if (!supported || config.timeline || locked) return false;
 
     reset(config);
     lockScroll();
@@ -201,6 +316,8 @@
       defaults: { overwrite: true },
       onComplete: () => {
         config.timeline = null;
+        config.previews.forEach((preview) => preview.remove());
+        config.previews = [];
         config.root.classList.remove("is-active");
 
         if (!configs.some((item) => item.root.classList.contains("is-active"))) {
@@ -209,22 +326,26 @@
         if (!config.settleTarget) {
           unlockScroll({ restore: false });
         }
+        requestUpdate();
       },
     });
 
-    if (config.clipDriven) {
+    if (config.kind === "page-reveal" && playPageReveal(config)) {
+      // Codrops-style page handoff: old view recedes while the next view
+      // reveals upward through clip-path.
+    } else if (config.clipDriven) {
       config.timeline
         .set(config.visualSvg, { yPercent: 0 }, 0)
         .to(config.curveState, {
           amount: 1,
           duration: config.durationIn,
-          ease: "power2.inOut",
+          ease: slowFastSoft,
           onUpdate: () => renderCurve(config),
         }, 0)
         .to(config.visualSvg, {
           duration: config.durationOut,
           yPercent: -108,
-          ease: "power2.inOut",
+          ease: slowFastSoft,
         }, config.overlap + 0.26);
     } else {
       config.timeline
@@ -236,34 +357,39 @@
         .to(config.maskPath, {
           duration: config.durationIn,
           morphSVG: config.startShape,
-          ease: "power2.inOut",
+          ease: slowFastSoft,
         }, 0)
         .to(config.surface, {
           duration: config.durationIn + 0.18,
           yPercent: 0,
           borderTopLeftRadius: "20%",
           borderTopRightRadius: "20%",
-          ease: "power2.inOut",
+          ease: slowFastSoft,
         }, 0)
         .to(config.maskPath, {
           duration: config.durationOut,
           morphSVG: config.endShape,
-          ease: "power2.inOut",
+          ease: slowFastSoft,
         }, config.overlap)
         .to(config.surface, {
           duration: config.durationOut,
           yPercent: -108,
           borderTopLeftRadius: "0%",
           borderTopRightRadius: "0%",
-          ease: "power2.inOut",
+          ease: slowFastSoft,
         }, config.overlap + 0.26);
     }
 
     if (config.settleTarget) {
       config.timeline.call(() => {
-        settleScroll(config, () => unlockScroll({ restore: false }));
+        settleScroll(config, () => {
+          unlockScroll({ restore: false });
+          requestUpdate();
+        });
       }, null, settleAt);
     }
+
+    return true;
   };
 
   const update = () => {
@@ -274,16 +400,24 @@
 
     configs.forEach((config) => {
       const rect = config.target.getBoundingClientRect();
+      const previousTop = config.lastTop;
+      const triggerY = vh * config.trigger;
+      const backY = vh * config.backLimit;
+      const enteredWindow = rect.top < triggerY && rect.top > backY;
+      const crossedWindow = previousTop !== null
+        && previousTop >= triggerY
+        && rect.top <= triggerY
+        && rect.top > -vh * 1.35;
+      config.lastTop = rect.top;
 
-      if (!config.played && rect.top < vh * config.trigger && rect.top > vh * config.backLimit) {
-        config.played = true;
-        play(config);
+      if (!config.played && (enteredWindow || crossedWindow)) {
+        if (play(config)) config.played = true;
         return;
       }
 
       if (rect.top > vh * config.reset) {
         config.played = false;
-        reset(config);
+        reset(config, { keepTop: true });
       }
     });
   };
@@ -292,6 +426,18 @@
     if (ticking) return;
     ticking = true;
     requestAnimationFrame(update);
+  };
+
+  const handleProgrammaticSectionJump = (event) => {
+    const targetId = event.detail?.targetId;
+    if (!targetId) return;
+    resetAll({ restore: false });
+
+    configs.forEach((config) => {
+      if (config.target?.id !== targetId) return;
+      config.played = true;
+      reset(config);
+    });
   };
 
   const keepScrollLocked = (event) => {
@@ -314,6 +460,7 @@
     window.addEventListener("wheel", keepScrollLocked, { passive: false, capture: true });
     window.addEventListener("touchmove", keepScrollLocked, { passive: false, capture: true });
     window.addEventListener("lucian:return-to-entry", resetAll);
+    window.addEventListener("lucian:programmatic-section-jump", handleProgrammaticSectionJump);
     requestUpdate();
   } catch (error) {
     supported = false;

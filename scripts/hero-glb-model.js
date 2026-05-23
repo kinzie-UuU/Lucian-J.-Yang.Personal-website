@@ -41,6 +41,257 @@
   const resolveAssetUrl = (uri) => new URL(uri, new URL(modelUrl, window.location.href)).href;
   const trimLionPedestal = /lion_head/i.test(modelUrl);
 
+  const pointToSegmentDistance = (pointX, pointY, startX, startY, endX, endY) => {
+    const segmentX = endX - startX;
+    const segmentY = endY - startY;
+    const lengthSquared = segmentX * segmentX + segmentY * segmentY;
+    if (lengthSquared <= 0.001) return Math.hypot(pointX - endX, pointY - endY);
+
+    const t = clamp(
+      ((pointX - startX) * segmentX + (pointY - startY) * segmentY) / lengthSquared,
+      0,
+      1
+    );
+    const closestX = startX + segmentX * t;
+    const closestY = startY + segmentY * t;
+    return Math.hypot(pointX - closestX, pointY - closestY);
+  };
+
+  const createWordmarkRipple = (wordmark) => {
+    const reduceMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
+    if (!wordmark || reduceMotion) return null;
+
+    const layer = document.createElement("canvas");
+    layer.className = "hero-wordmark-ripple-canvas";
+    layer.setAttribute("aria-hidden", "true");
+    host.appendChild(layer);
+
+    const ctx = layer.getContext("2d", { alpha: true });
+    const source = document.createElement("canvas");
+    const sourceCtx = source.getContext("2d", { alpha: true });
+    if (!ctx || !sourceCtx) {
+      layer.remove();
+      return null;
+    }
+
+    const metrics = {
+      cssWidth: 1,
+      cssHeight: 1,
+      dpr: 1,
+      rect: null,
+      padX: 72,
+      padY: 42,
+    };
+    const pointer = {
+      x: 0,
+      y: 0,
+      lastX: 0,
+      lastY: 0,
+      vx: 0,
+      vy: 0,
+      energy: 0,
+      initialized: false,
+    };
+    let frameId = 0;
+    let lastSync = 0;
+    let sourcePixels = null;
+
+    const drawSource = () => {
+      const style = window.getComputedStyle(wordmark);
+      const text = wordmark.textContent?.trim() || "";
+      const fontWeight = style.fontWeight || "700";
+      const fontSize = style.fontSize || "160px";
+      const fontFamily = style.fontFamily || "serif";
+
+      sourceCtx.setTransform(metrics.dpr, 0, 0, metrics.dpr, 0, 0);
+      sourceCtx.clearRect(0, 0, metrics.cssWidth, metrics.cssHeight);
+      sourceCtx.font = `${fontWeight} ${fontSize} ${fontFamily}`;
+      sourceCtx.textAlign = "center";
+      sourceCtx.textBaseline = "middle";
+      sourceCtx.lineJoin = "round";
+
+      const measured = Math.max(sourceCtx.measureText(text).width, 1);
+      const fit = clamp((metrics.rect?.width || measured) / measured, 0.62, 1.06);
+      sourceCtx.save();
+      sourceCtx.translate(metrics.cssWidth / 2, metrics.cssHeight / 2 + (metrics.rect?.height || 0) * 0.035);
+      sourceCtx.scale(fit, 1);
+      sourceCtx.fillStyle = "rgba(0, 0, 0, 0.96)";
+      sourceCtx.fillText(text, 0, 0);
+      sourceCtx.restore();
+      sourcePixels = sourceCtx.getImageData(0, 0, source.width, source.height);
+    };
+
+    const sync = (force = false) => {
+      const now = performance.now();
+      if (!force && now - lastSync < 280) return;
+      lastSync = now;
+
+      const rect = wordmark.getBoundingClientRect();
+      const hostRect = host.getBoundingClientRect();
+      if (!rect.width || !rect.height || !hostRect.width || !hostRect.height) return;
+
+      const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+      const padX = Math.max(58, rect.height * 0.62);
+      const padY = Math.max(32, rect.height * 0.38);
+      const cssWidth = rect.width + padX * 2;
+      const cssHeight = rect.height + padY * 2;
+      const width = Math.max(2, Math.round(cssWidth * dpr));
+      const height = Math.max(2, Math.round(cssHeight * dpr));
+
+      metrics.cssWidth = cssWidth;
+      metrics.cssHeight = cssHeight;
+      metrics.dpr = dpr;
+      metrics.rect = rect;
+      metrics.padX = padX;
+      metrics.padY = padY;
+
+      layer.style.left = `${rect.left - hostRect.left - padX}px`;
+      layer.style.top = `${rect.top - hostRect.top - padY}px`;
+      layer.style.width = `${cssWidth}px`;
+      layer.style.height = `${cssHeight}px`;
+
+      if (layer.width !== width || layer.height !== height || source.width !== width || source.height !== height) {
+        layer.width = width;
+        layer.height = height;
+        source.width = width;
+        source.height = height;
+      }
+
+      drawSource();
+    };
+
+    const render = () => {
+      frameId = 0;
+      sync();
+
+      ctx.setTransform(metrics.dpr, 0, 0, metrics.dpr, 0, 0);
+      ctx.clearRect(0, 0, metrics.cssWidth, metrics.cssHeight);
+
+      pointer.vx *= 0.88;
+      pointer.vy *= 0.88;
+      pointer.energy *= 0.935;
+
+      if (pointer.energy <= 0.018) {
+        pointer.energy = 0;
+        host.classList.remove("is-wordmark-rippling");
+        return;
+      }
+
+      const speed = Math.min(Math.hypot(pointer.vx, pointer.vy), 72);
+      const radius = Math.max(42, (metrics.rect?.height || 110) * 0.56) + speed * 0.56;
+      const stretchX = clamp(pointer.vx, -92, 92) * 0.92;
+      const stretchY = clamp(pointer.vy, -48, 48) * 0.22;
+      const phase = performance.now() * 0.008;
+      const boundPad = radius * 1.34 + Math.abs(stretchX) * pointer.energy + 32;
+      const minX = Math.max(0, Math.floor((Math.min(pointer.lastX, pointer.x) - boundPad) * metrics.dpr));
+      const minY = Math.max(0, Math.floor((Math.min(pointer.lastY, pointer.y) - boundPad) * metrics.dpr));
+      const maxX = Math.min(layer.width, Math.ceil((Math.max(pointer.lastX, pointer.x) + boundPad) * metrics.dpr));
+      const maxY = Math.min(layer.height, Math.ceil((Math.max(pointer.lastY, pointer.y) + boundPad) * metrics.dpr));
+      const outputWidth = Math.max(1, maxX - minX);
+      const outputHeight = Math.max(1, maxY - minY);
+
+      if (!sourcePixels || outputWidth <= 1 || outputHeight <= 1) {
+        frameId = window.requestAnimationFrame(render);
+        return;
+      }
+
+      const output = ctx.createImageData(outputWidth, outputHeight);
+      const sourceData = sourcePixels.data;
+      const outputData = output.data;
+      const rippleLimit = radius * 1.28;
+
+      for (let py = 0; py < outputHeight; py += 1) {
+        const cssY = (minY + py) / metrics.dpr;
+        for (let px = 0; px < outputWidth; px += 1) {
+          const cssX = (minX + px) / metrics.dpr;
+          const distance = pointToSegmentDistance(
+            cssX,
+            cssY,
+            pointer.lastX,
+            pointer.lastY,
+            pointer.x,
+            pointer.y
+          );
+          if (distance > rippleLimit) continue;
+
+          const falloff = Math.pow(1 - clamp(distance / rippleLimit, 0, 1), 2.35);
+          const wake = Math.sin(distance * 0.15 - phase) * falloff * pointer.energy;
+          const pull = falloff * pointer.energy;
+          if (pull < 0.12) continue;
+          const offsetX = stretchX * pull + wake * 38;
+          const offsetY = stretchY * pull + wake * 7;
+          const sampleX = Math.round((cssX - offsetX) * metrics.dpr);
+          const sampleY = Math.round((cssY - offsetY) * metrics.dpr);
+          if (sampleX < 0 || sampleX >= source.width || sampleY < 0 || sampleY >= source.height) continue;
+
+          const sourceIndex = (sampleY * source.width + sampleX) * 4;
+          const alpha = sourceData[sourceIndex + 3];
+          if (!alpha) continue;
+
+          const outputIndex = (py * outputWidth + px) * 4;
+          const visibility = clamp((pull - 0.10) * 1.45, 0, 0.98);
+          outputData[outputIndex] = sourceData[sourceIndex];
+          outputData[outputIndex + 1] = sourceData[sourceIndex + 1];
+          outputData[outputIndex + 2] = sourceData[sourceIndex + 2];
+          outputData[outputIndex + 3] = alpha * visibility;
+        }
+      }
+
+      ctx.putImageData(output, minX, minY);
+      frameId = window.requestAnimationFrame(render);
+    };
+
+    const start = () => {
+      if (!frameId) frameId = window.requestAnimationFrame(render);
+    };
+
+    const move = (event, active, strength) => {
+      sync();
+      if (!metrics.rect || !active) {
+        if (pointer.energy > 0.018) start();
+        return;
+      }
+
+      const x = event.clientX - metrics.rect.left + metrics.padX;
+      const y = event.clientY - metrics.rect.top + metrics.padY;
+      if (!pointer.initialized) {
+        pointer.x = x;
+        pointer.y = y;
+        pointer.lastX = x;
+        pointer.lastY = y;
+        pointer.initialized = true;
+        return;
+      } else {
+        pointer.lastX = pointer.x;
+        pointer.lastY = pointer.y;
+        pointer.vx = pointer.vx * 0.36 + (x - pointer.x) * 0.64;
+        pointer.vy = pointer.vy * 0.36 + (y - pointer.y) * 0.64;
+        pointer.x = x;
+        pointer.y = y;
+      }
+
+      const velocity = Math.hypot(pointer.vx, pointer.vy);
+      if (velocity < 1.8 && pointer.energy <= 0.018) return;
+
+      pointer.energy = Math.max(pointer.energy, clamp((velocity - 1.8) / 18, 0, 1) * strength);
+      if (pointer.energy <= 0.018) return;
+
+      host.classList.add("is-wordmark-rippling");
+      start();
+    };
+
+    const reset = () => {
+      pointer.initialized = false;
+      if (pointer.energy > 0.018) start();
+    };
+
+    window.addEventListener("resize", () => sync(true));
+    document.fonts?.ready?.then(() => sync(true)).catch(() => {});
+    sync(true);
+
+    return { move, reset, sync };
+  };
+
   const createDisjointSet = (count) => {
     const parent = Array.from({ length: count }, (_, index) => index);
     const find = (value) => {
@@ -449,6 +700,7 @@
     const current = { x: 0, y: 0, distance: 5.2 };
     const hover = { x: 0, y: 0, active: false };
     const wordmark = host.querySelector(".hero-model-wordmark:not(.hero-model-wordmark-intersection)");
+    const wordmarkRipple = createWordmarkRipple(wordmark);
     let activePointerId = null;
     let lastX = 0;
     let lastY = 0;
@@ -480,6 +732,9 @@
       host.style.setProperty("--wordmark-hover", strength.toFixed(3));
       host.style.setProperty("--wordmark-hover-x", localX.toFixed(3));
       host.style.setProperty("--wordmark-hover-y", localY.toFixed(3));
+      host.style.setProperty("--wordmark-hover-pos-x", `${((localX + 1) * 50).toFixed(2)}%`);
+      host.style.setProperty("--wordmark-hover-pos-y", `${((localY + 1) * 50).toFixed(2)}%`);
+      wordmarkRipple?.move(event, active, strength);
     };
 
     const resetWordmarkHover = () => {
@@ -487,6 +742,9 @@
       host.style.setProperty("--wordmark-hover", "0");
       host.style.setProperty("--wordmark-hover-x", "0");
       host.style.setProperty("--wordmark-hover-y", "0");
+      host.style.setProperty("--wordmark-hover-pos-x", "50%");
+      host.style.setProperty("--wordmark-hover-pos-y", "50%");
+      wordmarkRipple?.reset();
     };
 
     const endDrag = (event) => {

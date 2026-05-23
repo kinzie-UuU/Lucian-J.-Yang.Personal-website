@@ -121,7 +121,6 @@
       if (!parent) return;
       const isHeroDisplay = parent.matches(".about-heading, .contact-headline");
       const isParagraph = parent.matches(".about-lead, .about-detail");
-      const isWorksStatementTitle = parent.matches(".works-statement-title");
       const center = rect.top + rect.height * 0.5;
       const distance = Math.abs(center - focusLine);
       const raw = 1 - Math.min(1, distance / focusRange);
@@ -132,9 +131,9 @@
       const directionBias = scrollTypeDirection < 0 ? -0.035 : 0.035;
       const scanPhase = parentPhase + directionBias;
       const smooth = (value) => value * value * (3 - 2 * value);
-      const enterWindow = isWorksStatementTitle ? 0.34 : isParagraph ? 0.32 : 0.26;
-      const exitStart = isWorksStatementTitle ? 0.92 : isParagraph ? 0.9 : 0.82;
-      const exitWindow = isWorksStatementTitle ? 0.3 : isParagraph ? 0.28 : 0.22;
+      const enterWindow = isParagraph ? 0.32 : 0.26;
+      const exitStart = isParagraph ? 0.9 : 0.82;
+      const exitWindow = isParagraph ? 0.28 : 0.22;
       const enter = smooth(Math.max(0, Math.min(1, (scanPhase - glyphOrder * 0.38) / enterWindow)));
       const exit = smooth(Math.max(0, Math.min(1, (scanPhase - exitStart - glyphOrder * 0.12) / exitWindow)));
       const amount = Math.max(0, Math.min(1, enter * (1 - exit)));

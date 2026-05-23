@@ -18,11 +18,11 @@
   let projectDetailObserver = null;
   let gallerySourceItems = [];
   let galleryCurrentProject = null;
+  let galleryReturnY = 0;
 
   let circularCleanup = null;
   let circularCurrentIndex = 0;
   const circularImageCache = new Map();
-  const circularTextTextureCache = new Map();
   let circularPrewarmStarted = false;
 
   const getCurrentLang = () => runtime?.getCurrentLang?.() || "zh";
@@ -437,601 +437,6 @@
 
     root.innerHTML = "";
     initDomCircularGallery(root, sourceItems);
-    return;
-
-    if (window.location.protocol === "file:") {
-      initDomCircularGallery(root, sourceItems);
-      return;
-    }
-
-    const canvas = document.createElement("canvas");
-    canvas.className = "work-circular-canvas";
-    canvas.setAttribute("aria-label", galleryText[getCurrentLang()].project);
-    root.appendChild(canvas);
-
-    const gl = canvas.getContext("webgl", {
-      alpha: true,
-      antialias: true,
-      depth: false,
-      premultipliedAlpha: false
-    });
-
-    if (!gl) {
-      root.innerHTML = `<p class="work-circular-fallback">${galleryText[getCurrentLang()].project}</p>`;
-      return;
-    }
-
-    const vertexSource = `
-      precision mediump float;
-      attribute vec2 aPosition;
-      attribute vec2 aUv;
-      uniform mat4 uMatrix;
-      uniform vec2 uPlaneSize;
-      uniform float uTime;
-      uniform float uSpeed;
-      uniform float uWave;
-      varying vec2 vUv;
-      void main() {
-        vUv = aUv;
-        vec3 p = vec3(aPosition * uPlaneSize, 0.0);
-        float ripple = sin(p.x * 4.0 + uTime) * 1.5 + cos(p.y * 2.0 + uTime) * 1.5;
-        p.z += ripple * (uWave + abs(uSpeed) * 0.42);
-        gl_Position = uMatrix * vec4(p, 1.0);
-      }
-    `;
-    const fragmentSource = `
-      precision mediump float;
-      uniform sampler2D uTexture;
-      uniform vec2 uImageSize;
-      uniform vec2 uPlaneSize;
-      uniform float uBorderRadius;
-      uniform float uAlpha;
-      uniform float uIsText;
-      varying vec2 vUv;
-
-      float roundedBoxSDF(vec2 p, vec2 b, float r) {
-        vec2 d = abs(p) - b;
-        return length(max(d, vec2(0.0))) + min(max(d.x, d.y), 0.0) - r;
-      }
-
-      void main() {
-        if (uIsText > 0.5) {
-          vec4 text = texture2D(uTexture, vUv);
-          if (text.a < 0.08) discard;
-          gl_FragColor = vec4(text.rgb, text.a * uAlpha);
-          return;
-        }
-
-        vec2 ratio = vec2(
-          min((uPlaneSize.x / uPlaneSize.y) / (uImageSize.x / uImageSize.y), 1.0),
-          min((uPlaneSize.y / uPlaneSize.x) / (uImageSize.y / uImageSize.x), 1.0)
-        );
-        vec2 uv = vec2(
-          vUv.x * ratio.x + (1.0 - ratio.x) * 0.5,
-          vUv.y * ratio.y + (1.0 - ratio.y) * 0.5
-        );
-        vec4 color = texture2D(uTexture, uv);
-        float d = roundedBoxSDF(vUv - 0.5, vec2(0.5 - uBorderRadius), uBorderRadius);
-        float alpha = 1.0 - smoothstep(-0.002, 0.002, d);
-        gl_FragColor = vec4(color.rgb, color.a * alpha * uAlpha);
-      }
-    `;
-
-    const compileShader = (type, source) => {
-      const shader = gl.createShader(type);
-      gl.shaderSource(shader, source);
-      gl.compileShader(shader);
-      if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-        throw new Error(gl.getShaderInfoLog(shader) || "Work gallery shader failed.");
-      }
-      return shader;
-    };
-
-    const program = gl.createProgram();
-    gl.attachShader(program, compileShader(gl.VERTEX_SHADER, vertexSource));
-    gl.attachShader(program, compileShader(gl.FRAGMENT_SHADER, fragmentSource));
-    gl.linkProgram(program);
-    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-      throw new Error(gl.getProgramInfoLog(program) || "Work gallery program failed.");
-    }
-    gl.useProgram(program);
-
-    const locations = {
-      position: gl.getAttribLocation(program, "aPosition"),
-      uv: gl.getAttribLocation(program, "aUv"),
-      matrix: gl.getUniformLocation(program, "uMatrix"),
-      planeSize: gl.getUniformLocation(program, "uPlaneSize"),
-      imageSize: gl.getUniformLocation(program, "uImageSize"),
-      time: gl.getUniformLocation(program, "uTime"),
-      speed: gl.getUniformLocation(program, "uSpeed"),
-      wave: gl.getUniformLocation(program, "uWave"),
-      borderRadius: gl.getUniformLocation(program, "uBorderRadius"),
-      alpha: gl.getUniformLocation(program, "uAlpha"),
-      isText: gl.getUniformLocation(program, "uIsText"),
-      texture: gl.getUniformLocation(program, "uTexture")
-    };
-
-    const createPlaneGeometry = (columns = 36, rows = 48) => {
-      const vertices = [];
-      const indices = [];
-      for (let y = 0; y <= rows; y++) {
-        for (let x = 0; x <= columns; x++) {
-          const u = x / columns;
-          const v = y / rows;
-          vertices.push(u - 0.5, 0.5 - v, u, v);
-        }
-      }
-      for (let y = 0; y < rows; y++) {
-        for (let x = 0; x < columns; x++) {
-          const a = y * (columns + 1) + x;
-          const b = a + 1;
-          const c = a + columns + 1;
-          const d = c + 1;
-          indices.push(a, c, b, b, c, d);
-        }
-      }
-      return {
-        vertices: new Float32Array(vertices),
-        indices: new Uint16Array(indices),
-        count: indices.length
-      };
-    };
-
-    const geometry = createPlaneGeometry();
-    const vertexBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, geometry.vertices, gl.STATIC_DRAW);
-    const indexBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
-    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, geometry.indices, gl.STATIC_DRAW);
-    gl.enableVertexAttribArray(locations.position);
-    gl.vertexAttribPointer(locations.position, 2, gl.FLOAT, false, 16, 0);
-    gl.enableVertexAttribArray(locations.uv);
-    gl.vertexAttribPointer(locations.uv, 2, gl.FLOAT, false, 16, 8);
-
-    const createTexture = () => {
-      const texture = gl.createTexture();
-      gl.bindTexture(gl.TEXTURE_2D, texture);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([36, 34, 30, 255]));
-      return texture;
-    };
-
-    const uploadLoadedImage = (entry, img) => {
-      try {
-        entry.imageSize = [img.naturalWidth || 1, img.naturalHeight || 1];
-        gl.bindTexture(gl.TEXTURE_2D, entry.texture);
-        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
-        entry.loaded = true;
-      } catch (error) {
-        entry.loaded = false;
-      }
-    };
-
-    const uploadImageTexture = (entry) => {
-      const cachedImage = circularImageCache.get(entry.item.src);
-      if (cachedImage?.complete && cachedImage.naturalWidth) {
-        uploadLoadedImage(entry, cachedImage);
-        return;
-      }
-
-      const img = cachedImage || new Image();
-      img.onload = () => {
-        circularImageCache.set(entry.item.src, img);
-        media
-          .filter((mediaEntry) => mediaEntry.item.src === entry.item.src)
-          .forEach((mediaEntry) => uploadLoadedImage(mediaEntry, img));
-      };
-      img.onerror = () => {
-        entry.loaded = false;
-      };
-      circularImageCache.set(entry.item.src, img);
-      img.src = entry.item.src;
-    };
-
-    const createTextTexture = (text) => {
-      const cacheKey = `${getCurrentLang()}::${text}`;
-      const cached = circularTextTextureCache.get(cacheKey);
-      if (cached) {
-        const texture = createTexture();
-        gl.bindTexture(gl.TEXTURE_2D, texture);
-        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
-        gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, cached.canvas);
-        gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
-        return { texture, size: cached.size };
-      }
-
-      const ratio = Math.min(window.devicePixelRatio || 1, 2);
-      const textCanvas = document.createElement("canvas");
-      const context = textCanvas.getContext("2d");
-      const fontSize = 26 * ratio;
-      context.font = `800 ${fontSize}px Arial, "Microsoft YaHei", sans-serif`;
-      const metrics = context.measureText(text);
-      textCanvas.width = Math.ceil(metrics.width + 42 * ratio);
-      textCanvas.height = Math.ceil(52 * ratio);
-      context.font = `700 ${fontSize}px Arial, "Microsoft YaHei", sans-serif`;
-      context.textAlign = "center";
-      context.textBaseline = "middle";
-      context.fillStyle = "rgba(244, 242, 237, 0.92)";
-      context.clearRect(0, 0, textCanvas.width, textCanvas.height);
-      context.fillText(text, textCanvas.width / 2, textCanvas.height / 2);
-      const texture = createTexture();
-      gl.bindTexture(gl.TEXTURE_2D, texture);
-      gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
-      gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
-      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, textCanvas);
-      gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
-      circularTextTextureCache.set(cacheKey, { canvas: textCanvas, size: [textCanvas.width, textCanvas.height] });
-      return { texture, size: [textCanvas.width, textCanvas.height] };
-    };
-
-    const identity = () => new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
-    const multiply = (a, b) => {
-      const out = new Float32Array(16);
-      for (let i = 0; i < 4; i++) {
-        for (let j = 0; j < 4; j++) {
-          out[j * 4 + i] =
-            a[0 * 4 + i] * b[j * 4 + 0] +
-            a[1 * 4 + i] * b[j * 4 + 1] +
-            a[2 * 4 + i] * b[j * 4 + 2] +
-            a[3 * 4 + i] * b[j * 4 + 3];
-        }
-      }
-      return out;
-    };
-    const perspective = (fov, aspect, near, far) => {
-      const f = 1 / Math.tan(fov / 2);
-      const nf = 1 / (near - far);
-      return new Float32Array([
-        f / aspect, 0, 0, 0,
-        0, f, 0, 0,
-        0, 0, (far + near) * nf, -1,
-        0, 0, (2 * far * near) * nf, 0
-      ]);
-    };
-    const translate = (x, y, z) => {
-      const out = identity();
-      out[12] = x;
-      out[13] = y;
-      out[14] = z;
-      return out;
-    };
-    const rotateX = (angle) => {
-      const c = Math.cos(angle);
-      const s = Math.sin(angle);
-      return new Float32Array([1, 0, 0, 0, 0, c, s, 0, 0, -s, c, 0, 0, 0, 0, 1]);
-    };
-    const rotateY = (angle) => {
-      const c = Math.cos(angle);
-      const s = Math.sin(angle);
-      return new Float32Array([c, 0, -s, 0, 0, 1, 0, 0, s, 0, c, 0, 0, 0, 0, 1]);
-    };
-    const rotateZ = (angle) => {
-      const c = Math.cos(angle);
-      const s = Math.sin(angle);
-      return new Float32Array([c, s, 0, 0, -s, c, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
-    };
-
-    const transformPoint = (matrix, point) => {
-      const [x, y, z, w] = point;
-      return [
-        matrix[0] * x + matrix[4] * y + matrix[8] * z + matrix[12] * w,
-        matrix[1] * x + matrix[5] * y + matrix[9] * z + matrix[13] * w,
-        matrix[2] * x + matrix[6] * y + matrix[10] * z + matrix[14] * w,
-        matrix[3] * x + matrix[7] * y + matrix[11] * z + matrix[15] * w
-      ];
-    };
-
-    const sourceLoop = sourceItems.concat(sourceItems);
-    const media = sourceLoop.map((item, index) => {
-      const itemIndex = index % sourceItems.length;
-      const title = getGalleryItemTitle(item, itemIndex);
-      const titleTexture = createTextTexture(title);
-      const entry = {
-        index,
-        item,
-        itemIndex,
-        title,
-        texture: createTexture(),
-        titleTexture: titleTexture.texture,
-        titleTextureSize: titleTexture.size,
-        imageSize: [1, 1],
-        loaded: false,
-        hit: null
-      };
-      return entry;
-    });
-    media.forEach(uploadImageTexture);
-
-    let screen = { width: 1, height: 1, dpr: 1, aspect: 1 };
-    let metrics = { worldWidth: 12, worldHeight: 8, cardWidth: 2, cardHeight: 3, spacing: 3, bend: 3 };
-    let scrollTarget = sourceItems.length + galleryStep;
-    let scrollCurrent = scrollTarget;
-    let scrollLast = scrollTarget;
-    let raf = 0;
-    let snapTimeout = 0;
-    let disposed = false;
-    let isDown = false;
-    let didDrag = false;
-    let openingDetail = false;
-    let dragStartX = 0;
-    let dragStartTarget = 0;
-    let lastChromeIndex = -1;
-    const cameraZ = 12;
-    const startedAt = performance.now();
-
-    const resize = () => {
-      screen = {
-        width: Math.max(1, root.clientWidth || window.innerWidth),
-        height: Math.max(1, root.clientHeight || window.innerHeight),
-        dpr: Math.min(window.devicePixelRatio || 1, 1.5),
-        aspect: 1
-      };
-      screen.aspect = screen.width / screen.height;
-      canvas.width = Math.round(screen.width * screen.dpr);
-      canvas.height = Math.round(screen.height * screen.dpr);
-      canvas.style.width = `${screen.width}px`;
-      canvas.style.height = `${screen.height}px`;
-      gl.viewport(0, 0, canvas.width, canvas.height);
-
-      const fov = 45 * Math.PI / 180;
-      const worldHeight = 2 * Math.tan(fov / 2) * cameraZ;
-      const worldWidth = worldHeight * screen.aspect;
-      const cardHeight = clamp(worldHeight * 0.3, 2.35, 3.05);
-      const cardWidth = cardHeight * 0.78;
-      metrics = {
-        worldWidth,
-        worldHeight,
-        cardWidth,
-        cardHeight,
-        spacing: cardWidth + 1.7,
-        bend: clamp(worldHeight * 0.16, 1.25, 2.05)
-      };
-    };
-
-    const normalizeScroll = () => {
-      if (scrollTarget < sourceItems.length * 0.55) {
-        scrollTarget += sourceItems.length;
-        scrollCurrent += sourceItems.length;
-      } else if (scrollTarget > sourceItems.length * 2.45) {
-        scrollTarget -= sourceItems.length;
-        scrollCurrent -= sourceItems.length;
-      }
-    };
-
-    const syncChrome = () => {
-      const nextIndex = ((Math.round(scrollCurrent) % sourceItems.length) + sourceItems.length) % sourceItems.length;
-      if (nextIndex === lastChromeIndex) return;
-      lastChromeIndex = nextIndex;
-      circularCurrentIndex = nextIndex;
-      const activeItem = sourceItems[circularCurrentIndex] || sourceItems[0];
-      updateGalleryHeader(activeItem, circularCurrentIndex);
-    };
-
-    const snapToNearest = () => {
-      scrollTarget = Math.round(scrollTarget);
-    };
-
-    const scheduleSnap = () => {
-      window.clearTimeout(snapTimeout);
-      snapTimeout = window.setTimeout(snapToNearest, 180);
-    };
-
-    const drawPlane = ({ matrix, texture, planeSize, imageSize, alpha, borderRadius, isText, wave, speed, time }) => {
-      gl.uniformMatrix4fv(locations.matrix, false, matrix);
-      gl.uniform2fv(locations.planeSize, planeSize);
-      gl.uniform2fv(locations.imageSize, imageSize);
-      gl.uniform1f(locations.time, time);
-      gl.uniform1f(locations.speed, speed);
-      gl.uniform1f(locations.wave, wave);
-      gl.uniform1f(locations.borderRadius, borderRadius);
-      gl.uniform1f(locations.alpha, alpha);
-      gl.uniform1f(locations.isText, isText ? 1 : 0);
-      gl.activeTexture(gl.TEXTURE0);
-      gl.bindTexture(gl.TEXTURE_2D, texture);
-      gl.uniform1i(locations.texture, 0);
-      gl.drawElements(gl.TRIANGLES, geometry.count, gl.UNSIGNED_SHORT, 0);
-    };
-
-    const getLayoutForEntry = (entry, elapsed, speed) => {
-      const relative = entry.index - scrollCurrent;
-      const x = relative * metrics.spacing;
-      const half = metrics.worldWidth / 2;
-      const distance = Math.min(1.15, Math.abs(x) / half);
-      const effectiveX = Math.min(Math.abs(x), half);
-      const bend = metrics.bend;
-      const radius = (half * half + bend * bend) / (2 * bend);
-      const arc = radius - Math.sqrt(Math.max(0, radius * radius - effectiveX * effectiveX));
-      const y = -arc + metrics.worldHeight * 0.04;
-      const z = 0;
-      const rz = (x < 0 ? -1 : 1) * Math.asin(Math.min(0.92, effectiveX / radius)) * 0.58;
-      const ry = 0;
-      const rx = 0;
-      const alpha = clamp(1 - Math.max(0, distance - 0.92) * 1.7, 0.34, 1);
-      const wave = 0.045;
-      return { x, y, z, rx, ry, rz, distance, alpha, wave };
-    };
-
-    const getMatrix = (layout, offsetY = 0, offsetZ = 0) => {
-      const projection = perspective(45 * Math.PI / 180, screen.aspect, 0.1, 80);
-      const view = translate(0, 0, -cameraZ);
-      const model = multiply(
-        translate(layout.x, layout.y + offsetY, layout.z + offsetZ),
-        multiply(rotateZ(layout.rz), multiply(rotateY(layout.ry), rotateX(layout.rx)))
-      );
-      return multiply(projection, multiply(view, model));
-    };
-
-    const updateHit = (entry, matrix, layout) => {
-      const w = metrics.cardWidth / 2;
-      const h = metrics.cardHeight / 2;
-      const points = [
-        [-w, -h, 0, 1],
-        [w, -h, 0, 1],
-        [w, h, 0, 1],
-        [-w, h, 0, 1]
-      ].map((point) => {
-        const p = transformPoint(matrix, point);
-        const ndcX = p[0] / p[3];
-        const ndcY = p[1] / p[3];
-        return {
-          x: (ndcX * 0.5 + 0.5) * screen.width,
-          y: (-ndcY * 0.5 + 0.5) * screen.height
-        };
-      });
-      entry.hit = {
-        itemIndex: entry.itemIndex,
-        distance: layout.distance,
-        left: Math.min(...points.map((point) => point.x)),
-        right: Math.max(...points.map((point) => point.x)),
-        top: Math.min(...points.map((point) => point.y)),
-        bottom: Math.max(...points.map((point) => point.y))
-      };
-    };
-
-    const render = () => {
-      if (disposed) return;
-      normalizeScroll();
-      scrollCurrent += (scrollTarget - scrollCurrent) * 0.028;
-      if (Math.abs(scrollTarget - scrollCurrent) < 0.001) scrollCurrent = scrollTarget;
-
-      const elapsed = (performance.now() - startedAt) / 1000;
-      const speed = scrollCurrent - scrollLast;
-      scrollLast = scrollCurrent;
-
-      gl.clearColor(0, 0, 0, 0);
-      gl.clear(gl.COLOR_BUFFER_BIT);
-      gl.enable(gl.BLEND);
-      gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-      gl.disable(gl.DEPTH_TEST);
-
-      const visible = media
-        .map((entry) => ({ entry, layout: getLayoutForEntry(entry, elapsed, speed) }))
-        .filter(({ layout }) => Math.abs(layout.x) < metrics.worldWidth * 0.72 + metrics.cardWidth)
-        .sort((a, b) => b.layout.distance - a.layout.distance);
-
-      visible.forEach(({ entry, layout }) => {
-        const matrix = getMatrix(layout);
-        updateHit(entry, matrix, layout);
-        drawPlane({
-          matrix,
-          texture: entry.texture,
-          planeSize: [metrics.cardWidth, metrics.cardHeight],
-          imageSize: entry.imageSize,
-          alpha: entry.loaded ? layout.alpha : 0,
-          borderRadius: 0.045,
-          isText: false,
-          wave: layout.wave,
-          speed,
-          time: elapsed + entry.index * 0.18
-        });
-      });
-
-      visible.forEach(({ entry, layout }) => {
-        const textAspect = entry.titleTextureSize[0] / Math.max(1, entry.titleTextureSize[1]);
-        const textHeight = metrics.cardHeight * 0.105;
-        drawPlane({
-          matrix: getMatrix(layout, -metrics.cardHeight * 0.62, 0.01),
-          texture: entry.titleTexture,
-          planeSize: [textHeight * textAspect, textHeight],
-          imageSize: entry.titleTextureSize,
-          alpha: layout.alpha,
-          borderRadius: 0,
-          isText: true,
-          wave: 0,
-          speed: 0,
-          time: elapsed
-        });
-      });
-
-      syncChrome();
-      raf = window.requestAnimationFrame(render);
-    };
-
-    const onWheel = (event) => {
-      if (!isCircularGallery() || !isGalleryBrowsingMode()) return;
-      event.preventDefault();
-      event.stopPropagation();
-      const delta = Math.abs(event.deltaX) > Math.abs(event.deltaY) ? event.deltaX : event.deltaY;
-      scrollTarget += (delta > 0 ? 1 : -1) * 0.34;
-      scheduleSnap();
-    };
-
-    const getHitFromEvent = (event) => {
-      const rect = canvas.getBoundingClientRect();
-      const x = event.clientX - rect.left;
-      const y = event.clientY - rect.top;
-      return media
-        .map((entry) => entry.hit)
-        .filter(Boolean)
-        .filter((hit) => x >= hit.left && x <= hit.right && y >= hit.top && y <= hit.bottom)
-        .sort((a, b) => a.distance - b.distance)[0] || null;
-    };
-
-    const openHitDetail = (hit) => {
-      if (!hit || openingDetail || !isGalleryBrowsingMode()) return;
-      openingDetail = true;
-      if (galleryMode === "projects") {
-        openProjectDetail(hit.itemIndex);
-        return;
-      }
-      openWorkDetail(hit.itemIndex);
-    };
-
-    const onPointerDown = (event) => {
-      if (!isCircularGallery() || !isGalleryBrowsingMode()) return;
-      if (event.pointerType === "mouse" && event.button !== 0) return;
-      isDown = true;
-      didDrag = false;
-      dragStartX = event.clientX;
-      dragStartTarget = scrollTarget;
-      window.clearTimeout(snapTimeout);
-      root.classList.add("is-dragging");
-    };
-
-    const onPointerMove = (event) => {
-      if (!isDown) return;
-      const distance = (dragStartX - event.clientX) * 0.006;
-      if (Math.abs(event.clientX - dragStartX) > 6) didDrag = true;
-      scrollTarget = dragStartTarget + distance;
-    };
-
-    const onPointerUp = (event) => {
-      if (!isDown) return;
-      isDown = false;
-      root.classList.remove("is-dragging");
-      snapToNearest();
-      if (!didDrag && isGalleryBrowsingMode()) {
-        openHitDetail(getHitFromEvent(event));
-      }
-    };
-
-    resize();
-    window.addEventListener("resize", resize);
-    window.addEventListener("wheel", onWheel, { passive: false, capture: true });
-    root.addEventListener("pointerdown", onPointerDown);
-    root.addEventListener("pointermove", onPointerMove);
-    root.addEventListener("pointerup", onPointerUp);
-    root.addEventListener("pointercancel", onPointerUp);
-    raf = window.requestAnimationFrame(render);
-
-    circularCleanup = () => {
-      disposed = true;
-      if (raf) window.cancelAnimationFrame(raf);
-      window.clearTimeout(snapTimeout);
-      window.removeEventListener("resize", resize);
-      window.removeEventListener("wheel", onWheel, { capture: true });
-      root.removeEventListener("pointerdown", onPointerDown);
-      root.removeEventListener("pointermove", onPointerMove);
-      root.removeEventListener("pointerup", onPointerUp);
-      root.removeEventListener("pointercancel", onPointerUp);
-      root.innerHTML = "";
-    };
   };
 
   const buildGalleryItems = (items, { defer = false } = {}) => {
@@ -1061,7 +466,7 @@
 
     runIdle(() => {
       const items = getAllWorkGalleryItems();
-      items.forEach((item, index) => {
+      items.forEach((item) => {
         if (!circularImageCache.has(item.src)) {
           const img = new Image();
           img.decoding = "async";
@@ -1069,27 +474,6 @@
           circularImageCache.set(item.src, img);
           if (img.decode) img.decode().catch(() => {});
         }
-
-        const title = getGalleryItemTitle(item, index);
-        const cacheKey = `${getCurrentLang()}::${title}`;
-        if (circularTextTextureCache.has(cacheKey)) return;
-
-        const ratio = Math.min(window.devicePixelRatio || 1, 2);
-        const textCanvas = document.createElement("canvas");
-        const context = textCanvas.getContext("2d");
-        if (!context) return;
-        const fontSize = 26 * ratio;
-        context.font = `700 ${fontSize}px Arial, "Microsoft YaHei", sans-serif`;
-        const metrics = context.measureText(title);
-        textCanvas.width = Math.ceil(metrics.width + 42 * ratio);
-        textCanvas.height = Math.ceil(52 * ratio);
-        context.font = `700 ${fontSize}px Arial, "Microsoft YaHei", sans-serif`;
-        context.textAlign = "center";
-        context.textBaseline = "middle";
-        context.fillStyle = "rgba(244, 242, 237, 0.92)";
-        context.clearRect(0, 0, textCanvas.width, textCanvas.height);
-        context.fillText(title, textCanvas.width / 2, textCanvas.height / 2);
-        circularTextTextureCache.set(cacheKey, { canvas: textCanvas, size: [textCanvas.width, textCanvas.height] });
       });
     }, { timeout: 1800 });
   };
@@ -1282,6 +666,7 @@
 
   const showGallery = () => {
     runtime?.hideWorksPreview?.();
+    galleryReturnY = window.scrollY || window.pageYOffset || 0;
     document.body.classList.add("work-gallery-open");
     document.documentElement.classList.add("work-gallery-open");
     workGallery.setAttribute("aria-hidden", "false");
@@ -1362,11 +747,19 @@
 
   const close = () => {
     if (!workGallery) return;
+    const restorePageScroll = () => {
+      if (galleryReturnY <= 0) return;
+      window.scrollTo(0, galleryReturnY);
+      window.requestAnimationFrame(() => window.scrollTo(0, galleryReturnY));
+    };
+
     if (!galleryOpen) {
       workGallery.classList.remove("is-open", "is-detail", "is-project-detail", "is-circular");
       workGallery.setAttribute("aria-hidden", "true");
       document.body.classList.remove("work-gallery-open");
       document.documentElement.classList.remove("work-gallery-open");
+      if (workGalleryTrack) workGalleryTrack.innerHTML = "";
+      restorePageScroll();
       return;
     }
     galleryOpen = false;
@@ -1382,8 +775,10 @@
     document.body.classList.remove("work-gallery-open");
     document.documentElement.classList.remove("work-gallery-open");
     if (workDetail) workDetail.innerHTML = "";
+    if (workGalleryTrack) workGalleryTrack.innerHTML = "";
     workGallery.style.setProperty("--work-detail-reveal", "0");
     if (workGalleryDescription) workGalleryDescription.textContent = "";
+    restorePageScroll();
   };
 
   worksRows.forEach((row) => {

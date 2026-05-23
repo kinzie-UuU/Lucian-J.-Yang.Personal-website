@@ -3,8 +3,10 @@
   const navItems = document.querySelectorAll(".bottom-nav-item");
   const sectionIds = ["about", "services", "works", "contact"];
   const warmSectionIds = ["clients", "contact"];
+  const darkSectionIds = ["about", "services", "works"];
   const sections = sectionIds.map((id) => document.getElementById(id)).filter(Boolean);
   const warmSections = warmSectionIds.map((id) => document.getElementById(id)).filter(Boolean);
+  const darkSections = darkSectionIds.map((id) => document.getElementById(id)).filter(Boolean);
   const contactSection = document.getElementById("contact");
   const clientsSection = document.getElementById("clients");
   const anchorLinks = document.querySelectorAll('a[href^="#"]:not([href="#"])');
@@ -14,9 +16,9 @@
   let transitionActive = false;
   let transitionToken = 0;
   const transitionTiming = {
-    scroll: 180,
-    leave: 320,
-    cleanup: 500,
+    cover: 420,
+    reveal: 520,
+    buffer: 100,
   };
 
   const clearTransitionTimers = () => {
@@ -36,6 +38,22 @@
     const rootValue = getComputedStyle(document.documentElement).getPropertyValue("--site-top-safe");
     const parsed = parseFloat(rootValue);
     return Number.isFinite(parsed) ? parsed : 64;
+  };
+
+  const getSectionBehindTopControls = () => {
+    const x = Math.max(1, window.innerWidth - 96);
+    const y = Math.min(window.innerHeight - 1, Math.max(1, getTopSafeArea() * 0.62));
+    const elements = document.elementsFromPoint(x, y);
+    const section = elements.find((element) => (
+      element?.nodeType === 1
+      && typeof element.closest === "function"
+      && !element.closest(".top-meta")
+      && !element.closest(".works-side-rail")
+      && !element.closest(".bottom-nav")
+      && element.closest("main section[id]")
+    ));
+
+    return section?.closest("main section[id]") || null;
   };
 
   const getReadableTop = (target) => {
@@ -103,8 +121,6 @@
   const finishTransition = () => {
     navTransition?.classList.add("is-leaving");
     navTransition?.classList.remove("is-active");
-    document.body.classList.remove("nav-transition-active");
-    transitionActive = false;
   };
 
   const jumpToTop = (top) => {
@@ -125,19 +141,22 @@
       resetTransitionLayers({ removeNodes: true, clearTimers: false });
     }
     runtime?.closeWorkGallery?.();
+    const targetTop = getReadableTop(target);
 
     const runScroll = () => {
-      const top = getReadableTop(target);
       const longAnimatedSection = target.id === "services" || target.id === "works";
       const instant = forceInstant || withTransition || longAnimatedSection || runtime?.reducedMotion;
 
       if (instant) {
-        jumpToTop(top);
+        jumpToTop(targetTop);
       } else {
-        window.scrollTo({ top, left: 0, behavior: "smooth" });
+        window.scrollTo({ top: targetTop, left: 0, behavior: "smooth" });
       }
 
       updateActiveNav();
+      window.dispatchEvent(new CustomEvent("lucian:programmatic-section-jump", {
+        detail: { targetId: target.id },
+      }));
     };
 
     if (!withTransition || runtime?.reducedMotion) {
@@ -161,16 +180,15 @@
     transitionTimers.push(setTimeout(() => {
       if (token !== transitionToken) return;
       runScroll();
-    }, transitionTiming.scroll));
-    transitionTimers.push(setTimeout(() => {
-      if (token !== transitionToken) return;
-      finishTransition();
-    }, transitionTiming.leave));
-
+      window.requestAnimationFrame(() => {
+        if (token !== transitionToken) return;
+        finishTransition();
+      });
+    }, transitionTiming.cover));
     transitionTimers.push(setTimeout(() => {
       if (token !== transitionToken) return;
       resetTransitionLayers({ removeNodes: true, clearTimers: false });
-    }, transitionTiming.cleanup));
+    }, transitionTiming.cover + transitionTiming.reveal + transitionTiming.buffer));
   };
 
   const updateActiveNav = () => {
@@ -197,9 +215,15 @@
 
     const warmActive = warmSections.some(isSectionInView);
     const clientsActive = clientsSection ? isSectionInView(clientsSection) : false;
+    const sectionBehindTopControls = getSectionBehindTopControls();
+    const topSectionId = sectionBehindTopControls?.id || "";
+    const darkActive = darkSectionIds.includes(topSectionId)
+      && !warmSectionIds.includes(topSectionId)
+      && !warmActive;
 
     if (clientsActive) active = null;
     document.body.classList.toggle("is-warm-stage", warmActive);
+    document.body.classList.toggle("is-dark-stage", darkActive);
 
     navItems.forEach((item) => {
       const href = item.getAttribute("href");
@@ -224,9 +248,17 @@
 
   window.addEventListener("scroll", updateActiveNav, { passive: true });
   window.addEventListener("resize", updateActiveNav);
-  window.addEventListener("pageshow", () => resetTransitionLayers({ removeNodes: true }));
+  window.addEventListener("load", () => requestAnimationFrame(updateActiveNav), { once: true });
+  window.addEventListener("pageshow", () => {
+    resetTransitionLayers({ removeNodes: true });
+    requestAnimationFrame(updateActiveNav);
+  });
   document.addEventListener("visibilitychange", () => {
     if (!document.hidden) resetTransitionLayers({ removeNodes: true });
   });
   updateActiveNav();
+  requestAnimationFrame(updateActiveNav);
+  [240, 1200, 3200, 5600].forEach((delay) => {
+    window.setTimeout(updateActiveNav, delay);
+  });
 })();

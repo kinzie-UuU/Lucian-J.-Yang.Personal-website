@@ -6,11 +6,11 @@
     const renderer = new THREE.WebGLRenderer({
       canvas,
       antialias: true,
-      alpha: false,
+      alpha: true,
       powerPreference: "high-performance",
     });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-    renderer.setClearColor(0x020908, 1);
+    renderer.setClearColor(0x000000, 0);
 
     const uniforms = {
       iResolution: { value: new THREE.Vector3(1, 1, 1) },

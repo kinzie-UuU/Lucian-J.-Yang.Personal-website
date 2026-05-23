@@ -10,11 +10,6 @@
     if (!el) return;
     el.style.setProperty(name, value.toFixed(4));
   };
-  const mix = (from, to, amount) => Math.round(from + (to - from) * amount);
-  const mixProgressColor = (amount) => {
-    const t = smooth(clamp01((amount - 0.08) / 0.84));
-    return `rgb(${mix(255, 73, t)} ${mix(98, 196, t)} ${mix(104, 176, t)})`;
-  };
   let ticking = false;
 
   const update = () => {
@@ -27,16 +22,21 @@
     const settle = smooth(clamp01((vh * 0.58 - transitionRect.top) / (vh * 0.78)));
     const exit = smooth(clamp01((vh * 0.02 - transitionRect.top) / (vh * 0.68)));
     const serviceOutro = smooth(clamp01((vh * 1.05 - transitionRect.top) / (vh * 0.78)));
-    const gearFocus = smooth(clamp01((vh * 0.9 - transitionRect.top) / (vh * 0.84)));
+    const copyRevealRaw = clamp01((vh * 0.48 - transitionRect.top) / (vh * 1.42));
+    const copyReveal = smooth(copyRevealRaw);
+    const line2Reveal = smooth(clamp01((copyRevealRaw - 0.22) / 0.78));
+    const noteReveal = smooth(clamp01((copyRevealRaw - 0.42) / 0.58));
     const handoff = smooth(clamp01((vh * 0.42 - transitionRect.top) / (vh * 0.86)));
     const listEnter = worksRect ? smooth(clamp01((vh * 1.02 - worksRect.top) / (vh * 0.86))) : 0;
 
     setProgress(transition, "--works-enter", enter);
     setProgress(transition, "--works-settle", settle);
     setProgress(transition, "--works-exit", exit);
-    setProgress(transition, "--works-gear", gearFocus);
+    setProgress(transition, "--works-copy-reveal", copyReveal);
+    setProgress(transition, "--works-line-1", copyReveal);
+    setProgress(transition, "--works-line-2", line2Reveal);
+    setProgress(transition, "--works-note-reveal", noteReveal);
     setProgress(transition, "--works-handoff", handoff);
-    transition.style.setProperty("--works-progress-color", mixProgressColor(settle));
     setProgress(servicesSection, "--service-to-works-outro", serviceOutro);
     setProgress(worksSection, "--works-list-enter", listEnter);
   };
