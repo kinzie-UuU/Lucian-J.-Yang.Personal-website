@@ -80,6 +80,16 @@ body {
   overflow-x: clip;
 }
 
+.portrait-about-wrapper,
+.services-section,
+.service-work-transition,
+.works-section,
+.clients-section,
+.contact-section {
+  inline-size: 100%;
+  min-block-size: 100svh;
+}
+
 /* Keep body black during the entry → hero transition so the cream brand
    color never flashes through between phases. Restored on has-entered. */
 body.is-unfolding,

@@ -14,7 +14,6 @@ window.initLucianApp = () => {
   const langButtons = Array.from(document.querySelectorAll(".lang-button"));
   const heroStage = document.querySelector("#hero-stage");
   const heroWireframe = document.querySelector("#hero-wireframe");
-  const particleCanvas = document.querySelector("#clients-particles");
   const entryScreen = document.querySelector("#entry-screen");
 
   if ("scrollRestoration" in window.history) {
@@ -74,7 +73,6 @@ window.initLucianApp = () => {
       return parseFloat(heroStage?.style.getPropertyValue("--hero-scroll-progress") || "0");
     },
   });
-  // window.initParticleCanvas?.(particleCanvas, "light");
 
   return {
     heroState,
@@ -89,6 +87,5 @@ window.initLucianApp = () => {
     get heroWireframeController() {
       return heroWireframeController;
     },
-    particleCanvas,
   };
 };

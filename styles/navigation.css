@@ -811,6 +811,8 @@ body.is-warm-stage .works-side-rail.is-open .works-side-rail-toggle {
 body .bottom-nav.pill-nav {
   --pill-nav-base: rgba(6, 8, 8, 0.94);
   --pill-nav-border: rgba(247, 244, 238, 0.18);
+  --pill-nav-radius: 4px;
+  --pill-item-radius: 3px;
   --pill-bg: rgba(247, 244, 238, 0.055);
   --pill-bg-active: rgba(247, 244, 238, 0.13);
   --pill-hover-bg: rgba(247, 244, 238, 0.16);
@@ -826,7 +828,7 @@ body .bottom-nav.pill-nav {
   min-height: 44px;
   padding: 3px;
   border: 1px solid var(--pill-nav-border);
-  border-radius: 9999px;
+  border-radius: var(--pill-nav-radius);
   background: var(--pill-nav-base);
   transform: translateX(-50%);
   white-space: nowrap;
@@ -865,7 +867,7 @@ body .bottom-nav.pill-nav .pill {
   padding: 0 clamp(18px, 1.35vw, 26px);
   overflow: hidden;
   border: 0;
-  border-radius: 9999px;
+  border-radius: var(--pill-item-radius);
   background: var(--pill-bg);
   box-shadow: none;
   color: var(--pill-text);
@@ -903,7 +905,7 @@ body .bottom-nav.pill-nav .hover-circle {
   display: block;
   width: 138%;
   aspect-ratio: 1;
-  border-radius: 50%;
+  border-radius: var(--pill-nav-radius);
   background: var(--pill-hover-bg);
   pointer-events: none;
   transform: translate3d(-50%, 84%, 0) scale(0);
@@ -2245,6 +2247,13 @@ body.nav-transition-active .top-meta-right {
   --top-meta-fg: rgba(18, 18, 18, 0.72);
   --top-meta-fg-muted: rgba(18, 18, 18, 0.58);
   --top-meta-fg-strong: rgba(18, 18, 18, 0.94);
+  text-shadow: none;
+}
+
+body.hero-about-handoff-active:not(.hero-about-handoff-settled) .top-meta-right {
+  --top-meta-fg: rgba(20, 24, 28, 0.78);
+  --top-meta-fg-muted: rgba(20, 24, 28, 0.62);
+  --top-meta-fg-strong: rgba(20, 24, 28, 0.96);
   text-shadow: none;
 }
 

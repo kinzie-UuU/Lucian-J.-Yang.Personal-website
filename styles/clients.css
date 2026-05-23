@@ -26,10 +26,6 @@
   opacity: 0;
 }
 
-.clients-particles {
-  display: none;
-}
-
 .clients-content {
   position: relative;
   z-index: 1;

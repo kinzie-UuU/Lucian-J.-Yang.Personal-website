@@ -8,6 +8,7 @@
      curtain trigger threshold so portrait section starts immediately
      after the curtain finishes covering. */
   background: #000;
+  --portrait-media-y: -12vh;
   --portrait-enter: 0;
   --portrait-text-enter: 0;
   --portrait-progress: 0;
@@ -61,7 +62,7 @@
      Source frame's face already sits close enough to center; pushing up
      was overshooting and reading "too high." */
   transform:
-    translate3d(-50%, calc(-50% + 3vh), 0)
+    translate3d(-50%, calc(-50% + var(--portrait-media-y)), 0)
     scale(calc(1.04 - var(--portrait-enter) * 0.04 - var(--portrait-exit) * 0.02));
   transform-origin: 50% 50%;
   will-change: transform, filter, opacity;
@@ -104,7 +105,7 @@
   display: grid;
   align-items: center;
   margin: 0;
-  padding: clamp(86px, 10vh, 126px) clamp(42px, 6vw, 116px) clamp(92px, 12vh, 138px);
+  padding: clamp(86px, 10vh, 126px) clamp(34px, 4vw, 82px) clamp(92px, 12vh, 138px);
   background: transparent;
   border-radius: 0;
   box-shadow: none;
@@ -132,17 +133,17 @@
 
 .about-layout {
   display: grid;
-  grid-template-columns: minmax(360px, 0.82fr) minmax(420px, 0.58fr);
-  gap: clamp(72px, 10vw, 180px);
+  grid-template-columns: minmax(330px, 0.72fr) minmax(460px, 0.58fr);
+  gap: clamp(96px, 13vw, 250px);
   align-items: center;
   width: 100%;
-  max-width: 1720px;
+  max-width: 1840px;
   margin-inline: auto;
   padding-inline: 0;
   transform:
     translate3d(0, calc((1 - var(--portrait-text-enter)) * 10vh - var(--portrait-exit) * 10vh), 0)
     scale(calc(0.988 + var(--portrait-text-enter) * 0.012 - var(--portrait-exit) * 0.015));
-  opacity: max(0, min(1, calc(0.18 + var(--portrait-text-enter) * 1.04 - var(--portrait-exit) * 1.08)));
+  opacity: max(0, min(1, calc(0.04 + var(--portrait-text-enter) * 1.18 - var(--portrait-exit) * 1.08)));
   transform-origin: left bottom;
   will-change: transform, opacity;
 }
@@ -161,9 +162,9 @@
 
 .about-left {
   display: grid;
-  gap: clamp(20px, 3vh, 34px);
+  gap: clamp(18px, 2.7vh, 30px);
   align-content: center;
-  max-width: 46ch;
+  max-width: 42ch;
   padding-top: 0;
 }
 
@@ -174,8 +175,8 @@
   letter-spacing: -0.04em;
   color: rgba(248, 245, 239, 0.97);
   text-align: left;
-  white-space: pre-line;
-  max-width: 14ch;
+  white-space: nowrap;
+  max-width: none;
 }
 
 html[lang="zh-CN"] .about-heading {
@@ -184,7 +185,7 @@ html[lang="zh-CN"] .about-heading {
   line-height: 1.16;
   letter-spacing: 0;
   font-weight: 600;
-  max-width: 8ch;
+  max-width: none;
   word-break: keep-all;
 }
 
@@ -195,11 +196,11 @@ html[lang="zh-CN"] .about-heading {
   --flip-hover-color: #35d9c0;
   display: flex;
   flex-direction: column;
-  gap: 0.02em;
-  margin: clamp(8px, 1.4vh, 18px) 0 0;
+  gap: 0;
+  margin: clamp(2px, 0.8vh, 10px) 0 0;
   color: rgba(246, 242, 234, 0.96);
   font-family: "MiSans", "PingFang SC", "Microsoft YaHei", sans-serif;
-  font-size: clamp(4.8rem, 7.4vw, 8.8rem);
+  font-size: clamp(4.35rem, 6.65vw, 7.9rem);
   font-weight: 700;
   line-height: 0.98;
   letter-spacing: 0;
@@ -233,7 +234,7 @@ html[lang="zh-CN"] .about-heading {
 }
 
 .about-role > span:last-child {
-  margin-left: clamp(22px, 3.8vw, 76px);
+  margin-left: 0;
 }
 
 .about-role.flip-ready,
@@ -287,64 +288,75 @@ html[lang="zh-CN"] .about-heading {
 }
 
 .about-right {
+  --about-copy-width: min(34rem, 100%);
   display: grid;
-  gap: clamp(24px, 3.2vh, 38px);
-  max-width: min(46ch, 100%);
-  padding: clamp(10px, 2vh, 22px) 0 0;
+  gap: clamp(18px, 2.5vh, 28px);
+  width: min(34rem, 100%);
+  max-width: 100%;
+  padding: clamp(8px, 1.8vh, 18px) 0 0;
   justify-self: end;
+  justify-items: stretch;
 }
 
 /* About copy and skills */
 .about-lead {
   color: rgba(246, 242, 234, 0.9);
-  max-width: 36ch;
-  font-size: clamp(1rem, 1.3vw, 1.18rem);
-  line-height: 1.82;
-  letter-spacing: -0.005em;
-  text-align: left;
+  width: var(--about-copy-width);
+  max-width: 100%;
+  font-size: clamp(1rem, 1.14vw, 1.14rem);
+  line-height: 1.78;
+  letter-spacing: 0.005em;
+  text-align: justify;
+  text-align-last: left;
+  text-wrap: pretty;
   text-shadow: 0 18px 48px rgba(0, 0, 0, 0.78);
 }
 
 .about-detail {
   color: rgba(246, 242, 234, 0.62);
-  max-width: 40ch;
+  width: var(--about-copy-width);
+  max-width: 100%;
   font-size: 0.92rem;
-  line-height: 1.82;
-  letter-spacing: 0.005em;
-  text-align: left;
+  line-height: 1.78;
+  letter-spacing: 0.015em;
+  text-align: justify;
+  text-align-last: left;
+  text-wrap: pretty;
   text-shadow: 0 18px 48px rgba(0, 0, 0, 0.78);
 }
 
 html[lang="zh-CN"] .about-lead {
   font-family: "MiSans", "PingFang SC", "Microsoft YaHei", sans-serif;
   font-weight: 500;
-  font-size: clamp(1.02rem, 1.05vw, 1.16rem);
-  line-height: 1.86;
-  letter-spacing: 0.01em;
-  max-width: 34ch;
+  font-size: clamp(1.02rem, 1vw, 1.12rem);
+  line-height: 1.9;
+  letter-spacing: 0.035em;
+  max-width: 100%;
   word-break: keep-all;
-  text-align: left;
+  text-align: justify;
+  text-align-last: left;
 }
 
 html[lang="zh-CN"] .about-detail {
   font-family: "MiSans", "PingFang SC", "Microsoft YaHei", sans-serif;
   font-weight: 400;
   font-size: 0.88rem;
-  line-height: 1.88;
-  letter-spacing: 0.01em;
-  max-width: 36ch;
+  line-height: 1.92;
+  letter-spacing: 0.03em;
+  max-width: 100%;
   word-break: keep-all;
-  text-align: left;
+  text-align: justify;
+  text-align-last: left;
 }
 
 .about-skills {
-  margin-top: clamp(2px, 1vh, 10px);
+  margin-top: clamp(4px, 1.2vh, 14px);
 }
 
 .about-skills-label {
-  margin: 0 0 14px;
+  margin: 0 0 12px;
   font-size: 0.68rem;
-  letter-spacing: 0.22em;
+  letter-spacing: 0.24em;
   text-transform: uppercase;
   color: rgba(235, 231, 224, 0.32);
 }
@@ -352,19 +364,19 @@ html[lang="zh-CN"] .about-detail {
 .about-skills-list {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px 10px;
-  max-width: 40ch;
+  gap: 7px 8px;
+  max-width: 38em;
 }
 
 .about-skills-list span {
   display: inline-block;
-  padding: 5px 12px;
+  padding: 4px 10px;
   border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 999px;
-  font-size: 0.68rem;
-  letter-spacing: 0.03em;
-  color: rgba(235, 231, 224, 0.56);
-  background: rgba(255, 255, 255, 0.03);
+  border-radius: 3px;
+  font-size: 0.64rem;
+  letter-spacing: 0.045em;
+  color: rgba(235, 231, 224, 0.52);
+  background: rgba(255, 255, 255, 0.025);
   transition: border-color 200ms ease, color 200ms ease;
 }
 
@@ -395,6 +407,10 @@ html[lang="zh-CN"] .about-detail {
 
 /* About responsive mobile */
 @media (max-width: 760px) {
+  .portrait-about-wrapper {
+    --portrait-media-y: -4vh;
+  }
+
   .about-rows {
     min-height: auto;
     padding: 86px 22px 82px;

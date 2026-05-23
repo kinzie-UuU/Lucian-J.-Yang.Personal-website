@@ -41,8 +41,8 @@
 ## Services
 
 - [ ] Services section appears after About.
-- [ ] `#services-entry-gridscan` canvas displays.
-- [ ] Service panel shader canvases initialize.
+- [ ] Services contributes no local canvas/shader/glyph leftovers.
+- [ ] Sticky service stations stay readable through the full Services scroll range.
 - [ ] Scroll story progresses through services.
 - [ ] Service copy rebuilds after language switch.
 - [ ] Services-to-Works scroll curtain does not leave scroll locked.

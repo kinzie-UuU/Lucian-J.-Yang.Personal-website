@@ -80,7 +80,7 @@ Each change should target only one system:
 - Entry: `entry.js`, `entry-key-model.js`, entry markup, entry styles in `home.css`, `models/entry-key.glb`.
 - Hero: `hero-*` scripts, `liquid-glass-field.js`, hero markup, hero styles in `home.css`, `models/lion_head/`.
 - About: `portrait-motion.js`, `about-curtain.js`, about markup, `about.css`.
-- Services: `services-*`, `service-panel-shaders.js`, service markup, `services.css`.
+- Services: `services-scroll-story.js`, `section-flow.js`, service markup, `services.css`.
 - Works/Gallery: `work-gallery.js`, `works-side-rail.js`, `works-hover-preview.js`, `works-transition-motion.js`, works markup, `works.css`, `work-gallery.css`.
 - Scroll curtains: `scroll-curtain-transitions.js`, `styles/shared-motion.css`, GSAP vendor load order, related transition markup.
 - Contact: `contact-interactions.js`, contact markup, `contact.css`.

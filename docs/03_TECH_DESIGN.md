@@ -54,7 +54,7 @@ Visible copy changes should start here unless a text node is intentionally hardc
 - `three.min.js` must load before Three.js-dependent scripts.
 - `site-data.js` must load before language, gallery, services text rebuild, and works UI modules.
 - `runtime-bridge.js` must install `window.LucianRuntime` before most UI modules run.
-- Services WebGL helpers must load before `services-scroll-story.js`.
+- `services-scroll-story.js` owns only lightweight Services progress; `section-flow.js` owns hash jumps and active nav after Works transition motion loads.
 - GSAP and MorphSVG must load before `scroll-curtain-transitions.js`.
 - Entry key model and entry interaction load last so the rest of the runtime exists before entry completes or replays.
 
@@ -68,7 +68,7 @@ Visible copy changes should start here unless a text node is intentionally hardc
 - `scripts/hero-glb-model.js`.
 - `scripts/hero-curtain.js`, `scripts/about-curtain.js`, `scripts/scroll-curtain-transitions.js`.
 - `scripts/runtime-bridge.js`, `scripts/app-bootstrap.js`.
-- `scripts/services-scroll-story.js`, `scripts/services-entry-grid-scan.js`, `scripts/service-panel-shaders.js`.
+- `scripts/services-scroll-story.js`, `scripts/section-flow.js`.
 - `styles/home.css`, `styles/about.css`, `styles/services.css`, `styles/work-gallery.css`, `styles/navigation.css`, `styles/shared-motion.css`.
 
 ## Safer Modules

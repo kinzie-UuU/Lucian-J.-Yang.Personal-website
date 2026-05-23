@@ -1,9 +1,8 @@
 /**
- * About -> Services curtain.
+ * About -> Services visual handoff.
  *
- * The sticky About canvas owns a pure black sheet that rises from below near
- * the end of the About scroll travel. Once the sheet fully covers the viewport,
- * it hands the page to the Services entry frame and releases scrolling.
+ * This is now a passive visual marker only. It no longer locks input, scrolls
+ * the page, or starts the Services story; the shared section flow owns jumps.
  */
 (() => {
   const stage = document.querySelector(".portrait-canvas");
@@ -11,120 +10,39 @@
   const servicesSection = document.querySelector("#services");
   if (!stage || !aboutSection || !servicesSection) return;
 
-  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  let raised = false;
-  let handoffActive = false;
-  let handoffComplete = false;
-  let handoffTimer = 0;
-
-  const TRIGGER = 0.86;
-  const RESET = 0.74;
-  const DURATION = 1650;
-
-  const readProgress = () => {
-    const rect = aboutSection.getBoundingClientRect();
-    const vh = window.innerHeight || 1;
-    const travel = Math.max(1, rect.height - vh);
-    return Math.min(1, Math.max(0, -rect.top / travel));
-  };
-
-  const setLock = (locked) => {
-    document.documentElement.classList.toggle("about-services-handoff-active", locked);
-    document.body.classList.toggle("about-services-handoff-active", locked);
-  };
-
-  const targetServicesTop = () => Math.max(
-    0,
-    Math.round((window.scrollY || window.pageYOffset || 0) + servicesSection.getBoundingClientRect().top)
-  );
-
-  const isBlockedByProgrammaticTransition = () => (
-    document.body.classList.contains("nav-transition-active")
-    || document.body.classList.contains("scroll-curtain-active")
-    || document.body.classList.contains("work-gallery-open")
-  );
-
-  const finishHandoff = () => {
-    window.scrollTo(0, targetServicesTop());
-    window.requestAnimationFrame(() => {
-      window.LucianServicesStory?.holdEntryStart?.();
-      setLock(false);
-      handoffActive = false;
-      handoffComplete = true;
-    });
-  };
-
-  const startHandoff = () => {
-    if (handoffActive || handoffComplete || isBlockedByProgrammaticTransition()) return;
-    handoffActive = true;
-    raised = true;
-    setLock(true);
-    stage.classList.add("is-about-curtain-down");
-    window.clearTimeout(handoffTimer);
-    handoffTimer = window.setTimeout(finishHandoff, DURATION);
-  };
-
-  const resetHandoff = () => {
-    window.clearTimeout(handoffTimer);
-    handoffActive = false;
-    handoffComplete = false;
-    raised = false;
-    setLock(false);
-    stage.classList.remove("is-about-curtain-down");
-  };
+  let ticking = false;
 
   const update = () => {
-    const progress = readProgress();
+    ticking = false;
+    const aboutRect = aboutSection.getBoundingClientRect();
+    const servicesRect = servicesSection.getBoundingClientRect();
+    const vh = Math.max(1, window.innerHeight);
+    const active = (
+      aboutRect.bottom < vh * 0.76
+      && aboutRect.bottom > -vh * 0.18
+      && servicesRect.top < vh * 0.98
+      && !document.body.classList.contains("nav-transition-active")
+      && !document.body.classList.contains("work-gallery-open")
+    );
 
-    if (reducedMotion) {
-      if (progress > TRIGGER) {
-        stage.classList.add("is-about-curtain-down");
-        window.scrollTo(0, targetServicesTop());
-        window.LucianServicesStory?.holdEntryStart?.();
-      } else if (progress < RESET) {
-        resetHandoff();
-      }
-      return;
-    }
-
-    if (isBlockedByProgrammaticTransition()) return;
-
-    if (progress > TRIGGER) startHandoff();
-    else if ((raised || handoffComplete || handoffActive) && progress < RESET) resetHandoff();
+    stage.classList.toggle("is-about-curtain-down", active);
+    document.documentElement.classList.toggle("about-services-handoff-active", active);
+    document.body.classList.toggle("about-services-handoff-active", active);
   };
 
-  let ticking = false;
-  const onScroll = () => {
+  const requestUpdate = () => {
     if (ticking) return;
     ticking = true;
-    requestAnimationFrame(() => {
-      update();
-      ticking = false;
-    });
+    window.requestAnimationFrame(update);
   };
 
   update();
-  window.addEventListener("wheel", (event) => {
-    if (!handoffActive) return;
-    event.preventDefault();
-    event.stopPropagation();
-  }, { passive: false, capture: true });
-  window.addEventListener("touchmove", (event) => {
-    if (!handoffActive) return;
-    event.preventDefault();
-    event.stopPropagation();
-  }, { passive: false, capture: true });
-  window.addEventListener("keydown", (event) => {
-    if (!handoffActive || !["ArrowDown", "ArrowUp", "PageDown", "PageUp", "Home", "End", " "].includes(event.key)) return;
-    event.preventDefault();
-    event.stopPropagation();
-  }, { capture: true });
-  window.addEventListener("scroll", onScroll, { passive: true });
-  window.addEventListener("resize", update);
+  window.addEventListener("scroll", requestUpdate, { passive: true });
+  window.addEventListener("resize", requestUpdate, { passive: true });
+  window.addEventListener("lucian:programmatic-section-jump", requestUpdate);
   window.addEventListener("pagehide", () => {
-    window.clearTimeout(handoffTimer);
-    setLock(false);
-    window.removeEventListener("scroll", onScroll);
-    window.removeEventListener("resize", update);
+    stage.classList.remove("is-about-curtain-down");
+    document.documentElement.classList.remove("about-services-handoff-active");
+    document.body.classList.remove("about-services-handoff-active");
   }, { once: true });
 })();

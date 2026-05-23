@@ -8,23 +8,6 @@
     min-height: 760px;
   }
 
-  .services-section {
-    min-height: auto;
-  }
-
-  .services-sticky {
-    position: relative;
-    min-height: auto;
-    padding-top: 118px;
-    padding-bottom: 84px;
-    overflow: visible;
-  }
-
-  .services-sticky::before {
-    width: calc(100vw - 36px);
-    margin-bottom: 42px;
-  }
-
   .section-head h2 {
     font-size: clamp(2.4rem, 9vw, 4.2rem);
     max-width: none;

@@ -43,13 +43,15 @@
   };
 
   const buildFlowingMenu = (row) => {
+    const existing = row.querySelector(".works-flowing-menu");
+    if (existing) return existing;
+
     const text = getRowText(row);
     const image = getRowImage(row);
-    row.querySelector(".works-flowing-menu")?.remove();
     const overlay = document.createElement("span");
     const inner = document.createElement("span");
-    const contentWidthEstimate = Math.max(180, text.length * 34 + 260);
-    const repetitions = Math.max(4, Math.ceil(window.innerWidth / contentWidthEstimate) + 2);
+    const contentWidthEstimate = Math.max(220, text.length * 32 + 240);
+    const repetitions = Math.min(5, Math.max(3, Math.ceil(window.innerWidth / contentWidthEstimate) + 2));
 
     overlay.className = "works-flowing-menu";
     overlay.setAttribute("aria-hidden", "true");
@@ -73,18 +75,25 @@
     overlay.appendChild(inner);
     row.appendChild(overlay);
     row.style.setProperty("--flowing-menu-distance", `${contentWidthEstimate}px`);
+    return overlay;
+  };
+
+  const resetFlowingMenuText = (row) => {
+    row.querySelector(".works-flowing-menu")?.remove();
+    row.style.removeProperty("--flowing-menu-distance");
   };
 
   const showFlowingMenu = (row, edge) => {
-    const overlay = row.querySelector(".works-flowing-menu");
-    const inner = row.querySelector(".works-flowing-menu-inner");
-    if (!overlay || !inner) return;
+    const overlay = buildFlowingMenu(row);
+    const inner = overlay.querySelector(".works-flowing-menu-inner");
+    if (!inner) return;
+
     overlay.style.transition = "none";
     inner.style.transition = "none";
     overlay.style.transform = edge === "top" ? "translate3d(0, -101%, 0)" : "translate3d(0, 101%, 0)";
     inner.style.transform = edge === "top" ? "translate3d(0, 101%, 0)" : "translate3d(0, -101%, 0)";
 
-    requestAnimationFrame(() => {
+    window.requestAnimationFrame(() => {
       row.classList.add("is-flowing");
       overlay.style.transition = "";
       inner.style.transition = "";
@@ -104,12 +113,11 @@
 
   window.LucianWorksFlowingMenu = {
     refresh() {
-      worksRows.forEach(buildFlowingMenu);
+      worksRows.forEach(resetFlowingMenuText);
     },
   };
 
   worksRows.forEach((row) => {
-    buildFlowingMenu(row);
     row.setAttribute("role", "button");
     row.setAttribute("tabindex", "0");
 

@@ -12,8 +12,8 @@ It is not a React, Vue, Vite, Next, or bundled app. Runtime state is coordinated
 - Entry screen: `#entry-screen`, 3D key canvas, progress text/bar, atmosphere layers.
 - Hero: `.hero-section`, `#hero-stage`, WebGL water, SVG wireframe, fixed liquid field, GLB lion-head model, Hero wordmark, Hero curtain.
 - About: `#about`, portrait video/image, darkroom-style reveal, bio copy, toolkit tags, About curtain.
-- Services: `#services`, sticky scroll story, entry grid-scan canvas, service panel shaders.
-- Services-to-Works curtain: `#curtain-services-works`.
+- Services: `#services`, lightweight sticky narrative with section progress.
+- Services-to-Works curtain: `#curtain-services-works`, natural scroll MorphSVG handoff into `#works-transition`.
 - Works transition: `#works-transition`, scroll-linked statement/progress visual.
 - Works: `#works`, five category rows, hover preview, clients link.
 - Works-to-Contact curtain: `#curtain-works-contact`.
@@ -21,13 +21,13 @@ It is not a React, Vue, Vite, Next, or bundled app. Runtime state is coordinated
 - Contact: `#contact`, contact copy, Gmail compose form, social links, WeChat QR modal, toast.
 - Clients: `#clients`, title band, selected-client marquee, intro copy.
 - Works side rail: `#works-side-rail`, avatar replay and category quick-open.
-- Bottom navigation: `.bottom-nav`, four anchors: About, Services, Works, Contact.
+- Bottom navigation: `.bottom-nav`, three anchors: About, Services, Contact; full Works remains in the upper-left Works rail.
 
 ## CSS Responsibility Map
 
 - `styles/home.css`: entry screen, 3D key entry, Hero stage, lion model, water surface, Hero curtain.
 - `styles/about.css`: portrait reveal, About text, About-to-Services curtain.
-- `styles/services.css`: services sticky scroll story, entry grid scan, panel shaders.
+- `styles/services.css`: services sticky narrative, progress rail, and responsive layout.
 - `styles/works.css`: works transition, category rows, hover preview.
 - `styles/shared-motion.css`: reveal helpers and scroll curtain transition styles.
 - Other CSS modules keep their section-specific responsibilities as named.
@@ -37,8 +37,8 @@ It is not a React, Vue, Vite, Next, or bundled app. Runtime state is coordinated
 - Entry: `scripts/entry-key-model.js`, `scripts/entry.js`.
 - Hero: `hero-state-runtime.js`, `hero-sequence-runtime.js`, `hero-water-surface.js`, `hero-curtain.js`, `liquid-glass-field.js`, `hero-glb-model.js`, `hero-ripples.js`, `hero-wireframe.js`.
 - About: `portrait-motion.js`, `about-curtain.js`.
-- Scroll curtains: `scroll-curtain-transitions.js` plus GSAP vendor files.
-- Services: `services-scroll-story.js`, `services-entry-grid-scan.js`, `service-panel-shaders.js`.
+- Scroll curtains: `scroll-curtain-transitions.js` plus GSAP vendor files for natural scroll handoffs.
+- Services/section flow: `services-scroll-story.js`, `section-flow.js` for sticky progress, hash handling, and bottom-nav paper transitions.
 - Works/gallery: `work-gallery.js`, `works-side-rail.js`, `works-hover-preview.js`, `works-transition-motion.js`.
 - UI/language/effects: runtime bridge, app bootstrap, language/static text modules, header controls, bottom nav, cursor, reveal/text effects, clients, contact, audio.
 
@@ -51,7 +51,7 @@ JavaScript order is intentional:
 1. `three.min.js` loads in the head.
 2. `site-data.js` loads before any data-driven UI.
 3. Hero water/curtain/state/sequence load before runtime bridge and app bootstrap.
-4. Services helpers load before `services-scroll-story.js`.
+4. `services-scroll-story.js` loads before Gallery/Works UI; `section-flow.js` loads after Works transition motion and owns hash/navigation jumps plus bottom-nav paper transitions.
 5. Gallery and UI modules load after bootstrap/runtime bridge.
 6. Portrait/About, GSAP, scroll curtains, entry key, and entry interaction load near the end.
 
@@ -64,7 +64,7 @@ Do not reorder scripts unless the dependency chain is re-audited.
 - `scripts/work-gallery.js`: gallery modes, detail views, language refresh, body state.
 - Hero WebGL/model/liquid scripts.
 - Curtain scripts and `styles/shared-motion.css`.
-- Services WebGL/scroll scripts.
+- Services scroll and section-flow scripts.
 - Large visual CSS systems: `styles/home.css`, `styles/about.css`, `styles/services.css`, `styles/work-gallery.css`, `styles/navigation.css`.
 - `three.min.js` and vendor JS: local dependencies; do not hand-edit.
 
@@ -77,7 +77,7 @@ Do not reorder scripts unless the dependency chain is re-audited.
 5. Three.js/GSAP vendor files are missing or loaded too late.
 6. Entry replay can desync if `body.has-entered` and progress/key state are not coordinated.
 7. Hero and About curtains depend on scroll geometry and sticky section heights.
-8. Services sticky scroll can regress because layout, shaders, and progress variables are coupled.
+8. Services sticky scroll can regress if progress variables, section height, and active nav thresholds drift.
 9. Mobile text/model/water layers can overflow because of large display typography and canvases.
 10. WeChat modal, work gallery, and Works rail overlay states can conflict if Escape/body states change.
 

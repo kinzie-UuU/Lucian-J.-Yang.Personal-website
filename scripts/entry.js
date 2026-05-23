@@ -15,6 +15,13 @@
 
   let entryTransitionLocked = false;
   let entryTransitionReleaseTimer = 0;
+  let siteEnteredDispatched = false;
+
+  const dispatchSiteEntered = () => {
+    if (siteEnteredDispatched || !document.body.classList.contains("has-entered")) return;
+    siteEnteredDispatched = true;
+    window.dispatchEvent(new CustomEvent("lucian:site-entered"));
+  };
 
   const lockEntryTransitionScroll = (locked) => {
     entryTransitionLocked = locked;
@@ -26,6 +33,7 @@
   const releaseEntryTransitionScroll = () => {
     lockEntryTransitionScroll(false);
     forceScrollTop();
+    window.requestAnimationFrame(dispatchSiteEntered);
   };
 
   const scheduleEntryTransitionRelease = (delay = 260) => {
@@ -109,6 +117,7 @@
     document.body.classList.remove("has-entered", "is-entering", "is-unfolding", "is-entry-scroll-locked");
     runtime.setEntered(false);
     entryTransitionLocked = false;
+    siteEnteredDispatched = false;
     window.clearTimeout(entryTransitionReleaseTimer);
     resetHeroSequenceState({ resetScroll: true });
     requestAnimationFrame(forceScrollTop);

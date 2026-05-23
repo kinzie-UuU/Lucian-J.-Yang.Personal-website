@@ -35,19 +35,19 @@
     })();
   </script>
   <link rel="stylesheet" href="styles/fonts.css">
-  <link rel="stylesheet" href="styles.css?v=20260520-body-transition-bg1">
+  <link rel="stylesheet" href="styles.css?v=20260523-services-rebuild4">
   <link rel="stylesheet" href="styles/liquid-glass.css?v=20260522-neon-edge1">
   <link rel="stylesheet" href="styles/cursor.css?v=20260522-native-cursor1">
   <link rel="stylesheet" href="styles/typography.css">
-  <link rel="stylesheet" href="styles/home.css?v=20260522-wordmark-ripple10">
-  <link rel="stylesheet" href="styles/about.css?v=20260521-about-reveal1">
-  <link rel="stylesheet" href="styles/services.css?v=20260522-services-cinema1">
-  <link rel="stylesheet" href="styles/works.css?v=20260522-scroll-audit2">
+  <link rel="stylesheet" href="styles/home.css?v=20260523-entry-year-range1">
+  <link rel="stylesheet" href="styles/about.css?v=20260523-about-align1">
+  <link rel="stylesheet" href="styles/services.css?v=20260523-services-rebuild4">
+  <link rel="stylesheet" href="styles/works.css?v=20260523-services-rebuild4">
   <link rel="stylesheet" href="styles/clients.css?v=20260518-no-footer">
   <link rel="stylesheet" href="styles/work-gallery.css?v=20260513-pmg-edgefix2">
   <link rel="stylesheet" href="styles/contact.css?v=20260522-fullscreen-stage1">
-  <link rel="stylesheet" href="styles/navigation.css?v=20260521-bottom-nav-black1">
-  <link rel="stylesheet" href="styles/responsive.css">
+  <link rel="stylesheet" href="styles/navigation.css?v=20260523-services-rebuild4">
+  <link rel="stylesheet" href="styles/responsive.css?v=20260523-services-rebuild4">
   <link rel="stylesheet" href="styles/shared-motion.css?v=20260522-scroll-audit2">
   <script src="three.min.js"></script>
 </head>
@@ -105,12 +105,13 @@
   <main id="top">
     <section class="entry-screen" id="entry-screen" aria-label="Site entry">
       <div class="entry-atmosphere" aria-hidden="true">
+        <div class="entry-year-lockup">
+          <span class="entry-year">2017-2026</span>
+          <span class="entry-year-label">Lucian J. Yang / Packaging Index</span>
+        </div>
         <div class="entry-system-readout entry-system-readout-loading">
-          <span>[[</span>
-          <strong>[loading]</strong>
-          <span>]]]</span>
+          <span>Archive loading</span>
           <b id="entry-progress">[0%]</b>
-          <span>[[[]]]</span>
         </div>
         <div class="entry-system-readout entry-system-readout-note">
           <span>Packaging memory loaded.</span>
@@ -142,10 +143,6 @@
 
         <svg class="hero-wireframe" id="hero-wireframe" aria-hidden="true"></svg>
 
-        <div class="hero-scroll-cue" aria-hidden="true">
-          <span class="hero-scroll-cue-wheel"></span>
-        </div>
-
         <div class="hero-model-scene" id="hero-model-scene" data-model-src="/models/lion_head/lion_head_2k.gltf" aria-label="Floating Lion Head sculpture showcase">
           <p class="hero-model-wordmark" aria-hidden="true">LUCIAN J. YANG</p>
           <canvas class="hero-model-canvas" id="hero-model-canvas" aria-hidden="true"></canvas>
@@ -174,9 +171,7 @@
         <div class="about-rows reveal">
           <div class="about-layout">
             <div class="about-left">
-              <p class="section-kicker" data-reveal data-delay="0">ABOUT</p>
-              <h2 class="about-heading" data-i18n="about_heading" data-reveal data-delay="60">关于
-我</h2>
+              <h2 class="about-heading" data-i18n="about_heading" data-reveal data-delay="60">关于我</h2>
               <p class="about-role js-flip-text" data-reveal data-delay="90">
                 <span data-i18n="about_role_1">包装</span>
                 <span data-i18n="about_role_2">设计师</span>
@@ -204,22 +199,12 @@
 
     <section class="services-section services-scroll-story reveal" id="services">
       <div class="services-sticky">
-        <article class="services-entry-card">
-          <canvas class="services-entry-gridscan" id="services-entry-gridscan" aria-hidden="true"></canvas>
-          <div class="services-entry-copy">
-            <p class="services-entry-kicker" data-i18n="services_kicker">服务</p>
-            <h2 class="services-entry-title" aria-label="为何选择我">
-              <span>为何</span><span>选择我</span>
-            </h2>
-            <p class="services-entry-intro" data-i18n="services_intro">我提供的不只是画面输出，而是帮助项目在价格带、工艺、渠道和交付节奏里做出更稳的包装判断。</p>
-          </div>
-        </article>
-
-        <div class="services-cinema-field" aria-hidden="true">
-          <canvas class="services-lion-canvas" id="services-lion-canvas"></canvas>
-          <canvas class="services-tunnel-grid" id="services-tunnel-grid"></canvas>
-          <div class="services-depth-vignette"></div>
-        </div>
+        <div class="services-stage-grid" aria-hidden="true"></div>
+        <header class="services-entry-card">
+          <p class="services-entry-kicker" data-i18n="services_kicker">服务</p>
+          <h2 class="services-entry-title" data-i18n="services_title">为何选择我</h2>
+          <p class="services-entry-intro" data-i18n="services_intro">我提供的不只是画面输出，而是帮助项目在价格带、工艺、渠道和交付节奏里做出更稳的包装判断。</p>
+        </header>
 
         <div class="services-text-track" aria-live="polite">
           <article class="service-text-panel" data-service-title="service_title_1" data-service-text="service_text_1">
@@ -279,8 +264,8 @@
       </svg>
     </div>
 
-    <section class="service-work-transition reveal" id="works-transition" aria-hidden="true">
-      <div class="works-transition-copy" aria-hidden="true">
+    <section class="service-work-transition reveal" id="works-transition">
+      <div class="works-transition-copy">
         <section class="works-transition-line">
           <span class="works-transition-line-text" data-i18n="works_transition_line_1">不是把包装做漂亮</span>
         </section>
@@ -292,7 +277,10 @@
     </section>
 
     <section class="works-section reveal" id="works">
-      <div class="works-list-header" data-reveal data-delay="260" aria-hidden="true"></div>
+      <div class="works-list-header" data-reveal data-delay="260">
+        <p class="works-list-kicker" data-i18n="featured_works_kicker">精选项目预览</p>
+        <p class="works-list-note" data-i18n="featured_works_note">完整作品请从左上角 WORK 进入，这里只保留服务叙事后的代表项目。</p>
+      </div>
       <ul class="works-list" id="works-list">
         <li class="works-row" data-category="oem" data-project-index="0" data-reveal data-delay="320">
           <span class="works-row-index">01</span>
@@ -495,7 +483,6 @@
     </section>
 
     <section class="clients-section reveal" id="clients" aria-label="合作客户 / Selected clients">
-      <canvas class="clients-particles" id="clients-particles" aria-hidden="true"></canvas>
       <div class="clients-content">
         <div class="clients-title-band" aria-hidden="true">
           <div class="clients-title-float" id="clients-title-float" aria-hidden="true"></div>
@@ -609,12 +596,6 @@
           <span class="label-stack"><span class="pill-label">Services</span><span class="pill-label-hover" aria-hidden="true">Services</span></span>
         </a>
       </li>
-      <li class="nav-mobile-only">
-        <a class="bottom-nav-item pill" href="#works" data-i18n="nav_works" aria-label="Works">
-          <span class="hover-circle" aria-hidden="true"></span>
-          <span class="label-stack"><span class="pill-label">Works</span><span class="pill-label-hover" aria-hidden="true">Works</span></span>
-        </a>
-      </li>
       <li>
         <a class="bottom-nav-item pill" href="#contact" data-i18n="nav_contact" aria-label="Contact">
           <span class="hover-circle" aria-hidden="true"></span>
@@ -624,11 +605,11 @@
     </ul>
   </nav>
 
-  <script src="site-data.js"></script>
+  <script src="site-data.js?v=20260523-services-rebuild3"></script>
   <script src="scripts/audio-feedback.js?v=20260515-bgm1"></script>
   <script src="scripts/hero-wireframe.js"></script>
   <script src="scripts/hero-water-surface.js?v=20260520-caustics-aqua1"></script>
-  <script src="scripts/hero-curtain.js?v=20260520-curtain7"></script>
+  <script src="scripts/hero-curtain.js?v=20260523-hash-flow1"></script>
   <script src="scripts/hero-state-runtime.js"></script>
   <script src="scripts/hero-sequence-runtime.js"></script>
   <script src="scripts/runtime-bridge.js?v=20260515-bgm1"></script>
@@ -636,14 +617,10 @@
   <script src="scripts/static-text-runtime.js"></script>
   <script src="scripts/language-runtime.js"></script>
   <script src="scripts/flip-text.js"></script>
-  <script src="scripts/particle-canvas.js"></script>
   <script src="script.js"></script>
   <script src="scripts/liquid-glass-field.js?v=20260522-neon-edge1"></script>
   <script src="scripts/hero-glb-model.js?v=20260522-wordmark-ripple10"></script>
-  <script src="scripts/services-entry-grid-scan.js?v=20260522-services-cinema1"></script>
-  <script src="scripts/service-panel-shaders.js?v=20260515-nav-speed1"></script>
-  <script src="scripts/services-lion-silhouette.js?v=20260522-services-cinema1"></script>
-  <script src="scripts/services-scroll-story.js?v=20260522-services-cinema1"></script>
+  <script src="scripts/services-scroll-story.js?v=20260523-services-rebuild2"></script>
   <script src="scripts/work-gallery.js?v=20260522-scroll-audit2"></script>
   <script src="scripts/works-side-rail.js?v=20260521-rail-close-return3"></script>
   <script src="scripts/scrambled-text.js"></script>
@@ -653,19 +630,20 @@
   <script src="scripts/scroll-type-effects.js?v=20260522-scroll-audit2"></script>
   <script src="scripts/reveal-effects.js?v=20260517-works-fast-reveal1"></script>
   <script src="scripts/precision-cursor.js?v=20260512-target-cursor1"></script>
-  <script src="scripts/works-hover-preview.js?v=20260514-detail-works1"></script>
-  <script src="scripts/works-transition-motion.js?v=20260522-scroll-audit2"></script>
+  <script src="scripts/works-hover-preview.js?v=20260523-lazy-flow2"></script>
+  <script src="scripts/works-transition-motion.js?v=20260523-services-rebuild4"></script>
+  <script src="scripts/section-flow.js?v=20260523-hash-flow1"></script>
   <script src="scripts/site-clock.js"></script>
-  <script src="scripts/bottom-nav-scroll-spy.js?v=20260521-adaptive-top-meta3"></script>
+  <script src="scripts/bottom-nav-scroll-spy.js?v=20260523-services-rebuild4"></script>
   <script src="scripts/clients-marquee.js"></script>
   <script src="scripts/clients-title-interaction.js"></script>
   <script src="scripts/portrait-motion.js?v=20260521-fast-reveal1"></script>
-  <script src="scripts/about-curtain.js?v=20260522-handoff2"></script>
+  <script src="scripts/about-curtain.js?v=20260523-services-rebuild2"></script>
   <script src="scripts/hero-ripples.js"></script>
   <script src="scripts/vendor/gsap/gsap.min.js?v=3.13.0"></script>
   <script src="scripts/vendor/gsap/MorphSVGPlugin.min.js?v=3.13.0"></script>
   <script src="scripts/scroll-curtain-transitions.js?v=20260522-scroll-audit2"></script>
   <script src="scripts/entry-key-model.js?v=20260519-entry-replay2"></script>
-  <script src="scripts/entry.js?v=20260520-key-turn1"></script>
+  <script src="scripts/entry.js?v=20260523-entry-replay1"></script>
 </body>
 </html>
