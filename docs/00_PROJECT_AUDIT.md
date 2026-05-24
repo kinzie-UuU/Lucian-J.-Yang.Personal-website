@@ -12,8 +12,8 @@ It is not a React, Vue, Vite, Next, or bundled app. Runtime state is coordinated
 - Entry screen: `#entry-screen`, 3D key canvas, progress text/bar, atmosphere layers.
 - Hero: `.hero-section`, `#hero-stage`, WebGL water, SVG wireframe, fixed liquid field, GLB lion-head model, Hero wordmark, Hero curtain.
 - About: `#about`, portrait video/image, darkroom-style reveal, bio copy, toolkit tags, About curtain.
-- Services: `#services`, lightweight sticky narrative with section progress.
-- Services-to-Works curtain: `#curtain-services-works`, natural scroll MorphSVG handoff into `#works-transition`.
+- Services: `#services`, full-screen black-water PrismaticBurst title stage, local time-tunnel stage, and lightweight sticky service stations with section progress.
+- Services-to-Works handoff: Services owns the automatic sequence and lands directly on `#works-transition`.
 - Works transition: `#works-transition`, scroll-linked statement/progress visual.
 - Works: `#works`, five category rows, hover preview, clients link.
 - Works-to-Contact curtain: `#curtain-works-contact`.
@@ -25,20 +25,21 @@ It is not a React, Vue, Vite, Next, or bundled app. Runtime state is coordinated
 
 ## CSS Responsibility Map
 
-- `styles/home.css`: entry screen, 3D key entry, Hero stage, lion model, water surface, Hero curtain.
+- `styles/home.css`: entry screen and Hero base layout, lion model, and water surface.
+- `styles/entry-hero-experience.css`: Entry key collapse, Hero reveal curtains, and Hero-to-About black curtain.
 - `styles/about.css`: portrait reveal, About text, About-to-Services curtain.
-- `styles/services.css`: services sticky narrative, progress rail, and responsive layout.
+- `styles/services.css`: services tunnel title stage, deferred service station stage, progress rail, and responsive layout.
 - `styles/works.css`: works transition, category rows, hover preview.
 - `styles/shared-motion.css`: reveal helpers and scroll curtain transition styles.
 - Other CSS modules keep their section-specific responsibilities as named.
 
 ## JS Responsibility Map
 
-- Entry: `scripts/entry-key-model.js`, `scripts/entry.js`.
-- Hero: `hero-state-runtime.js`, `hero-sequence-runtime.js`, `hero-water-surface.js`, `hero-curtain.js`, `liquid-glass-field.js`, `hero-glb-model.js`, `hero-ripples.js`, `hero-wireframe.js`.
+- Entry: `scripts/entry-key-model.js`, `scripts/entry-hero-experience.js`.
+- Hero: `hero-state-runtime.js`, `hero-sequence-runtime.js`, `hero-water-surface.js`, `entry-hero-experience.js`, `liquid-glass-field.js`, `hero-glb-model.js`, `hero-ripples.js`, `hero-wireframe.js`.
 - About: `portrait-motion.js`, `about-curtain.js`.
 - Scroll curtains: `scroll-curtain-transitions.js` plus GSAP vendor files for natural scroll handoffs.
-- Services/section flow: `services-scroll-story.js`, `section-flow.js` for sticky progress, hash handling, and bottom-nav paper transitions.
+- Services/section flow: `services-scroll-story.js`, `services-prismatic-burst.js`, `services-time-tunnel-shader.js`, and `section-flow.js` for sticky progress, canvas stages, hash handling, and bottom-nav paper transitions.
 - Works/gallery: `work-gallery.js`, `works-side-rail.js`, `works-hover-preview.js`, `works-transition-motion.js`.
 - UI/language/effects: runtime bridge, app bootstrap, language/static text modules, header controls, bottom nav, cursor, reveal/text effects, clients, contact, audio.
 
@@ -50,10 +51,10 @@ JavaScript order is intentional:
 
 1. `three.min.js` loads in the head.
 2. `site-data.js` loads before any data-driven UI.
-3. Hero water/curtain/state/sequence load before runtime bridge and app bootstrap.
+3. Hero water/state/sequence load before runtime bridge and app bootstrap.
 4. `services-scroll-story.js` loads before Gallery/Works UI; `section-flow.js` loads after Works transition motion and owns hash/navigation jumps plus bottom-nav paper transitions.
 5. Gallery and UI modules load after bootstrap/runtime bridge.
-6. Portrait/About, GSAP, scroll curtains, entry key, and entry interaction load near the end.
+6. Portrait/About, GSAP, scroll curtains, entry key, and the Entry-to-Hero experience controller load near the end.
 
 Do not reorder scripts unless the dependency chain is re-audited.
 

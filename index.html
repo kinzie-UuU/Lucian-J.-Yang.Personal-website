@@ -39,14 +39,15 @@
   <link rel="stylesheet" href="styles/liquid-glass.css?v=20260522-neon-edge1">
   <link rel="stylesheet" href="styles/cursor.css?v=20260522-native-cursor1">
   <link rel="stylesheet" href="styles/typography.css">
-  <link rel="stylesheet" href="styles/home.css?v=20260523-entry-year-range1">
-  <link rel="stylesheet" href="styles/about.css?v=20260523-about-align1">
-  <link rel="stylesheet" href="styles/services.css?v=20260523-services-rebuild4">
+  <link rel="stylesheet" href="styles/home.css?v=20260524-entry-hero-experience1">
+  <link rel="stylesheet" href="styles/entry-hero-experience.css?v=20260524-entry-hero-experience1">
+  <link rel="stylesheet" href="styles/about.css?v=20260523-portrait-scrub1">
+  <link rel="stylesheet" href="styles/services.css?v=20260524-services-cleanend3">
   <link rel="stylesheet" href="styles/works.css?v=20260523-services-rebuild4">
   <link rel="stylesheet" href="styles/clients.css?v=20260518-no-footer">
   <link rel="stylesheet" href="styles/work-gallery.css?v=20260513-pmg-edgefix2">
   <link rel="stylesheet" href="styles/contact.css?v=20260522-fullscreen-stage1">
-  <link rel="stylesheet" href="styles/navigation.css?v=20260523-services-rebuild4">
+  <link rel="stylesheet" href="styles/navigation.css?v=20260524-services-cleanup1">
   <link rel="stylesheet" href="styles/responsive.css?v=20260523-services-rebuild4">
   <link rel="stylesheet" href="styles/shared-motion.css?v=20260522-scroll-audit2">
   <script src="three.min.js"></script>
@@ -97,11 +98,6 @@
     </div>
   </header>
 
-  <div class="entry-stage-curtains" aria-hidden="true">
-    <div class="entry-stage-curtain entry-stage-curtain-left"></div>
-    <div class="entry-stage-curtain entry-stage-curtain-right"></div>
-  </div>
-
   <main id="top">
     <section class="entry-screen" id="entry-screen" aria-label="Site entry">
       <div class="entry-atmosphere" aria-hidden="true">
@@ -135,6 +131,11 @@
     </section>
 
     <section class="hero-section">
+      <div class="entry-stage-curtains" aria-hidden="true">
+        <div class="entry-stage-curtain entry-stage-curtain-left"></div>
+        <div class="entry-stage-curtain entry-stage-curtain-right"></div>
+      </div>
+
       <div class="hero-stage reveal reveal-delay" id="hero-stage">
         <div class="hero-kinetic-mark" aria-hidden="true">
           <canvas class="hero-kinetic-canvas" id="hero-kinetic-canvas"></canvas>
@@ -165,7 +166,7 @@
     <section class="portrait-about-wrapper" id="about">
       <!-- 媒体 sticky 固定，spacer 提供滚动停留空间 -->
       <div class="portrait-canvas">
-        <video class="portrait-video" id="portrait-video" src="videos/Video%208.mp4" poster="images/9999.png" muted playsinline preload="metadata"></video>
+        <video class="portrait-video" id="portrait-video" src="videos/portrait-scrub.mp4" poster="images/9999.png" muted playsinline preload="auto"></video>
         <img class="portrait-image" src="images/9999.png" alt="" aria-hidden="true">
         <div class="portrait-overlay"></div>
         <div class="about-rows reveal">
@@ -199,70 +200,48 @@
 
     <section class="services-section services-scroll-story reveal" id="services">
       <div class="services-sticky">
-        <div class="services-stage-grid" aria-hidden="true"></div>
-        <header class="services-entry-card">
-          <p class="services-entry-kicker" data-i18n="services_kicker">服务</p>
+        <canvas class="services-prismatic-canvas" id="services-prismatic-canvas" aria-hidden="true"></canvas>
+        <canvas class="services-time-canvas" id="services-time-canvas" aria-hidden="true"></canvas>
+        <header class="services-title-stage">
           <h2 class="services-entry-title" data-i18n="services_title">为何选择我</h2>
-          <p class="services-entry-intro" data-i18n="services_intro">我提供的不只是画面输出，而是帮助项目在价格带、工艺、渠道和交付节奏里做出更稳的包装判断。</p>
         </header>
 
-        <div class="services-text-track" aria-live="polite">
-          <article class="service-text-panel" data-service-title="service_title_1" data-service-text="service_text_1">
-            <span class="service-text-index">01</span>
-            <h3 class="service-text-title">包装主导</h3>
-            <p class="service-text-body">以 OEM / 贴牌包装为主，也覆盖礼品、福利渠道、系列包装与礼盒设计。</p>
-          </article>
-          <article class="service-text-panel" data-service-title="service_title_2" data-service-text="service_text_2">
-            <span class="service-text-index">02</span>
-            <h3 class="service-text-title">判断力</h3>
-            <p class="service-text-body">我更关注什么方案真正适合当前价格带、工艺条件与渠道场景，而不只是哪个方案看起来更炫。</p>
-          </article>
-          <article class="service-text-panel" data-service-title="service_title_3" data-service-text="service_text_3">
-            <span class="service-text-index">03</span>
-            <h3 class="service-text-title">落地能力</h3>
-            <p class="service-text-body">从材质、工艺、打样到供应商协同，我会同时考虑设计与执行之间的关系。</p>
-          </article>
-          <article class="service-text-panel" data-service-title="service_title_4" data-service-text="service_text_4">
-            <span class="service-text-index">04</span>
-            <h3 class="service-text-title">效率意识</h3>
-            <p class="service-text-body">AIGC 可以提高前期测试、方案比较与提案效率，但不会替代判断。</p>
-          </article>
-          <article class="service-text-panel" data-service-title="service_title_5" data-service-text="service_text_5">
-            <span class="service-text-index">05</span>
-            <h3 class="service-text-title">综合表达</h3>
-            <p class="service-text-body">在需要时，我也会结合品牌、字体与视觉系统，补强包装识别与整体完成度。</p>
-          </article>
-          <article class="service-text-panel" data-service-title="service_title_6" data-service-text="service_text_6">
-            <span class="service-text-index">06</span>
-            <h3 class="service-text-title">交付协同</h3>
-            <p class="service-text-body">我会把设计文件、打样反馈与供应商沟通整理清楚，让方案更顺畅地进入执行。</p>
-          </article>
+        <div class="services-card-stage">
+          <div class="services-text-track" aria-live="polite">
+            <article class="service-text-panel" data-service-title="service_title_1" data-service-text="service_text_1">
+              <span class="service-text-index">01</span>
+              <h3 class="service-text-title">包装主导</h3>
+              <p class="service-text-body">以 OEM / 贴牌包装为主，也覆盖礼品、福利渠道、系列包装与礼盒设计。</p>
+            </article>
+            <article class="service-text-panel" data-service-title="service_title_2" data-service-text="service_text_2">
+              <span class="service-text-index">02</span>
+              <h3 class="service-text-title">判断力</h3>
+              <p class="service-text-body">我更关注什么方案真正适合当前价格带、工艺条件与渠道场景，而不只是哪个方案看起来更炫。</p>
+            </article>
+            <article class="service-text-panel" data-service-title="service_title_3" data-service-text="service_text_3">
+              <span class="service-text-index">03</span>
+              <h3 class="service-text-title">落地能力</h3>
+              <p class="service-text-body">从材质、工艺、打样到供应商协同，我会同时考虑设计与执行之间的关系。</p>
+            </article>
+            <article class="service-text-panel" data-service-title="service_title_4" data-service-text="service_text_4">
+              <span class="service-text-index">04</span>
+              <h3 class="service-text-title">效率意识</h3>
+              <p class="service-text-body">AIGC 可以提高前期测试、方案比较与提案效率，但不会替代判断。</p>
+            </article>
+            <article class="service-text-panel" data-service-title="service_title_5" data-service-text="service_text_5">
+              <span class="service-text-index">05</span>
+              <h3 class="service-text-title">综合表达</h3>
+              <p class="service-text-body">在需要时，我也会结合品牌、字体与视觉系统，补强包装识别与整体完成度。</p>
+            </article>
+            <article class="service-text-panel" data-service-title="service_title_6" data-service-text="service_text_6">
+              <span class="service-text-index">06</span>
+              <h3 class="service-text-title">交付协同</h3>
+              <p class="service-text-body">我会把设计文件、打样反馈与供应商沟通整理清楚，让方案更顺畅地进入执行。</p>
+            </article>
+          </div>
         </div>
-
-        <div class="services-story-progress" aria-hidden="true"><span></span></div>
       </div>
     </section>
-
-    <div
-      class="scroll-curtain-transition scroll-curtain-transition--pink"
-      id="curtain-services-works"
-      data-target="#works-transition"
-      data-duration-in="0.86"
-      data-duration-out="0.72"
-      data-overlap="0.7"
-      data-curve-edge="170"
-      data-curve-center="46"
-      aria-hidden="true"
-    >
-      <div class="scroll-curtain-transition__surface" style="--curtain-color: #ff5f68; clip-path: url('#curtain-services-works-clip');"></div>
-      <svg class="scroll-curtain-transition__mask" width="1440" height="1024" viewBox="0 0 1440 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <clipPath id="curtain-services-works-clip" clipPathUnits="objectBoundingBox" transform="scale(0.000694444444444,0.0009765625)">
-          <path class="scroll-curtain-transition__mask-path" fill-rule="evenodd" clip-rule="evenodd" d="M0 1024V1024C240 1024 480 1024 720 1024C960 1024 1200 1024 1440 1024V1024H0Z" fill="#D9D9D9" />
-        </clipPath>
-        <path class="scroll-curtain-transition__shape scroll-curtain-transition__shape-start" d="M0 1024V170C240 92 480 46 720 46C960 46 1200 92 1440 170V1024H0Z" fill="#D9D9D9" />
-        <path class="scroll-curtain-transition__shape scroll-curtain-transition__shape-end" d="M0 0V0C240 0 480 0 720 0C960 0 1200 0 1440 0V0H0Z" fill="#D9D9D9" />
-      </svg>
-    </div>
 
     <section class="service-work-transition reveal" id="works-transition">
       <div class="works-transition-copy">
@@ -277,10 +256,6 @@
     </section>
 
     <section class="works-section reveal" id="works">
-      <div class="works-list-header" data-reveal data-delay="260">
-        <p class="works-list-kicker" data-i18n="featured_works_kicker">精选项目预览</p>
-        <p class="works-list-note" data-i18n="featured_works_note">完整作品请从左上角 WORK 进入，这里只保留服务叙事后的代表项目。</p>
-      </div>
       <ul class="works-list" id="works-list">
         <li class="works-row" data-category="oem" data-project-index="0" data-reveal data-delay="320">
           <span class="works-row-index">01</span>
@@ -388,7 +363,6 @@
             data-circular-text="PACKAGING DESIGN * REAL DELIVERY * CONTACT * "
             aria-hidden="true"
           ></div>
-          <p class="section-kicker" data-i18n="contact_kicker">联系</p>
           <h2 class="contact-title js-flip-text" data-i18n="contact_title">联系</h2>
         </div>
 
@@ -609,7 +583,6 @@
   <script src="scripts/audio-feedback.js?v=20260515-bgm1"></script>
   <script src="scripts/hero-wireframe.js"></script>
   <script src="scripts/hero-water-surface.js?v=20260520-caustics-aqua1"></script>
-  <script src="scripts/hero-curtain.js?v=20260523-hash-flow1"></script>
   <script src="scripts/hero-state-runtime.js"></script>
   <script src="scripts/hero-sequence-runtime.js"></script>
   <script src="scripts/runtime-bridge.js?v=20260515-bgm1"></script>
@@ -620,7 +593,9 @@
   <script src="script.js"></script>
   <script src="scripts/liquid-glass-field.js?v=20260522-neon-edge1"></script>
   <script src="scripts/hero-glb-model.js?v=20260522-wordmark-ripple10"></script>
-  <script src="scripts/services-scroll-story.js?v=20260523-services-rebuild2"></script>
+  <script src="scripts/services-scroll-story.js?v=20260524-services-cleanend6"></script>
+  <script src="scripts/services-prismatic-burst.js?v=20260524-services-prismatic-aqua1"></script>
+  <script src="scripts/services-time-tunnel-shader.js?v=20260524-services-time-tunnel-clean1"></script>
   <script src="scripts/work-gallery.js?v=20260522-scroll-audit2"></script>
   <script src="scripts/works-side-rail.js?v=20260521-rail-close-return3"></script>
   <script src="scripts/scrambled-text.js"></script>
@@ -631,19 +606,19 @@
   <script src="scripts/reveal-effects.js?v=20260517-works-fast-reveal1"></script>
   <script src="scripts/precision-cursor.js?v=20260512-target-cursor1"></script>
   <script src="scripts/works-hover-preview.js?v=20260523-lazy-flow2"></script>
-  <script src="scripts/works-transition-motion.js?v=20260523-services-rebuild4"></script>
+  <script src="scripts/works-transition-motion.js?v=20260524-services-cleanend1"></script>
   <script src="scripts/section-flow.js?v=20260523-hash-flow1"></script>
   <script src="scripts/site-clock.js"></script>
   <script src="scripts/bottom-nav-scroll-spy.js?v=20260523-services-rebuild4"></script>
   <script src="scripts/clients-marquee.js"></script>
   <script src="scripts/clients-title-interaction.js"></script>
-  <script src="scripts/portrait-motion.js?v=20260521-fast-reveal1"></script>
-  <script src="scripts/about-curtain.js?v=20260523-services-rebuild2"></script>
+  <script src="scripts/portrait-motion.js?v=20260523-scrub-smooth1"></script>
+  <script src="scripts/about-curtain.js?v=20260524-services-cleanend3"></script>
   <script src="scripts/hero-ripples.js"></script>
   <script src="scripts/vendor/gsap/gsap.min.js?v=3.13.0"></script>
   <script src="scripts/vendor/gsap/MorphSVGPlugin.min.js?v=3.13.0"></script>
   <script src="scripts/scroll-curtain-transitions.js?v=20260522-scroll-audit2"></script>
   <script src="scripts/entry-key-model.js?v=20260519-entry-replay2"></script>
-  <script src="scripts/entry.js?v=20260523-entry-replay1"></script>
+  <script src="scripts/entry-hero-experience.js?v=20260524-entry-hero-experience1"></script>
 </body>
 </html>

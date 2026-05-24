@@ -24,7 +24,7 @@ Secondary path: Works side rail or Works rows -> matching gallery category/proje
 - Hero
 - About / Portrait
 - Services
-- Services-to-Works curtain
+- Services-owned sequence landing on Works transition copy
 - Works transition
 - Works list
 - Works-to-Contact curtain
@@ -64,7 +64,8 @@ Secondary path: Works side rail or Works rows -> matching gallery category/proje
 ## Services Requirements
 
 - Explain why to work with the designer.
-- Maintain services grid scan, panel shader visuals, and scroll-story interaction.
+- Start with a full-screen `为何选择我` title stage before any service station appears.
+- Use local WebGL canvas stages for the Services title and time-tunnel sequence; scroll-story interaction must remain natural and readable.
 - Copy should emphasize packaging judgment within price, process, delivery, and channel constraints.
 - Service copy should refresh after language switch.
 

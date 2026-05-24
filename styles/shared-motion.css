@@ -38,7 +38,6 @@
     );
 }
 
-.scroll-curtain-transition--pink .scroll-curtain-transition__surface,
 .scroll-curtain-transition--paper .scroll-curtain-transition__surface {
   background: var(--curtain-color);
 }

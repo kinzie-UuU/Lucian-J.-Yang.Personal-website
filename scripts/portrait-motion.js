@@ -23,6 +23,9 @@
   const clamp01 = (value) => Math.max(0, Math.min(1, value));
   const CENTERED_REVEAL_DONE = 0.86;
   const CENTERED_REVEAL_MIN = 0.1;
+  const CENTERED_REVEAL_DELTA_SCALE = 2600;
+  const CENTERED_REVEAL_MAX_STEP = 0.16;
+  const VIDEO_FRAME_DURATION = 1 / 24;
   const portraitEnterFromProgress = (progress) => {
     const enterRaw = clamp01(progress / 0.14);
     return enterRaw * enterRaw * (3 - 2 * enterRaw);
@@ -99,10 +102,11 @@
 
   const advanceCenteredReveal = (delta) => {
     if (!centeredRevealActive) return;
+    if (!Number.isFinite(delta) || Math.abs(delta) < 0.01) return;
     const direction = delta >= 0 ? 1 : -1;
-    const magnitude = Math.abs(delta);
-    const step = Math.min(0.28, Math.max(0.18, magnitude / 3200));
-    centeredRevealTarget = clamp01(centeredRevealTarget + direction * step);
+    const rawStep = delta / CENTERED_REVEAL_DELTA_SCALE;
+    const step = Math.max(-CENTERED_REVEAL_MAX_STEP, Math.min(CENTERED_REVEAL_MAX_STEP, rawStep));
+    centeredRevealTarget = clamp01(centeredRevealTarget + step);
     if (direction > 0) centeredRevealTarget = Math.max(centeredRevealTarget, currentEnter);
     else centeredRevealTarget = Math.min(centeredRevealTarget, currentEnter);
     centeredRevealTarget = Math.max(CENTERED_REVEAL_MIN, centeredRevealTarget);
@@ -202,16 +206,33 @@
   };
 
   let smoothedVideoTime = 0;
+  let deferredSeekTime = null;
+  const seekThreshold = () => Math.max(0.012, VIDEO_FRAME_DURATION * 0.45);
+  const clampVideoTime = (time) => {
+    if (!video || !Number.isFinite(video.duration) || video.duration <= 0) return 0;
+    return Math.max(0, Math.min(video.duration, time));
+  };
+  const commitVideoSeek = (time) => {
+    if (!video) return;
+    const nextTime = clampVideoTime(time);
+    if (video.seeking) {
+      deferredSeekTime = nextTime;
+      return;
+    }
+    deferredSeekTime = null;
+    video.currentTime = nextTime;
+  };
+
   const scrubVideo = () => {
     scrubRaf = requestAnimationFrame(scrubVideo);
     if (!video || !Number.isFinite(video.duration) || video.duration <= 0) return;
     // Critically-damped chase — same easing model as the CSS variables.
     // No dead zone, no stepped jumps; the face turn reads as silk.
     smoothedVideoTime += (targetVideoTime - smoothedVideoTime) * 0.12;
-    // Only seek if the visible delta is meaningful, to avoid hammering
-    // the decoder with sub-frame seeks (~1/80s threshold).
-    if (Math.abs(smoothedVideoTime - video.currentTime) > 0.012) {
-      video.currentTime = smoothedVideoTime;
+    // Only seek by meaningful frame-sized deltas, and never stack seeks while
+    // the decoder is still landing on the previous frame.
+    if (Math.abs(smoothedVideoTime - video.currentTime) > seekThreshold()) {
+      commitVideoSeek(smoothedVideoTime);
     }
   };
 
@@ -301,13 +322,25 @@
 
   if (video) {
     video.pause();
-    video.addEventListener("loadedmetadata", () => {
+    const markVideoReady = () => {
       section.classList.add("is-portrait-video-ready");
       update();
+    };
+    video.addEventListener("seeked", () => {
+      if (deferredSeekTime === null || !Number.isFinite(deferredSeekTime)) return;
+      const nextTime = deferredSeekTime;
+      deferredSeekTime = null;
+      if (Math.abs(nextTime - video.currentTime) > seekThreshold()) {
+        commitVideoSeek(nextTime);
+      }
+    });
+    video.addEventListener("loadedmetadata", () => {
+      markVideoReady();
     }, { once: true });
     video.addEventListener("canplay", () => {
       section.classList.add("is-portrait-video-ready");
     }, { once: true });
+    if (video.readyState >= 1) markVideoReady();
     scrubVideo();
   }
 

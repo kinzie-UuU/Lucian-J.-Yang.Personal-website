@@ -45,7 +45,7 @@
 - [ ] Sticky service stations stay readable through the full Services scroll range.
 - [ ] Scroll story progresses through services.
 - [ ] Service copy rebuilds after language switch.
-- [ ] Services-to-Works scroll curtain does not leave scroll locked.
+- [ ] Services automatic sequence lands on Works transition copy without scroll lock.
 
 ## Works / Gallery
 

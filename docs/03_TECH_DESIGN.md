@@ -31,12 +31,12 @@
 
 ## Runtime Systems
 
-- Entry uses `models/entry-key.glb`, progress text/bar, auto-enter, scroll/touch enter, horizontal stage curtains, and avatar replay.
+- Entry uses `models/entry-key.glb`, progress text/bar, auto-enter, scroll/touch enter, horizontal stage curtains, and avatar replay. Entry interaction, Hero reveal curtains, and the Hero-to-About black curtain are coordinated by `scripts/entry-hero-experience.js`.
 - Hero uses WebGL water, SVG wireframe, fixed liquid field, GLB lion-head model, Hero wordmark layers, pointer orbiting, ripples, and Hero-to-About curtain.
-- About uses portrait video/image reveal, scroll-scrubbed video time, text reveal, and About-to-Services curtain.
-- Services uses Three.js grid scan, WebGL service panel shaders, and sticky scroll story.
+- About uses portrait video/image reveal, scroll-scrubbed video time, text reveal, and a Hero-style About-to-Services curtain that briefly locks input, lets the black sheet cover, then fades the real Services stage into the viewport before Services owns the scroll position.
+- Services uses a full-screen title gate, a local WebGL2 PrismaticBurst entry canvas adapted from the React Bits shader, a local WebGL2 time-tunnel canvas, and a Services-owned handoff sequence. Natural scroll from About completes the timed bridge using the real Services title and background, then Services auto-starts the locked automatic timeline after a short beat; direct navigation to Services still lands on the title gate without autoplay. The sequence clears the old About handoff, suppresses the About bridge while Services owns playback/release, the title fully clears, the entry burst yields to the time tunnel, the tunnel runs without service text, six service messages play more slowly as flat centered in-tunnel inscriptions without local panel underlay, marker lines, card-stage scan-line backing, residue lines, auxiliary progress rail, or adjacent-card ghost carryover, and the sequence ends by landing on the Works transition copy screen.
 - Works/Gallery uses category rows, Works side rail, hover preview, gallery overlay, detail view, and language refresh.
-- Scroll curtains use GSAP + MorphSVG for Services-to-Works and Works-to-Contact visual handoffs.
+- Scroll curtains use GSAP + MorphSVG for the Works-to-Contact visual handoff; Services-to-Works is handled by the Services-owned automatic sequence landing on the Works transition copy screen.
 - Contact uses Gmail compose form fields, social links, QR modal, and toast.
 
 ## `site-data.js` Responsibilities
@@ -54,9 +54,9 @@ Visible copy changes should start here unless a text node is intentionally hardc
 - `three.min.js` must load before Three.js-dependent scripts.
 - `site-data.js` must load before language, gallery, services text rebuild, and works UI modules.
 - `runtime-bridge.js` must install `window.LucianRuntime` before most UI modules run.
-- `services-scroll-story.js` owns only lightweight Services progress; `section-flow.js` owns hash jumps and active nav after Works transition motion loads.
+- `about-curtain.js` owns the Hero-style About-to-Services timed bridge, input lock, real Services stage preview, Services settle point, bridge completion event, and Services-owned playback/release suppression; `services-scroll-story.js` owns the Services title gate, bridge preview/autoplay guard for natural scroll, About handoff cleanup at Services takeover, locked automatic sequence, in-tunnel service inscription timing, start/complete events, and progress bridges to the Services canvas layers; `section-flow.js` owns hash jumps and active nav after Works transition motion loads.
 - GSAP and MorphSVG must load before `scroll-curtain-transitions.js`.
-- Entry key model and entry interaction load last so the rest of the runtime exists before entry completes or replays.
+- Entry key model and the Entry-to-Hero experience controller load last so the rest of the runtime exists before entry completes, replays, or hands off from Hero to About.
 
 ## High-Risk Modules
 
@@ -66,7 +66,7 @@ Visible copy changes should start here unless a text node is intentionally hardc
 - `scripts/hero-water-surface.js`.
 - `scripts/liquid-glass-field.js`.
 - `scripts/hero-glb-model.js`.
-- `scripts/hero-curtain.js`, `scripts/about-curtain.js`, `scripts/scroll-curtain-transitions.js`.
+- `scripts/entry-hero-experience.js`, `scripts/about-curtain.js`, `scripts/scroll-curtain-transitions.js`.
 - `scripts/runtime-bridge.js`, `scripts/app-bootstrap.js`.
 - `scripts/services-scroll-story.js`, `scripts/section-flow.js`.
 - `styles/home.css`, `styles/about.css`, `styles/services.css`, `styles/work-gallery.css`, `styles/navigation.css`, `styles/shared-motion.css`.

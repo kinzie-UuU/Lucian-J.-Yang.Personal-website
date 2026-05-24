@@ -77,7 +77,7 @@ Each change should target only one system:
 
 ## Main System Boundaries
 
-- Entry: `entry.js`, `entry-key-model.js`, entry markup, entry styles in `home.css`, `models/entry-key.glb`.
+- Entry/Hero experience: `entry-hero-experience.js`, `entry-key-model.js`, entry/Hero markup, base styles in `home.css`, transition styles in `entry-hero-experience.css`, `models/entry-key.glb`.
 - Hero: `hero-*` scripts, `liquid-glass-field.js`, hero markup, hero styles in `home.css`, `models/lion_head/`.
 - About: `portrait-motion.js`, `about-curtain.js`, about markup, `about.css`.
 - Services: `services-scroll-story.js`, `section-flow.js`, service markup, `services.css`.

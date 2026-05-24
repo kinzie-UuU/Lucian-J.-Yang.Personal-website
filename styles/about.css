@@ -56,8 +56,8 @@
   filter:
     saturate(0.94)
     contrast(1.14)
-    brightness(calc(0.14 + var(--portrait-enter) * 0.82 - var(--portrait-exit) * 0.22))
-    blur(calc((1 - var(--portrait-enter)) * 10px + var(--portrait-exit) * 12px));
+    brightness(calc(0.16 + var(--portrait-enter) * 0.8 - var(--portrait-exit) * 0.22))
+    blur(calc((1 - var(--portrait-enter)) * 7px + var(--portrait-exit) * 10px));
   /* No vertical lift — keep the framed portrait at geometric center.
      Source frame's face already sits close enough to center; pushing up
      was overshooting and reading "too high." */
@@ -74,8 +74,8 @@
   filter:
     saturate(0.96)
     contrast(1.14)
-    brightness(calc(0.14 + var(--portrait-enter) * 0.82 - var(--portrait-exit) * 0.25))
-    blur(calc((1 - var(--portrait-enter)) * 10px + var(--portrait-exit) * 16px));
+    brightness(calc(0.16 + var(--portrait-enter) * 0.8 - var(--portrait-exit) * 0.24))
+    blur(calc((1 - var(--portrait-enter)) * 7px + var(--portrait-exit) * 12px));
 }
 
 .portrait-image {

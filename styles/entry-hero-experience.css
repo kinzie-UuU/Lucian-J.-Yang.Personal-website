@@ -1,0 +1,200 @@
+/* Entry -> Hero -> About experience --------------------------------------- */
+
+@keyframes entryKeyTurn {
+  0% {
+    opacity: 1;
+    transform: rotateZ(0deg) scale(1);
+    filter: brightness(1) drop-shadow(0 0 0 rgba(255, 255, 255, 0));
+  }
+  35% {
+    opacity: 1;
+    transform: rotateZ(18deg) scale(1.04);
+    filter: brightness(1.2) drop-shadow(0 0 12px rgba(255, 255, 255, 0.45));
+  }
+  55% {
+    opacity: 1;
+    transform: rotateZ(28deg) scale(1.06);
+    filter: brightness(1.6) drop-shadow(0 0 24px rgba(255, 255, 255, 0.85));
+  }
+  80% {
+    opacity: 0.7;
+    transform: rotateZ(28deg) scale(0.6);
+    filter: brightness(1.2) drop-shadow(0 0 14px rgba(255, 255, 255, 0.4));
+  }
+  100% {
+    opacity: 0;
+    transform: rotateZ(28deg) scale(0.2);
+    filter: brightness(1) drop-shadow(0 0 0 rgba(255, 255, 255, 0));
+  }
+}
+
+body:not(.has-entered) .hero-section {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+body.is-entry-curtain-ready .hero-section,
+body.is-entering .hero-section,
+body.has-entered .hero-section {
+  visibility: visible;
+  pointer-events: auto;
+  opacity: 1;
+}
+
+body.is-entry-curtain-ready .hero-section,
+body.is-entering .hero-section {
+  position: fixed;
+  inset: 0;
+  z-index: 9990;
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow: hidden;
+  transform: scale(1);
+  filter: blur(0);
+}
+
+body.is-entry-curtain-ready .hero-section {
+  background: #000;
+  opacity: 1 !important;
+  transition: none;
+}
+
+body:not(.has-entered):not(.is-entry-curtain-ready):not(.is-entering):not(.is-unfolding) .hero-stage {
+  opacity: 0;
+}
+
+body:not(.has-entered) .portrait-about-wrapper,
+body:not(.has-entered) .services-section,
+body:not(.has-entered) .services-scroll-story,
+body:not(.has-entered) .service-work-transition,
+body:not(.has-entered) .works-section,
+body:not(.has-entered) .clients-section,
+body:not(.has-entered) .contact-section {
+  display: none !important;
+}
+
+body.is-entering .hero-stage {
+  opacity: 1;
+  animation: heroStageReveal 920ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes heroStageReveal {
+  0% { transform: scale(1.04); filter: blur(4px); }
+  100% { transform: scale(1); filter: blur(0); }
+}
+
+body.has-entered .hero-stage {
+  opacity: 1;
+}
+
+body.is-entering .hero-kinetic-mark {
+  animation: heroWaterReceive 960ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.entry-stage-curtains {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  pointer-events: none;
+  display: none;
+}
+
+body.is-entry-curtain-ready .entry-stage-curtains,
+body.is-entering .entry-stage-curtains {
+  display: block;
+}
+
+.entry-stage-curtain {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 52%;
+  background: #000;
+  will-change: transform;
+}
+
+.entry-stage-curtain-left { left: 0; transform: translate3d(0, 0, 0); }
+.entry-stage-curtain-right { right: 0; transform: translate3d(0, 0, 0); }
+
+@keyframes entryCurtainRetractLeft {
+  0% { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(-101%, 0, 0); }
+}
+
+@keyframes entryCurtainRetractRight {
+  0% { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(101%, 0, 0); }
+}
+
+body.is-entering .entry-stage-curtain-left {
+  animation: entryCurtainRetractLeft 2000ms cubic-bezier(0.65, 0, 0.35, 1) forwards;
+}
+
+body.is-entering .entry-stage-curtain-right {
+  animation: entryCurtainRetractRight 2000ms cubic-bezier(0.65, 0, 0.35, 1) forwards;
+}
+
+body.is-unfolding .entry-screen {
+  visibility: visible;
+  opacity: 1;
+  pointer-events: none;
+}
+
+body.is-unfolding .entry-key-canvas {
+  animation: entryKeyTurn 640ms cubic-bezier(0.32, 0.04, 0.18, 1) forwards;
+}
+
+body.is-entry-curtain-ready .entry-screen,
+body.is-entering .entry-screen,
+body.has-entered .entry-screen {
+  display: none;
+  pointer-events: none;
+}
+
+body.is-entry-replaying .entry-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  width: 100%;
+  max-width: none;
+  height: 100svh;
+  min-height: 100svh;
+  margin: 0;
+}
+
+body.is-unfolding .entry-center {
+  opacity: 1;
+  transition: none;
+}
+
+body.is-unfolding .entry-atmosphere,
+body.is-unfolding .entry-progress-bar {
+  opacity: 0;
+  transition: opacity 220ms ease;
+}
+
+.hero-curtain {
+  position: absolute;
+  inset: 0;
+  z-index: 18;
+  pointer-events: none;
+  background: #000;
+  transform: translate3d(0, 102%, 0);
+  transition: transform 1450ms cubic-bezier(0.76, 0, 0.24, 1);
+  will-change: transform;
+}
+
+.hero-stage.is-curtain-down .hero-curtain {
+  transform: translate3d(0, 0, 0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.is-entering .hero-stage,
+  body.is-entering .entry-stage-curtain-left,
+  body.is-entering .entry-stage-curtain-right,
+  .hero-curtain {
+    animation: none;
+    transition: none;
+  }
+}

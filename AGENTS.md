@@ -59,9 +59,9 @@ node tools/runtime-smoke-check.js
 - Entry: `#entry-screen`, 3D key canvas, progress text/bar, auto-enter, scroll/touch enter, replay from avatar.
 - Hero: water canvas, ripples, wireframe, fixed liquid field, GLB lion-head model, wordmark layers, Hero-to-About curtain.
 - About/Portrait: portrait video/fallback, scroll reveal, video scrub, About-to-Services curtain.
-- Services: sticky scroll story, Three.js grid scan, panel shaders.
+- Services: sticky title gate, one-scroll locked launch, About handoff cleanup at Services takeover, local WebGL2 black-water PrismaticBurst entry canvas, local WebGL2 time-tunnel canvas, automatic flat in-tunnel service inscription stage.
 - Works: five category rows, hover preview, Works side rail, gallery entry.
-- Scroll curtains: Services-to-Works and Works-to-Contact handoffs.
+- Scroll curtains: Works-to-Contact handoff; Services lands directly on the Works transition copy screen after its owned sequence.
 - Gallery: overlay, category/project browsing, detail page, back/close.
 - Contact: Gmail compose form, social links, WeChat QR modal, toast.
 - Clients: selected-client marquee and credibility copy.
@@ -74,7 +74,8 @@ node tools/runtime-smoke-check.js
 - `styles/liquid-glass.css`: fixed liquid field layer.
 - `styles/cursor.css`: precision cursor.
 - `styles/typography.css`: shared type and section styles.
-- `styles/home.css`: Entry and Hero.
+- `styles/home.css`: Entry and Hero base layout.
+- `styles/entry-hero-experience.css`: Entry-to-Hero reveal and Hero-to-About black curtain.
 - `styles/about.css`: About/Portrait.
 - `styles/services.css`: Services.
 - `styles/works.css`: Works and transition.
@@ -84,6 +85,10 @@ node tools/runtime-smoke-check.js
 - `styles/navigation.css`: top controls, bottom nav, Works side rail.
 - `styles/responsive.css`: cross-section responsive corrections.
 - `styles/shared-motion.css`: reveal helpers and scroll curtain styles.
+
+## Visual Rules
+
+- Do not use text shadows anywhere in this project. Typography should rely on color, contrast, size, weight, spacing, and background treatment instead of `text-shadow`.
 
 ## JS Load Order
 
@@ -103,7 +108,7 @@ Keep the order in `index.html` unless the dependency chain is re-audited. Key or
 12. portrait/about curtain/ripples
 13. GSAP vendor and `scroll-curtain-transitions.js`
 14. `entry-key-model.js`
-15. `entry.js`
+15. `entry-hero-experience.js`
 
 ## High-Risk Areas
 
@@ -111,7 +116,7 @@ Keep the order in `index.html` unless the dependency chain is re-audited. Key or
 - `site-data.js` data schema and image paths.
 - `scripts/work-gallery.js`.
 - Hero WebGL/model/liquid scripts.
-- Curtain scripts: `hero-curtain.js`, `about-curtain.js`, `scroll-curtain-transitions.js`.
+- Curtain scripts: `entry-hero-experience.js`, `about-curtain.js`, `scroll-curtain-transitions.js`.
 - Services WebGL/scroll scripts.
 - Large visual CSS modules: `home.css`, `about.css`, `services.css`, `work-gallery.css`, `navigation.css`, `shared-motion.css`.
 - `three.min.js` and minified vendor files.
@@ -142,7 +147,7 @@ Keep the order in `index.html` unless the dependency chain is re-audited. Key or
 - Entry key enters and replays.
 - Console has no site errors.
 - If Hero changed, verify water/liquid/lion model/scroll.
-- If Services changed, verify grid scan, panel shader, and scroll story.
+- If Services changed, verify the PrismaticBurst entry canvas, time-tunnel canvas, delayed service-card stage, and scroll story.
 - If Works/Gallery changed, verify Works rows, side rail, Gallery open/close/detail/back.
 - If copy/language changed, verify `zh-CN` / `en` switching and open Gallery text refresh.
 - If layout changed, verify desktop/mobile horizontal overflow.
