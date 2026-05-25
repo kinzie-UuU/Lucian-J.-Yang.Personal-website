@@ -8,7 +8,7 @@
      curtain trigger threshold so portrait section starts immediately
      after the curtain finishes covering. */
   background: #000;
-  --portrait-media-y: -12vh;
+  --portrait-media-y: 0vh;
   --portrait-enter: 0;
   --portrait-text-enter: 0;
   --portrait-progress: 0;
@@ -50,20 +50,19 @@
   height: min(94vh, 960px);
   object-fit: contain;
   object-position: center;
-  /* Darkness reveal: opacity + brightness + blur all wake from 0,
-     no vertical translate. Reads as a print developing in a tray. */
+  /* Darkness reveal: the first frame stays centered while contrast and focus wake up. */
   opacity: max(0, calc(var(--portrait-enter) * 1.0 - var(--portrait-exit) * 0.98));
   filter:
     saturate(0.94)
     contrast(1.14)
-    brightness(calc(0.16 + var(--portrait-enter) * 0.8 - var(--portrait-exit) * 0.22))
-    blur(calc((1 - var(--portrait-enter)) * 7px + var(--portrait-exit) * 10px));
-  /* No vertical lift — keep the framed portrait at geometric center.
+    brightness(calc(0.08 + var(--portrait-enter) * 0.9 - var(--portrait-exit) * 0.22))
+    blur(calc((1 - var(--portrait-enter)) * 8px + var(--portrait-exit) * 10px));
+  /* No vertical lift - keep the framed portrait at geometric center.
      Source frame's face already sits close enough to center; pushing up
      was overshooting and reading "too high." */
   transform:
     translate3d(-50%, calc(-50% + var(--portrait-media-y)), 0)
-    scale(calc(1.04 - var(--portrait-enter) * 0.04 - var(--portrait-exit) * 0.02));
+    scale(calc(1.012 - var(--portrait-enter) * 0.012 - var(--portrait-exit) * 0.012));
   transform-origin: 50% 50%;
   will-change: transform, filter, opacity;
 }
@@ -74,8 +73,13 @@
   filter:
     saturate(0.96)
     contrast(1.14)
-    brightness(calc(0.16 + var(--portrait-enter) * 0.8 - var(--portrait-exit) * 0.24))
-    blur(calc((1 - var(--portrait-enter)) * 7px + var(--portrait-exit) * 12px));
+    brightness(calc(0.08 + var(--portrait-enter) * 0.9 - var(--portrait-exit) * 0.24))
+    blur(calc((1 - var(--portrait-enter)) * 8px + var(--portrait-exit) * 12px));
+}
+
+.portrait-about-wrapper:not(.is-portrait-reveal-armed):not(.is-portrait-reveal-complete) .portrait-video,
+.portrait-about-wrapper:not(.is-portrait-reveal-armed):not(.is-portrait-reveal-complete) .portrait-image {
+  opacity: 0 !important;
 }
 
 .portrait-image {
@@ -408,7 +412,7 @@ html[lang="zh-CN"] .about-detail {
 /* About responsive mobile */
 @media (max-width: 760px) {
   .portrait-about-wrapper {
-    --portrait-media-y: -4vh;
+    --portrait-media-y: 0vh;
   }
 
   .about-rows {

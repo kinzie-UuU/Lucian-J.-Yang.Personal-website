@@ -29,16 +29,6 @@ body.is-dark-stage {
   background: #050607;
 }
 
-html.services-sequence-playing,
-body.services-sequence-playing {
-  overscroll-behavior: none;
-}
-
-body.services-sequence-releasing .services-card-stage {
-  opacity: 0;
-  filter: blur(10px);
-}
-
 body.is-dark-stage::before,
 body.is-dark-stage::after {
   opacity: 0;
@@ -80,39 +70,6 @@ html.is-warm-stage {
   background:
     #050607;
   overflow: hidden;
-}
-
-body.about-services-bridge-active .services-section {
-  z-index: 140;
-}
-
-body.about-services-bridge-active .services-sticky {
-  position: fixed;
-  inset: 0;
-  z-index: 130;
-  min-height: 100svh;
-  opacity: 0;
-  visibility: visible;
-  transform:
-    translate3d(0, 3.8svh, 0)
-    scale(1.015);
-  transition:
-    opacity 1180ms cubic-bezier(0.16, 1, 0.3, 1),
-    transform 1450ms cubic-bezier(0.16, 1, 0.3, 1);
-  pointer-events: none;
-}
-
-body.about-services-bridge-visual-visible .services-sticky {
-  opacity: 1;
-  transform:
-    translate3d(0, 0, 0)
-    scale(1);
-}
-
-body.about-services-bridge-releasing .services-sticky {
-  transition:
-    opacity 620ms cubic-bezier(0.62, 0, 0.24, 1),
-    transform 620ms cubic-bezier(0.62, 0, 0.24, 1);
 }
 
 .services-sticky::before {
@@ -197,26 +154,6 @@ body.about-services-bridge-releasing .services-sticky {
   filter: blur(var(--services-title-blur));
   transform-origin: 50% 54%;
   pointer-events: none;
-}
-
-body.about-services-bridge-active .services-title-stage {
-  opacity: 0;
-  transform:
-    translate3d(0, 8svh, 0)
-    scale(1.035);
-  filter: blur(18px);
-  transition:
-    opacity 1050ms cubic-bezier(0.16, 1, 0.3, 1),
-    filter 1450ms cubic-bezier(0.16, 1, 0.3, 1),
-    transform 1450ms cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-body.about-services-bridge-title-visible .services-title-stage {
-  opacity: var(--services-title-opacity);
-  transform:
-    translate3d(0, var(--services-title-y), 0)
-    scale(var(--services-title-scale));
-  filter: blur(var(--services-title-blur));
 }
 
 .services-entry-title {

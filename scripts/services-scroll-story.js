@@ -8,23 +8,15 @@
   const runtime = window.LucianRuntime;
   const reducedMotion = runtime?.reducedMotion
     || window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
-  const AUTO_DURATION = 30000;
-  const SETTLE_GUARD = 520;
-  const BRIDGE_AUTOPLAY_DELAY = 180;
   const BRIDGE_SEQUENCE_START_PROGRESS = 0.045;
 
   const clamp01 = (value) => Math.min(1, Math.max(0, value));
   const smooth = (value) => value * value * (3 - 2 * value);
 
   let ticking = false;
-  let mode = "gate";
+  let mode = "scroll";
   let sequenceFrame = 0;
   let sequenceStart = 0;
-  let settleGuardUntil = 0;
-  let releaseGuardUntil = 0;
-  let releaseFrame = 0;
-  let releaseTargetY = 0;
-  let touchStartY = 0;
   let bridgeAutoplayTimer = 0;
   let suppressBridgeAutoplayUntil = 0;
 
@@ -61,6 +53,7 @@
 
     titleNode.textContent = label;
     titleNode.setAttribute("aria-label", label);
+    delete titleNode.dataset.typeSource;
   };
 
   const rebuildServicesStoryText = () => {
@@ -78,12 +71,12 @@
 
   const writeProgress = (progress) => {
     const titleProgress = smooth(clamp01(progress / 0.18));
-    const tunnelProgress = smooth(clamp01((progress - 0.02) / 0.2));
+    const tunnelProgress = smooth(clamp01((progress - 0.02) / 0.3));
     const tunnelEnter = smooth(clamp01(progress / 0.06));
-    const tunnelExit = smooth(clamp01((progress - 0.07) / 0.09));
-    const timeProgress = smooth(clamp01((progress - 0.14) / 0.12));
-    const cardProgress = smooth(clamp01((progress - 0.28) / 0.12));
-    const stationProgress = smooth(clamp01((progress - 0.34) / 0.56));
+    const tunnelExit = smooth(clamp01((progress - 0.28) / 0.1));
+    const timeProgress = smooth(clamp01((progress - 0.16) / 0.18));
+    const cardProgress = smooth(clamp01((progress - 0.36) / 0.12));
+    const stationProgress = smooth(clamp01((progress - 0.44) / 0.46));
     const outro = smooth(clamp01((progress - 0.94) / 0.06));
     const titleOpacity = reducedMotion ? 1 : clamp01(1 - smooth(clamp01((progress - 0.02) / 0.1)));
     const cardOpacity = reducedMotion ? 1 : clamp01(cardProgress * (1 - outro));
@@ -150,30 +143,6 @@
 
     if (document.body.classList.contains("about-services-bridge-active")) return;
 
-    if (mode === "playing") {
-      settleToGate();
-      return;
-    }
-
-    if (mode === "released" && releaseTargetY && performance.now() < releaseGuardUntil) {
-      settleToRelease();
-      writeProgress(1);
-      return;
-    }
-
-    if (mode === "gate") {
-      if (isBeforeServices()) {
-        writeProgress(0);
-        return;
-      }
-      if (isPastReleasedZone()) {
-        mode = "released";
-      } else {
-        writeProgress(0);
-        return;
-      }
-    }
-
     const rect = section.getBoundingClientRect();
     const vh = Math.max(1, window.innerHeight);
     const travel = Math.max(1, rect.height - vh);
@@ -181,42 +150,6 @@
   };
 
   const sectionTop = () => Math.max(0, Math.round((window.scrollY || window.pageYOffset || 0) + section.getBoundingClientRect().top));
-  const releaseTop = () => {
-    const vh = Math.max(1, window.innerHeight || 1);
-    return Math.max(0, Math.round(sectionTop() + section.offsetHeight - vh + 2));
-  };
-  const worksTransitionTop = () => {
-    const transition = document.querySelector("#works-transition");
-    if (!transition) return releaseTop();
-    return Math.max(0, Math.round(transition.offsetTop));
-  };
-
-  function settleToGate() {
-    const top = sectionTop();
-    if (Math.abs((window.scrollY || window.pageYOffset || 0) - top) <= 2) return;
-    window.scrollTo({ top, left: 0, behavior: "auto" });
-    document.documentElement.scrollTop = top;
-    document.body.scrollTop = top;
-  }
-
-  const isInGateZone = () => {
-    const rect = section.getBoundingClientRect();
-    const vh = Math.max(1, window.innerHeight || 1);
-    return rect.top < vh * 0.18 && rect.bottom > vh * 0.72;
-  };
-
-  const isBeforeServices = () => {
-    const rect = section.getBoundingClientRect();
-    const vh = Math.max(1, window.innerHeight || 1);
-    return rect.bottom > vh && rect.top > -vh * 0.08;
-  };
-
-  const isPastReleasedZone = () => {
-    const rect = section.getBoundingClientRect();
-    const vh = Math.max(1, window.innerHeight || 1);
-    return rect.top < -vh * 1.2;
-  };
-
   const setSequenceClass = (playing) => {
     document.documentElement.classList.toggle("services-sequence-playing", playing);
     document.body.classList.toggle("services-sequence-playing", playing);
@@ -227,109 +160,40 @@
     document.body.classList.toggle("services-sequence-releasing", releasing);
   };
 
-  const settleToRelease = () => {
-    if (!releaseTargetY) return;
-    document.querySelector("#works-transition")?.scrollIntoView({
-      block: "start",
-      inline: "nearest",
-      behavior: "auto",
-    });
-    window.scrollTo({ top: releaseTargetY, left: 0, behavior: "auto" });
-    window.scrollTo(0, releaseTargetY);
-    document.documentElement.scrollTop = releaseTargetY;
-    document.body.scrollTop = releaseTargetY;
-  };
-
-  const guardReleasePosition = () => {
-    if (!releaseTargetY || performance.now() >= releaseGuardUntil) {
-      releaseFrame = 0;
-      releaseGuardUntil = 0;
-      releaseTargetY = 0;
-      setReleaseClass(false);
-      return;
-    }
-    settleToRelease();
-    writeProgress(1);
-    releaseFrame = window.requestAnimationFrame(guardReleasePosition);
-  };
-
   const resetSequence = () => {
     window.cancelAnimationFrame(sequenceFrame);
-    window.cancelAnimationFrame(releaseFrame);
     window.clearTimeout(bridgeAutoplayTimer);
     bridgeAutoplayTimer = 0;
     sequenceFrame = 0;
     sequenceStart = 0;
-    releaseFrame = 0;
-    releaseGuardUntil = 0;
-    releaseTargetY = 0;
-    mode = "gate";
-    settleGuardUntil = 0;
+    mode = "scroll";
     setSequenceClass(false);
     setReleaseClass(false);
-    writeProgress(0);
-  };
-
-  const finishSequence = () => {
-    window.cancelAnimationFrame(sequenceFrame);
-    sequenceFrame = 0;
-    mode = "released";
-    clearAboutHandoff();
-    writeProgress(1);
-    const target = worksTransitionTop();
-    releaseTargetY = target;
-    releaseGuardUntil = performance.now() + 5200;
-    setSequenceClass(false);
-    setReleaseClass(true);
-    settleToRelease();
-    window.cancelAnimationFrame(releaseFrame);
-    releaseFrame = window.requestAnimationFrame(guardReleasePosition);
-    window.dispatchEvent(new CustomEvent("lucian:services-sequence-complete", {
-      detail: { targetY: target },
-    }));
-  };
-
-  const runSequence = (now) => {
-    if (mode !== "playing") return;
-    const elapsed = Math.max(0, now - sequenceStart);
-    const progress = clamp01(elapsed / AUTO_DURATION);
-    clearAboutHandoff();
-    settleToGate();
-    writeProgress(progress);
-    if (progress >= 1) {
-      finishSequence();
-      return;
-    }
-    sequenceFrame = window.requestAnimationFrame(runSequence);
+    readProgress();
   };
 
   const startSequence = ({ fromBridge = false } = {}) => {
-    if (reducedMotion || mode === "playing") return;
-    if (mode === "released") return;
-    if (!isInGateZone()) return;
-    mode = "playing";
+    if (reducedMotion) return;
+    mode = "scroll";
     clearAboutHandoff();
-    setSequenceClass(true);
-    window.dispatchEvent(new CustomEvent("lucian:services-sequence-start", {
+    setSequenceClass(false);
+    setReleaseClass(false);
+    window.dispatchEvent(new CustomEvent("lucian:services-scroll-start", {
       detail: { fromBridge },
     }));
-    settleGuardUntil = performance.now() + SETTLE_GUARD;
-    settleToGate();
-    writeProgress(fromBridge ? BRIDGE_SEQUENCE_START_PROGRESS : 0);
+    if (fromBridge) writeProgress(BRIDGE_SEQUENCE_START_PROGRESS);
     window.cancelAnimationFrame(sequenceFrame);
-    sequenceStart = performance.now() - (fromBridge ? AUTO_DURATION * BRIDGE_SEQUENCE_START_PROGRESS : 0);
-    sequenceFrame = window.requestAnimationFrame(runSequence);
+    sequenceFrame = window.requestAnimationFrame(readProgress);
   };
 
   const scheduleBridgeAutoplay = (event) => {
-    if (reducedMotion || mode !== "gate" || event.detail?.programmatic) return;
+    if (reducedMotion || event.detail?.programmatic) return;
     if (performance.now() < suppressBridgeAutoplayUntil) return;
     window.clearTimeout(bridgeAutoplayTimer);
     bridgeAutoplayTimer = window.setTimeout(() => {
       bridgeAutoplayTimer = 0;
-      if (mode !== "gate" || !isInGateZone()) return;
       startSequence({ fromBridge: true });
-    }, BRIDGE_AUTOPLAY_DELAY);
+    }, 180);
   };
 
   const requestUpdate = () => {
@@ -368,7 +232,6 @@
       bridgeAutoplayTimer = 0;
       window.requestAnimationFrame(() => {
         resetSequence();
-        settleToGate();
       });
       return;
     }
@@ -378,51 +241,20 @@
   window.addEventListener("lucian:about-services-bridge-complete", scheduleBridgeAutoplay);
   window.addEventListener("wheel", (event) => {
     if (reducedMotion) return;
-    if (mode === "playing") {
-      event.preventDefault();
-      event.stopPropagation();
-      if (performance.now() < settleGuardUntil) window.requestAnimationFrame(settleToGate);
-      return;
-    }
-    if (mode !== "gate" || event.deltaY <= 0 || !isInGateZone()) return;
-    event.preventDefault();
-    event.stopPropagation();
-    startSequence();
-  }, { passive: false, capture: true });
-  window.addEventListener("touchstart", (event) => {
-    touchStartY = event.touches?.[0]?.clientY || 0;
+    requestUpdate();
   }, { passive: true });
-  window.addEventListener("touchmove", (event) => {
+  window.addEventListener("touchmove", () => {
     if (reducedMotion) return;
-    const currentY = event.touches?.[0]?.clientY || touchStartY;
-    const movingDownPage = touchStartY - currentY > 10;
-    if (mode === "playing") {
-      event.preventDefault();
-      event.stopPropagation();
-      return;
-    }
-    if (mode !== "gate" || !movingDownPage || !isInGateZone()) return;
-    event.preventDefault();
-    event.stopPropagation();
-    startSequence();
-  }, { passive: false, capture: true });
+    requestUpdate();
+  }, { passive: true });
   window.addEventListener("keydown", (event) => {
     if (reducedMotion) return;
     const forwardKeys = ["ArrowDown", "PageDown", " ", "End"];
     if (!forwardKeys.includes(event.key)) return;
-    if (mode === "playing") {
-      event.preventDefault();
-      event.stopPropagation();
-      return;
-    }
-    if (mode !== "gate" || !isInGateZone()) return;
-    event.preventDefault();
-    event.stopPropagation();
-    startSequence();
+    requestUpdate();
   }, { capture: true });
   window.addEventListener("pagehide", () => {
     window.cancelAnimationFrame(sequenceFrame);
-    window.cancelAnimationFrame(releaseFrame);
     window.clearTimeout(bridgeAutoplayTimer);
     setSequenceClass(false);
     setReleaseClass(false);

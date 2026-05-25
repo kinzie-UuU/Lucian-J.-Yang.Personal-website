@@ -16,16 +16,24 @@
   let scrubRaf = null;
   let aboutRevealUnits = [];
   let centeredRevealActive = false;
+  let centeredRevealArmed = false;
+  let centeredRevealCompleted = false;
+  let centeredTurnLocked = false;
   let centeredRevealAnchorY = 0;
   let centeredRevealTarget = 0;
+  let centeredRevealArmRaf = null;
   let centeredTouchY = 0;
   const smootherStep = (t) => t * t * t * (t * (t * 6 - 15) + 10);
   const clamp01 = (value) => Math.max(0, Math.min(1, value));
   const CENTERED_REVEAL_DONE = 0.86;
-  const CENTERED_REVEAL_MIN = 0.1;
-  const CENTERED_REVEAL_DELTA_SCALE = 2600;
-  const CENTERED_REVEAL_MAX_STEP = 0.16;
+  const CENTERED_REVEAL_MIN = 0;
+  const CENTERED_REVEAL_DELTA_SCALE = 4600;
+  const CENTERED_REVEAL_MAX_STEP = 0.055;
+  const CENTERED_TURN_START = 0.45;
+  const CENTERED_AUTO_START_MAX_PROGRESS = 0.1;
+  const CENTERED_AUTO_COMPLETE_PROGRESS = 0.28;
   const VIDEO_FRAME_DURATION = 1 / 24;
+  const PORTRAIT_SCRUB_SECONDS = 3;
   const portraitEnterFromProgress = (progress) => {
     const enterRaw = clamp01(progress / 0.14);
     return enterRaw * enterRaw * (3 - 2 * enterRaw);
@@ -36,11 +44,37 @@
     document.body.classList.toggle("about-centered-reveal-active", active);
   };
 
+  const setPortraitRevealState = ({ armed = false, complete = false } = {}) => {
+    section.classList.toggle("is-portrait-reveal-armed", armed);
+    section.classList.toggle("is-portrait-reveal-complete", complete);
+  };
+
+  const cancelCenteredRevealArm = () => {
+    if (centeredRevealArmRaf !== null) {
+      cancelAnimationFrame(centeredRevealArmRaf);
+      centeredRevealArmRaf = null;
+    }
+    centeredRevealArmed = false;
+  };
+
   const sectionTop = () => {
     const currentY = window.scrollY || window.pageYOffset || 0;
     const rect = section.getBoundingClientRect();
     return Math.max(0, Math.round(currentY + rect.top));
   };
+
+  const effectiveVideoDuration = () => {
+    if (!video || !Number.isFinite(video.duration) || video.duration <= 0) return 0;
+    return Math.min(video.duration, PORTRAIT_SCRUB_SECONDS);
+  };
+
+  const centeredRevealProgress = () => (
+    smootherStep(clamp01(centeredRevealTarget / CENTERED_TURN_START))
+  );
+
+  const centeredTurnProgress = () => (
+    smootherStep(clamp01((centeredRevealTarget - CENTERED_TURN_START) / (CENTERED_REVEAL_DONE - CENTERED_TURN_START)))
+  );
 
   const lockToCenteredAnchor = () => {
     if (!centeredRevealActive) return;
@@ -49,17 +83,66 @@
     document.body.scrollTop = centeredRevealAnchorY;
   };
 
-  const syncCenteredVideo = () => {
+  const syncCenteredPortrait = () => {
+    if (!centeredRevealArmed) {
+      targetEnter = CENTERED_REVEAL_MIN;
+      targetVideoTime = 0;
+      return;
+    }
+    targetEnter = centeredRevealProgress();
+    const duration = effectiveVideoDuration();
+    if (duration <= 0) return;
+    if (centeredTurnLocked) {
+      targetEnter = 1;
+      targetVideoTime = duration;
+      return;
+    }
+
+    const turnProgress = centeredTurnProgress();
+    targetVideoTime = duration * turnProgress;
+    if (turnProgress >= 0.995) lockVideoToFinalFrame();
+  };
+
+  const resetVideoToFirstFrame = () => {
+    centeredTurnLocked = false;
+    targetVideoTime = 0;
+    smoothedVideoTime = 0;
+    deferredSeekTime = null;
     if (!video || !Number.isFinite(video.duration) || video.duration <= 0) return;
-    const rawVideoProgress = clamp01((centeredRevealTarget - 0.34) / 0.52);
-    targetVideoTime = video.duration * smootherStep(rawVideoProgress);
+    if (video.seeking) {
+      deferredSeekTime = 0;
+      return;
+    }
+    if (Math.abs(video.currentTime) > seekThreshold()) video.currentTime = 0;
+  };
+
+  const lockVideoToFinalFrame = () => {
+    const duration = effectiveVideoDuration();
+    if (duration <= 0) return;
+    centeredTurnLocked = true;
+    targetVideoTime = duration;
+    smoothedVideoTime = duration;
+    deferredSeekTime = null;
+    if (!video || !Number.isFinite(video.duration) || video.duration <= 0) return;
+    if (video.seeking) {
+      deferredSeekTime = duration;
+      return;
+    }
+    if (Math.abs(video.currentTime - duration) > seekThreshold()) video.currentTime = duration;
   };
 
   const releaseCenteredReveal = ({ force = false } = {}) => {
     if (!centeredRevealActive && !force) return;
+    cancelCenteredRevealArm();
     centeredRevealActive = false;
+    if (!force) centeredRevealCompleted = true;
+    if (!force) lockVideoToFinalFrame();
     setCenteredRevealClass(false);
-    targetEnter = Math.max(targetEnter, currentEnter, CENTERED_REVEAL_DONE);
+    setPortraitRevealState({
+      armed: false,
+      complete: !force,
+    });
+    targetEnter = Math.max(targetEnter, currentEnter, 1);
     targetTextEnter = 0;
     targetProgressValue = 0;
   };
@@ -72,49 +155,87 @@
 
   const releaseCenteredRevealBack = () => {
     if (!centeredRevealActive) return;
+    cancelCenteredRevealArm();
     centeredRevealActive = false;
+    centeredRevealCompleted = false;
     setCenteredRevealClass(false);
+    setPortraitRevealState();
     const previousY = Math.max(0, centeredRevealAnchorY - window.innerHeight * 0.28);
     targetEnter = CENTERED_REVEAL_MIN;
     targetTextEnter = 0;
     targetProgressValue = 0;
+    resetVideoToFirstFrame();
     window.scrollTo({ top: previousY, left: 0, behavior: "auto" });
     document.documentElement.scrollTop = previousY;
     document.body.scrollTop = previousY;
   };
 
+  const armCenteredRevealAfterAnchor = () => {
+    cancelCenteredRevealArm();
+    centeredRevealArmRaf = requestAnimationFrame(() => {
+      lockToCenteredAnchor();
+      centeredRevealArmRaf = requestAnimationFrame(() => {
+        lockToCenteredAnchor();
+        centeredRevealArmRaf = null;
+        if (!centeredRevealActive) return;
+        centeredRevealArmed = true;
+        setPortraitRevealState({ armed: true });
+        syncCenteredPortrait();
+        renderAboutReveal();
+      });
+    });
+  };
+
   const activateCenteredReveal = ({ anchorY = sectionTop(), enter = currentEnter } = {}) => {
+    cancelCenteredRevealArm();
     centeredRevealActive = true;
-    centeredRevealAnchorY = Math.max(0, Math.round(anchorY));
+    centeredRevealCompleted = false;
+    const measuredAnchorY = sectionTop();
+    centeredRevealAnchorY = Math.max(0, Math.round(Number.isFinite(measuredAnchorY) ? measuredAnchorY : anchorY));
     centeredRevealTarget = clamp01(enter);
-    targetEnter = centeredRevealTarget;
+    targetEnter = CENTERED_REVEAL_MIN;
     targetTextEnter = 0;
     targetProgressValue = 0;
     targetExit = 0;
+    currentEnter = CENTERED_REVEAL_MIN;
     currentTextEnter = 0;
     currentProgressValue = 0;
     currentExit = 0;
+    section.style.setProperty("--portrait-enter", currentEnter.toFixed(4));
+    section.style.setProperty("--portrait-text-enter", currentTextEnter.toFixed(4));
+    section.style.setProperty("--portrait-progress", currentProgressValue.toFixed(4));
+    section.style.setProperty("--portrait-exit", currentExit.toFixed(4));
+    setPortraitRevealState();
     setCenteredRevealClass(true);
     lockToCenteredAnchor();
-    syncCenteredVideo();
+    if (centeredRevealTarget <= CENTERED_TURN_START) resetVideoToFirstFrame();
+    targetVideoTime = 0;
+    armCenteredRevealAfterAnchor();
     renderAboutReveal();
   };
 
   const advanceCenteredReveal = (delta) => {
     if (!centeredRevealActive) return;
     if (!Number.isFinite(delta) || Math.abs(delta) < 0.01) return;
+    if (!centeredRevealArmed) {
+      lockToCenteredAnchor();
+      return;
+    }
     const direction = delta >= 0 ? 1 : -1;
+    if (centeredTurnLocked && direction < 0) {
+      lockVideoToFinalFrame();
+      lockToCenteredAnchor();
+      return;
+    }
     const rawStep = delta / CENTERED_REVEAL_DELTA_SCALE;
     const step = Math.max(-CENTERED_REVEAL_MAX_STEP, Math.min(CENTERED_REVEAL_MAX_STEP, rawStep));
-    centeredRevealTarget = clamp01(centeredRevealTarget + step);
-    if (direction > 0) centeredRevealTarget = Math.max(centeredRevealTarget, currentEnter);
-    else centeredRevealTarget = Math.min(centeredRevealTarget, currentEnter);
+    const nextTarget = clamp01(centeredRevealTarget + step);
+    centeredRevealTarget = centeredTurnLocked ? CENTERED_REVEAL_DONE : nextTarget;
     centeredRevealTarget = Math.max(CENTERED_REVEAL_MIN, centeredRevealTarget);
-    targetEnter = centeredRevealTarget;
     targetTextEnter = 0;
     targetProgressValue = 0;
     targetExit = 0;
-    syncCenteredVideo();
+    syncCenteredPortrait();
     lockToCenteredAnchor();
     if (
       direction < 0
@@ -124,6 +245,17 @@
       releaseCenteredRevealBack();
     }
   };
+
+  const shouldLetNaturalScrollResume = (delta = 0) => (
+    centeredRevealActive
+    && centeredRevealArmed
+    && delta > 0
+    && (
+      centeredTurnLocked
+      || centeredTurnProgress() >= 0.96
+      || currentEnter >= 0.92
+    )
+  );
 
   const refreshAboutReveal = () => {
     const leftSelectors = [
@@ -209,8 +341,9 @@
   let deferredSeekTime = null;
   const seekThreshold = () => Math.max(0.012, VIDEO_FRAME_DURATION * 0.45);
   const clampVideoTime = (time) => {
-    if (!video || !Number.isFinite(video.duration) || video.duration <= 0) return 0;
-    return Math.max(0, Math.min(video.duration, time));
+    const duration = effectiveVideoDuration();
+    if (duration <= 0) return 0;
+    return Math.max(0, Math.min(duration, time));
   };
   const commitVideoSeek = (time) => {
     if (!video) return;
@@ -243,12 +376,18 @@
         requestAnimationFrame(renderMotion);
         return;
       }
-      targetEnter = Math.max(targetEnter, centeredRevealTarget);
       targetTextEnter = 0;
       targetProgressValue = 0;
       targetExit = 0;
       if (Math.abs(window.scrollY - centeredRevealAnchorY) > 2) lockToCenteredAnchor();
-      if (centeredRevealTarget >= CENTERED_REVEAL_DONE && currentEnter >= CENTERED_REVEAL_DONE - 0.04) {
+      if (!centeredRevealArmed) {
+        targetEnter = CENTERED_REVEAL_MIN;
+        targetVideoTime = 0;
+      } else {
+        syncCenteredPortrait();
+      }
+      if (centeredRevealArmed && centeredRevealTarget >= CENTERED_REVEAL_DONE && currentEnter >= 0.96 && centeredTurnProgress() >= 0.99) {
+        lockVideoToFinalFrame();
         releaseCenteredReveal();
       }
     }
@@ -283,16 +422,20 @@
     // progress: 0 = section just entered, 1 = section fully scrolled through
     const progress = clamp01(-rect.top / scrollable);
 
+    if (progress > CENTERED_AUTO_COMPLETE_PROGRESS) {
+      centeredRevealCompleted = true;
+    }
+
     if (
-      progress <= 0.08
-      && currentEnter < CENTERED_REVEAL_DONE + 0.08
+      progress <= CENTERED_AUTO_START_MAX_PROGRESS
+      && !centeredRevealCompleted
       && rect.top <= window.innerHeight * 0.18
-      && rect.top >= -window.innerHeight * 0.18
+      && rect.top >= -window.innerHeight * 0.16
       && !document.body.classList.contains("about-services-handoff-active")
     ) {
       activateCenteredReveal({
         anchorY: sectionTop(),
-        enter: Math.max(CENTERED_REVEAL_MIN, currentEnter),
+        enter: CENTERED_REVEAL_MIN,
       });
       return;
     }
@@ -307,22 +450,28 @@
 
     targetProgressValue = progress;
 
-    // Exit starts later and takes longer, so the About scene breathes before
-    // the copied Hero-style curtain hands off to Services.
-    targetExit = smootherStep(clamp01((progress - 0.82) / 0.22));
+    // About now scrolls naturally into Services; keep the portrait and copy
+    // present instead of fading them into a handoff ghost.
+    targetExit = 0;
 
-    if (video && Number.isFinite(video.duration) && video.duration > 0) {
+    const duration = effectiveVideoDuration();
+    if (duration > 0) {
+      if (centeredTurnLocked || centeredRevealCompleted) {
+        lockVideoToFinalFrame();
+        return;
+      }
       // Video scrub overlaps the portrait reveal tail so the face turn feels
       // connected instead of waiting for a separate later phase.
       const rawVideoProgress = clamp01((progress - 0.12) / 0.58);
       const videoProgress = smootherStep(rawVideoProgress);
-      targetVideoTime = video.duration * videoProgress;
+      targetVideoTime = duration * videoProgress;
     }
   };
 
   if (video) {
     video.pause();
     const markVideoReady = () => {
+      resetVideoToFirstFrame();
       section.classList.add("is-portrait-video-ready");
       update();
     };
@@ -391,6 +540,10 @@
 
   window.addEventListener("wheel", (event) => {
     if (!centeredRevealActive) return;
+    if (shouldLetNaturalScrollResume(event.deltaY || 0)) {
+      releaseCenteredReveal();
+      return;
+    }
     event.preventDefault();
     event.stopPropagation();
     advanceCenteredReveal(event.deltaY || 0);
@@ -406,6 +559,10 @@
     const y = event.touches[0]?.clientY || centeredTouchY;
     const delta = centeredTouchY - y;
     centeredTouchY = y;
+    if (shouldLetNaturalScrollResume(delta * 3.2)) {
+      releaseCenteredReveal();
+      return;
+    }
     event.preventDefault();
     event.stopPropagation();
     advanceCenteredReveal(delta * 3.2);
@@ -413,9 +570,13 @@
 
   window.addEventListener("keydown", (event) => {
     if (!centeredRevealActive || !["ArrowDown", "ArrowUp", "PageDown", "PageUp", "Home", "End", " "].includes(event.key)) return;
+    const direction = ["ArrowUp", "PageUp", "Home"].includes(event.key) ? -1 : 1;
+    if (shouldLetNaturalScrollResume(direction * 720)) {
+      releaseCenteredReveal();
+      return;
+    }
     event.preventDefault();
     event.stopPropagation();
-    const direction = ["ArrowUp", "PageUp", "Home"].includes(event.key) ? -1 : 1;
     advanceCenteredReveal(direction * 720);
   }, { capture: true });
 

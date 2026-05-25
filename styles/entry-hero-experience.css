@@ -185,6 +185,11 @@ body.is-unfolding .entry-progress-bar {
   will-change: transform;
 }
 
+body.hero-about-handoff-active .hero-curtain {
+  position: fixed;
+  inset: 0;
+}
+
 .hero-stage.is-curtain-down .hero-curtain {
   transform: translate3d(0, 0, 0);
 }
