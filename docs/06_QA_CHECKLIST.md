@@ -41,9 +41,10 @@
 ## Services
 
 - [ ] Services section appears after About.
-- [ ] Services contributes no local canvas/shader/glyph leftovers.
-- [ ] Sticky service stations stay readable through the full Services scroll range.
-- [ ] Scroll story progresses through services.
+- [ ] PrismaticBurst entry canvas is visible during the Services title/portal stage.
+- [ ] Time-tunnel canvas takes over after the portal stage.
+- [ ] Flat in-tunnel service inscriptions stay readable through the automatic sequence.
+- [ ] Scroll story progresses through Services and releases scroll afterward.
 - [ ] Service copy rebuilds after language switch.
 - [ ] Services automatic sequence lands on Works transition copy without scroll lock.
 
@@ -72,6 +73,8 @@
 - [ ] Contact section appears after Works/Gallery overlay markup.
 - [ ] Top-right arrow reaches Contact.
 - [ ] Bottom nav Contact reaches Contact.
+- [ ] Bottom nav shows the current three primary items: About, Services, Contact.
+- [ ] Works is reachable through Services completion, natural scroll, Works rows, or the upper-left Works rail.
 - [ ] Contact form fields are usable.
 - [ ] Submit opens Gmail compose or expected compose target.
 - [ ] WeChat QR trigger opens modal.
@@ -92,7 +95,7 @@
 ## Mobile
 
 - [ ] Entry is usable.
-- [ ] Bottom nav fits four items.
+- [ ] Bottom nav fits three items.
 - [ ] Top controls do not overlap.
 - [ ] Hero model/water/wordmark fit without horizontal overflow.
 - [ ] About text does not overflow.

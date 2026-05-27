@@ -25,7 +25,7 @@
 ## `index.html` Loading Structure
 
 - Head loads favicons, a small boot script, CSS, then `three.min.js`.
-- Body contains page sections, gallery overlay, QR modal, Works side rail, and bottom nav.
+- Body contains page sections, gallery overlay, QR modal, Works side rail, and a three-item bottom nav for About, Services, and Contact.
 - Footer loads data and script modules in dependency order.
 - `script.js` only calls `window.initLucianApp?.()`.
 
@@ -36,7 +36,7 @@
 - About uses portrait video/image reveal, scroll-scrubbed video time, text reveal, and a Hero-style About-to-Services curtain that briefly locks input, lets the black sheet cover, then fades the real Services stage into the viewport before Services owns the scroll position.
 - Services uses a full-screen title gate, a local WebGL2 PrismaticBurst entry canvas adapted from the React Bits shader, a local WebGL2 time-tunnel canvas, and a Services-owned handoff sequence. Natural scroll from About completes the timed bridge using the real Services title and background, then Services auto-starts the locked automatic timeline after a short beat; direct navigation to Services still lands on the title gate without autoplay. The sequence clears the old About handoff, suppresses the About bridge while Services owns playback/release, the title fully clears, the entry burst yields to the time tunnel, the tunnel runs without service text, six service messages play more slowly as flat centered in-tunnel inscriptions without local panel underlay, marker lines, card-stage scan-line backing, residue lines, auxiliary progress rail, or adjacent-card ghost carryover, and the sequence ends by landing on the Works transition copy screen.
 - Works/Gallery uses category rows, Works side rail, hover preview, gallery overlay, detail view, and language refresh.
-- Scroll curtains use GSAP + MorphSVG for the Works-to-Contact visual handoff; Services-to-Works is handled by the Services-owned automatic sequence landing on the Works transition copy screen.
+- Scroll curtains use GSAP + MorphSVG for the Works-to-Contact visual handoff; Services-to-Works is handled by the Services-owned automatic sequence landing on the Works transition copy screen. Works is not exposed as a bottom-nav item in the current markup.
 - Contact uses Gmail compose form fields, social links, QR modal, and toast.
 
 ## `site-data.js` Responsibilities

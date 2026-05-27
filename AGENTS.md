@@ -61,11 +61,11 @@ node tools/runtime-smoke-check.js
 - About/Portrait: portrait video/fallback, scroll reveal, video scrub, About-to-Services curtain.
 - Services: sticky title gate, one-scroll locked launch, About handoff cleanup at Services takeover, local WebGL2 black-water PrismaticBurst entry canvas, local WebGL2 time-tunnel canvas, automatic flat in-tunnel service inscription stage.
 - Works: five category rows, hover preview, Works side rail, gallery entry.
-- Scroll curtains: Works-to-Contact handoff; Services lands directly on the Works transition copy screen after its owned sequence.
+- Scroll curtains: Works-to-Contact handoff; Services owns the timed sequence that lands on the Works transition copy screen.
 - Gallery: overlay, category/project browsing, detail page, back/close.
 - Contact: Gmail compose form, social links, WeChat QR modal, toast.
 - Clients: selected-client marquee and credibility copy.
-- Bottom nav: About / Services / Works / Contact.
+- Bottom nav: About / Services / Contact. Works is reached through natural scroll/Services completion and the upper-left Works rail, not a bottom-nav item.
 
 ## CSS Modules
 
@@ -147,7 +147,7 @@ Keep the order in `index.html` unless the dependency chain is re-audited. Key or
 - Entry key enters and replays.
 - Console has no site errors.
 - If Hero changed, verify water/liquid/lion model/scroll.
-- If Services changed, verify the PrismaticBurst entry canvas, time-tunnel canvas, delayed service-card stage, and scroll story.
+- If Services changed, verify the PrismaticBurst entry canvas, time-tunnel canvas, flat in-tunnel service inscription stage, and scroll story.
 - If Works/Gallery changed, verify Works rows, side rail, Gallery open/close/detail/back.
 - If copy/language changed, verify `zh-CN` / `en` switching and open Gallery text refresh.
 - If layout changed, verify desktop/mobile horizontal overflow.

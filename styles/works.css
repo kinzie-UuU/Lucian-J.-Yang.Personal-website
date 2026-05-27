@@ -13,7 +13,6 @@
   color: #f3efe7;
   background-color: #050505;
   background:
-    radial-gradient(circle at 74% 34%, rgba(255, 95, 104, 0.18), transparent 24%),
     radial-gradient(circle at 25% 72%, rgba(93, 198, 191, 0.1), transparent 26%),
     linear-gradient(180deg, #020303 0%, #050505 62%, #050505 100%);
   background-color: #050505;
@@ -75,7 +74,7 @@
   grid-column: 1;
   grid-row: 2;
   align-self: start;
-  padding-left: clamp(38px, 8vw, 140px);
+  padding-left: 0;
 }
 
 .works-transition-line-text {
@@ -122,15 +121,6 @@ html[lang="en"] .works-transition-line-text {
 html[lang="en"] .works-transition-note {
   font-family: "Outfit", "Satoshi", system-ui, sans-serif;
   line-height: 1.72;
-}
-
-.works-transition-note::before {
-  content: "";
-  display: block;
-  width: clamp(32px, 4vw, 70px);
-  height: 1px;
-  margin-bottom: clamp(22px, 3svh, 36px);
-  background: rgba(255, 95, 104, 0.76);
 }
 
 /* Works list ---------------------------------------------------------------- */
@@ -480,7 +470,7 @@ html[lang="en"] .works-flowing-menu-text {
 
   .works-transition-line:nth-child(2) {
     grid-row: 2;
-    padding-left: clamp(26px, 12vw, 58px);
+    padding-left: 0;
   }
 
   .works-transition-line-text {

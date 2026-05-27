@@ -12,7 +12,7 @@ It is not a React, Vue, Vite, Next, or bundled app. Runtime state is coordinated
 - Entry screen: `#entry-screen`, 3D key canvas, progress text/bar, atmosphere layers.
 - Hero: `.hero-section`, `#hero-stage`, WebGL water, SVG wireframe, fixed liquid field, GLB lion-head model, Hero wordmark, Hero curtain.
 - About: `#about`, portrait video/image, darkroom-style reveal, bio copy, toolkit tags, About curtain.
-- Services: `#services`, full-screen black-water PrismaticBurst title stage, local time-tunnel stage, and lightweight sticky service stations with section progress.
+- Services: `#services`, full-screen title gate, black-water PrismaticBurst portal canvas, local time-tunnel stage, and automatic flat in-tunnel service inscriptions.
 - Services-to-Works handoff: Services owns the automatic sequence and lands directly on `#works-transition`.
 - Works transition: `#works-transition`, scroll-linked statement/progress visual.
 - Works: `#works`, five category rows, hover preview, clients link.

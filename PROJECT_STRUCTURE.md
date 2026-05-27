@@ -27,7 +27,7 @@ This is a pure static personal packaging-design portfolio. It keeps `index.html`
 - `styles/typography.css`: shared text effects and section typography.
 - `styles/home.css`: entry screen, 3D key entry transition, Hero stage, water, GLB model, Hero curtain.
 - `styles/about.css`: portrait reveal, About copy, About-to-Services curtain.
-- `styles/services.css`: lightweight Services sticky narrative and section progress styles.
+- `styles/services.css`: Services title gate, portal canvas sizing, time-tunnel stage, automatic sequence, and responsive service inscription styles.
 - `styles/works.css`: works rows, works transition, hover preview, clients link.
 - `styles/clients.css`: clients title and marquee.
 - `styles/work-gallery.css`: gallery overlay, category/project browsing, details.
@@ -42,9 +42,9 @@ This is a pure static personal packaging-design portfolio. It keeps `index.html`
 - Entry: `entry.js`, `entry-key-model.js`.
 - Hero: `hero-wireframe.js`, `hero-water-surface.js`, `hero-curtain.js`, `hero-state-runtime.js`, `hero-sequence-runtime.js`, `liquid-glass-field.js`, `hero-glb-model.js`, `hero-ripples.js`.
 - About: `portrait-motion.js`, `about-curtain.js`.
-- Services/section flow: `services-scroll-story.js`, `section-flow.js`; natural Services-to-Works curtain remains in `scroll-curtain-transitions.js`.
+- Services/section flow: `services-scroll-story.js`, `section-flow.js`; Services owns the timed sequence that lands on the Works transition copy screen, while `scroll-curtain-transitions.js` owns Works-to-Contact.
 - Works/gallery: `work-gallery.js`, `works-side-rail.js`, `works-hover-preview.js`, `works-transition-motion.js`.
-- Navigation/UI: `section-flow.js` for bottom-nav paper transitions/hash jumps, `header-controls.js`, `bottom-nav-scroll-spy.js`, `site-clock.js`, `precision-cursor.js`.
+- Navigation/UI: `section-flow.js` for the three-item bottom-nav paper transitions/hash jumps, `header-controls.js`, `bottom-nav-scroll-spy.js`, `site-clock.js`, `precision-cursor.js`.
 - Language/text/motion: `static-text-runtime.js`, `language-runtime.js`, `language-controls.js`, `flip-text.js`, `scrambled-text.js`, `scroll-type-effects.js`, `reveal-effects.js`.
 - Clients/contact/audio: `clients-marquee.js`, `clients-title-interaction.js`, `contact-interactions.js`, `audio-feedback.js`.
 - Vendor: `scripts/vendor/gsap/gsap.min.js`, `scripts/vendor/gsap/MorphSVGPlugin.min.js` for scroll curtain morphing.

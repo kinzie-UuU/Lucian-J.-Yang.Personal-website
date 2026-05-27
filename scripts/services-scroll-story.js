@@ -1,4 +1,4 @@
-(() => {
+﻿(() => {
   const section = document.querySelector(".services-scroll-story");
   const sticky = section?.querySelector(".services-sticky");
   const titleNode = section?.querySelector(".services-entry-title");
@@ -8,17 +8,28 @@
   const runtime = window.LucianRuntime;
   const reducedMotion = runtime?.reducedMotion
     || window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
+  const AUTO_DURATION = 30000;
   const BRIDGE_SEQUENCE_START_PROGRESS = 0.045;
+  const SERVICES_TITLE_HOLD_PROGRESS = 0.16;
+  const PRISMATIC_WINDOW_START = 0.16;
+  const PRISMATIC_WINDOW_END = 0.30;
+  const PRISMATIC_EXPAND_END = 0.46;
 
   const clamp01 = (value) => Math.min(1, Math.max(0, value));
   const smooth = (value) => value * value * (3 - 2 * value);
 
   let ticking = false;
-  let mode = "scroll";
+  let mode = "gate";
   let sequenceFrame = 0;
   let sequenceStart = 0;
+  let sequenceStartY = 0;
+  let sequenceEndY = 0;
   let bridgeAutoplayTimer = 0;
   let suppressBridgeAutoplayUntil = 0;
+  let touchStartY = 0;
+  let lastScrollY = window.scrollY || window.pageYOffset || 0;
+  let rebuildingTitle = false;
+  let titleRebuildFrame = 0;
 
   const clearAboutHandoff = () => {
     document.querySelector(".portrait-canvas")?.classList.remove("is-about-curtain-down");
@@ -46,33 +57,50 @@
 
   const textFor = (key) => window.i18n?.[currentLang()]?.[key] || "";
 
-  const rebuildTitleText = () => {
-    if (!titleNode) return;
-    titleNode.classList.remove("js-scroll-type-disabled", "scroll-type-text");
-    const isEnglish = currentLang() === "en";
-    const label = textFor("services_title") || (isEnglish ? "Why Work With Me" : "为何选择我");
-    const normalizedLabel = label.replace(/\s+/g, " ").trim();
-    const splitTitle = isEnglish && normalizedLabel === "Why Work With Me"
-      ? ["Why Work", "With Me"]
-      : normalizedLabel === "为何选择我"
-        ? ["为何", "选择我"]
-        : null;
+  const titleIsSplit = () => (
+    titleNode?.querySelectorAll(".services-title-part").length === 2
+  );
 
-    titleNode.replaceChildren();
-    titleNode.classList.toggle("is-split-title", Boolean(splitTitle));
-    if (splitTitle) {
-      splitTitle.forEach((text, index) => {
-        const part = document.createElement("span");
-        part.className = `services-title-part services-title-part-${index === 0 ? "left" : "right"}`;
-        part.textContent = text;
-        titleNode.appendChild(part);
-      });
-    } else {
-      titleNode.textContent = label;
-    }
+  const rebuildTitleText = () => {
+    if (!titleNode || rebuildingTitle) return;
+    rebuildingTitle = true;
+    const isEnglish = currentLang() === "en";
+    const label = textFor("services_title") || (isEnglish ? "Why Work With Me" : "\u4e3a\u4f55\u9009\u62e9\u6211");
+    const [leftText, rightText] = isEnglish ? ["Why Work", "With Me"] : ["\u4e3a\u4f55", "\u9009\u62e9\u6211"];
+    const left = document.createElement("span");
+    const right = document.createElement("span");
+
+    left.className = "services-title-part services-title-part--left";
+    right.className = "services-title-part services-title-part--right";
+    left.textContent = leftText;
+    right.textContent = rightText;
+    titleNode.classList.remove("js-scroll-type-disabled", "scroll-type-text");
+    titleNode.removeAttribute("data-i18n");
+    titleNode.replaceChildren(left, right);
     titleNode.setAttribute("aria-label", label);
     delete titleNode.dataset.typeSource;
+    titleNode.style.removeProperty("--glyph-count");
+    rebuildingTitle = false;
   };
+
+  const scheduleTitleRebuild = () => {
+    if (rebuildingTitle || titleIsSplit() || titleRebuildFrame) return;
+    titleRebuildFrame = window.requestAnimationFrame(() => {
+      titleRebuildFrame = 0;
+      if (!titleIsSplit()) rebuildTitleText();
+    });
+  };
+
+  const titleObserver = titleNode && "MutationObserver" in window
+    ? new MutationObserver(scheduleTitleRebuild)
+    : null;
+  titleObserver?.observe(titleNode, {
+    attributes: true,
+    attributeFilter: ["data-i18n"],
+    childList: true,
+    characterData: true,
+    subtree: true,
+  });
 
   const rebuildServicesStoryText = () => {
     rebuildTitleText();
@@ -88,23 +116,44 @@
   };
 
   const writeProgress = (progress) => {
-    const titleProgress = smooth(clamp01(progress / 0.18));
-    const titleVisualHold = clamp01(1 - smooth(clamp01(progress / 0.16)));
-    const tunnelProgress = smooth(clamp01((progress - 0.02) / 0.3));
-    const tunnelEnter = smooth(clamp01(progress / 0.06));
-    const tunnelExit = smooth(clamp01((progress - 0.28) / 0.1));
-    const timeProgress = smooth(clamp01((progress - 0.16) / 0.18));
-    const cardProgress = smooth(clamp01((progress - 0.36) / 0.12));
-    const stationProgress = smooth(clamp01((progress - 0.44) / 0.46));
-    const outro = smooth(clamp01((progress - 0.94) / 0.06));
-    const titleOpacity = reducedMotion ? 1 : clamp01(1 - smooth(clamp01((progress - 0.02) / 0.1)));
+    const storyProgress = clamp01((progress - SERVICES_TITLE_HOLD_PROGRESS) / (1 - SERVICES_TITLE_HOLD_PROGRESS));
+    const postPortalProgress = clamp01((progress - PRISMATIC_EXPAND_END) / (1 - PRISMATIC_EXPAND_END));
+    const portalReveal = smooth(clamp01((progress - PRISMATIC_WINDOW_START) / (PRISMATIC_WINDOW_END - PRISMATIC_WINDOW_START)));
+    const portalExpand = smooth(clamp01((progress - PRISMATIC_WINDOW_END) / (PRISMATIC_EXPAND_END - PRISMATIC_WINDOW_END)));
+    const portalProgress = clamp01(portalReveal * 0.42 + portalExpand * 0.58);
+    const portalScale = 1 + portalExpand * 0.08;
+    const portalWidth = 30 + portalExpand * 70;
+    const portalHeight = 22 + portalExpand * 78;
+    const portalRadius = 10 * (1 - portalExpand);
+    const portalGlow = 18 + portalExpand * 46;
+    const portalAura = (0.45 + portalReveal * 0.55) * 42;
+    const portalStrokeOpacity = 0.06 * (1 - portalExpand);
+    const titleProgress = smooth(clamp01((progress - 0.30) / 0.16));
+    const tunnelProgress = smooth(clamp01((progress - PRISMATIC_WINDOW_START) / (PRISMATIC_EXPAND_END - PRISMATIC_WINDOW_START)));
+    const tunnelEnter = portalReveal;
+    const tunnelExit = smooth(clamp01(postPortalProgress / 0.12));
+    const timeProgress = smooth(clamp01((postPortalProgress - 0.1) / 0.16));
+    const cardProgress = smooth(clamp01((postPortalProgress - 0.26) / 0.14));
+    const stationProgress = smooth(clamp01((postPortalProgress - 0.38) / 0.52));
+    const outro = smooth(clamp01((postPortalProgress - 0.92) / 0.08));
+    const titleOpacity = reducedMotion ? 1 : clamp01(1 - smooth(clamp01((progress - 0.32) / 0.14)));
     const cardOpacity = reducedMotion ? 1 : clamp01(cardProgress * (1 - outro));
-    const tunnelOpacity = reducedMotion ? 0 : clamp01(Math.max(tunnelEnter, titleVisualHold * 0.72) * (1 - tunnelExit) * (1 - cardProgress * 0.34));
+    const tunnelOpacity = reducedMotion ? 0 : clamp01((0.9 + portalReveal * 0.1) * (1 - tunnelExit * 0.26) * (1 - cardProgress * 0.34));
     const timeOpacity = reducedMotion ? 0 : clamp01(timeProgress * (1 - cardProgress * 0.04) * (1 - outro));
     const blackoutOpacity = reducedMotion ? 0 : clamp01(tunnelExit * (1 - cardProgress * 0.58) * (1 - outro * 0.85));
     const stationCount = Math.max(1, panels.length - 1);
     const stationPosition = stationProgress * stationCount;
 
+    section.style.setProperty("--services-portal-reveal", portalReveal.toFixed(4));
+    section.style.setProperty("--services-portal-expand", portalExpand.toFixed(4));
+    section.style.setProperty("--services-portal-progress", portalProgress.toFixed(4));
+    section.style.setProperty("--services-portal-scale", portalScale.toFixed(4));
+    section.style.setProperty("--services-portal-width", `${portalWidth.toFixed(3)}vw`);
+    section.style.setProperty("--services-portal-height", `${portalHeight.toFixed(3)}svh`);
+    section.style.setProperty("--services-portal-radius", `${portalRadius.toFixed(3)}px`);
+    section.style.setProperty("--services-portal-glow", `${portalGlow.toFixed(3)}px`);
+    section.style.setProperty("--services-portal-aura", `${portalAura.toFixed(3)}px`);
+    section.style.setProperty("--services-portal-stroke-opacity", portalStrokeOpacity.toFixed(4));
     section.style.setProperty("--services-title-opacity", titleOpacity.toFixed(4));
     section.style.setProperty("--services-title-y", `${(-6 * titleProgress).toFixed(3)}svh`);
     section.style.setProperty("--services-title-scale", (1 + titleProgress * 0.035).toFixed(4));
@@ -137,7 +186,7 @@
     });
 
     window.LucianServicesPrismatic?.setProgress?.({
-      progress,
+      progress: storyProgress,
       tunnelProgress,
       timeProgress,
       cardProgress,
@@ -145,7 +194,7 @@
       outro,
     });
     window.LucianServicesTimeTunnel?.setProgress?.({
-      progress,
+      progress: storyProgress,
       tunnelProgress,
       timeProgress,
       cardProgress,
@@ -161,14 +210,54 @@
     }
 
     if (document.body.classList.contains("about-services-bridge-active")) return;
+    if (mode === "playing") return;
+
+    const y = currentScrollY();
+    const scrollingForward = y > lastScrollY + 8;
+    lastScrollY = y;
+    if (
+      mode === "gate"
+      && scrollingForward
+      && (window.performance?.now?.() || Date.now()) >= suppressBridgeAutoplayUntil
+      && isInGateZone()
+    ) {
+      startSequence();
+      return;
+    }
 
     const rect = section.getBoundingClientRect();
     const vh = Math.max(1, window.innerHeight);
     const travel = Math.max(1, rect.height - vh);
+    if (mode === "released" && rect.top > vh * 0.2) {
+      mode = "gate";
+      setReleaseClass(false);
+    }
     writeProgress(clamp01(-rect.top / travel));
   };
 
   const sectionTop = () => Math.max(0, Math.round((window.scrollY || window.pageYOffset || 0) + section.getBoundingClientRect().top));
+  const worksTransitionTop = () => {
+    const transition = document.querySelector("#works-transition");
+    const sectionEnd = Math.max(0, Math.round(sectionTop() + section.offsetHeight));
+    if (transition) return Math.max(sectionEnd, Math.round(transition.offsetTop));
+    return sectionEnd;
+  };
+  const currentScrollY = () => window.scrollY || window.pageYOffset || 0;
+
+  const isInGateZone = () => {
+    const rect = section.getBoundingClientRect();
+    const vh = Math.max(1, window.innerHeight || 1);
+    return rect.top < vh * 0.18 && rect.bottom > vh * 0.14;
+  };
+
+  const scrollToSequenceProgress = (progress) => {
+    if (!sequenceEndY || sequenceEndY <= sequenceStartY) return;
+    const top = Math.round(sequenceStartY + (sequenceEndY - sequenceStartY) * clamp01(progress));
+    const root = document.scrollingElement || document.documentElement;
+    if (root) root.scrollTop = top;
+    window.scrollTo(0, top);
+  };
+
   const setSequenceClass = (playing) => {
     document.documentElement.classList.toggle("services-sequence-playing", playing);
     document.body.classList.toggle("services-sequence-playing", playing);
@@ -185,34 +274,84 @@
     bridgeAutoplayTimer = 0;
     sequenceFrame = 0;
     sequenceStart = 0;
-    mode = "scroll";
+    sequenceStartY = 0;
+    sequenceEndY = 0;
+    mode = "gate";
     setSequenceClass(false);
     setReleaseClass(false);
     readProgress();
   };
 
-  const startSequence = ({ fromBridge = false } = {}) => {
-    if (reducedMotion) return;
-    mode = "scroll";
+  const finishSequence = () => {
+    window.cancelAnimationFrame(sequenceFrame);
+    sequenceFrame = 0;
+    mode = "released";
     clearAboutHandoff();
     setSequenceClass(false);
+    setReleaseClass(true);
+    writeProgress(1);
+    scrollToSequenceProgress(1);
+    window.dispatchEvent(new CustomEvent("lucian:services-sequence-complete", {
+      detail: { targetY: sequenceEndY },
+    }));
+    window.requestAnimationFrame(() => setReleaseClass(false));
+  };
+
+  const runSequence = (now) => {
+    if (mode !== "playing") return;
+    const progress = clamp01((now - sequenceStart) / AUTO_DURATION);
+    clearAboutHandoff();
+    writeProgress(progress);
+    scrollToSequenceProgress(progress);
+    if (progress >= 1) {
+      finishSequence();
+      return;
+    }
+    sequenceFrame = window.requestAnimationFrame(runSequence);
+  };
+
+  const startSequence = ({ fromBridge = false } = {}) => {
+    if (reducedMotion || mode === "playing") return;
+    if (!fromBridge && !isInGateZone()) return;
+    mode = "playing";
+    clearAboutHandoff();
+    setSequenceClass(true);
     setReleaseClass(false);
-    window.dispatchEvent(new CustomEvent("lucian:services-scroll-start", {
+    sequenceStartY = Math.max(currentScrollY(), sectionTop());
+    sequenceEndY = Math.max(sequenceStartY + 1, worksTransitionTop());
+    const initialProgress = fromBridge ? BRIDGE_SEQUENCE_START_PROGRESS : 0;
+    writeProgress(initialProgress);
+    scrollToSequenceProgress(initialProgress);
+    window.dispatchEvent(new CustomEvent("lucian:services-sequence-start", {
       detail: { fromBridge },
     }));
-    if (fromBridge) writeProgress(BRIDGE_SEQUENCE_START_PROGRESS);
     window.cancelAnimationFrame(sequenceFrame);
-    sequenceFrame = window.requestAnimationFrame(readProgress);
+    sequenceStart = performance.now() - AUTO_DURATION * initialProgress;
+    sequenceFrame = window.requestAnimationFrame(runSequence);
   };
 
   const scheduleBridgeAutoplay = (event) => {
-    if (reducedMotion || event.detail?.programmatic) return;
+    if (reducedMotion || mode !== "gate" || event.detail?.programmatic) return;
     if (performance.now() < suppressBridgeAutoplayUntil) return;
     window.clearTimeout(bridgeAutoplayTimer);
     bridgeAutoplayTimer = window.setTimeout(() => {
       bridgeAutoplayTimer = 0;
+      if (mode !== "gate" || !isInGateZone()) return;
       startSequence({ fromBridge: true });
     }, 180);
+  };
+
+  const cancelSequenceToUserScroll = () => {
+    if (mode !== "playing") return;
+    window.cancelAnimationFrame(sequenceFrame);
+    sequenceFrame = 0;
+    sequenceStart = 0;
+    sequenceStartY = 0;
+    sequenceEndY = 0;
+    mode = "gate";
+    setSequenceClass(false);
+    setReleaseClass(false);
+    readProgress();
   };
 
   const requestUpdate = () => {
@@ -240,6 +379,7 @@
   };
 
   rebuildServicesStoryText();
+  window.requestAnimationFrame(rebuildServicesStoryText);
   readProgress();
 
   window.addEventListener("scroll", requestUpdate, { passive: true });
@@ -256,25 +396,84 @@
     }
     requestUpdate();
   });
-  window.addEventListener("lucian:site-entered", requestUpdate);
+  window.addEventListener("lucian:site-entered", () => {
+    rebuildServicesStoryText();
+    requestUpdate();
+  });
   window.addEventListener("lucian:about-services-bridge-complete", scheduleBridgeAutoplay);
   window.addEventListener("wheel", (event) => {
     if (reducedMotion) return;
+    if (mode === "playing") {
+      if (event.deltaY < -4) {
+        cancelSequenceToUserScroll();
+        return;
+      }
+      event.preventDefault();
+      event.stopPropagation();
+      return;
+    }
+    if (mode === "gate" && event.deltaY > 0 && isInGateZone()) {
+      event.preventDefault();
+      event.stopPropagation();
+      startSequence();
+      return;
+    }
     requestUpdate();
-  }, { passive: true });
-  window.addEventListener("touchmove", () => {
+  }, { passive: false, capture: true });
+  window.addEventListener("touchstart", (event) => {
+    touchStartY = event.touches?.[0]?.clientY || 0;
+  }, { passive: true, capture: true });
+  window.addEventListener("touchmove", (event) => {
     if (reducedMotion) return;
+    const currentY = event.touches?.[0]?.clientY || touchStartY;
+    const delta = touchStartY - currentY;
+    touchStartY = currentY;
+    if (mode === "playing") {
+      if (delta < -8) {
+        cancelSequenceToUserScroll();
+        return;
+      }
+      event.preventDefault();
+      event.stopPropagation();
+      return;
+    }
+    if (mode === "gate" && delta > 10 && isInGateZone()) {
+      event.preventDefault();
+      event.stopPropagation();
+      startSequence();
+      return;
+    }
     requestUpdate();
-  }, { passive: true });
+  }, { passive: false, capture: true });
   window.addEventListener("keydown", (event) => {
     if (reducedMotion) return;
     const forwardKeys = ["ArrowDown", "PageDown", " ", "End"];
-    if (!forwardKeys.includes(event.key)) return;
+    const backKeys = ["ArrowUp", "PageUp", "Home"];
+    if (mode === "playing") {
+      if (backKeys.includes(event.key)) {
+        cancelSequenceToUserScroll();
+        return;
+      }
+      if (forwardKeys.includes(event.key)) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+      return;
+    }
+    if (mode === "gate" && forwardKeys.includes(event.key) && isInGateZone()) {
+      event.preventDefault();
+      event.stopPropagation();
+      startSequence();
+      return;
+    }
+    if (!forwardKeys.includes(event.key) && !backKeys.includes(event.key)) return;
     requestUpdate();
   }, { capture: true });
   window.addEventListener("pagehide", () => {
     window.cancelAnimationFrame(sequenceFrame);
+    window.cancelAnimationFrame(titleRebuildFrame);
     window.clearTimeout(bridgeAutoplayTimer);
+    titleObserver?.disconnect();
     setSequenceClass(false);
     setReleaseClass(false);
   }, { once: true });

@@ -56,7 +56,7 @@ This list mirrors the current `index.html` order.
 | 26 | `scripts/precision-cursor.js` | Precision cursor |
 | 27 | `scripts/works-hover-preview.js` | Works hover preview |
 | 28 | `scripts/works-transition-motion.js` | Works transition motion |
-| 29 | `scripts/section-flow.js` | Section jumps, hash handling, active nav, bottom-nav paper transition |
+| 29 | `scripts/section-flow.js` | Section jumps, hash handling, active nav, three-item bottom-nav paper transition |
 | 30 | `scripts/site-clock.js` | Beijing clock |
 | 31 | `scripts/bottom-nav-scroll-spy.js` | Section flow refresh bridge |
 | 32 | `scripts/clients-marquee.js` | Client marquee |
@@ -81,7 +81,7 @@ This list mirrors the current `index.html` order.
 - Gallery: `index.html`, `styles/work-gallery.css`, `scripts/work-gallery.js`, `site-data.js`, `images/works/`.
 - Clients: `index.html`, `styles/clients.css`, `scripts/clients-marquee.js`, `scripts/clients-title-interaction.js`.
 - Contact: `index.html`, `styles/contact.css`, `scripts/contact-interactions.js`, `images/wechat-qr.jpg`.
-- Navigation: `index.html`, `styles/navigation.css`, `scripts/section-flow.js`, `scripts/bottom-nav-scroll-spy.js`, `scripts/works-side-rail.js`, `scripts/header-controls.js`.
+- Navigation: `index.html`, `styles/navigation.css`, `scripts/section-flow.js`, `scripts/bottom-nav-scroll-spy.js`, `scripts/works-side-rail.js`, `scripts/header-controls.js`; current bottom nav exposes About, Services, and Contact, while Works uses scroll/Services completion and the upper-left Works rail.
 
 ## High-Risk Edit Zones
 

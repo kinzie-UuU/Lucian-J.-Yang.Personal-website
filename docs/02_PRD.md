@@ -33,7 +33,7 @@ Secondary path: Works side rail or Works rows -> matching gallery category/proje
 - Clients
 - Top meta controls
 - Works side rail
-- Bottom primary navigation
+- Bottom primary navigation for About, Services, and Contact
 
 ## Entry Requirements
 
@@ -88,6 +88,7 @@ Secondary path: Works side rail or Works rows -> matching gallery category/proje
 
 - Contact remains a dedicated inquiry section.
 - Top-right arrow and bottom nav Contact navigate to Contact.
+- Works is intentionally not a bottom-nav item; visitors reach it through the Services sequence, natural scroll, Works rows, or the upper-left Works rail.
 - Gmail compose flow should use form fields to build subject/body.
 - Social links and WeChat QR modal remain available.
 - Contact copy should ask for project type, timing, and budget range.
@@ -102,7 +103,7 @@ Secondary path: Works side rail or Works rows -> matching gallery category/proje
 
 - Site must remain scrollable and readable on mobile.
 - Large hero/about/contact/clients type must not overflow horizontally.
-- Bottom navigation must fit four items within the viewport.
+- Bottom navigation must fit its three current items within the viewport.
 - Contact form and social links must stack cleanly.
 - Heavy effects should degrade acceptably under reduced motion.
 
@@ -128,7 +129,7 @@ Secondary path: Works side rail or Works rows -> matching gallery category/proje
 - `index.html` opens locally through a static server.
 - Entry key appears and enters the site.
 - Hero water, liquid field, and lion model render.
-- About, Services, Works, Contact, and Clients sections are reachable.
+- About, Services, Works, Contact, and Clients sections are reachable through their current paths; Works does not require a bottom-nav anchor.
 - Works rows and side rail open Gallery.
 - Gallery detail/back/close paths work.
 - Chinese/English switching works.
