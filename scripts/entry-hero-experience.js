@@ -114,11 +114,15 @@
     resetHeroSequenceState({ resetScroll: true });
     runtime.setEntered(true);
     lockEntryTransitionScroll(true);
-    playUiTone("click");
+    document.body.classList.add("is-key-unlocking");
+    window.LucianEntryKey?.unlock?.();
+    if (runtime.playUnlockTone) runtime.playUnlockTone({ delayMs: 520 }).catch(() => false);
+    else playUiTone("click");
     startBackgroundMusic?.({ fade: true });
 
     if (reducedMotion) {
       document.body.classList.add("has-entered");
+      document.body.classList.remove("is-key-unlocking");
       stopEntryReplayTopLock();
       requestAnimationFrame(() => {
         forceScrollTop();
@@ -134,6 +138,7 @@
 
     window.setTimeout(() => {
       document.body.classList.remove("is-unfolding");
+      document.body.classList.remove("is-key-unlocking");
       document.body.classList.add("is-entry-curtain-ready");
 
       window.setTimeout(() => {
@@ -154,7 +159,8 @@
       "is-entering",
       "is-unfolding",
       "is-entry-curtain-ready",
-      "is-entry-scroll-locked"
+      "is-entry-scroll-locked",
+      "is-key-unlocking"
     );
     runtime.setEntered(false);
     entryTransitionLocked = false;

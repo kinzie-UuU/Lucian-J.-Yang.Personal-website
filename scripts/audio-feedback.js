@@ -3,8 +3,10 @@
   let audioContext = null;
   let lastToneAt = 0;
   let lastWaterDropAt = 0;
+  let lastUnlockAt = 0;
   const UI_TONE_GAIN = 0.06;
   const WATER_DROP_GAIN = 0.04;
+  const UNLOCK_TONE_GAIN = 0.075;
   const BACKGROUND_MUSIC_SRC = "audio/liquid-light-loop.mp3";
   const BACKGROUND_MUSIC_VOLUME = 0.24;
   let backgroundAudio = null;
@@ -98,6 +100,63 @@
 
     osc.start(now);
     osc.stop(now + 0.15);
+  };
+
+  const playUnlockTone = async ({ delayMs = 0 } = {}) => {
+    if (!soundEnabled) return false;
+    const nowMs = performance.now();
+    if (nowMs - lastUnlockAt < 520) return false;
+
+    const context = await getAudioContext().catch(() => null);
+    if (!context || context.state !== "running") return false;
+    lastUnlockAt = nowMs;
+
+    const scheduledDelayMs = Number.isFinite(delayMs) ? Math.max(0, delayMs) : 0;
+    const startAt = context.currentTime + scheduledDelayMs * 0.001;
+    const master = context.createGain();
+    const click = context.createOscillator();
+    const clickGain = context.createGain();
+    const clickFilter = context.createBiquadFilter();
+    const latch = context.createOscillator();
+    const latchGain = context.createGain();
+    const latchFilter = context.createBiquadFilter();
+
+    master.gain.setValueAtTime(UNLOCK_TONE_GAIN, startAt);
+    master.gain.exponentialRampToValueAtTime(0.0001, startAt + 0.24);
+
+    click.type = "triangle";
+    click.frequency.setValueAtTime(1480, startAt);
+    click.frequency.exponentialRampToValueAtTime(980, startAt + 0.028);
+    clickFilter.type = "bandpass";
+    clickFilter.frequency.setValueAtTime(2100, startAt);
+    clickFilter.Q.setValueAtTime(5.2, startAt);
+    clickGain.gain.setValueAtTime(0.0001, startAt);
+    clickGain.gain.exponentialRampToValueAtTime(0.82, startAt + 0.005);
+    clickGain.gain.exponentialRampToValueAtTime(0.0001, startAt + 0.045);
+
+    latch.type = "sine";
+    latch.frequency.setValueAtTime(260, startAt + 0.035);
+    latch.frequency.exponentialRampToValueAtTime(155, startAt + 0.145);
+    latchFilter.type = "lowpass";
+    latchFilter.frequency.setValueAtTime(760, startAt);
+    latchFilter.Q.setValueAtTime(1.35, startAt);
+    latchGain.gain.setValueAtTime(0.0001, startAt);
+    latchGain.gain.setValueAtTime(0.46, startAt + 0.038);
+    latchGain.gain.exponentialRampToValueAtTime(0.0001, startAt + 0.18);
+
+    click.connect(clickFilter);
+    clickFilter.connect(clickGain);
+    clickGain.connect(master);
+    latch.connect(latchFilter);
+    latchFilter.connect(latchGain);
+    latchGain.connect(master);
+    master.connect(context.destination);
+
+    click.start(startAt);
+    click.stop(startAt + 0.055);
+    latch.start(startAt + 0.035);
+    latch.stop(startAt + 0.2);
+    return true;
   };
 
   const getBackgroundAudio = () => {
@@ -196,6 +255,7 @@
     getAudioContext,
     playUiTone,
     playWaterDrop,
+    playUnlockTone,
     startBackgroundMusic(options) {
       return playBackgroundMusic(options);
     },

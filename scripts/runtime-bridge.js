@@ -39,6 +39,9 @@ window.initLucianRuntimeBridge = ({
   const runtime = {
     reducedMotion,
     playUiTone,
+    playUnlockTone(options) {
+      return window.LucianAudio?.playUnlockTone?.(options) || Promise.resolve(false);
+    },
     getAudioContext,
     suspendAudioContext() {
       return window.LucianAudio?.suspendAudioContext?.() || Promise.resolve(null);

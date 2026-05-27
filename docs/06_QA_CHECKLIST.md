@@ -12,8 +12,12 @@
 ## Entry
 
 - [ ] 3D key canvas is visible.
+- [ ] No extra lock-core target, ring, or UI marker is visible behind the key.
 - [ ] Progress text and bottom progress bar advance.
+- [ ] Key remains front-facing while completing one clean screen-plane turn during loading.
 - [ ] Auto-enter fires when key progress reaches 100%.
+- [ ] Unlock moment shows a slight key insertion and clean fade into the curtain.
+- [ ] With a user scroll/touch/click gesture and sound enabled, the unlock click lands near the key insertion.
 - [ ] Scroll/touch on entry can also enter the site.
 - [ ] Entry curtain transition completes and `body.has-entered` is applied.
 - [ ] Pixel avatar returns to entry.

@@ -118,7 +118,7 @@
     const wrapper = new THREE.Group();
     root.position.sub(center);
     wrapper.add(root);
-    wrapper.scale.setScalar(2.0 / maxDim);
+    wrapper.scale.setScalar(1.62 / maxDim);
     return wrapper;
   };
 
@@ -173,6 +173,19 @@
   let animationStartedAt = performance.now();
   let modelLoaded = false;
   let disposed = false;
+  const FRONT_ROTATION_X = 0.04;
+  const FRONT_ROTATION_Y = 1.08;
+  const FRONT_ROTATION_Z = 0;
+  const ENTRY_FULL_TURN = Math.PI * 2;
+  const UNLOCK_POSE_MS = 940;
+  let entryProgress = 0;
+  let unlockStartedAt = 0;
+  let unlockStartRotationX = 0;
+  let unlockStartRotationY = 0;
+  let unlockStartPositionY = 0;
+  let unlockStartPositionZ = 0;
+  let modelBaseScale = 0;
+  let unlockBaseScale = 1;
 
   const delay = parseInt(canvas.dataset.autoEnterDelay || "2400", 10);
   const progressEl = document.getElementById("entry-progress");
@@ -190,26 +203,56 @@
     progressRaf = 0;
   };
 
+  const easeOutCubic = (value) => 1 - Math.pow(1 - value, 3);
+  const easeInOutCubic = (value) => (
+    value < 0.5
+      ? 4 * value * value * value
+      : 1 - Math.pow(-2 * value + 2, 3) / 2
+  );
+
+  const startUnlockPose = () => {
+    if (!model || unlockStartedAt) return;
+    unlockStartedAt = performance.now();
+    unlockStartRotationX = model.rotation.x;
+    unlockStartRotationY = model.rotation.y;
+    unlockStartPositionY = model.position.y;
+    unlockStartPositionZ = model.position.z;
+    unlockBaseScale = model.scale.x || modelBaseScale || 1;
+    startAnimation();
+  };
+
   const animate = () => {
     raf = 0;
     if (disposed || document.body.classList.contains("has-entered")) return;
     raf = requestAnimationFrame(animate);
 
-    const elapsed = (performance.now() - animationStartedAt) * 0.001;
-    const rect = canvas.getBoundingClientRect();
-    const w = rect.width || 280;
-    const h = rect.height || 280;
+    const now = performance.now();
+    const elapsed = (now - animationStartedAt) * 0.001;
+    const w = canvas.clientWidth || 280;
+    const h = canvas.clientHeight || 280;
     renderer.setSize(w, h, false);
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
 
     if (model) {
-      // Accelerating rotation
-      const speed = 0.6 + elapsed * 0.25;
-      model.rotation.y = elapsed * speed;
-      model.rotation.x = Math.sin(elapsed * 0.8) * 0.12;
-      // Gentle float
-      model.position.y = Math.sin(elapsed * 1.4) * 0.04;
+      if (unlockStartedAt) {
+        const progress = Math.min(1, (now - unlockStartedAt) / UNLOCK_POSE_MS);
+        const alignPose = easeOutCubic(Math.min(1, progress / 0.22));
+        const insert = Math.min(1, progress / 0.72);
+        model.rotation.y = unlockStartRotationY + (FRONT_ROTATION_Y - unlockStartRotationY) * alignPose;
+        model.rotation.x = unlockStartRotationX + (FRONT_ROTATION_X - unlockStartRotationX) * alignPose;
+        model.rotation.z = FRONT_ROTATION_Z;
+        model.position.y = unlockStartPositionY * (1 - alignPose);
+        model.position.z = unlockStartPositionZ - 0.18 * easeOutCubic(insert);
+        model.scale.setScalar(unlockBaseScale * (1 - alignPose * 0.035));
+      } else {
+        const turn = easeInOutCubic(entryProgress) * ENTRY_FULL_TURN;
+        model.rotation.y = FRONT_ROTATION_Y;
+        model.rotation.x = FRONT_ROTATION_X;
+        model.rotation.z = FRONT_ROTATION_Z + turn;
+        model.position.y = Math.sin(elapsed * 1.15) * 0.018;
+        model.position.z = 0;
+      }
     }
 
     renderer.render(scene, camera);
@@ -225,6 +268,13 @@
     if (disposed) return;
     cancelProgress();
     setProgress(0);
+    entryProgress = 0;
+    unlockStartedAt = 0;
+    if (model) {
+      model.position.z = 0;
+      model.rotation.z = FRONT_ROTATION_Z;
+      if (modelBaseScale) model.scale.setScalar(modelBaseScale);
+    }
     if (!modelLoaded) return;
 
     document.body.classList.add("entry-key-ready");
@@ -241,7 +291,8 @@
       }
 
       const elapsed = performance.now() - progressStart;
-      const pct = Math.min(Math.round((elapsed / delay) * 100), 100);
+      entryProgress = Math.min(elapsed / delay, 1);
+      const pct = Math.min(Math.round(entryProgress * 100), 100);
       setProgress(pct);
 
       if (pct < 100) {
@@ -259,6 +310,7 @@
   window.LucianEntryKey = {
     replay: playProgress,
     reset: playProgress,
+    unlock: startUnlockPose,
     isReady() {
       return modelLoaded;
     },
@@ -269,6 +321,7 @@
     if (!response.ok) throw new Error(`Key model fetch failed: ${response.status}`);
     const { json, buffers } = parseGlb(await response.arrayBuffer());
     model = buildModel(json, buffers);
+    modelBaseScale = model.scale.x || 1;
     scene.add(model);
     modelLoaded = true;
 

@@ -2,8 +2,8 @@
 /* Entry key model canvas --------------------------------------------------- */
 .entry-key-canvas {
   position: relative;
-  width: 300px;
-  height: 300px;
+  width: 268px;
+  height: 268px;
   z-index: 2;
   pointer-events: none;
   opacity: 0;
@@ -18,7 +18,7 @@ body.entry-key-ready .entry-key-canvas {
 .entry-progress-bar {
   position: absolute;
   left: 50%;
-  top: calc(50% + 174px);
+  top: calc(50% + 154px);
   z-index: 8;
   transform: translateX(-50%);
   width: min(220px, 42vw);
@@ -952,12 +952,12 @@ body:not(.has-entered) .entry-screen {
   }
 
   .entry-key-canvas {
-    width: 248px;
-    height: 248px;
+    width: 218px;
+    height: 218px;
   }
 
   .entry-progress-bar {
-    top: calc(50% + 146px);
+    top: calc(50% + 130px);
     width: min(190px, 54vw);
   }
 

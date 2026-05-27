@@ -75,6 +75,12 @@ Feature globals:
 
 Initializer-style globals should be defined before the file that calls them. Feature globals should guard optional dependencies with `?.` when called from other modules.
 
+Entry-specific feature contracts:
+
+- `window.LucianEntryKey.unlock()`: starts the 940ms key unlock pose. The key should already be loaded and progressing toward its front-facing pose; callers should treat this as a fire-and-forget visual cue.
+- `window.LucianAudio.playUnlockTone({ delayMs })`: schedules the short lock-opening tone on the active Web Audio clock and resolves to `true` when scheduled. It may resolve/return `false` when sound is disabled, the browser has not unlocked audio, or the call is throttled.
+- `window.LucianRuntime.playUnlockTone(options)`: runtime bridge wrapper for the audio method above. Entry uses `{ delayMs: 520 }` so the click lands near the key insertion.
+
 ## Shared Event Contracts
 
 Known custom events:
