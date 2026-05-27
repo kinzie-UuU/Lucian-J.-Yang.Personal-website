@@ -502,7 +502,6 @@ body.work-gallery-open .work-gallery-back {
   font-size: clamp(0.66rem, 0.7vw, 0.84rem);
   font-weight: 600;
   line-height: 1.2;
-  text-shadow: 0 12px 28px rgba(0, 0, 0, 0.62);
 }
 
 .work-detail-full-figure img {
@@ -898,7 +897,6 @@ body.work-gallery-open .work-gallery-back {
   line-height: 1.25;
   letter-spacing: 0;
   text-align: center;
-  text-shadow: 0 10px 26px rgba(0, 0, 0, 0.6);
   white-space: nowrap;
   pointer-events: none;
 }
@@ -967,7 +965,6 @@ body.work-gallery-open .work-gallery-back {
   line-height: 1.05;
   text-align: center;
   color: rgba(244, 242, 237, 0.88);
-  text-shadow: 0 10px 28px rgba(0, 0, 0, 0.58);
   white-space: nowrap;
   pointer-events: none;
 }

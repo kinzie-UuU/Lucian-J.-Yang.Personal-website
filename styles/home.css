@@ -319,8 +319,6 @@ body.hero-model-orbiting .hero-model-canvas {
   white-space: nowrap;
   text-transform: uppercase;
   -webkit-text-stroke: 0.45px rgba(0, 0, 0, 0.18);
-  text-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.18);
   transform:
     translate3d(
       calc(-50% + var(--wordmark-hover-x) * var(--wordmark-hover) * -7px),
@@ -337,7 +335,6 @@ body.hero-model-orbiting .hero-model-canvas {
   transition:
     color 180ms ease,
     opacity 180ms ease,
-    text-shadow 180ms ease,
     transform 220ms cubic-bezier(0.16, 1, 0.3, 1);
   will-change: opacity, transform;
 }
@@ -383,9 +380,6 @@ body.hero-model-orbiting .hero-model-canvas {
 
 .hero-model-wordmark::before {
   color: rgba(0, 0, 0, 0.84);
-  text-shadow:
-    calc(var(--wordmark-hover-x) * 2px) 1px 0 rgba(0, 0, 0, 0.28),
-    calc(var(--wordmark-hover-x) * -2px) -1px 0 rgba(255, 255, 255, 0.10);
   transform:
     translate3d(
       calc(var(--wordmark-hover-x) * var(--wordmark-hover) * -20px),
@@ -401,9 +395,6 @@ body.hero-model-orbiting .hero-model-canvas {
 
 .hero-model-wordmark::after {
   color: rgba(226, 246, 246, 0.18);
-  text-shadow:
-    calc(var(--wordmark-hover-x) * -3px) -1px 0 rgba(238, 255, 255, 0.20),
-    calc(var(--wordmark-hover-x) * 3px) 1px 0 rgba(0, 0, 0, 0.24);
   transform:
     translate3d(
       calc(var(--wordmark-hover-x) * var(--wordmark-hover) * 13px),
@@ -420,8 +411,6 @@ body.hero-model-orbiting .hero-model-canvas {
 .hero-model-scene.is-wordmark-hovering .hero-model-wordmark:not(.hero-model-wordmark-intersection) {
   color: rgba(0, 0, 0, 0.98);
   letter-spacing: 0;
-  text-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.18);
 }
 
 .hero-model-scene.is-wordmark-rippling .hero-model-wordmark:not(.hero-model-wordmark-intersection) {
@@ -480,9 +469,6 @@ body.hero-model-orbiting .hero-model-canvas {
   -webkit-text-fill-color: rgba(17, 25, 27, 0.50);
   -webkit-text-stroke: 0.24px rgba(238, 252, 252, 0.20);
   clip-path: none;
-  text-shadow:
-    -1px -1px 0 rgba(235, 250, 248, 0.08),
-    1px 1px 0 rgba(0, 0, 0, 0.34);
   filter: blur(0.08px);
   mix-blend-mode: multiply;
   opacity: 0.84;
@@ -503,9 +489,6 @@ body.hero-model-orbiting .hero-model-canvas {
   -webkit-text-stroke-color: rgba(244, 255, 255, 0.18);
   letter-spacing: 0;
   opacity: 0.84;
-  text-shadow:
-    -1px -1px 0 rgba(235, 250, 248, 0.08),
-    1px 1px 0 rgba(0, 0, 0, 0.34);
   filter: blur(0.08px);
 }
 

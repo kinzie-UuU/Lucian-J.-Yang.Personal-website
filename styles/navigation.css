@@ -1254,12 +1254,10 @@ body.sound-dots .icon-dots { display: inline; }
   0%,
   100% {
     color: rgba(73, 196, 176, 0.55);
-    text-shadow: 0 0 8px rgba(73, 196, 176, 0.2);
   }
 
   50% {
     color: rgba(73, 196, 176, 1);
-    text-shadow: 0 0 16px rgba(73, 196, 176, 0.5);
   }
 }
 
@@ -2120,15 +2118,13 @@ body .top-meta-right {
   --top-meta-fg: rgba(20, 24, 28, 0.78);
   --top-meta-fg-muted: rgba(20, 24, 28, 0.62);
   --top-meta-fg-strong: rgba(20, 24, 28, 0.96);
-  text-shadow: none;
-  transition: color 180ms ease, text-shadow 180ms ease;
+  transition: color 180ms ease;
 }
 
 body.is-dark-stage:not(.is-warm-stage):not(.nav-transition-active) .top-meta-right {
   --top-meta-fg: rgba(247, 244, 238, 0.78);
   --top-meta-fg-muted: rgba(247, 244, 238, 0.64);
   --top-meta-fg-strong: rgba(255, 255, 255, 0.98);
-  text-shadow: 0 1px 14px rgba(0, 0, 0, 0.42);
 }
 
 body.is-warm-stage .top-meta-right,
@@ -2136,14 +2132,12 @@ body.nav-transition-active .top-meta-right {
   --top-meta-fg: rgba(18, 18, 18, 0.72);
   --top-meta-fg-muted: rgba(18, 18, 18, 0.58);
   --top-meta-fg-strong: rgba(18, 18, 18, 0.94);
-  text-shadow: none;
 }
 
 body.hero-about-handoff-active:not(.hero-about-handoff-settled) .top-meta-right {
   --top-meta-fg: rgba(20, 24, 28, 0.78);
   --top-meta-fg-muted: rgba(20, 24, 28, 0.62);
   --top-meta-fg-strong: rgba(20, 24, 28, 0.96);
-  text-shadow: none;
 }
 
 body .top-meta-line-control,

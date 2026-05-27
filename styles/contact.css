@@ -230,7 +230,6 @@
   --flip-delay: calc(var(--flip-index) * var(--flip-delay-factor));
   display: inline-block;
   color: currentColor;
-  text-shadow: 0 1lh var(--flip-hover-color);
   transform: translate3d(0, 0, 0);
   transition:
     transform var(--flip-duration)
@@ -648,7 +647,6 @@ html[lang="zh-CN"] .contact-title {
 
   .contact-title .flip-char {
     transition: color 180ms ease;
-    text-shadow: none;
   }
 
   .contact-title:hover .flip-char,
