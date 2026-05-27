@@ -17,7 +17,7 @@
   const reducedMotion = runtime.reducedMotion
     || window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  const ENTRY_UNFOLD_MS = 640;
+  const ENTRY_UNFOLD_MS = 940;
   const ENTRY_CURTAIN_PREPAINT_MS = 160;
   const ENTRY_CURTAIN_MS = 2000;
   const ENTRY_CURTAIN_HOLD_MS = 180;

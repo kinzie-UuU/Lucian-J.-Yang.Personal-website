@@ -48,10 +48,28 @@
 
   const rebuildTitleText = () => {
     if (!titleNode) return;
+    titleNode.classList.remove("js-scroll-type-disabled", "scroll-type-text");
     const isEnglish = currentLang() === "en";
     const label = textFor("services_title") || (isEnglish ? "Why Work With Me" : "为何选择我");
+    const normalizedLabel = label.replace(/\s+/g, " ").trim();
+    const splitTitle = isEnglish && normalizedLabel === "Why Work With Me"
+      ? ["Why Work", "With Me"]
+      : normalizedLabel === "为何选择我"
+        ? ["为何", "选择我"]
+        : null;
 
-    titleNode.textContent = label;
+    titleNode.replaceChildren();
+    titleNode.classList.toggle("is-split-title", Boolean(splitTitle));
+    if (splitTitle) {
+      splitTitle.forEach((text, index) => {
+        const part = document.createElement("span");
+        part.className = `services-title-part services-title-part-${index === 0 ? "left" : "right"}`;
+        part.textContent = text;
+        titleNode.appendChild(part);
+      });
+    } else {
+      titleNode.textContent = label;
+    }
     titleNode.setAttribute("aria-label", label);
     delete titleNode.dataset.typeSource;
   };
@@ -71,6 +89,7 @@
 
   const writeProgress = (progress) => {
     const titleProgress = smooth(clamp01(progress / 0.18));
+    const titleVisualHold = clamp01(1 - smooth(clamp01(progress / 0.16)));
     const tunnelProgress = smooth(clamp01((progress - 0.02) / 0.3));
     const tunnelEnter = smooth(clamp01(progress / 0.06));
     const tunnelExit = smooth(clamp01((progress - 0.28) / 0.1));
@@ -80,7 +99,7 @@
     const outro = smooth(clamp01((progress - 0.94) / 0.06));
     const titleOpacity = reducedMotion ? 1 : clamp01(1 - smooth(clamp01((progress - 0.02) / 0.1)));
     const cardOpacity = reducedMotion ? 1 : clamp01(cardProgress * (1 - outro));
-    const tunnelOpacity = reducedMotion ? 0 : clamp01(tunnelEnter * (1 - tunnelExit) * (1 - cardProgress * 0.34));
+    const tunnelOpacity = reducedMotion ? 0 : clamp01(Math.max(tunnelEnter, titleVisualHold * 0.72) * (1 - tunnelExit) * (1 - cardProgress * 0.34));
     const timeOpacity = reducedMotion ? 0 : clamp01(timeProgress * (1 - cardProgress * 0.04) * (1 - outro));
     const blackoutOpacity = reducedMotion ? 0 : clamp01(tunnelExit * (1 - cardProgress * 0.58) * (1 - outro * 0.85));
     const stationCount = Math.max(1, panels.length - 1);

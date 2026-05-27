@@ -6,6 +6,7 @@
   --services-title-blur: 0px;
   --services-tunnel-progress: 0;
   --services-tunnel-opacity: 0;
+  --services-tunnel-plate-width: clamp(520px, 32vw, 690px);
   --services-time-opacity: 0;
   --services-blackout-opacity: 0;
   --services-card-progress: 0;
@@ -36,6 +37,10 @@ body.is-dark-stage::after {
 
 html.is-warm-stage {
   background: #f7f4ee;
+}
+
+html[lang="en"] .services-section {
+  --services-tunnel-plate-width: clamp(430px, 30vw, 620px);
 }
 
 .services-section::before,
@@ -98,13 +103,16 @@ html.is-warm-stage {
 
 .services-prismatic-canvas {
   position: absolute;
-  inset: 0;
+  top: 50%;
+  left: 50%;
   z-index: 0;
-  width: 100%;
-  height: 100%;
+  width: var(--services-tunnel-plate-width);
+  height: auto;
+  aspect-ratio: 2.28 / 1;
   display: block;
   background: #000;
-  mix-blend-mode: lighten;
+  border-radius: 8px;
+  mix-blend-mode: normal;
   opacity: var(--services-tunnel-opacity);
   filter:
     saturate(calc(1.06 - var(--services-card-progress) * 0.08))
@@ -112,6 +120,7 @@ html.is-warm-stage {
     contrast(calc(1.02 + var(--services-card-progress) * 0.02))
     blur(calc(var(--services-card-progress) * 2px));
   transform:
+    translate3d(-50%, -50%, 0)
     translate3d(calc(var(--services-tunnel-progress) * -1.6vw), 0, 0)
     scale(calc(1 + var(--services-tunnel-progress) * 0.065 + var(--services-card-progress) * 0.035));
   transform-origin: 50% 50%;
@@ -169,6 +178,36 @@ html.is-warm-stage {
   user-select: none;
 }
 
+.services-entry-title.is-split-title {
+  width: min(1480px, 100%);
+  max-width: 100%;
+  display: grid;
+  grid-template-columns:
+    minmax(0, 1fr)
+    var(--services-tunnel-plate-width)
+    minmax(0, 1fr);
+  column-gap: clamp(22px, 2vw, 44px);
+  align-items: center;
+}
+
+.services-title-part {
+  display: block;
+  min-width: 0;
+  white-space: nowrap;
+}
+
+.services-title-part-left {
+  grid-column: 1;
+  justify-self: end;
+  text-align: right;
+}
+
+.services-title-part-right {
+  grid-column: 3;
+  justify-self: start;
+  text-align: left;
+}
+
 html[lang="en"] .services-entry-title {
   max-width: calc(100vw - 72px);
   font-family: "Outfit", "Satoshi", system-ui, sans-serif;
@@ -177,6 +216,15 @@ html[lang="en"] .services-entry-title {
   font-weight: 520;
   letter-spacing: 0.02em;
   text-transform: uppercase;
+}
+
+html[lang="en"] .services-entry-title.is-split-title {
+  --services-tunnel-plate-width: clamp(430px, 30vw, 620px);
+  grid-template-columns:
+    minmax(0, 1.05fr)
+    var(--services-tunnel-plate-width)
+    minmax(0, 1fr);
+  font-size: clamp(2.7rem, 5.55vw, 7.4rem);
 }
 
 .services-card-stage {
@@ -283,9 +331,33 @@ html[lang="en"] .service-text-body {
     font-size: clamp(2.75rem, 13vw, 4.8rem);
   }
 
+  .services-entry-title.is-split-title {
+    width: auto;
+    max-width: calc(100vw - 34px);
+    display: block;
+  }
+
+  .services-entry-title.is-split-title .services-title-part {
+    display: inline;
+    grid-column: auto;
+  }
+
   html[lang="en"] .services-entry-title {
     max-width: calc(100vw - 34px);
     font-size: clamp(1.58rem, 7.4vw, 3.1rem);
+  }
+
+  html[lang="en"] .services-entry-title.is-split-title {
+    max-width: calc(100vw - 34px);
+    font-size: clamp(1.58rem, 7.4vw, 3.1rem);
+  }
+
+  html[lang="en"] .services-entry-title.is-split-title .services-title-part-left::after {
+    content: " ";
+  }
+
+  .services-prismatic-canvas {
+    width: min(82vw, 430px);
   }
 
   .services-card-stage {
