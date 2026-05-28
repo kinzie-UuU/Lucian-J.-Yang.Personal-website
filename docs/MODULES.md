@@ -108,12 +108,12 @@ Owned files:
 - `styles/about.css`
 - `scripts/portrait-motion.js`
 - `scripts/about-curtain.js`
-- `videos/portrait-scrub.mp4`
+- `videos/portrait-scrub-60fps.mp4`
 - `images/9999.png`
 
 Responsibilities:
 
-- Render portrait media, fallback image, About copy reveal, scroll-scrubbed portrait video, and About-to-Services bridge.
+- Render portrait media, fallback image, About copy reveal, wheel-controlled portrait video scrub, and About-to-Services bridge.
 - Clean up legacy bridge state on entry, page show/hide, and programmatic jumps.
 
 Contracts:
@@ -126,7 +126,7 @@ Contracts:
 QA:
 
 - Portrait fallback appears before video readiness.
-- Video scrub/reveal does not trap scroll.
+- Wheel down scrubs the portrait from side to front; wheel up reverses from front to side without using pointer position.
 - Natural scroll to Services runs the bridge once.
 - Direct nav does not leave black-curtain residue.
 

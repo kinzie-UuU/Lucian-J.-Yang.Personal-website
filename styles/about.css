@@ -77,8 +77,18 @@
     blur(calc((1 - var(--portrait-enter)) * 8px + var(--portrait-exit) * 12px));
 }
 
-.portrait-about-wrapper:not(.is-portrait-reveal-armed):not(.is-portrait-reveal-complete) .portrait-video,
-.portrait-about-wrapper:not(.is-portrait-reveal-armed):not(.is-portrait-reveal-complete) .portrait-image {
+body.about-centered-reveal-active .portrait-video,
+body.about-centered-reveal-active .portrait-image {
+  position: fixed;
+  left: 50vw;
+  top: 50svh;
+  transform:
+    translate3d(-50%, -50%, 0)
+    scale(calc(1.012 - var(--portrait-enter) * 0.012 - var(--portrait-exit) * 0.012));
+}
+
+body:not(.about-centered-reveal-active) .portrait-about-wrapper:not(.is-portrait-reveal-armed):not(.is-portrait-reveal-complete) .portrait-video,
+body:not(.about-centered-reveal-active) .portrait-about-wrapper:not(.is-portrait-reveal-armed):not(.is-portrait-reveal-complete) .portrait-image {
   opacity: 0 !important;
 }
 
