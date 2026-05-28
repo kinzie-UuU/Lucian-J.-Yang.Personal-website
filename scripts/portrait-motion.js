@@ -23,20 +23,47 @@
   let centeredRevealTarget = 0;
   let centeredRevealArmRaf = null;
   let centeredTouchY = 0;
+  let scrollTurnProgress = 0;
+  let centeredRevealBackSuppressed = false;
   const smootherStep = (t) => t * t * t * (t * (t * 6 - 15) + 10);
   const clamp01 = (value) => Math.max(0, Math.min(1, value));
-  const CENTERED_REVEAL_DONE = 0.86;
+  const inverseSmootherStep = (value) => {
+    const target = clamp01(value);
+    let low = 0;
+    let high = 1;
+    for (let i = 0; i < 12; i += 1) {
+      const mid = (low + high) / 2;
+      if (smootherStep(mid) < target) low = mid;
+      else high = mid;
+    }
+    return (low + high) / 2;
+  };
+  const CENTERED_REVEAL_DONE = 1;
   const CENTERED_REVEAL_MIN = 0;
-  const CENTERED_REVEAL_DELTA_SCALE = 4600;
-  const CENTERED_REVEAL_MAX_STEP = 0.055;
-  const CENTERED_TURN_START = 0.45;
-  const CENTERED_AUTO_START_MAX_PROGRESS = 0.1;
+  const CENTERED_REVEAL_DELTA_SCALE = 4400;
+  const CENTERED_REVEAL_MAX_STEP = 0.078;
+  const CENTERED_REVEAL_WHEEL_MIN_STEP = 0.056;
+  const CENTERED_TURN_START = 0.06;
   const CENTERED_AUTO_COMPLETE_PROGRESS = 0.28;
-  const VIDEO_FRAME_DURATION = 1 / 24;
+  const VIDEO_FRAME_DURATION = 1 / 60;
   const PORTRAIT_SCRUB_SECONDS = 3;
   const portraitEnterFromProgress = (progress) => {
     const enterRaw = clamp01(progress / 0.14);
     return enterRaw * enterRaw * (3 - 2 * enterRaw);
+  };
+
+  const setPortraitVideoTarget = (fallbackProgress = scrollTurnProgress) => {
+    const duration = effectiveVideoDuration();
+    if (duration <= 0) return;
+    if (
+      centeredRevealActive
+      && !centeredRevealArmed
+      && centeredRevealTarget <= CENTERED_TURN_START
+    ) {
+      targetVideoTime = 0;
+      return;
+    }
+    targetVideoTime = duration * clamp01(fallbackProgress);
   };
 
   const setCenteredRevealClass = (active) => {
@@ -76,6 +103,13 @@
     smootherStep(clamp01((centeredRevealTarget - CENTERED_TURN_START) / (CENTERED_REVEAL_DONE - CENTERED_TURN_START)))
   );
 
+  const visibleCenteredRevealTarget = () => {
+    const duration = effectiveVideoDuration();
+    if (duration <= 0) return centeredRevealTarget;
+    const visibleTurn = clamp01(smoothedVideoTime / duration);
+    return CENTERED_TURN_START + inverseSmootherStep(visibleTurn) * (CENTERED_REVEAL_DONE - CENTERED_TURN_START);
+  };
+
   const lockToCenteredAnchor = () => {
     if (!centeredRevealActive) return;
     window.scrollTo({ top: centeredRevealAnchorY, left: 0, behavior: "auto" });
@@ -86,21 +120,20 @@
   const syncCenteredPortrait = () => {
     if (!centeredRevealArmed) {
       targetEnter = CENTERED_REVEAL_MIN;
-      targetVideoTime = 0;
+      scrollTurnProgress = 0;
+      setPortraitVideoTarget(0);
       return;
     }
     targetEnter = centeredRevealProgress();
-    const duration = effectiveVideoDuration();
-    if (duration <= 0) return;
     if (centeredTurnLocked) {
       targetEnter = 1;
-      targetVideoTime = duration;
+      scrollTurnProgress = 1;
+      setPortraitVideoTarget(1);
       return;
     }
 
-    const turnProgress = centeredTurnProgress();
-    targetVideoTime = duration * turnProgress;
-    if (turnProgress >= 0.995) lockVideoToFinalFrame();
+    scrollTurnProgress = centeredTurnProgress();
+    setPortraitVideoTarget(scrollTurnProgress);
   };
 
   const resetVideoToFirstFrame = () => {
@@ -136,12 +169,17 @@
     cancelCenteredRevealArm();
     centeredRevealActive = false;
     if (!force) centeredRevealCompleted = true;
-    if (!force) lockVideoToFinalFrame();
     setCenteredRevealClass(false);
     setPortraitRevealState({
       armed: false,
       complete: !force,
     });
+    if (!force) {
+      lockVideoToFinalFrame();
+    } else {
+      centeredTurnLocked = false;
+      setPortraitVideoTarget(scrollTurnProgress);
+    }
     targetEnter = Math.max(targetEnter, currentEnter, 1);
     targetTextEnter = 0;
     targetProgressValue = 0;
@@ -150,7 +188,24 @@
   const isCenteredRevealInRange = () => {
     const rect = section.getBoundingClientRect();
     const vh = window.innerHeight || 1;
-    return rect.top < vh * 0.32 && rect.bottom > vh * 0.34;
+    return rect.top < vh * 0.54 && rect.bottom > vh * 0.34;
+  };
+
+  const isCenteredRevealNearTop = () => {
+    const rect = section.getBoundingClientRect();
+    const vh = window.innerHeight || 1;
+    return rect.top > -vh * 0.14 && rect.top < vh * 0.18;
+  };
+
+  const isCenteredRevealEntryGate = () => {
+    const rect = section.getBoundingClientRect();
+    const vh = window.innerHeight || 1;
+    return (
+      rect.top <= vh * 0.48
+      && rect.top > -vh * 0.78
+      && rect.bottom > vh * 0.34
+      && !document.body.classList.contains("about-services-handoff-active")
+    );
   };
 
   const releaseCenteredRevealBack = () => {
@@ -158,9 +213,10 @@
     cancelCenteredRevealArm();
     centeredRevealActive = false;
     centeredRevealCompleted = false;
+    centeredRevealBackSuppressed = true;
     setCenteredRevealClass(false);
     setPortraitRevealState();
-    const previousY = Math.max(0, centeredRevealAnchorY - window.innerHeight * 0.28);
+    const previousY = Math.max(0, centeredRevealAnchorY - window.innerHeight * 0.56);
     targetEnter = CENTERED_REVEAL_MIN;
     targetTextEnter = 0;
     targetProgressValue = 0;
@@ -193,11 +249,17 @@
     const measuredAnchorY = sectionTop();
     centeredRevealAnchorY = Math.max(0, Math.round(Number.isFinite(measuredAnchorY) ? measuredAnchorY : anchorY));
     centeredRevealTarget = clamp01(enter);
-    targetEnter = CENTERED_REVEAL_MIN;
+    const initialPortraitEnter = centeredRevealTarget > CENTERED_TURN_START
+      ? centeredRevealProgress()
+      : CENTERED_REVEAL_MIN;
+    const initialTurnProgress = centeredRevealTarget > CENTERED_TURN_START
+      ? centeredTurnProgress()
+      : 0;
+    targetEnter = initialPortraitEnter;
     targetTextEnter = 0;
     targetProgressValue = 0;
     targetExit = 0;
-    currentEnter = CENTERED_REVEAL_MIN;
+    currentEnter = initialPortraitEnter;
     currentTextEnter = 0;
     currentProgressValue = 0;
     currentExit = 0;
@@ -209,27 +271,42 @@
     setCenteredRevealClass(true);
     lockToCenteredAnchor();
     if (centeredRevealTarget <= CENTERED_TURN_START) resetVideoToFirstFrame();
-    targetVideoTime = 0;
+    scrollTurnProgress = initialTurnProgress;
+    setPortraitVideoTarget(scrollTurnProgress);
+    smoothedVideoTime = targetVideoTime;
     armCenteredRevealAfterAnchor();
     renderAboutReveal();
   };
 
-  const advanceCenteredReveal = (delta) => {
+  const advanceCenteredReveal = (delta, { source = "wheel", allowBeforeArmed = false } = {}) => {
     if (!centeredRevealActive) return;
     if (!Number.isFinite(delta) || Math.abs(delta) < 0.01) return;
-    if (!centeredRevealArmed) {
+    if (!centeredRevealArmed && !allowBeforeArmed) {
       lockToCenteredAnchor();
       return;
     }
     const direction = delta >= 0 ? 1 : -1;
     if (centeredTurnLocked && direction < 0) {
-      lockVideoToFinalFrame();
-      lockToCenteredAnchor();
-      return;
+      centeredTurnLocked = false;
+      smoothedVideoTime = clampVideoTime(targetVideoTime);
     }
     const rawStep = delta / CENTERED_REVEAL_DELTA_SCALE;
-    const step = Math.max(-CENTERED_REVEAL_MAX_STEP, Math.min(CENTERED_REVEAL_MAX_STEP, rawStep));
-    const nextTarget = clamp01(centeredRevealTarget + step);
+    const stepDirection = rawStep >= 0 ? 1 : -1;
+    const minimumStep = source === "wheel" && Math.abs(delta) >= 40
+      ? CENTERED_REVEAL_WHEEL_MIN_STEP
+      : 0;
+    const stepMagnitude = Math.min(
+      CENTERED_REVEAL_MAX_STEP,
+      Math.max(Math.abs(rawStep), minimumStep),
+    );
+    const step = stepDirection * stepMagnitude;
+    const visibleTarget = visibleCenteredRevealTarget();
+    const baseTarget = centeredRevealArmed
+      ? (direction < 0
+        ? Math.min(centeredRevealTarget, visibleTarget)
+        : Math.max(centeredRevealTarget, visibleTarget))
+      : centeredRevealTarget;
+    const nextTarget = clamp01(baseTarget + step);
     centeredRevealTarget = centeredTurnLocked ? CENTERED_REVEAL_DONE : nextTarget;
     centeredRevealTarget = Math.max(CENTERED_REVEAL_MIN, centeredRevealTarget);
     targetTextEnter = 0;
@@ -246,15 +323,28 @@
     }
   };
 
+  const portraitVideoReadyToRelease = () => {
+    const duration = effectiveVideoDuration();
+    if (duration <= 0) return true;
+    return smoothedVideoTime >= duration * 0.96;
+  };
+
+  const centeredRevealReadyToResume = () => (
+    centeredTurnLocked || (centeredTurnProgress() >= 0.995 && portraitVideoReadyToRelease())
+  );
+
+  const centeredRevealReadyToExitBack = () => (
+    centeredRevealActive
+    && centeredRevealArmed
+    && centeredRevealTarget <= CENTERED_REVEAL_MIN + 0.001
+    && currentEnter <= CENTERED_REVEAL_MIN + 0.04
+  );
+
   const shouldLetNaturalScrollResume = (delta = 0) => (
     centeredRevealActive
     && centeredRevealArmed
     && delta > 0
-    && (
-      centeredTurnLocked
-      || centeredTurnProgress() >= 0.96
-      || currentEnter >= 0.92
-    )
+    && centeredRevealReadyToResume()
   );
 
   const refreshAboutReveal = () => {
@@ -361,7 +451,7 @@
     if (!video || !Number.isFinite(video.duration) || video.duration <= 0) return;
     // Critically-damped chase — same easing model as the CSS variables.
     // No dead zone, no stepped jumps; the face turn reads as silk.
-    smoothedVideoTime += (targetVideoTime - smoothedVideoTime) * 0.12;
+    smoothedVideoTime += (targetVideoTime - smoothedVideoTime) * 0.16;
     // Only seek by meaningful frame-sized deltas, and never stack seeks while
     // the decoder is still landing on the previous frame.
     if (Math.abs(smoothedVideoTime - video.currentTime) > seekThreshold()) {
@@ -381,12 +471,14 @@
       targetExit = 0;
       if (Math.abs(window.scrollY - centeredRevealAnchorY) > 2) lockToCenteredAnchor();
       if (!centeredRevealArmed) {
-        targetEnter = CENTERED_REVEAL_MIN;
-        targetVideoTime = 0;
+        targetEnter = centeredRevealTarget > CENTERED_TURN_START
+          ? centeredRevealProgress()
+          : CENTERED_REVEAL_MIN;
+        setPortraitVideoTarget(scrollTurnProgress);
       } else {
         syncCenteredPortrait();
       }
-      if (centeredRevealArmed && centeredRevealTarget >= CENTERED_REVEAL_DONE && currentEnter >= 0.96 && centeredTurnProgress() >= 0.99) {
+      if (centeredRevealArmed && centeredRevealTarget >= CENTERED_REVEAL_DONE && currentEnter >= 0.96 && centeredRevealReadyToResume()) {
         lockVideoToFinalFrame();
         releaseCenteredReveal();
       }
@@ -397,6 +489,10 @@
     currentTextEnter += (targetTextEnter - currentTextEnter) * 0.11;
     currentProgressValue += (targetProgressValue - currentProgressValue) * 0.07;
     currentExit += (targetExit - currentExit) * 0.085;
+
+    if (centeredRevealReadyToExitBack()) {
+      releaseCenteredRevealBack();
+    }
 
     section.style.setProperty("--portrait-enter", currentEnter.toFixed(4));
     section.style.setProperty("--portrait-text-enter", currentTextEnter.toFixed(4));
@@ -422,22 +518,20 @@
     // progress: 0 = section just entered, 1 = section fully scrolled through
     const progress = clamp01(-rect.top / scrollable);
 
-    if (progress > CENTERED_AUTO_COMPLETE_PROGRESS) {
-      centeredRevealCompleted = true;
-    }
-
-    if (
-      progress <= CENTERED_AUTO_START_MAX_PROGRESS
-      && !centeredRevealCompleted
-      && rect.top <= window.innerHeight * 0.18
-      && rect.top >= -window.innerHeight * 0.16
-      && !document.body.classList.contains("about-services-handoff-active")
-    ) {
+    if (!centeredRevealCompleted && !centeredRevealBackSuppressed && isCenteredRevealEntryGate()) {
       activateCenteredReveal({
         anchorY: sectionTop(),
         enter: CENTERED_REVEAL_MIN,
       });
       return;
+    }
+
+    if (centeredRevealBackSuppressed && rect.top > window.innerHeight * 0.52) {
+      centeredRevealBackSuppressed = false;
+    }
+
+    if (progress > CENTERED_AUTO_COMPLETE_PROGRESS) {
+      centeredRevealCompleted = true;
     }
 
     // The portrait reads from both the section timeline and the visual moment
@@ -456,15 +550,15 @@
 
     const duration = effectiveVideoDuration();
     if (duration > 0) {
-      if (centeredTurnLocked || centeredRevealCompleted) {
+      if (centeredTurnLocked) {
         lockVideoToFinalFrame();
         return;
       }
       // Video scrub overlaps the portrait reveal tail so the face turn feels
       // connected instead of waiting for a separate later phase.
-      const rawVideoProgress = clamp01((progress - 0.12) / 0.58);
-      const videoProgress = smootherStep(rawVideoProgress);
-      targetVideoTime = duration * videoProgress;
+      const rawVideoProgress = clamp01((progress - 0.08) / 0.76);
+      scrollTurnProgress = smootherStep(rawVideoProgress);
+      setPortraitVideoTarget(scrollTurnProgress);
     }
   };
 
@@ -539,6 +633,35 @@
   }, { passive: true });
 
   window.addEventListener("wheel", (event) => {
+    if (event.deltaY > 0 && centeredRevealBackSuppressed) {
+      centeredRevealBackSuppressed = false;
+    }
+    if (
+      !centeredRevealActive
+      && !centeredRevealCompleted
+      && !centeredRevealBackSuppressed
+      && event.deltaY > 0
+      && isCenteredRevealEntryGate()
+    ) {
+      activateCenteredReveal({
+        anchorY: sectionTop(),
+        enter: CENTERED_REVEAL_MIN,
+      });
+      event.preventDefault();
+      event.stopPropagation();
+      return;
+    }
+    if (!centeredRevealActive && centeredRevealCompleted && event.deltaY < 0 && isCenteredRevealNearTop()) {
+      activateCenteredReveal({
+        anchorY: sectionTop(),
+        enter: CENTERED_REVEAL_DONE,
+      });
+      centeredTurnLocked = false;
+      advanceCenteredReveal(event.deltaY || 0, {
+        allowBeforeArmed: true,
+        source: "wheel",
+      });
+    }
     if (!centeredRevealActive) return;
     if (shouldLetNaturalScrollResume(event.deltaY || 0)) {
       releaseCenteredReveal();
@@ -546,7 +669,7 @@
     }
     event.preventDefault();
     event.stopPropagation();
-    advanceCenteredReveal(event.deltaY || 0);
+    advanceCenteredReveal(event.deltaY || 0, { source: "wheel" });
   }, { passive: false, capture: true });
 
   window.addEventListener("touchstart", (event) => {
@@ -565,7 +688,7 @@
     }
     event.preventDefault();
     event.stopPropagation();
-    advanceCenteredReveal(delta * 3.2);
+    advanceCenteredReveal(delta * 3.2, { source: "touch" });
   }, { passive: false, capture: true });
 
   window.addEventListener("keydown", (event) => {
@@ -577,7 +700,7 @@
     }
     event.preventDefault();
     event.stopPropagation();
-    advanceCenteredReveal(direction * 720);
+    advanceCenteredReveal(direction * 720, { source: "keyboard" });
   }, { capture: true });
 
   window.addEventListener("lucian:programmatic-section-jump", () => {
