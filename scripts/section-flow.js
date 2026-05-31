@@ -23,9 +23,9 @@
   let clearHashPendingTimer = 0;
 
   const transitionTiming = {
-    cover: 420,
-    reveal: 520,
-    buffer: 120,
+    cover: 120,
+    reveal: 220,
+    buffer: 0,
   };
 
   const transitionCopy = {
@@ -148,6 +148,15 @@
     navTransition?.classList.remove("is-active");
   };
 
+  const setActiveNavTarget = (id) => {
+    activeSection = id;
+    setStageClasses(activeSection);
+    navItems.forEach((item) => {
+      item.classList.toggle("is-active", item.getAttribute("href") === `#${activeSection}`);
+    });
+    return activeSection;
+  };
+
   const performJump = (id, { updateHash = true, behavior = "auto", source = "section-flow" } = {}) => {
     const target = sections.get(id);
     if (!target) return false;
@@ -164,13 +173,15 @@
       window.history.pushState(null, "", `#${id}`);
     }
 
+    setActiveNavTarget(id);
+
     window.dispatchEvent(new CustomEvent("lucian:programmatic-section-jump", {
       detail: { targetId: id, source },
     }));
 
     window.requestAnimationFrame(() => {
       document.documentElement.classList.remove("nav-jump-instant");
-      updateActiveNav();
+      setActiveNavTarget(id);
       window.LucianServicesStory?.refresh?.();
       window.LucianWorksFlowingMenu?.refresh?.();
     });
@@ -237,12 +248,7 @@
   };
 
   const updateActiveNav = () => {
-    activeSection = detectActiveSection();
-    setStageClasses(activeSection);
-    navItems.forEach((item) => {
-      item.classList.toggle("is-active", item.getAttribute("href") === `#${activeSection}`);
-    });
-    return activeSection;
+    return setActiveNavTarget(detectActiveSection());
   };
 
   const refresh = () => {

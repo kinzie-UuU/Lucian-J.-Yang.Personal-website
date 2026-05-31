@@ -11,7 +11,7 @@
   --works-handoff: 0;
   position: relative;
   z-index: 3;
-  min-height: 210svh;
+  min-height: 285svh;
   color: #f3efe7;
   background: #030303;
   overflow: clip;
@@ -23,32 +23,7 @@
 }
 
 .works-transition-copy::after {
-  content: "";
-  position: absolute;
-  top: 18svh;
-  left: 50%;
-  z-index: 2;
-  display: block;
-  width: 1px;
-  height: 64svh;
-  margin-left: -0.5px;
-  pointer-events: none;
-  opacity: calc(var(--works-axis-reveal) * (1 - var(--works-exit) * 0.62));
-  background:
-    linear-gradient(
-      180deg,
-      transparent 0%,
-      rgba(255, 95, 104, 0) calc(8% + var(--works-axis-drop) * 46%),
-      rgba(255, 95, 104, 0.92) calc(18% + var(--works-axis-drop) * 46%),
-      rgba(255, 95, 104, 0.44) calc(19% + var(--works-axis-drop) * 46%),
-      rgba(255, 95, 104, 0) calc(28% + var(--works-axis-drop) * 46%),
-      transparent 100%
-    );
-  transform:
-    translate3d(0, calc((1 - var(--works-axis-drop)) * -6svh), 0)
-    scaleY(calc(0.72 + var(--works-axis-drop) * 0.28));
-  transform-origin: 50% 0%;
-  mix-blend-mode: screen;
+  display: none;
 }
 
 .works-transition-copy {
@@ -87,7 +62,7 @@
   grid-column: 1;
   grid-row: 2;
   align-self: start;
-  padding-left: clamp(38px, 8vw, 140px);
+  padding-left: 0;
 }
 
 .works-transition-line-text {
@@ -100,10 +75,19 @@
   line-height: 0.92;
   letter-spacing: 0;
   opacity: var(--works-line-reveal);
-  transform:
-    translate3d(calc((1 - var(--works-line-reveal)) * -2vw), calc((1 - var(--works-line-reveal)) * 1.8rem), 0)
-    skewY(calc((1 - var(--works-line-reveal)) * -2deg));
+  transform: translate3d(0, calc((1 - var(--works-line-reveal)) * 0.6rem), 0);
   transform-origin: left center;
+}
+
+.works-transition-line-text.scroll-type-text {
+  transform: none;
+}
+
+.works-transition-line-text .scroll-type-glyph {
+  transform: translate3d(0, var(--type-y), 0) scale(calc(0.985 + var(--type-focus) * 0.015));
+  transition:
+    opacity 160ms linear,
+    transform 420ms cubic-bezier(0.19, 1, 0.22, 1);
 }
 
 .works-transition-line:nth-child(2) .works-transition-line-text {
@@ -139,12 +123,7 @@ html[lang="en"] .works-transition-note {
 }
 
 .works-transition-note::before {
-  content: "";
-  display: block;
-  width: clamp(32px, 4vw, 70px);
-  height: 1px;
-  margin-bottom: clamp(22px, 3svh, 36px);
-  background: rgba(255, 95, 104, 0.76);
+  display: none;
 }
 
 /* Works list ---------------------------------------------------------------- */
@@ -203,8 +182,7 @@ html[lang="en"] .works-transition-note {
   transform-origin: center;
 }
 
-.works-list-kicker,
-.works-list-note {
+.works-list-kicker {
   margin: 0;
 }
 
@@ -215,16 +193,6 @@ html[lang="en"] .works-transition-note {
   letter-spacing: 0;
   text-transform: uppercase;
   color: rgba(255, 95, 104, 0.82);
-}
-
-.works-list-note {
-  max-width: 38rem;
-  font-family: var(--font-body);
-  font-size: clamp(0.82rem, 0.95vw, 0.98rem);
-  font-weight: 600;
-  line-height: 1.7;
-  text-align: right;
-  color: rgba(248, 245, 239, 0.58);
 }
 
 .works-list {
@@ -488,7 +456,7 @@ html[lang="en"] .works-flowing-menu-text {
 
 @media (max-width: 768px) {
   .service-work-transition {
-    min-height: 185svh;
+    min-height: 245svh;
   }
 
   .works-transition-copy {
@@ -540,12 +508,6 @@ html[lang="en"] .works-flowing-menu-text {
     gap: 8px;
   }
 
-  .works-list-note {
-    max-width: 30rem;
-    text-align: left;
-    font-size: 0.82rem;
-  }
-
   .works-row {
     grid-template-columns: 2rem minmax(0, 1fr) 2rem;
     min-height: clamp(76px, 10svh, 106px);
@@ -566,6 +528,45 @@ html[lang="en"] .works-flowing-menu-text {
 
   .works-flowing-menu-img {
     width: clamp(62px, 18vw, 92px);
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1320px) {
+  .works-transition-copy {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+    align-content: center;
+    gap: clamp(18px, 3.4svh, 42px);
+  }
+
+  .works-transition-line:nth-child(1),
+  .works-transition-line:nth-child(2),
+  .works-transition-note {
+    grid-column: 1;
+  }
+
+  .works-transition-line:nth-child(1) {
+    grid-row: 1;
+    align-self: end;
+  }
+
+  .works-transition-line:nth-child(2) {
+    grid-row: 2;
+    align-self: start;
+  }
+
+  .works-transition-line-text {
+    max-width: calc(100vw - clamp(56px, 14vw, 224px));
+    font-size: clamp(4.2rem, 7.2vw, 7.6rem);
+    white-space: nowrap;
+  }
+
+  .works-transition-note {
+    grid-row: 3;
+    justify-self: end;
+    align-self: start;
+    max-width: min(40ch, 46vw);
+    margin-top: clamp(6px, 1.6svh, 18px);
   }
 }
 

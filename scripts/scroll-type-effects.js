@@ -8,6 +8,7 @@
 
   const SCROLL_TYPE_SCOPE_SELECTOR = [
     "#services",
+    "#works-transition",
     "#works",
     "#contact",
     ".clients-section",
@@ -132,21 +133,27 @@
       const directionBias = scrollTypeDirection < 0 ? -0.035 : 0.035;
       const scanPhase = parentPhase + directionBias;
       const smooth = (value) => value * value * (3 - 2 * value);
-      const enterWindow = isParagraph ? 0.32 : 0.26;
-      const exitStart = isParagraph ? 0.9 : 0.82;
-      const exitWindow = isParagraph ? 0.28 : 0.22;
-      const enter = smooth(Math.max(0, Math.min(1, (scanPhase - glyphOrder * 0.38) / enterWindow)));
-      const exit = smooth(Math.max(0, Math.min(1, (scanPhase - exitStart - glyphOrder * 0.12) / exitWindow)));
+      const glyphSpread = isWorksStatementTitle ? 0.18 : 0.38;
+      const exitSpread = isWorksStatementTitle ? 0.08 : 0.12;
+      const enterWindow = isWorksStatementTitle ? 0.42 : isParagraph ? 0.32 : 0.26;
+      const exitStart = isWorksStatementTitle ? 1.08 : isParagraph ? 0.9 : 0.82;
+      const exitWindow = isWorksStatementTitle ? 0.32 : isParagraph ? 0.28 : 0.22;
+      const enter = smooth(Math.max(0, Math.min(1, (scanPhase - glyphOrder * glyphSpread) / enterWindow)));
+      const exit = smooth(Math.max(0, Math.min(1, (scanPhase - exitStart - glyphOrder * exitSpread) / exitWindow)));
       const amount = Math.max(0, Math.min(1, enter * (1 - exit)));
       const focus = Math.max(viewportFocus * 0.58, amount);
       const baseMaxBlur = isHeroDisplay ? 11 : isWorksStatementTitle ? 3.6 : isParagraph ? 2.6 : 6;
       const exitBlur = isHeroDisplay ? 7 : isWorksStatementTitle ? 1.8 : isParagraph ? 1.4 : 4;
-      const maxY = isHeroDisplay ? 14 : isWorksStatementTitle ? 5 : isParagraph ? 3.5 : 7;
+      const maxY = isHeroDisplay ? 14 : isWorksStatementTitle ? 18 : isParagraph ? 3.5 : 7;
       const enteringFromBelow = center > focusLine ? 1 : -1;
-      const y = ((1 - enter) * maxY - exit * maxY * 0.7) * enteringFromBelow * scrollTypeDirection;
+      const y = isWorksStatementTitle
+        ? (1 - enter) * maxY - exit * maxY * 0.35
+        : ((1 - enter) * maxY - exit * maxY * 0.7) * enteringFromBelow * scrollTypeDirection;
       const blur = 0;
-      const minOpacity = isHeroDisplay ? 0.08 : isWorksStatementTitle ? 0.34 : isParagraph ? 0.22 : 0.06;
-      const opacity = Math.max(minOpacity, 0.12 + amount * 0.82 + viewportFocus * 0.12 - exit * 0.16);
+      const minOpacity = isHeroDisplay ? 0.08 : isWorksStatementTitle ? 0 : isParagraph ? 0.22 : 0.06;
+      const opacity = isWorksStatementTitle
+        ? Math.max(minOpacity, amount * 0.96 + viewportFocus * 0.04 - exit * 0.1)
+        : Math.max(minOpacity, 0.12 + amount * 0.82 + viewportFocus * 0.12 - exit * 0.16);
 
       glyph.style.setProperty("--type-focus", focus.toFixed(4));
       glyph.style.setProperty("--type-blur", `${blur.toFixed(2)}px`);

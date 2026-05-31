@@ -4,6 +4,7 @@
 
   const contactEmail = "y1156813759@gmail.com";
   const contactSection = document.querySelector("#contact");
+  const contactTitle = contactSection?.querySelector(".contact-title");
   const copyItems = document.querySelectorAll(".contact-copy-item");
   const contactForm = document.querySelector("#contact-form");
   const wechatTrigger = document.querySelector("#wechat-qr-trigger");
@@ -21,9 +22,51 @@
 
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     let ticking = false;
+    let titleFlipTimer = 0;
+    let titleFlipLoopTimer = 0;
 
     const setVar = (name, value) => {
       contactSection.style.setProperty(name, value.toFixed(4));
+    };
+
+    const setPxVar = (name, value) => {
+      contactSection.style.setProperty(name, `${value.toFixed(2)}px`);
+    };
+
+    const triggerTitleFlip = () => {
+      if (!contactTitle || titleFlipTimer) return;
+      contactTitle.classList.add("is-flipping");
+      titleFlipTimer = window.setTimeout(() => {
+        contactTitle.classList.remove("is-flipping");
+        titleFlipTimer = 0;
+      }, 1600);
+    };
+
+    const titleReadyToFlip = () => {
+      if (!contactTitle || prefersReducedMotion.matches) return false;
+      const vh = Math.max(1, window.innerHeight);
+      const rect = contactSection.getBoundingClientRect();
+      return rect.top < vh * 0.22 && rect.bottom > vh * 0.42;
+    };
+
+    const maybeFlipTitle = () => {
+      if (!titleReadyToFlip()) return;
+      triggerTitleFlip();
+    };
+
+    const stopTitleFlipLoop = () => {
+      window.clearTimeout(titleFlipLoopTimer);
+      titleFlipLoopTimer = 0;
+    };
+
+    const scheduleTitleFlipLoop = (delay = 0) => {
+      if (!contactTitle || prefersReducedMotion.matches || titleFlipLoopTimer) return;
+      titleFlipLoopTimer = window.setTimeout(() => {
+        titleFlipLoopTimer = 0;
+        if (!titleReadyToFlip()) return;
+        maybeFlipTitle();
+        scheduleTitleFlipLoop(5600);
+      }, delay);
     };
 
     const update = () => {
@@ -32,22 +75,30 @@
       if (prefersReducedMotion.matches) {
         setVar("--contact-paper-place", 1);
         setVar("--contact-paper-settle", 1);
-        setVar("--contact-paper-exit", 0);
-        setVar("--contact-paper-bg", 1);
+        setVar("--contact-form-reveal", 1);
+        setVar("--contact-form-alpha", 1);
+        setVar("--contact-social-alpha", 1);
+        setPxVar("--contact-form-y", 0);
+        setPxVar("--contact-social-y", 0);
         return;
       }
 
       const vh = Math.max(1, window.innerHeight);
       const rect = contactSection.getBoundingClientRect();
-      const enter = smootherStep(clamp01((vh * 1.08 - rect.top) / (vh * 0.94)));
-      const settle = smootherStep(clamp01((vh * 0.74 - rect.top) / (vh * 0.72)));
-      const bg = smootherStep(clamp01((vh * 1.18 - rect.top) / (vh * 1.16)));
-      const exit = smootherStep(clamp01((vh * 0.04 - rect.bottom) / (vh * 0.7)));
+      const enter = smootherStep(clamp01((vh * 1.04 - rect.top) / (vh * 0.9)));
+      const settle = smootherStep(clamp01((vh * 0.72 - rect.top) / (vh * 0.68)));
+      const form = smootherStep(clamp01((vh * 0.18 - rect.top) / (vh * 0.52)));
+      const social = smootherStep(clamp01((vh * 0.02 - rect.top) / (vh * 0.48)));
 
       setVar("--contact-paper-place", enter);
       setVar("--contact-paper-settle", settle);
-      setVar("--contact-paper-exit", exit);
-      setVar("--contact-paper-bg", bg);
+      setVar("--contact-form-reveal", form);
+      setVar("--contact-form-alpha", form);
+      setVar("--contact-social-alpha", social);
+      setPxVar("--contact-form-y", (1 - form) * 36);
+      setPxVar("--contact-social-y", (1 - social) * 28);
+      if (titleReadyToFlip()) scheduleTitleFlipLoop(400);
+      else stopTitleFlipLoop();
     };
 
     const requestUpdate = () => {
@@ -60,6 +111,19 @@
     window.addEventListener("scroll", requestUpdate, { passive: true });
     window.addEventListener("resize", requestUpdate);
     prefersReducedMotion.addEventListener?.("change", requestUpdate);
+    if ("IntersectionObserver" in window && contactTitle) {
+      const titleObserver = new IntersectionObserver((entries) => {
+        const entry = entries[0];
+        if (entry?.isIntersecting) scheduleTitleFlipLoop(400);
+        else stopTitleFlipLoop();
+      }, { threshold: 0.18 });
+      titleObserver.observe(contactSection);
+      window.addEventListener("pagehide", () => {
+        titleObserver.disconnect();
+        stopTitleFlipLoop();
+        window.clearTimeout(titleFlipTimer);
+      }, { once: true });
+    }
   };
 
   initContactPaperMotion();

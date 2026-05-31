@@ -40,6 +40,7 @@
   let heroHandoffTimer = 0;
   let heroWasReadyForHandoff = false;
   let postEntryGuardUntil = 0;
+  let postEntryGuardTimer = 0;
   let settleGuardUntil = 0;
   let settleTargetY = 0;
 
@@ -166,6 +167,9 @@
     entryTransitionLocked = false;
     siteEnteredDispatched = false;
     window.clearTimeout(entryTransitionReleaseTimer);
+    window.clearTimeout(postEntryGuardTimer);
+    postEntryGuardTimer = 0;
+    postEntryGuardUntil = 0;
     resetHeroAboutHandoff();
     resetHeroSequenceState({ resetScroll: true });
     startEntryReplayTopLock();
@@ -219,7 +223,12 @@
   );
 
   const startPostEntryGuard = () => {
+    window.clearTimeout(postEntryGuardTimer);
     postEntryGuardUntil = performance.now() + 820;
+    postEntryGuardTimer = window.setTimeout(() => {
+      postEntryGuardTimer = 0;
+      updateHeroAboutHandoff();
+    }, 840);
   };
 
   const isPostEntryGuardActive = () => performance.now() < postEntryGuardUntil;
@@ -307,8 +316,6 @@
       return;
     }
     if (isPostEntryGuardActive()) {
-      if (isBlockedByProgrammaticTransition()) return;
-      if (readHeroPast() > HERO_HANDOFF_RESET) settleHeroStart();
       return;
     }
     if (isBlockedByProgrammaticTransition() && !heroHandoffActive) return;
@@ -348,7 +355,7 @@
   };
 
   const blockInputDuringHeroHandoff = (event) => {
-    if (!heroHandoffActive && !isPostEntryGuardActive() && !isSettleGuardActive()) return;
+    if (!heroHandoffActive && !isSettleGuardActive()) return;
     event.preventDefault();
     event.stopPropagation();
     if (isSettleGuardActive()) requestAnimationFrame(settleAboutEntry);
@@ -413,6 +420,7 @@
 
   window.addEventListener("pagehide", () => {
     window.clearTimeout(entryTransitionReleaseTimer);
+    window.clearTimeout(postEntryGuardTimer);
     window.clearTimeout(heroHandoffTimer);
     setHandoffClass(false);
     window.removeEventListener("scroll", onHeroScroll);

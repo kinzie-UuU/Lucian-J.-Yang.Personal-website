@@ -394,8 +394,15 @@ const main = async () => {
       return { ...snapshot, settledMs: Date.now() - startedAt };
     };
 
+    const bottomNavHrefs = await evaluate(client, `(() => [...document.querySelectorAll('.bottom-nav-item')]
+      .map((item) => item.getAttribute('href'))
+      .filter(Boolean))()`);
+    for (const href of ["#about", "#services", "#contact"]) {
+      assert(bottomNavHrefs.includes(href), `Bottom nav is missing ${href}: ${JSON.stringify(bottomNavHrefs)}`);
+    }
+
     const navSequence = {};
-    for (const href of ["#about", "#services", "#works", "#contact"]) {
+    for (const href of bottomNavHrefs) {
       navSequence[href] = await clickBottomNav(href);
       assert(!navSequence[href].navTransitionActive, `Bottom nav transition remained active after ${href}: ${JSON.stringify(navSequence[href])}`);
       assert(navSequence[href].visibleOverlayCount === 0, `Bottom nav overlay remained visible after ${href}: ${JSON.stringify(navSequence[href])}`);
@@ -542,7 +549,12 @@ const main = async () => {
     const mobileHealth = await readViewportHealth("mobile");
     assert(mobileHealth.horizontalOverflow <= 2, `Mobile has horizontal overflow: ${JSON.stringify(mobileHealth)}`);
     assert(mobileHealth.bottomNavVisible, `Bottom nav is not visible on mobile: ${JSON.stringify(mobileHealth)}`);
-    assert(mobileHealth.bottomItems.some((item) => item.href === "#works" && item.visible), `Works nav item should be visible on mobile: ${JSON.stringify(mobileHealth)}`);
+    for (const href of ["#about", "#services", "#contact"]) {
+      assert(
+        mobileHealth.bottomItems.some((item) => item.href === href && item.visible),
+        `Bottom nav item should be visible on mobile for ${href}: ${JSON.stringify(mobileHealth)}`
+      );
+    }
 
     await client.send("Emulation.clearDeviceMetricsOverride");
 

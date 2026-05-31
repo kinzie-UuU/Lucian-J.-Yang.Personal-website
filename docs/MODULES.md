@@ -2,6 +2,22 @@
 
 This document maps each user-facing system to its owning files, runtime contracts, and focused QA. Update it when a feature gains or loses files, events, globals, DOM ids, data fields, or QA requirements.
 
+## Detailed Module Docs
+
+Use this file as the compact map. Use the per-module playbooks for implementation details, dependencies, and change checklists:
+
+- `docs/modules/core-runtime.md`
+- `docs/modules/entry.md`
+- `docs/modules/hero.md`
+- `docs/modules/about-portrait.md`
+- `docs/modules/services.md`
+- `docs/modules/works-gallery.md`
+- `docs/modules/scroll-curtains.md`
+- `docs/modules/navigation-header.md`
+- `docs/modules/language-text-effects.md`
+- `docs/modules/clients.md`
+- `docs/modules/contact.md`
+
 ## Core Runtime
 
 Owned files:
@@ -98,6 +114,7 @@ QA:
 - Water and ripples render.
 - Liquid field is visible and responsive.
 - Lion model loads and orbits/interacts.
+- First wheel after Entry release scrolls Hero instead of being swallowed by the post-entry guard.
 - Hero-to-About handoff lands correctly.
 
 ## About And Portrait
@@ -145,7 +162,7 @@ Responsibilities:
 
 - Render Services sticky title gate.
 - Run PrismaticBurst entry canvas and local WebGL2 time-tunnel canvas.
-- Own the locked automatic service inscription sequence.
+- Own the locked automatic service inscription sequence, including held reading beats for each service message.
 - Land on the Works transition copy screen after the Services sequence completes.
 
 Contracts:
@@ -161,7 +178,8 @@ QA:
 - Title gate appears on direct nav.
 - Natural About handoff starts Services autoplay after the bridge.
 - PrismaticBurst yields to time tunnel.
-- Six service messages play without adjacent ghost carryover.
+- Six service messages play slowly enough to read, with held beats and no adjacent ghost carryover.
+- Message 06 remains readable through its final hold before the sequence releases to Works.
 - Sequence lands on Works transition copy.
 
 ## Works And Gallery
@@ -257,6 +275,7 @@ QA:
 - Language switch updates visible copy and Gallery copy.
 - Sound state persists and can resume after user gesture.
 - Fullscreen button state reflects browser fullscreen.
+- Bottom-nav paper transition settles under the browser smoke budget without leaving overlay nodes.
 - Bottom nav active state follows the current three nav targets and programmatic jumps.
 
 ## Language And Text Effects

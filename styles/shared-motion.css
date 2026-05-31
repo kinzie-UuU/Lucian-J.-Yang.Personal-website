@@ -350,3 +350,13 @@ body.scroll-curtain-locking {
 .contact-social {
   transition-duration: 620ms;
 }
+
+#contact .contact-form {
+  transform: translate3d(0, calc(var(--scene-y) + var(--contact-form-y)), 0) scale(var(--scene-scale));
+  opacity: var(--contact-form-alpha);
+}
+
+#contact .contact-social {
+  transform: translate3d(0, calc(var(--scene-y) + var(--contact-social-y)), 0) scale(var(--scene-scale));
+  opacity: var(--contact-social-alpha);
+}

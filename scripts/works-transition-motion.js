@@ -21,14 +21,14 @@
     const transitionSpan = Math.max(vh, transitionRect.height + vh);
     const progress = clamp01((vh - transitionRect.top) / transitionSpan);
 
-    const enter = range(progress, 0.04, 0.3);
-    const copy = range(progress, 0.3, 0.47);
-    const line2 = range(progress, 0.36, 0.54);
-    const note = range(progress, 0.42, 0.62);
-    const exit = range(progress, 0.62, 0.78);
-    const axisReveal = range(progress, 0.42, 0.54) * (1 - range(progress, 0.86, 1));
-    const axisDrop = range(progress, 0.46, 0.82);
-    const headerEnter = range(progress, 0.8, 0.95)
+    const enter = range(progress, 0.02, 0.2);
+    const copy = range(progress, 0.08, 0.2);
+    const line2 = range(progress, 0.12, 0.24);
+    const note = range(progress, 0.22, 0.38);
+    const exit = range(progress, 0.86, 0.96);
+    const axisReveal = range(progress, 0.3, 0.42) * (1 - range(progress, 0.92, 1));
+    const axisDrop = range(progress, 0.42, 0.9);
+    const headerEnter = range(progress, 0.92, 0.99)
       || smooth(clamp01((vh * 0.86 - worksRect.top) / (vh * 0.52)));
     const listEnter = smooth(clamp01((vh * 0.56 - worksRect.top) / (vh * 0.58)));
 

@@ -8,15 +8,43 @@
   const runtime = window.LucianRuntime;
   const reducedMotion = runtime?.reducedMotion
     || window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
-  const AUTO_DURATION = 30000;
-  const BRIDGE_SEQUENCE_START_PROGRESS = 0.045;
+  const AUTO_DURATION = 46000;
+  const MANUAL_SEQUENCE_START_PROGRESS = 0.13;
+  const BRIDGE_SEQUENCE_START_PROGRESS = 0.09;
   const SERVICES_TITLE_HOLD_PROGRESS = 0.16;
   const PRISMATIC_WINDOW_START = 0.16;
   const PRISMATIC_WINDOW_END = 0.30;
   const PRISMATIC_EXPAND_END = 0.46;
+  const SERVICE_STATION_START = 0.32;
+  const SERVICE_STATION_END = 0.84;
+  const SERVICE_STATION_DWELL_EDGE = 0.34;
+  const SERVICE_OUTRO_START = 0.965;
+  const SEQUENCE_SCROLL_HOLD_PROGRESS = 0.82;
+  const SEQUENCE_SCROLL_RELEASE_START = 0.965;
 
   const clamp01 = (value) => Math.min(1, Math.max(0, value));
   const smooth = (value) => value * value * (3 - 2 * value);
+  const scrollProgressFromSequenceProgress = (progress) => {
+    const value = clamp01(progress);
+    if (value <= SEQUENCE_SCROLL_HOLD_PROGRESS) return value;
+    if (value < SEQUENCE_SCROLL_RELEASE_START) return SEQUENCE_SCROLL_HOLD_PROGRESS;
+    const release = smooth(clamp01((value - SEQUENCE_SCROLL_RELEASE_START) / (1 - SEQUENCE_SCROLL_RELEASE_START)));
+    return SEQUENCE_SCROLL_HOLD_PROGRESS + release * (1 - SEQUENCE_SCROLL_HOLD_PROGRESS);
+  };
+
+  const stationPositionFromProgress = (progress, stationCount) => {
+    const count = Math.max(0, stationCount);
+    if (!count) return 0;
+    const scaled = clamp01(progress) * count;
+    if (scaled >= count) return count;
+    const index = Math.floor(scaled);
+    const local = scaled - index;
+    const holdStart = SERVICE_STATION_DWELL_EDGE;
+    const holdEnd = 1 - SERVICE_STATION_DWELL_EDGE;
+    if (local <= holdStart) return index;
+    if (local >= holdEnd) return Math.min(count, index + 1);
+    return index + smooth((local - holdStart) / (holdEnd - holdStart));
+  };
 
   let ticking = false;
   let mode = "gate";
@@ -134,15 +162,15 @@
     const tunnelExit = smooth(clamp01(postPortalProgress / 0.12));
     const timeProgress = smooth(clamp01((postPortalProgress - 0.1) / 0.16));
     const cardProgress = smooth(clamp01((postPortalProgress - 0.26) / 0.14));
-    const stationProgress = smooth(clamp01((postPortalProgress - 0.38) / 0.52));
-    const outro = smooth(clamp01((postPortalProgress - 0.92) / 0.08));
+    const stationProgress = smooth(clamp01((postPortalProgress - SERVICE_STATION_START) / (SERVICE_STATION_END - SERVICE_STATION_START)));
+    const outro = smooth(clamp01((postPortalProgress - SERVICE_OUTRO_START) / (1 - SERVICE_OUTRO_START)));
     const titleOpacity = reducedMotion ? 1 : clamp01(1 - smooth(clamp01((progress - 0.32) / 0.14)));
     const cardOpacity = reducedMotion ? 1 : clamp01(cardProgress * (1 - outro));
     const tunnelOpacity = reducedMotion ? 0 : clamp01((0.9 + portalReveal * 0.1) * (1 - tunnelExit * 0.26) * (1 - cardProgress * 0.34));
     const timeOpacity = reducedMotion ? 0 : clamp01(timeProgress * (1 - cardProgress * 0.04) * (1 - outro));
     const blackoutOpacity = reducedMotion ? 0 : clamp01(tunnelExit * (1 - cardProgress * 0.58) * (1 - outro * 0.85));
     const stationCount = Math.max(1, panels.length - 1);
-    const stationPosition = stationProgress * stationCount;
+    const stationPosition = stationPositionFromProgress(stationProgress, stationCount);
 
     section.style.setProperty("--services-portal-reveal", portalReveal.toFixed(4));
     section.style.setProperty("--services-portal-expand", portalExpand.toFixed(4));
@@ -302,7 +330,7 @@
     const progress = clamp01((now - sequenceStart) / AUTO_DURATION);
     clearAboutHandoff();
     writeProgress(progress);
-    scrollToSequenceProgress(progress);
+    scrollToSequenceProgress(scrollProgressFromSequenceProgress(progress));
     if (progress >= 1) {
       finishSequence();
       return;
@@ -319,7 +347,9 @@
     setReleaseClass(false);
     sequenceStartY = Math.max(currentScrollY(), sectionTop());
     sequenceEndY = Math.max(sequenceStartY + 1, worksTransitionTop());
-    const initialProgress = fromBridge ? BRIDGE_SEQUENCE_START_PROGRESS : 0;
+    const initialProgress = fromBridge
+      ? BRIDGE_SEQUENCE_START_PROGRESS
+      : MANUAL_SEQUENCE_START_PROGRESS;
     writeProgress(initialProgress);
     scrollToSequenceProgress(initialProgress);
     window.dispatchEvent(new CustomEvent("lucian:services-sequence-start", {
