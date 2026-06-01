@@ -16,6 +16,7 @@
   let transitionActive = false;
   let transitionToken = 0;
   let transitionTimers = [];
+  let jumpSettleTimers = [];
   let activeSection = "about";
   let ticking = false;
   let pendingHashTarget = window.location.hash?.slice(1) || "";
@@ -49,7 +50,7 @@
 
     if (id === "about") {
       const scrollable = Math.max(0, target.scrollHeight - vh);
-      return Math.max(0, target.offsetTop + scrollable * 0.18);
+      return Math.max(0, target.offsetTop + scrollable * 0.36);
     }
 
     if (id === "services") {
@@ -104,6 +105,35 @@
   const clearTransitionTimers = () => {
     transitionTimers.forEach((timer) => window.clearTimeout(timer));
     transitionTimers = [];
+  };
+
+  const clearJumpSettleTimers = () => {
+    jumpSettleTimers.forEach((timer) => window.clearTimeout(timer));
+    jumpSettleTimers = [];
+  };
+
+  const applyJumpTop = (top) => {
+    window.scrollTo({ top, left: 0, behavior: "auto" });
+    document.documentElement.scrollTop = top;
+    document.body.scrollTop = top;
+  };
+
+  const scheduleJumpSettle = (id, top, source) => {
+    if (!["bottom-nav", "anchor", "hashchange", "initial-hash"].includes(source)) return;
+    clearJumpSettleTimers();
+
+    const settle = () => {
+      if (window.location.hash && window.location.hash !== `#${id}`) return;
+      applyJumpTop(top);
+      setActiveNavTarget(id);
+      window.LucianServicesStory?.refresh?.();
+      window.LucianWorksFlowingMenu?.refresh?.();
+    };
+
+    window.requestAnimationFrame(settle);
+    [90, 220, 420].forEach((delay) => {
+      jumpSettleTimers.push(window.setTimeout(settle, delay));
+    });
   };
 
   const getTransitionOverlay = () => {
@@ -165,9 +195,8 @@
 
     const top = Math.round(topFor(id));
     document.documentElement.classList.add("nav-jump-instant");
-    window.scrollTo({ top, left: 0, behavior });
-    document.documentElement.scrollTop = top;
-    document.body.scrollTop = top;
+    if (behavior === "auto") applyJumpTop(top);
+    else window.scrollTo({ top, left: 0, behavior });
 
     if (updateHash && window.location.hash !== `#${id}`) {
       window.history.pushState(null, "", `#${id}`);
@@ -185,6 +214,7 @@
       window.LucianServicesStory?.refresh?.();
       window.LucianWorksFlowingMenu?.refresh?.();
     });
+    scheduleJumpSettle(id, top, source);
 
     return true;
   };
@@ -329,6 +359,7 @@
 
   const handleReturnToEntry = () => {
     clearPendingHashTimers();
+    clearJumpSettleTimers();
     pendingHashTarget = "";
     setHashJumpPending(false);
     resetTransitionLayers({ removeNodes: true });

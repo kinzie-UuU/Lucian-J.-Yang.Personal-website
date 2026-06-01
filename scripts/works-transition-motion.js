@@ -23,7 +23,7 @@
 
     const enter = range(progress, 0.02, 0.2);
     const copy = range(progress, 0.08, 0.2);
-    const line2 = range(progress, 0.12, 0.24);
+    const statement = range(progress, 0.08, 0.22);
     const note = range(progress, 0.22, 0.38);
     const exit = range(progress, 0.86, 0.96);
     const axisReveal = range(progress, 0.3, 0.42) * (1 - range(progress, 0.92, 1));
@@ -34,8 +34,8 @@
 
     setProgress(transition, "--works-enter", enter);
     setProgress(transition, "--works-copy-reveal", copy);
-    setProgress(transition, "--works-line-1", copy);
-    setProgress(transition, "--works-line-2", line2);
+    setProgress(transition, "--works-line-1", statement);
+    setProgress(transition, "--works-line-2", statement);
     setProgress(transition, "--works-note-reveal", note);
     setProgress(transition, "--works-axis-reveal", axisReveal);
     setProgress(transition, "--works-axis-drop", axisDrop);

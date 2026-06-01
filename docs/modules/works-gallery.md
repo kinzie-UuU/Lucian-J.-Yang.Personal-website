@@ -34,6 +34,7 @@ Works is the portfolio index. It renders category rows, hover preview, side rail
 - Consumes `lucian:programmatic-section-jump`.
 - Consumes `lucian:site-entered`.
 - Language runtime calls Gallery refresh after language changes.
+- `#works-transition` uses a paired two-line statement reveal; keep both headline lines synchronized and out of per-glyph scroll splitting for smoother handoff.
 
 ## Data Contracts
 

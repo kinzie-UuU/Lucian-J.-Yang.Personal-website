@@ -30,6 +30,8 @@ Navigation and header controls provide site-level controls: sound, language, ful
 
 - Uses `window.LucianRuntime` for sound, language, cursor, and gallery helpers.
 - `section-flow.js` produces `lucian:programmatic-section-jump`.
+- Bottom-nav programmatic jumps briefly re-settle their scroll target so Services/Works scroll systems cannot steal the first click during handoff states.
+- The About bottom-nav target lands inside the readable About scene, not the pre-reveal gate.
 - Scroll spy consumes `lucian:programmatic-section-jump` and `lucian:site-entered`.
 - Works side rail can call `window.LucianWorkGallery`.
 

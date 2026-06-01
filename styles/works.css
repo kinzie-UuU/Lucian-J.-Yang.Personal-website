@@ -79,17 +79,6 @@
   transform-origin: left center;
 }
 
-.works-transition-line-text.scroll-type-text {
-  transform: none;
-}
-
-.works-transition-line-text .scroll-type-glyph {
-  transform: translate3d(0, var(--type-y), 0) scale(calc(0.985 + var(--type-focus) * 0.015));
-  transition:
-    opacity 160ms linear,
-    transform 420ms cubic-bezier(0.19, 1, 0.22, 1);
-}
-
 .works-transition-line:nth-child(2) .works-transition-line-text {
   --works-line-reveal: var(--works-line-2);
 }

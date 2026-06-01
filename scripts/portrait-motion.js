@@ -226,6 +226,36 @@
     document.body.scrollTop = previousY;
   };
 
+  const settleProgrammaticAboutJump = () => {
+    cancelCenteredRevealArm();
+    centeredRevealActive = false;
+    centeredRevealCompleted = true;
+    centeredRevealBackSuppressed = false;
+    centeredTurnLocked = false;
+    setCenteredRevealClass(false);
+    setPortraitRevealState({ complete: true });
+
+    const rect = section.getBoundingClientRect();
+    const scrollable = Math.max(1, rect.height - window.innerHeight);
+    const progress = clamp01(-rect.top / scrollable);
+    const textEnter = smootherStep(clamp01((progress - 0.2) / 0.3));
+
+    targetEnter = 1;
+    currentEnter = Math.max(currentEnter, 1);
+    targetTextEnter = Math.max(targetTextEnter, textEnter);
+    currentTextEnter = Math.max(currentTextEnter, textEnter);
+    targetProgressValue = Math.max(targetProgressValue, progress);
+    currentProgressValue = Math.max(currentProgressValue, progress);
+    targetExit = 0;
+    currentExit = 0;
+    section.style.setProperty("--portrait-enter", currentEnter.toFixed(4));
+    section.style.setProperty("--portrait-text-enter", currentTextEnter.toFixed(4));
+    section.style.setProperty("--portrait-progress", currentProgressValue.toFixed(4));
+    section.style.setProperty("--portrait-exit", "0.0000");
+    setPortraitVideoTarget(scrollTurnProgress);
+    renderAboutReveal();
+  };
+
   const armCenteredRevealAfterAnchor = () => {
     cancelCenteredRevealArm();
     centeredRevealArmRaf = requestAnimationFrame(() => {
@@ -703,7 +733,12 @@
     advanceCenteredReveal(direction * 720, { source: "keyboard" });
   }, { capture: true });
 
-  window.addEventListener("lucian:programmatic-section-jump", () => {
+  window.addEventListener("lucian:programmatic-section-jump", (event) => {
+    if (event.detail?.targetId === "about") {
+      settleProgrammaticAboutJump();
+      window.requestAnimationFrame(settleProgrammaticAboutJump);
+      return;
+    }
     releaseCenteredReveal({ force: true });
   });
 

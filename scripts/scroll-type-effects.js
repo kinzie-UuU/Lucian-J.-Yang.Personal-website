@@ -18,6 +18,7 @@
   const shouldUseScrollTypeEffect = (node) => {
     if (!(node instanceof HTMLElement)) return false;
     if (!node.closest(SCROLL_TYPE_SCOPE_SELECTOR)) return false;
+    if (node.closest("#works-transition")) return false;
     if (node.closest("svg, canvas, input, textarea, select, option, script, style")) return false;
     if (node.matches(".toggle-icon, .site-svg-filters *, .entry-code-pixels *, .entry-dieline *")) return false;
 
