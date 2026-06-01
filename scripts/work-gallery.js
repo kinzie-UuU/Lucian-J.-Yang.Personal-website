@@ -14,7 +14,6 @@
   let galleryMode = "projects";
   let galleryCategory = "oem";
   let galleryStep = 0;
-  let workDetailRevealRaf = 0;
   let projectDetailObserver = null;
   let gallerySourceItems = [];
   let galleryCurrentProject = null;
@@ -27,7 +26,7 @@
 
   const getCurrentLang = () => runtime?.getCurrentLang?.() || "zh";
   const isCircularGallery = () => workGallery?.classList.contains("is-circular");
-  const isGalleryBrowsingMode = () => galleryMode === "projects" || galleryMode === "index";
+  const isGalleryBrowsingMode = () => galleryMode === "projects";
   const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
 
   const localizedValue = (value) => {
@@ -216,13 +215,9 @@
     };
 
     const openCard = (card) => {
-      if (!card || (galleryMode !== "projects" && galleryMode !== "index")) return;
+      if (!card || galleryMode !== "projects") return;
       const index = Number.parseInt(card.dataset.index || "0", 10);
-      if (galleryMode === "projects") {
-        openProjectDetail(index);
-        return;
-      }
-      openWorkDetail(index);
+      openProjectDetail(index);
     };
 
     const makeCard = (item, index) => {
@@ -478,42 +473,6 @@
     }, { timeout: 1800 });
   };
 
-  const renderWorkDetail = (item, index) => {
-    if (!workDetail) return;
-    const currentLang = getCurrentLang();
-    const title = getGalleryItemTitle(item, index);
-    const copy = galleryText[currentLang];
-    const summary = localizedValue(item.summary) || copy.summary;
-    const body = item.body ? item.body.map(localizedValue) : copy.body;
-    const tags = item.tags ? item.tags.map(localizedValue) : copy.tags;
-    workDetail.innerHTML = `
-      <section class="work-detail-intro">
-        <aside class="work-detail-side">
-          <div>
-            <p class="work-detail-kicker">${copy.project} ${getGalleryDisplayIndex(item, index)}</p>
-            <h4 class="work-detail-name">${title}</h4>
-            <div class="work-detail-tags">
-              ${tags.map((tag) => `<span class="work-detail-tag">${tag}</span>`).join("")}
-            </div>
-          </div>
-          <div class="work-detail-body">
-            <p class="work-detail-copy">${summary}</p>
-            ${body.map((line) => `<p>${line}</p>`).join("")}
-          </div>
-        </aside>
-        <figure class="work-detail-hero" style="--gallery-position: ${item.position || "center"};">
-          <img src="${item.src}" alt="" decoding="async">
-        </figure>
-      </section>
-      <section class="work-detail-full">
-        <figure class="work-detail-full-figure" style="--gallery-position: ${item.position || "center"};">
-          <img src="${item.src}" alt="" decoding="async">
-        </figure>
-      </section>
-    `;
-    workGallery?.style.setProperty("--work-detail-reveal", "0");
-  };
-
   const renderProjectDetail = (project, index) => {
     if (!workDetail || !project) return;
     const currentLang = getCurrentLang();
@@ -562,51 +521,10 @@
         </div>
       </section>
     `;
-    workGallery?.style.setProperty("--work-detail-reveal", "0");
     setupProjectDetailMotion();
   };
 
-  const updateWorkDetailReveal = () => {
-    if (!workGallery || galleryMode !== "detail") return;
-    const figure = workGallery.querySelector(".work-detail-full-figure");
-    if (!figure) return;
-
-    const galleryRect = workGallery.getBoundingClientRect();
-    const figureRect = figure.getBoundingClientRect();
-    const revealLine = galleryRect.top + galleryRect.height * 0.76;
-    const revealDistance = Math.max(320, galleryRect.height * 0.5);
-    const progress = Math.max(0, Math.min(1, (revealLine - figureRect.top) / revealDistance));
-    workGallery.style.setProperty("--work-detail-reveal", progress.toFixed(4));
-  };
-
-  const queueWorkDetailReveal = () => {
-    if (galleryMode !== "detail") return;
-    if (workDetailRevealRaf) return;
-    workDetailRevealRaf = window.requestAnimationFrame(() => {
-      workDetailRevealRaf = 0;
-      updateWorkDetailReveal();
-    });
-  };
-
-  const openWorkDetail = (index) => {
-    if (!workGallery) return;
-    const items = gallerySourceItems.length ? gallerySourceItems : getAllWorkGalleryItems();
-    const item = items[index] || items[0];
-    galleryStep = Math.max(0, Math.min(items.length - 1, index));
-    galleryMode = "detail";
-    destroyCircularGallery();
-    teardownProjectDetailMotion();
-    renderWorkDetail(item, galleryStep);
-    workGallery.classList.add("is-detail");
-    workGallery.classList.remove("is-circular");
-    updateGalleryChromeText();
-    updateGalleryHeader(item, galleryStep);
-    workGallery.scrollTo({ top: 0, behavior: "auto" });
-    queueWorkDetailReveal();
-    runtime?.playUiTone?.("click");
-  };
-
-  const openProjectDetail = (index) => {
+  const openProjectDetail = (index, { playTone = true } = {}) => {
     if (!workGallery) return;
     const projects = gallerySourceItems.length ? gallerySourceItems : getGalleryProjects(galleryCategory);
     const project = projects[index] || projects[0];
@@ -621,7 +539,7 @@
     updateGalleryChromeText();
     updateGalleryHeader(project, galleryStep);
     workGallery.scrollTo({ top: 0, behavior: "auto" });
-    runtime?.playUiTone?.("click");
+    if (playTone) runtime?.playUiTone?.("click");
   };
 
   const returnToGalleryIndex = () => {
@@ -630,7 +548,6 @@
     teardownProjectDetailMotion();
     workGallery.classList.remove("is-detail", "is-project-detail");
     if (workDetail) workDetail.innerHTML = "";
-    workGallery.style.setProperty("--work-detail-reveal", "0");
     galleryCurrentProject = null;
     const projects = getGalleryProjects(galleryCategory);
     buildGalleryItems(projects);
@@ -643,14 +560,6 @@
     if (!workGallery || !galleryOpen) return;
 
     const items = gallerySourceItems.length ? gallerySourceItems : getGalleryProjects(galleryCategory);
-
-    if (galleryMode === "detail") {
-      const item = items[galleryStep] || items[0];
-      teardownProjectDetailMotion();
-      renderWorkDetail(item, galleryStep);
-      updateGalleryHeader(item, galleryStep);
-      return;
-    }
 
     if (galleryMode === "project-detail") {
       const project = galleryCurrentProject || items[galleryStep] || items[0];
@@ -677,29 +586,6 @@
     runtime?.playUiTone?.("click");
   };
 
-  const openFromHeroCard = ({ projectKey, projectIndex = 0, cardName = "Project" } = {}) => {
-    if (!workGallery || !workGalleryTrack || !projectKey) return;
-
-    galleryCategory = projectKey;
-    const projects = getGalleryProjects(projectKey);
-    const initialIndex = Math.max(0, Math.min(projects.length - 1, projectIndex));
-
-    galleryStep = initialIndex;
-    galleryMode = "projects";
-    galleryCurrentProject = null;
-    teardownProjectDetailMotion();
-    workGallery.classList.remove("is-detail");
-    workGallery.classList.remove("is-project-detail");
-    if (workDetail) workDetail.innerHTML = "";
-
-    updateGalleryChromeText();
-    updateGalleryHeader(projects[initialIndex] || projects[0], initialIndex, cardName);
-
-    buildGalleryItems(projects, { defer: true });
-    showGallery();
-    workGallery.scrollTo({ top: 0, behavior: "auto" });
-  };
-
   const getCategoryTitle = (category) => {
     const currentLang = getCurrentLang();
     return galleryText[currentLang]?.categoryTitles?.[category]
@@ -719,7 +605,6 @@
     workGallery.classList.remove("is-detail");
     workGallery.classList.remove("is-project-detail");
     if (workDetail) workDetail.innerHTML = "";
-    workGallery.style.setProperty("--work-detail-reveal", "0");
     updateGalleryChromeText();
     updateGalleryHeader(projects[initialIndex], initialIndex, title);
     buildGalleryItems(projects, { defer: true });
@@ -738,11 +623,22 @@
 
   const openProject = ({ category = "oem", projectIndex = 0, title = "" } = {}) => {
     const parsedIndex = Number.parseInt(projectIndex, 10);
-    openFromHeroCard({
-      projectKey: category,
-      projectIndex: Number.isFinite(parsedIndex) ? parsedIndex : 0,
-      cardName: title || getCategoryTitle(category),
-    });
+    const projects = getGalleryProjects(category);
+    if (!projects.length) {
+      openCategory(category, title || getCategoryTitle(category));
+      return;
+    }
+
+    galleryCategory = category;
+    gallerySourceItems = projects;
+    galleryCurrentProject = null;
+    galleryStep = Math.max(0, Math.min(projects.length - 1, Number.isFinite(parsedIndex) ? parsedIndex : 0));
+    teardownProjectDetailMotion();
+    destroyCircularGallery();
+    if (workGalleryTrack) workGalleryTrack.innerHTML = "";
+    updateGalleryChromeText();
+    showGallery();
+    openProjectDetail(galleryStep, { playTone: false });
   };
 
   const close = () => {
@@ -776,7 +672,6 @@
     document.documentElement.classList.remove("work-gallery-open");
     if (workDetail) workDetail.innerHTML = "";
     if (workGalleryTrack) workGalleryTrack.innerHTML = "";
-    workGallery.style.setProperty("--work-detail-reveal", "0");
     if (workGalleryDescription) workGalleryDescription.textContent = "";
     restorePageScroll();
   };
@@ -792,11 +687,6 @@
 
   workGalleryBack?.addEventListener("click", returnToGalleryIndex);
   workGalleryClose?.addEventListener("click", close);
-  workGallery?.addEventListener("scroll", queueWorkDetailReveal, { passive: true });
-  window.addEventListener("resize", () => {
-    if (!galleryOpen) return;
-    queueWorkDetailReveal();
-  });
   window.addEventListener("keydown", (event) => {
     if (event.key === "Escape" && document.querySelector("#wechat-qr-modal.is-open")) return;
     if (event.key === "Escape") close();
@@ -809,7 +699,6 @@
     close,
     openCategory,
     openProject,
-    openFromHeroCard,
     refreshLanguage,
   };
 })();

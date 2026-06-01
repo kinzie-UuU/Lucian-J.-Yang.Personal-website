@@ -288,10 +288,6 @@ body.scroll-curtain-locking {
     transform: none;
   }
 
-  .work-gallery {
-    --work-detail-reveal: 1;
-  }
-
   .services-section {
     min-height: auto;
   }
@@ -329,7 +325,6 @@ body.scroll-curtain-locking {
   --scene-scale: 1;
 }
 
-.works-list-header,
 .works-list,
 .contact-section .section-head,
 .contact-form,
@@ -344,7 +339,6 @@ body.scroll-curtain-locking {
     transform 520ms cubic-bezier(0.19, 1, 0.22, 1);
 }
 
-.works-list-header,
 .works-list,
 .contact-form,
 .contact-social {

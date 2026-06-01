@@ -28,8 +28,6 @@
     const exit = range(progress, 0.86, 0.96);
     const axisReveal = range(progress, 0.3, 0.42) * (1 - range(progress, 0.92, 1));
     const axisDrop = range(progress, 0.42, 0.9);
-    const headerEnter = range(progress, 0.92, 0.99)
-      || smooth(clamp01((vh * 0.86 - worksRect.top) / (vh * 0.52)));
     const listEnter = smooth(clamp01((vh * 0.56 - worksRect.top) / (vh * 0.58)));
 
     setProgress(transition, "--works-enter", enter);
@@ -41,7 +39,6 @@
     setProgress(transition, "--works-axis-drop", axisDrop);
     setProgress(transition, "--works-exit", exit);
     setProgress(transition, "--works-handoff", exit);
-    setProgress(worksSection, "--works-header-enter", headerEnter);
     setProgress(worksSection, "--works-list-enter", listEnter);
   };
 

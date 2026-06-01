@@ -34,6 +34,7 @@ Works is the portfolio index. It renders category rows, hover preview, side rail
 - Consumes `lucian:programmatic-section-jump`.
 - Consumes `lucian:site-entered`.
 - Language runtime calls Gallery refresh after language changes.
+- Gallery runtime modes are category project browsing and project detail; Works rows with project indexes skip the category browsing screen.
 - `#works-transition` uses a paired two-line statement reveal; keep both headline lines synchronized and out of per-glyph scroll splitting for smoother handoff.
 
 ## Data Contracts
@@ -55,7 +56,8 @@ Category ids must stay aligned across Works rows, side rail targets, image data,
 
 ## QA
 
-- Rows open expected categories.
+- Works rows with `data-project-index` open the matching project detail directly.
+- Category-only entries, such as the Works side rail, open the category project index first.
 - Side rail opens expected categories/projects.
 - Hover preview follows rows and does not cover controls.
 - Gallery close/back/detail flows work.

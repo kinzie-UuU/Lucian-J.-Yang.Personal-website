@@ -118,7 +118,6 @@ html[lang="en"] .works-transition-note {
 /* Works list ---------------------------------------------------------------- */
 .works-section {
   --works-list-enter: 0;
-  --works-header-enter: 0;
   position: relative;
   z-index: 3;
   width: 100%;
@@ -127,7 +126,7 @@ html[lang="en"] .works-transition-note {
   flex-direction: column;
   justify-content: center;
   align-items: stretch;
-  gap: clamp(20px, 3svh, 36px);
+  gap: 0;
   padding: clamp(78px, 10svh, 126px) 0 clamp(140px, 15svh, 190px);
   color: #f3efe7;
   background-color: #020303;
@@ -156,34 +155,6 @@ html[lang="en"] .works-transition-note {
   mask-image: radial-gradient(ellipse at 50% 50%, #000 0 44%, transparent 76%);
 }
 
-.works-list-header {
-  width: min(100%, calc(100vw - clamp(56px, 10vw, 168px)));
-  margin: 0 auto;
-  display: flex;
-  align-items: end;
-  justify-content: space-between;
-  gap: clamp(18px, 5vw, 80px);
-  color: rgba(248, 245, 239, 0.72);
-  opacity: var(--works-header-enter);
-  transform:
-    translate3d(0, calc((1 - var(--works-header-enter)) * 24px), 0)
-    scale(calc(0.985 + var(--works-header-enter) * 0.015));
-  transform-origin: center;
-}
-
-.works-list-kicker {
-  margin: 0;
-}
-
-.works-list-kicker {
-  font-family: var(--font-mono);
-  font-size: clamp(0.72rem, 0.92vw, 0.88rem);
-  line-height: 1.35;
-  letter-spacing: 0;
-  text-transform: uppercase;
-  color: rgba(255, 95, 104, 0.82);
-}
-
 .works-list {
   width: 100vw;
   list-style: none;
@@ -194,13 +165,6 @@ html[lang="en"] .works-transition-note {
     translate3d(0, calc((1 - var(--works-list-enter)) * 34px), 0)
     scale(calc(0.985 + var(--works-list-enter) * 0.015));
   transform-origin: center;
-}
-
-.works-section .works-list-header {
-  opacity: var(--works-header-enter);
-  transform:
-    translate3d(0, calc((1 - var(--works-header-enter)) * 24px), 0)
-    scale(calc(0.985 + var(--works-header-enter) * 0.015));
 }
 
 .works-section .works-list {
@@ -490,13 +454,6 @@ html[lang="en"] .works-flowing-menu-text {
     gap: 18px;
   }
 
-  .works-list-header {
-    width: calc(100vw - 36px);
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-  }
-
   .works-row {
     grid-template-columns: 2rem minmax(0, 1fr) 2rem;
     min-height: clamp(76px, 10svh, 106px);
@@ -570,7 +527,6 @@ html[lang="en"] .works-flowing-menu-text {
     transform: none;
   }
 
-  .works-section .works-list-header,
   .works-section .works-list {
     opacity: 1;
     transform: none;
