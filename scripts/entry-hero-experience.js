@@ -26,6 +26,7 @@
   const HERO_HANDOFF_TRIGGER = 0.10;
   const HERO_HANDOFF_RESET = 0.02;
   const HERO_HANDOFF_MS = 1550;
+  const HERO_HANDOFF_RELEASE_MS = 180;
 
   let entryTransitionLocked = false;
   let entryTransitionReleaseTimer = 0;
@@ -38,6 +39,9 @@
   let heroHandoffActive = false;
   let heroHandoffComplete = false;
   let heroHandoffTimer = 0;
+  let heroHandoffReleaseTimer = 0;
+  let heroHandoffSettleRaf = 0;
+  let heroHandoffSettleUntil = 0;
   let heroWasReadyForHandoff = false;
   let postEntryGuardUntil = 0;
   let postEntryGuardTimer = 0;
@@ -186,6 +190,11 @@
     setClass(document.body, "hero-about-handoff-settled", settled);
   };
 
+  const setReleaseClass = (releasing) => {
+    setClass(document.documentElement, "hero-about-handoff-releasing", releasing);
+    setClass(document.body, "hero-about-handoff-releasing", releasing);
+  };
+
   const readHeroPast = () => {
     if (!heroSection) return 0;
     const rect = heroSection.getBoundingClientRect();
@@ -245,6 +254,28 @@
     document.body.scrollTop = settleTargetY;
   };
 
+  const stopAboutEntrySettleLock = () => {
+    if (heroHandoffSettleRaf) cancelAnimationFrame(heroHandoffSettleRaf);
+    heroHandoffSettleRaf = 0;
+    heroHandoffSettleUntil = 0;
+  };
+
+  const startAboutEntrySettleLock = (duration = HERO_HANDOFF_RELEASE_MS + 520) => {
+    stopAboutEntrySettleLock();
+    heroHandoffSettleUntil = performance.now() + duration;
+
+    const keepSettled = () => {
+      settleAboutEntry();
+      if (performance.now() >= heroHandoffSettleUntil) {
+        stopAboutEntrySettleLock();
+        return;
+      }
+      heroHandoffSettleRaf = requestAnimationFrame(keepSettled);
+    };
+
+    keepSettled();
+  };
+
   const syncHeroReadyState = () => {
     const ready = isHeroReadyForHandoff();
     if (ready && !heroWasReadyForHandoff) startPostEntryGuard();
@@ -255,28 +286,50 @@
   const finishHeroAboutHandoff = () => {
     const targetY = targetAboutEntryTop();
     settleTargetY = targetY;
-    settleGuardUntil = performance.now() + 720;
+    setReleaseClass(true);
+    settleGuardUntil = performance.now() + HERO_HANDOFF_RELEASE_MS + 360;
     window.scrollTo({ top: targetY, left: 0, behavior: "auto" });
     document.documentElement.scrollTop = targetY;
     document.body.scrollTop = targetY;
+    startAboutEntrySettleLock();
 
-    window.requestAnimationFrame(() => {
+    const completeRelease = () => {
+      settleAboutEntry();
+      heroStage?.classList.remove("is-curtain-down");
+      setHandoffClass(false);
+      setSettledClass(true);
+      heroHandoffActive = false;
+      heroHandoffComplete = true;
+      settleGuardUntil = 0;
+      window.requestAnimationFrame(() => {
+        setReleaseClass(false);
+      });
+      window.dispatchEvent(new CustomEvent("lucian:hero-about-handoff", {
+        detail: { complete: true, targetY },
+      }));
+    };
+
+    const primeAboutEntry = () => {
       if (window.LucianAboutMotion?.startCenteredReveal) {
         window.LucianAboutMotion.startCenteredReveal({
           anchorY: targetY,
           initialEnter: 0.12,
         });
-        settleGuardUntil = 0;
       } else {
         window.LucianAboutMotion?.primeEntry?.(0.04);
       }
-      setHandoffClass(false);
-      setSettledClass(true);
-      heroHandoffActive = false;
-      heroHandoffComplete = true;
-      window.dispatchEvent(new CustomEvent("lucian:hero-about-handoff", {
-        detail: { complete: true, targetY },
-      }));
+    };
+
+    window.requestAnimationFrame(() => {
+      primeAboutEntry();
+      window.requestAnimationFrame(() => {
+        window.clearTimeout(heroHandoffReleaseTimer);
+        if (reducedMotion) {
+          completeRelease();
+          return;
+        }
+        heroHandoffReleaseTimer = window.setTimeout(completeRelease, HERO_HANDOFF_RELEASE_MS);
+      });
     });
   };
 
@@ -286,8 +339,10 @@
     heroCurtainRaised = true;
     setHandoffClass(true);
     setSettledClass(false);
+    setReleaseClass(false);
     heroStage.classList.add("is-curtain-down");
     window.clearTimeout(heroHandoffTimer);
+    window.clearTimeout(heroHandoffReleaseTimer);
 
     if (reducedMotion) {
       finishHeroAboutHandoff();
@@ -304,7 +359,10 @@
     heroCurtainRaised = false;
     settleGuardUntil = 0;
     settleTargetY = 0;
+    window.clearTimeout(heroHandoffReleaseTimer);
+    stopAboutEntrySettleLock();
     setHandoffClass(false);
+    setReleaseClass(false);
     setSettledClass(false);
     heroStage?.classList.remove("is-curtain-down");
   }
@@ -422,7 +480,10 @@
     window.clearTimeout(entryTransitionReleaseTimer);
     window.clearTimeout(postEntryGuardTimer);
     window.clearTimeout(heroHandoffTimer);
+    window.clearTimeout(heroHandoffReleaseTimer);
+    stopAboutEntrySettleLock();
     setHandoffClass(false);
+    setReleaseClass(false);
     window.removeEventListener("scroll", onHeroScroll);
     window.removeEventListener("resize", updateHeroAboutHandoff);
   }, { once: true });

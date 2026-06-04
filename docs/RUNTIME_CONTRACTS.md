@@ -146,6 +146,7 @@ Only one system should own scroll locking or forced scroll position at a time.
 
 - Entry owns scroll blocking before the site is entered.
 - Hero owns Hero-to-About handoff locking.
+- Hero-to-About uses `hero-about-handoff-active`, `hero-about-handoff-releasing`, and `hero-about-handoff-settled`; the releasing state keeps the screen covered after About has been primed so intermediate Hero/About geometry is not exposed.
 - About owns the timed bridge into Services.
 - Services owns its automatic sequence and release.
 - Works-to-Contact curtain owns its transition lock.

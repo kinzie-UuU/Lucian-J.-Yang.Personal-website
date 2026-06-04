@@ -36,6 +36,7 @@ Hero is the main visual stage after entry. It combines WebGL water, pointer ripp
 - `window.LucianLiquidField`
 - consumes `window.LucianRuntime.heroRipples`
 - produces `lucian:hero-about-handoff`
+- `entry-hero-experience.js` owns the black-curtain cover, primes About while covered, keeps a short `hero-about-handoff-releasing` hold, then releases after the About scroll target has settled.
 
 ## Change Checklist
 
@@ -52,3 +53,4 @@ Hero is the main visual stage after entry. It combines WebGL water, pointer ripp
 - Liquid field renders and resizes.
 - Lion model loads, renders, and responds to interaction.
 - Hero-to-About transition covers, lands, and releases scroll.
+- During Hero-to-About release, About stays aligned instead of flashing a partial intermediate position.

@@ -184,6 +184,7 @@ body.is-unfolding .entry-progress-bar {
   z-index: 18;
   pointer-events: none;
   background: #000;
+  opacity: 1;
   transform: translate3d(0, 102%, 0);
   transition: transform 1450ms cubic-bezier(0.76, 0, 0.24, 1);
   will-change: transform;
@@ -196,6 +197,27 @@ body.hero-about-handoff-active .hero-curtain {
 
 .hero-stage.is-curtain-down .hero-curtain {
   transform: translate3d(0, 0, 0);
+}
+
+body.hero-about-handoff-releasing .hero-section,
+body.hero-about-handoff-releasing .hero-stage,
+body.hero-about-handoff-settled .hero-section,
+body.hero-about-handoff-settled .hero-stage {
+  background: #000;
+  border-color: transparent;
+}
+
+html.hero-about-handoff-releasing,
+body.hero-about-handoff-releasing,
+html.hero-about-handoff-settled,
+body.hero-about-handoff-settled {
+  background: #000;
+}
+
+body.hero-about-handoff-settled .hero-stage > :not(.hero-curtain),
+body.hero-about-handoff-releasing .hero-stage > :not(.hero-curtain) {
+  opacity: 0;
+  transition: opacity 120ms ease;
 }
 
 @media (prefers-reduced-motion: reduce) {
