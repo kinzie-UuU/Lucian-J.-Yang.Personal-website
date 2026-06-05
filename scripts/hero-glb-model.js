@@ -549,7 +549,7 @@
     const pbr = materialDef.pbrMetallicRoughness || {};
     const factor = pbr.baseColorFactor || [1, 1, 1, 1];
     const material = new THREE.MeshStandardMaterial({
-      color: new THREE.Color(factor[0], factor[1], factor[2]).multiplyScalar(0.9),
+      color: new THREE.Color(0x0a0c10),
       roughness: pbr.roughnessFactor ?? 0.08,
       metalness: Math.max(pbr.metallicFactor ?? 0, 0.98),
       transparent: materialDef.alphaMode === "BLEND" || factor[3] < 1,
@@ -560,11 +560,8 @@
     if (pbr.baseColorTexture) {
       applyTexture(loadTexture(json, buffers, pbr.baseColorTexture, { color: true }), (map) => {
         material.map = map;
-        material.color = new THREE.Color(0x0a0c10);
         material.needsUpdate = true;
       });
-    } else {
-      material.color = new THREE.Color(0x0a0c10);
     }
 
     if (materialDef.normalTexture) {

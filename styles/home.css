@@ -288,7 +288,7 @@ body.hero-model-ready .hero-model-scene {
 .hero-model-canvas {
   position: absolute;
   inset: 0;
-  z-index: 2;
+  z-index: 3;
   display: block;
   width: 100%;
   height: 100%;
@@ -305,7 +305,7 @@ body.hero-model-orbiting .hero-model-canvas {
   position: absolute;
   left: 50%;
   top: 51%;
-  z-index: 3;
+  z-index: 2;
   width: max-content;
   max-width: none;
   margin: 0;
@@ -442,7 +442,7 @@ body.hero-model-orbiting .hero-model-canvas {
 
 .hero-wordmark-ripple-canvas {
   position: absolute;
-  z-index: 3;
+  z-index: 4;
   width: 1px;
   height: 1px;
   pointer-events: none;
