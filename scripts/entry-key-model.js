@@ -5,6 +5,15 @@
 
   const modelUrl = canvas.dataset.modelSrc;
   if (!modelUrl) return;
+  const fallbackEnter = () => {
+    document.body.classList.add("entry-key-ready");
+    document.getElementById("entry-progress")?.replaceChildren("[100%]");
+    const fill = document.getElementById("entry-progress-fill");
+    if (fill) fill.style.width = "100%";
+    window.requestAnimationFrame(() => {
+      window.dispatchEvent(new CustomEvent("entry-key-ready"));
+    });
+  };
 
   /* ─── GLB parser (adapted from hero-glb-model.js) ─── */
   const componentTypes = {
@@ -144,7 +153,14 @@
   const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 50);
   camera.position.set(0, 0, 3.6);
 
-  const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+  let renderer = null;
+  try {
+    renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+  } catch (error) {
+    console.warn("[entry-key-model] WebGL unavailable:", error.message);
+    fallbackEnter();
+    return;
+  }
   renderer.setClearColor(0x000000, 0);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   if (renderer.outputColorSpace !== undefined) renderer.outputColorSpace = "srgb";
@@ -334,7 +350,7 @@
 
   init().catch((err) => {
     console.warn("[entry-key-model] Failed:", err.message);
-    // Fallback: don't hide OPEN button, user can still click manually
+    fallbackEnter();
   });
 
   // Cleanup on page hide

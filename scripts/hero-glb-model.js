@@ -538,7 +538,14 @@
     });
   });
 
-  const makeMaterial = async (json, buffers, materialDef = {}) => {
+  const applyTexture = (promise, apply) => {
+    promise.then((texture) => {
+      if (!texture) return;
+      apply(texture);
+    }).catch(() => null);
+  };
+
+  const makeMaterial = (json, buffers, materialDef = {}) => {
     const pbr = materialDef.pbrMetallicRoughness || {};
     const factor = pbr.baseColorFactor || [1, 1, 1, 1];
     const material = new THREE.MeshStandardMaterial({
@@ -551,40 +558,40 @@
     });
 
     if (pbr.baseColorTexture) {
-      const map = await loadTexture(json, buffers, pbr.baseColorTexture, { color: true });
-      if (map) {
+      applyTexture(loadTexture(json, buffers, pbr.baseColorTexture, { color: true }), (map) => {
         material.map = map;
         material.color = new THREE.Color(0x0a0c10);
-      }
+        material.needsUpdate = true;
+      });
     } else {
       material.color = new THREE.Color(0x0a0c10);
     }
 
     if (materialDef.normalTexture) {
-      const normalMap = await loadTexture(json, buffers, materialDef.normalTexture);
-      if (normalMap) {
+      applyTexture(loadTexture(json, buffers, materialDef.normalTexture), (normalMap) => {
         material.normalMap = normalMap;
         material.normalScale = new THREE.Vector2(0.72, 0.72);
-      }
+        material.needsUpdate = true;
+      });
     }
 
     if (pbr.metallicRoughnessTexture) {
-      const packedMap = await loadTexture(json, buffers, pbr.metallicRoughnessTexture);
-      if (packedMap) {
+      applyTexture(loadTexture(json, buffers, pbr.metallicRoughnessTexture), (packedMap) => {
         material.roughnessMap = packedMap;
         material.aoMap = packedMap;
         material.aoMapIntensity = 0.72;
         material.roughness = 0.42;
         material.metalness = 0.9;
-      }
+        material.needsUpdate = true;
+      });
     }
 
     if (materialDef.occlusionTexture) {
-      const aoMap = await loadTexture(json, buffers, materialDef.occlusionTexture);
-      if (aoMap) {
+      applyTexture(loadTexture(json, buffers, materialDef.occlusionTexture), (aoMap) => {
         material.aoMap = aoMap;
         material.aoMapIntensity = materialDef.occlusionTexture.strength ?? 0.72;
-      }
+        material.needsUpdate = true;
+      });
     }
 
     if (materialDef.emissiveFactor) {
@@ -597,8 +604,10 @@
     }
 
     if (materialDef.emissiveTexture) {
-      const emissiveMap = await loadTexture(json, buffers, materialDef.emissiveTexture, { color: true });
-      if (emissiveMap) material.emissiveMap = emissiveMap;
+      applyTexture(loadTexture(json, buffers, materialDef.emissiveTexture, { color: true }), (emissiveMap) => {
+        material.emissiveMap = emissiveMap;
+        material.needsUpdate = true;
+      });
     }
 
     material.envMapIntensity = 1.6;
@@ -607,9 +616,9 @@
   };
 
   const buildModel = async (json, buffers) => {
-    const materials = await Promise.all((json.materials || [{}]).map((material) => (
+    const materials = (json.materials || [{}]).map((material) => (
       makeMaterial(json, buffers, material)
-    )));
+    ));
     const root = new THREE.Group();
     let pedestalFacesRemoved = 0;
 
