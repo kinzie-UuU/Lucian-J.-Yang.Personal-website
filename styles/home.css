@@ -288,7 +288,7 @@ body.hero-model-ready .hero-model-scene {
 .hero-model-canvas {
   position: absolute;
   inset: 0;
-  z-index: 3;
+  z-index: 2;
   display: block;
   width: 100%;
   height: 100%;
@@ -305,7 +305,7 @@ body.hero-model-orbiting .hero-model-canvas {
   position: absolute;
   left: 50%;
   top: 51%;
-  z-index: 2;
+  z-index: 3;
   width: max-content;
   max-width: none;
   margin: 0;
