@@ -164,7 +164,7 @@
 
     backgroundAudio = new Audio(BACKGROUND_MUSIC_SRC);
     backgroundAudio.loop = true;
-    backgroundAudio.preload = "auto";
+    backgroundAudio.preload = "none";
     backgroundAudio.volume = 0;
     return backgroundAudio;
   };

@@ -55,7 +55,7 @@
         .catch(() => {});
     })();
   </script>
-  <link rel="stylesheet" href="styles/fonts.css?v=20260606-font-priority1">
+  <link rel="stylesheet" href="styles/fonts.css?v=20260606-speed-pass1">
   <link rel="stylesheet" href="styles.css?v=20260523-services-rebuild4">
   <link rel="stylesheet" href="styles/liquid-glass.css?v=20260522-neon-edge1">
   <link rel="stylesheet" href="styles/cursor.css?v=20260522-native-cursor1">
@@ -187,8 +187,8 @@
     <section class="portrait-about-wrapper" id="about">
       <!-- 媒体 sticky 固定，spacer 提供滚动停留空间 -->
       <div class="portrait-canvas">
-        <video class="portrait-video" id="portrait-video" src="videos/portrait-scrub-60fps.mp4" poster="images/9999.png" muted playsinline preload="auto"></video>
-        <img class="portrait-image" src="images/9999.png" alt="" aria-hidden="true">
+        <video class="portrait-video" id="portrait-video" src="videos/portrait-scrub-60fps.mp4" poster="images/9999.png" muted playsinline preload="metadata"></video>
+        <img class="portrait-image" src="images/9999.png" alt="" aria-hidden="true" loading="lazy" decoding="async">
         <div class="portrait-overlay"></div>
         <div class="about-rows reveal">
           <div class="about-layout">
