@@ -10,7 +10,7 @@
   transition: opacity 600ms ease;
 }
 
-body.entry-key-ready .entry-key-canvas {
+body.entry-key-model-ready .entry-key-canvas {
   opacity: 1;
 }
 
@@ -414,22 +414,8 @@ body.hero-model-orbiting .hero-model-canvas {
 }
 
 .hero-model-scene.is-wordmark-rippling .hero-model-wordmark:not(.hero-model-wordmark-intersection) {
-  -webkit-mask-image:
-    radial-gradient(
-      ellipse 18% 78% at var(--wordmark-hover-pos-x) var(--wordmark-hover-pos-y),
-      rgba(0, 0, 0, 0.10) 0 28%,
-      rgba(0, 0, 0, 0.38) 45%,
-      rgba(0, 0, 0, 0.78) 64%,
-      #000 82%
-    );
-  mask-image:
-    radial-gradient(
-      ellipse 18% 78% at var(--wordmark-hover-pos-x) var(--wordmark-hover-pos-y),
-      rgba(0, 0, 0, 0.10) 0 28%,
-      rgba(0, 0, 0, 0.38) 45%,
-      rgba(0, 0, 0, 0.78) 64%,
-      #000 82%
-    );
+  -webkit-mask-image: none;
+  mask-image: none;
 }
 
 .hero-model-scene.is-wordmark-hovering .hero-model-wordmark:not(.hero-model-wordmark-intersection)::before {
@@ -447,14 +433,14 @@ body.hero-model-orbiting .hero-model-canvas {
   height: 1px;
   pointer-events: none;
   opacity: 0;
-  mix-blend-mode: normal;
-  filter: contrast(1.1);
+  mix-blend-mode: multiply;
+  filter: contrast(1.08);
   transition: opacity 180ms ease;
   will-change: opacity;
 }
 
 .hero-model-scene.is-wordmark-rippling .hero-wordmark-ripple-canvas {
-  opacity: 0.96;
+  opacity: 0.38;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -464,18 +450,7 @@ body.hero-model-orbiting .hero-model-canvas {
 }
 
 .hero-model-wordmark-intersection {
-  z-index: 4;
-  color: rgba(17, 25, 27, 0.54);
-  -webkit-text-fill-color: rgba(17, 25, 27, 0.50);
-  -webkit-text-stroke: 0.24px rgba(238, 252, 252, 0.20);
-  clip-path: none;
-  filter: blur(0.08px);
-  mix-blend-mode: multiply;
-  opacity: 0.84;
-  -webkit-mask-image:
-    radial-gradient(ellipse 35% 70% at 50% 51%, #000 0 44%, rgba(0, 0, 0, 0.74) 57%, rgba(0, 0, 0, 0.30) 70%, transparent 86%);
-  mask-image:
-    radial-gradient(ellipse 35% 70% at 50% 51%, #000 0 44%, rgba(0, 0, 0, 0.74) 57%, rgba(0, 0, 0, 0.30) 70%, transparent 86%);
+  display: none;
 }
 
 .hero-model-wordmark-intersection::before,
@@ -484,12 +459,7 @@ body.hero-model-orbiting .hero-model-canvas {
 }
 
 .hero-model-scene.is-wordmark-hovering .hero-model-wordmark-intersection {
-  color: rgba(12, 18, 20, 0.56);
-  -webkit-text-fill-color: rgba(12, 18, 20, 0.52);
-  -webkit-text-stroke-color: rgba(244, 255, 255, 0.18);
-  letter-spacing: 0;
-  opacity: 0.84;
-  filter: blur(0.08px);
+  display: none;
 }
 
 @keyframes heroModelWordmarkBreathe {

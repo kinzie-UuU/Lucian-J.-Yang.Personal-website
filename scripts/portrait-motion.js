@@ -47,9 +47,19 @@
   const CENTERED_AUTO_COMPLETE_PROGRESS = 0.28;
   const VIDEO_FRAME_DURATION = 1 / 60;
   const PORTRAIT_SCRUB_SECONDS = 3;
+  let portraitVideoLoadStarted = !video || !video.dataset.src;
   const portraitEnterFromProgress = (progress) => {
     const enterRaw = clamp01(progress / 0.14);
     return enterRaw * enterRaw * (3 - 2 * enterRaw);
+  };
+
+  const ensurePortraitVideoLoaded = () => {
+    if (!video || portraitVideoLoadStarted) return;
+    const src = video.dataset.src;
+    portraitVideoLoadStarted = true;
+    if (!src) return;
+    video.src = src;
+    video.load();
   };
 
   const setPortraitVideoTarget = (fallbackProgress = scrollTurnProgress) => {
@@ -227,6 +237,7 @@
   };
 
   const settleProgrammaticAboutJump = () => {
+    ensurePortraitVideoLoaded();
     cancelCenteredRevealArm();
     centeredRevealActive = false;
     centeredRevealCompleted = true;
@@ -273,6 +284,7 @@
   };
 
   const activateCenteredReveal = ({ anchorY = sectionTop(), enter = currentEnter } = {}) => {
+    ensurePortraitVideoLoaded();
     cancelCenteredRevealArm();
     centeredRevealActive = true;
     centeredRevealCompleted = false;
@@ -542,6 +554,9 @@
     }
 
     const rect = section.getBoundingClientRect();
+    if (rect.top < window.innerHeight * 1.25 && rect.bottom > -window.innerHeight * 0.35) {
+      ensurePortraitVideoLoaded();
+    }
     const scrollable = rect.height - window.innerHeight;
     if (scrollable <= 0) return;
 
@@ -617,8 +632,21 @@
     scrubVideo();
   }
 
+  if (video && video.dataset.src && "IntersectionObserver" in window) {
+    const portraitVideoObserver = new IntersectionObserver((entries) => {
+      if (!entries.some((entry) => entry.isIntersecting)) return;
+      ensurePortraitVideoLoaded();
+      portraitVideoObserver.disconnect();
+    }, { rootMargin: "85% 0px" });
+    portraitVideoObserver.observe(section);
+    window.addEventListener("pagehide", () => {
+      portraitVideoObserver.disconnect();
+    }, { once: true });
+  }
+
   window.LucianAboutMotion = {
     startCenteredReveal: ({ anchorY = sectionTop(), initialEnter = 0.12 } = {}) => {
+      ensurePortraitVideoLoaded();
       activateCenteredReveal({
         anchorY,
         enter: initialEnter,
@@ -626,6 +654,7 @@
       currentEnter = Math.min(currentEnter, centeredRevealTarget);
     },
     primeEntry: (progress = 0.08) => {
+      ensurePortraitVideoLoaded();
       const entry = portraitEnterFromProgress(progress);
       targetEnter = Math.max(targetEnter, entry);
       targetProgressValue = Math.max(targetProgressValue, progress);

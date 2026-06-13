@@ -4,6 +4,7 @@
   if (!section || !canvas) return;
 
   const prefersReducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
+  const TARGET_FRAME_MS = 1000 / 42;
   const config = {
     animationType: "rotate3d",
     intensity: 1.84,
@@ -212,8 +213,11 @@ void main(){
   let buffer = null;
   let gradientTexture = null;
   let frameId = 0;
+  let initialized = false;
+  let initFailed = false;
   let visible = false;
   let last = performance.now();
+  let lastRenderedAt = 0;
   let elapsed = 0;
   let lastState = { tunnelProgress: 0, cardProgress: 0 };
   const mouseTarget = [0.5, 0.5];
@@ -271,8 +275,11 @@ void main(){
   const resize = () => {
     if (!gl) return;
     const rect = canvas.getBoundingClientRect();
-    const width = Math.max(1, Math.round((rect.width || window.innerWidth || 1) * Math.min(window.devicePixelRatio || 1, 2)));
-    const height = Math.max(1, Math.round((rect.height || window.innerHeight || 1) * Math.min(window.devicePixelRatio || 1, 2)));
+    const viewportWidth = window.innerWidth || 1;
+    const maxDpr = viewportWidth < 720 ? 0.86 : 1.12;
+    const dpr = Math.max(0.72, Math.min(window.devicePixelRatio || 1, maxDpr));
+    const width = Math.max(1, Math.round((rect.width || viewportWidth) * dpr));
+    const height = Math.max(1, Math.round((rect.height || window.innerHeight || 1) * dpr));
     if (canvas.width === width && canvas.height === height) return;
     canvas.width = width;
     canvas.height = height;
@@ -319,6 +326,15 @@ void main(){
   };
 
   const loop = (now) => {
+    if (document.hidden) {
+      stop();
+      return;
+    }
+    if (lastRenderedAt && now - lastRenderedAt < TARGET_FRAME_MS) {
+      frameId = window.requestAnimationFrame(loop);
+      return;
+    }
+    lastRenderedAt = now;
     render(now);
     if (visible && !prefersReducedMotion && lastState.cardProgress < 0.95) {
       frameId = window.requestAnimationFrame(loop);
@@ -327,6 +343,7 @@ void main(){
 
   const start = () => {
     if (frameId || prefersReducedMotion) return;
+    if (!ensureInit()) return;
     last = performance.now();
     frameId = window.requestAnimationFrame(loop);
   };
@@ -342,9 +359,10 @@ void main(){
       tunnelProgress: clamp01(state.tunnelProgress || 0),
       cardProgress: clamp01(state.cardProgress || 0),
     };
+    if (!initialized && (visible || lastState.tunnelProgress > 0.02)) ensureInit();
     if (visible && lastState.cardProgress < 0.95) start();
     else stop();
-    render(performance.now());
+    if (initialized) render(performance.now());
   };
 
   const init = () => {
@@ -397,12 +415,20 @@ void main(){
     render(performance.now());
   };
 
-  try {
-    init();
-  } catch (error) {
-    canvas.dataset.prismaticEngine = "webgl2-init-failed";
-    console.error(error);
-  }
+  const ensureInit = () => {
+    if (initialized) return true;
+    if (initFailed || prefersReducedMotion) return false;
+    try {
+      init();
+      initialized = true;
+      return true;
+    } catch (error) {
+      initFailed = true;
+      canvas.dataset.prismaticEngine = "webgl2-init-failed";
+      console.error(error);
+      return false;
+    }
+  };
 
   canvas.addEventListener("pointermove", (event) => {
     const rect = canvas.getBoundingClientRect();
@@ -412,14 +438,18 @@ void main(){
 
   const observer = new IntersectionObserver(([entry]) => {
     visible = Boolean(entry?.isIntersecting);
-    if (visible) start();
+    if (visible) {
+      ensureInit();
+      start();
+    }
     else stop();
-  }, { threshold: 0.01 });
+  }, { rootMargin: "48% 0px", threshold: 0.01 });
   observer.observe(section);
 
   window.LucianServicesPrismatic = {
     getEngine: () => canvas.dataset.prismaticEngine || null,
     refresh: () => {
+      if (!ensureInit()) return;
       resize();
       render(performance.now());
     },
@@ -428,6 +458,7 @@ void main(){
   };
 
   window.addEventListener("resize", () => {
+    if (!initialized) return;
     resize();
     render(performance.now());
   }, { passive: true });

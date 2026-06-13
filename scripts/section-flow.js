@@ -19,9 +19,11 @@
   let jumpSettleTimers = [];
   let activeSection = "about";
   let ticking = false;
-  let pendingHashTarget = window.location.hash?.slice(1) || "";
   let pendingHashTimers = [];
   let clearHashPendingTimer = 0;
+
+  const readHashTarget = () => (window.location.hash?.slice(1) || "").split("?")[0];
+  let pendingHashTarget = readHashTarget();
 
   const transitionTiming = {
     cover: 120,
@@ -61,7 +63,11 @@
       return Math.max(0, target.offsetTop - safe + vh * 0.06);
     }
 
-    if (id === "contact" || id === "clients") {
+    if (id === "contact") {
+      return Math.max(0, target.offsetTop - safe + vh * 0.04);
+    }
+
+    if (id === "clients") {
       return Math.max(0, target.offsetTop - safe + vh * 0.08);
     }
 
@@ -123,7 +129,7 @@
     clearJumpSettleTimers();
 
     const settle = () => {
-      if (window.location.hash && window.location.hash !== `#${id}`) return;
+      if (window.location.hash && readHashTarget() !== id) return;
       applyJumpTop(top);
       setActiveNavTarget(id);
       window.LucianServicesStory?.refresh?.();
@@ -182,7 +188,10 @@
     activeSection = id;
     setStageClasses(activeSection);
     navItems.forEach((item) => {
-      item.classList.toggle("is-active", item.getAttribute("href") === `#${activeSection}`);
+      const isActive = item.getAttribute("href") === `#${activeSection}`;
+      item.classList.toggle("is-active", isActive);
+      if (isActive) item.setAttribute("aria-current", "page");
+      else item.removeAttribute("aria-current");
     });
     return activeSection;
   };
@@ -286,6 +295,11 @@
     ticking = true;
     window.requestAnimationFrame(() => {
       ticking = false;
+      if (!document.body.classList.contains("has-entered")) {
+        const id = sections.has(pendingHashTarget) ? pendingHashTarget : "about";
+        setActiveNavTarget(id);
+        return;
+      }
       updateActiveNav();
       window.LucianServicesStory?.refresh?.();
     });
@@ -300,7 +314,7 @@
     jumpToSection(id, {
       updateHash: true,
       source: anchor.classList.contains("bottom-nav-item") ? "bottom-nav" : "anchor",
-      withTransition: anchor.classList.contains("bottom-nav-item"),
+      withTransition: false,
     });
   };
 
@@ -330,7 +344,7 @@
   };
 
   const handlePendingHash = (forcedId = "") => {
-    const id = forcedId || pendingHashTarget || window.location.hash?.slice(1);
+    const id = forcedId || pendingHashTarget || readHashTarget();
     if (!id || !sections.has(id)) return;
     if (targetIsSettled(id)) {
       pendingHashTarget = "";
@@ -346,7 +360,7 @@
   };
 
   const schedulePendingHash = () => {
-    const id = window.location.hash?.slice(1) || pendingHashTarget;
+    const id = readHashTarget() || pendingHashTarget;
     if (!id || !sections.has(id)) return;
     pendingHashTarget = id;
     setHashJumpPending(true);
@@ -385,14 +399,14 @@
   window.addEventListener("scroll", refresh, { passive: true });
   window.addEventListener("resize", refresh, { passive: true });
   window.addEventListener("hashchange", () => {
-    const id = window.location.hash?.slice(1);
+    const id = readHashTarget();
     if (id && sections.has(id)) jumpToSection(id, { updateHash: false, source: "hashchange" });
   });
   window.addEventListener("lucian:site-entered", schedulePendingHash);
   window.addEventListener("lucian:return-to-entry", handleReturnToEntry);
   window.addEventListener("pageshow", () => {
     resetTransitionLayers({ removeNodes: true });
-    pendingHashTarget = window.location.hash?.slice(1) || pendingHashTarget;
+    pendingHashTarget = readHashTarget() || pendingHashTarget;
     refresh();
     if (document.body.classList.contains("has-entered")) {
       schedulePendingHash();
@@ -402,7 +416,8 @@
     if (!document.hidden) resetTransitionLayers({ removeNodes: true });
   });
 
-  updateActiveNav();
+  if (document.body.classList.contains("has-entered")) updateActiveNav();
+  else setActiveNavTarget(sections.has(pendingHashTarget) ? pendingHashTarget : "about");
   if (document.body.classList.contains("has-entered")) {
     schedulePendingHash();
   }

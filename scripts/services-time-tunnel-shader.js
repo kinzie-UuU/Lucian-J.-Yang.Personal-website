@@ -4,13 +4,17 @@
   if (!section || !canvas) return;
 
   const prefersReducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
-  const resolutionScale = 0.5;
+  const resolutionScale = 0.42;
+  const TARGET_FRAME_MS = 1000 / 36;
   let gl = null;
   let program = null;
   let buffer = null;
   let frameId = 0;
+  let initialized = false;
+  let initFailed = false;
   let isVisible = false;
   let startTime = performance.now();
+  let lastRenderedAt = 0;
   let lastState = {
     progress: 0,
     tunnelProgress: 0,
@@ -257,7 +261,8 @@ void main() {
     const sectionRect = section.getBoundingClientRect();
     const cssWidth = rect.width || sectionRect.width || window.innerWidth || 1;
     const cssHeight = rect.height || Math.min(Math.max(sectionRect.height, window.innerHeight || 1), window.innerHeight || 1);
-    const dpr = Math.max(1, resolutionScale * (window.devicePixelRatio || 1));
+    const maxDpr = (window.innerWidth || 1) < 720 ? 0.76 : 0.92;
+    const dpr = Math.max(0.56, Math.min(resolutionScale * (window.devicePixelRatio || 1), maxDpr));
     const width = Math.max(1, Math.round(cssWidth * dpr));
     const height = Math.max(1, Math.round(cssHeight * dpr));
     if (canvas.width === width && canvas.height === height) return;
@@ -282,6 +287,15 @@ void main() {
   };
 
   const loop = (now) => {
+    if (document.hidden) {
+      stop();
+      return;
+    }
+    if (lastRenderedAt && now - lastRenderedAt < TARGET_FRAME_MS) {
+      frameId = window.requestAnimationFrame(loop);
+      return;
+    }
+    lastRenderedAt = now;
     render(now);
     if (isVisible && lastState.timeProgress > 0.02 && !prefersReducedMotion) {
       frameId = window.requestAnimationFrame(loop);
@@ -290,6 +304,7 @@ void main() {
 
   const start = () => {
     if (frameId || prefersReducedMotion || lastState.timeProgress <= 0.02) return;
+    if (!ensureInit()) return;
     frameId = window.requestAnimationFrame(loop);
   };
 
@@ -308,6 +323,8 @@ void main() {
       stationProgress: Math.min(1, Math.max(0, state.stationProgress || 0)),
       outro: Math.min(1, Math.max(0, state.outro || 0)),
     };
+    if (!initialized && (isVisible || lastState.timeProgress > 0.02)) ensureInit();
+    if (!initialized) return;
     resize();
     if (isVisible && lastState.timeProgress > 0.02) start();
     else {
@@ -351,23 +368,32 @@ void main() {
     });
   };
 
-  try {
-    init();
-  } catch (error) {
-    canvas.dataset.timeTunnelEngine = "webgl2-init-failed";
-    console.error(error);
-  }
+  const ensureInit = () => {
+    if (initialized) return true;
+    if (initFailed || prefersReducedMotion) return false;
+    try {
+      init();
+      initialized = true;
+      return true;
+    } catch (error) {
+      initFailed = true;
+      canvas.dataset.timeTunnelEngine = "webgl2-init-failed";
+      console.error(error);
+      return false;
+    }
+  };
 
   const observer = new IntersectionObserver(([entry]) => {
     isVisible = Boolean(entry?.isIntersecting);
-    if (isVisible) start();
+    if (isVisible && lastState.timeProgress > 0.02) start();
     else stop();
-  }, { threshold: 0.04 });
+  }, { rootMargin: "36% 0px", threshold: 0.04 });
   observer.observe(section);
 
   window.LucianServicesTimeTunnel = {
     getEngine: () => canvas.dataset.timeTunnelEngine || null,
     refresh: () => {
+      if (!ensureInit()) return;
       resize();
       render(performance.now());
     },
@@ -376,6 +402,7 @@ void main() {
   };
 
   window.addEventListener("resize", () => {
+    if (!initialized) return;
     resize();
     render(performance.now());
   }, { passive: true });

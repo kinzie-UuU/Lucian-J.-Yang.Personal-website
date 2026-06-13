@@ -24,6 +24,7 @@
     let ticking = false;
     let titleFlipTimer = 0;
     let titleFlipLoopTimer = 0;
+    let programmaticEntryTimer = 0;
 
     const setVar = (name, value) => {
       contactSection.style.setProperty(name, value.toFixed(4));
@@ -31,6 +32,17 @@
 
     const setPxVar = (name, value) => {
       contactSection.style.setProperty(name, `${value.toFixed(2)}px`);
+    };
+
+    const runProgrammaticEntry = () => {
+      if (prefersReducedMotion.matches) return;
+      window.clearTimeout(programmaticEntryTimer);
+      contactSection.classList.add("is-contact-jump-entering");
+      requestUpdate();
+      programmaticEntryTimer = window.setTimeout(() => {
+        contactSection.classList.remove("is-contact-jump-entering");
+        programmaticEntryTimer = 0;
+      }, 980);
     };
 
     const triggerTitleFlip = () => {
@@ -85,18 +97,18 @@
 
       const vh = Math.max(1, window.innerHeight);
       const rect = contactSection.getBoundingClientRect();
-      const enter = smootherStep(clamp01((vh * 1.04 - rect.top) / (vh * 0.9)));
-      const settle = smootherStep(clamp01((vh * 0.72 - rect.top) / (vh * 0.68)));
-      const form = smootherStep(clamp01((vh * 0.18 - rect.top) / (vh * 0.52)));
-      const social = smootherStep(clamp01((vh * 0.02 - rect.top) / (vh * 0.48)));
+      const enter = smootherStep(clamp01((vh * 1.12 - rect.top) / (vh * 1.08)));
+      const settle = smootherStep(clamp01((vh * 0.56 - rect.top) / (vh * 0.92)));
+      const form = smootherStep(clamp01((vh * 0.18 - rect.top) / (vh * 0.82)));
+      const social = smootherStep(clamp01((vh * -0.02 - rect.top) / (vh * 0.72)));
 
       setVar("--contact-paper-place", enter);
       setVar("--contact-paper-settle", settle);
       setVar("--contact-form-reveal", form);
       setVar("--contact-form-alpha", form);
       setVar("--contact-social-alpha", social);
-      setPxVar("--contact-form-y", (1 - form) * 36);
-      setPxVar("--contact-social-y", (1 - social) * 28);
+      setPxVar("--contact-form-y", (1 - form) * 48);
+      setPxVar("--contact-social-y", (1 - social) * 34);
       if (titleReadyToFlip()) scheduleTitleFlipLoop(400);
       else stopTitleFlipLoop();
     };
@@ -110,6 +122,10 @@
     update();
     window.addEventListener("scroll", requestUpdate, { passive: true });
     window.addEventListener("resize", requestUpdate);
+    window.addEventListener("lucian:programmatic-section-jump", (event) => {
+      if (event.detail?.targetId !== "contact") return;
+      runProgrammaticEntry();
+    });
     prefersReducedMotion.addEventListener?.("change", requestUpdate);
     if ("IntersectionObserver" in window && contactTitle) {
       const titleObserver = new IntersectionObserver((entries) => {
@@ -121,6 +137,8 @@
       window.addEventListener("pagehide", () => {
         titleObserver.disconnect();
         stopTitleFlipLoop();
+        contactSection.classList.remove("is-contact-jump-entering");
+        window.clearTimeout(programmaticEntryTimer);
         window.clearTimeout(titleFlipTimer);
       }, { once: true });
     }

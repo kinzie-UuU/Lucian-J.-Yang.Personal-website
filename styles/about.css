@@ -194,11 +194,11 @@ body:not(.about-centered-reveal-active) .portrait-about-wrapper:not(.is-portrait
 }
 
 html[lang="zh-CN"] .about-heading {
-  font-family: "MiSans", "PingFang SC", "Microsoft YaHei", sans-serif;
+  font-family: "SkyHeart Clear Serif SC", "Songti SC", SimSun, serif;
   font-size: clamp(2.1rem, 3.2vw, 3.8rem);
   line-height: 1.16;
   letter-spacing: 0;
-  font-weight: 600;
+  font-weight: 400;
   max-width: none;
   word-break: keep-all;
 }
@@ -213,9 +213,9 @@ html[lang="zh-CN"] .about-heading {
   gap: 0;
   margin: clamp(2px, 0.8vh, 10px) 0 0;
   color: rgba(246, 242, 234, 0.96);
-  font-family: "MiSans", "PingFang SC", "Microsoft YaHei", sans-serif;
+  font-family: "SkyHeart Clear Serif SC", "Songti SC", SimSun, serif;
   font-size: clamp(4.35rem, 6.65vw, 7.9rem);
-  font-weight: 700;
+  font-weight: 400;
   line-height: 0.98;
   letter-spacing: 0;
   white-space: nowrap;
@@ -333,8 +333,8 @@ html[lang="zh-CN"] .about-heading {
 }
 
 html[lang="zh-CN"] .about-lead {
-  font-family: "MiSans", "PingFang SC", "Microsoft YaHei", sans-serif;
-  font-weight: 500;
+  font-family: "SkyHeart Clear Serif SC", "Songti SC", SimSun, serif;
+  font-weight: 400;
   font-size: clamp(1.02rem, 1vw, 1.12rem);
   line-height: 1.9;
   letter-spacing: 0.035em;
@@ -345,7 +345,7 @@ html[lang="zh-CN"] .about-lead {
 }
 
 html[lang="zh-CN"] .about-detail {
-  font-family: "MiSans", "PingFang SC", "Microsoft YaHei", sans-serif;
+  font-family: "SkyHeart Clear Serif SC", "Songti SC", SimSun, serif;
   font-weight: 400;
   font-size: 0.88rem;
   line-height: 1.92;

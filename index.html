@@ -55,22 +55,22 @@
         .catch(() => {});
     })();
   </script>
-  <link rel="stylesheet" href="styles/fonts.css?v=20260606-speed-pass1">
+  <link rel="stylesheet" href="styles/fonts.css?v=20260608-skyheart-subset1">
   <link rel="stylesheet" href="styles.css?v=20260523-services-rebuild4">
   <link rel="stylesheet" href="styles/liquid-glass.css?v=20260522-neon-edge1">
   <link rel="stylesheet" href="styles/cursor.css?v=20260522-native-cursor1">
   <link rel="stylesheet" href="styles/typography.css">
-  <link rel="stylesheet" href="styles/home.css?v=20260528-entry-key-unlock1">
+  <link rel="stylesheet" href="styles/home.css?v=20260612-entry-key-unblock1">
   <link rel="stylesheet" href="styles/entry-hero-experience.css?v=20260604-hero-about-release6">
-  <link rel="stylesheet" href="styles/about.css?v=20260528-portrait-center-lock1">
-  <link rel="stylesheet" href="styles/services.css?v=20260526-services-portal-split3">
-  <link rel="stylesheet" href="styles/works.css?v=20260601-works-no-kicker1">
+  <link rel="stylesheet" href="styles/about.css?v=20260608-about-skyheart1">
+  <link rel="stylesheet" href="styles/services.css?v=20260609-services-title-serif1">
+  <link rel="stylesheet" href="styles/works.css?v=20260609-works-transition-copy1">
   <link rel="stylesheet" href="styles/clients.css?v=20260518-no-footer">
   <link rel="stylesheet" href="styles/work-gallery.css?v=20260601-work-deep-clean1">
-  <link rel="stylesheet" href="styles/contact.css?v=20260531-contact-title-pulse2">
-  <link rel="stylesheet" href="styles/navigation.css?v=20260531-nav-paper-fast4">
+  <link rel="stylesheet" href="styles/contact.css?v=20260613-contact-soft-landing2">
+  <link rel="stylesheet" href="styles/navigation.css?v=20260611-bottom-nav-calm1">
   <link rel="stylesheet" href="styles/responsive.css?v=20260523-services-rebuild4">
-  <link rel="stylesheet" href="styles/shared-motion.css?v=20260601-works-no-kicker1">
+  <link rel="stylesheet" href="styles/shared-motion.css?v=20260613-contact-soft-landing2">
   <script src="three.min.js"></script>
 </head>
 <body>
@@ -187,7 +187,7 @@
     <section class="portrait-about-wrapper" id="about">
       <!-- 媒体 sticky 固定，spacer 提供滚动停留空间 -->
       <div class="portrait-canvas">
-        <video class="portrait-video" id="portrait-video" src="videos/portrait-scrub-60fps.mp4" poster="images/9999.png" muted playsinline preload="metadata"></video>
+        <video class="portrait-video" id="portrait-video" data-src="videos/portrait-scrub-60fps.mp4" poster="images/9999.png" muted playsinline preload="none"></video>
         <img class="portrait-image" src="images/9999.png" alt="" aria-hidden="true" loading="lazy" decoding="async">
         <div class="portrait-overlay"></div>
         <div class="about-rows reveal">
@@ -270,9 +270,9 @@
           <span class="works-transition-line-text js-scroll-type-disabled" data-i18n="works_transition_line_1">不是把包装做漂亮</span>
         </section>
         <section class="works-transition-line">
-          <span class="works-transition-line-text js-scroll-type-disabled" data-i18n="works_transition_line_2">而是把包装做对</span>
+          <span class="works-transition-line-text js-scroll-type-disabled" data-i18n="works_transition_line_2">而是让包装在真实条件下成立</span>
         </section>
-        <p class="works-transition-note" data-i18n="works_transition_note">Lucian J. Yang 聚焦 OEM、礼赠渠道、系列礼盒与品牌升级项目。比起单纯制造风格，我更关心包装如何在真实约束中成立。</p>
+        <p class="works-transition-note" data-i18n="works_transition_note">我关注的不是单一风格，而是包装能否适配渠道、预算、工艺与交付。从 OEM、礼赠渠道到系列礼盒，我更在意方案能不能被生产、被运输、被销售，并最终完整落地。</p>
       </div>
     </section>
 
@@ -597,7 +597,7 @@
     </ul>
   </nav>
 
-  <script src="site-data.js?v=20260601-works-no-kicker1"></script>
+  <script src="site-data.js?v=20260609-works-transition-copy1"></script>
   <script src="scripts/audio-feedback.js?v=20260528-entry-key-unlock1"></script>
   <script src="scripts/hero-wireframe.js"></script>
   <script src="scripts/hero-water-surface.js?v=20260520-caustics-aqua1"></script>
@@ -610,33 +610,33 @@
   <script src="scripts/flip-text.js"></script>
   <script src="script.js"></script>
   <script src="scripts/liquid-glass-field.js?v=20260522-neon-edge1"></script>
-  <script src="scripts/hero-glb-model.js?v=20260606-front-wordmark1"></script>
+  <script src="scripts/hero-glb-model.js?v=20260612-defer-hero-model1"></script>
   <script src="scripts/services-scroll-story.js?v=20260531-services-final-hold1"></script>
-  <script src="scripts/services-prismatic-burst.js?v=20260524-services-prismatic-aqua1"></script>
-  <script src="scripts/services-time-tunnel-shader.js?v=20260524-services-time-tunnel-clean1"></script>
-  <script src="scripts/work-gallery.js?v=20260601-work-deep-clean1"></script>
+  <script src="scripts/services-prismatic-burst.js?v=20260613-services-light-init1"></script>
+  <script src="scripts/services-time-tunnel-shader.js?v=20260613-services-light-init1"></script>
+  <script src="scripts/work-gallery.js?v=20260613-gallery-lazy-images1"></script>
   <script src="scripts/works-side-rail.js?v=20260521-rail-close-return3"></script>
   <script src="scripts/scrambled-text.js"></script>
   <script src="scripts/header-controls.js?v=20260515-bgm1"></script>
   <script src="scripts/language-controls.js"></script>
-  <script src="scripts/contact-interactions.js?v=20260531-contact-title-pulse2"></script>
+  <script src="scripts/contact-interactions.js?v=20260613-contact-soft-landing2"></script>
   <script src="scripts/scroll-type-effects.js?v=20260601-works-transition-sync1"></script>
   <script src="scripts/reveal-effects.js?v=20260517-works-fast-reveal1"></script>
   <script src="scripts/precision-cursor.js?v=20260512-target-cursor1"></script>
   <script src="scripts/works-hover-preview.js?v=20260523-lazy-flow2"></script>
   <script src="scripts/works-transition-motion.js?v=20260601-works-no-kicker1"></script>
-  <script src="scripts/section-flow.js?v=20260601-bottom-nav-about2"></script>
+  <script src="scripts/section-flow.js?v=20260613-contact-soft-landing2"></script>
   <script src="scripts/site-clock.js"></script>
   <script src="scripts/bottom-nav-scroll-spy.js?v=20260523-services-rebuild4"></script>
   <script src="scripts/clients-marquee.js"></script>
   <script src="scripts/clients-title-interaction.js"></script>
-  <script src="scripts/portrait-motion.js?v=20260601-bottom-nav-about2"></script>
+  <script src="scripts/portrait-motion.js?v=20260613-portrait-lazy-video1"></script>
   <script src="scripts/about-curtain.js?v=20260525-about-services-natural1"></script>
   <script src="scripts/hero-ripples.js"></script>
   <script src="scripts/vendor/gsap/gsap.min.js?v=3.13.0"></script>
   <script src="scripts/vendor/gsap/MorphSVGPlugin.min.js?v=3.13.0"></script>
   <script src="scripts/scroll-curtain-transitions.js?v=20260522-scroll-audit2"></script>
-  <script src="scripts/entry-key-model.js?v=20260605-entry-fallback1"></script>
-  <script src="scripts/entry-hero-experience.js?v=20260604-hero-about-release6"></script>
+  <script src="scripts/entry-key-model.js?v=20260612-entry-key-unblock1"></script>
+  <script src="scripts/entry-hero-experience.js?v=20260612-deep-link-entry1"></script>
 </body>
 </html>

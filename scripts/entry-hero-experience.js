@@ -27,6 +27,7 @@
   const HERO_HANDOFF_RESET = 0.02;
   const HERO_HANDOFF_MS = 1550;
   const HERO_HANDOFF_RELEASE_MS = 180;
+  const DEEP_LINK_TARGETS = new Set(["about", "services", "works", "contact"]);
 
   let entryTransitionLocked = false;
   let entryTransitionReleaseTimer = 0;
@@ -47,6 +48,13 @@
   let postEntryGuardTimer = 0;
   let settleGuardUntil = 0;
   let settleTargetY = 0;
+
+  const readInitialDeepLinkTarget = () => {
+    const id = (window.location.hash || "").slice(1).split("?")[0];
+    return DEEP_LINK_TARGETS.has(id) ? id : "";
+  };
+
+  const initialDeepLinkTarget = readInitialDeepLinkTarget();
 
   const setClass = (target, className, active) => {
     target.classList.toggle(className, active);
@@ -114,8 +122,45 @@
     });
   };
 
+  const quickEnterFromDeepLink = () => {
+    if (!initialDeepLinkTarget || runtime.isEntered()) return false;
+
+    runtime.setEntered(true);
+    entryTransitionLocked = false;
+    window.clearTimeout(entryTransitionReleaseTimer);
+    stopEntryReplayTopLock();
+    document.body.classList.remove(
+      "is-entering",
+      "is-unfolding",
+      "is-entry-curtain-ready",
+      "is-entry-scroll-locked",
+      "is-key-unlocking",
+      "is-entry-replaying"
+    );
+    document.body.classList.add("has-entered", "is-deep-link-entry");
+    entryScreen?.style.removeProperty("display");
+    runtime.setCursorVisible(false);
+
+    requestAnimationFrame(() => {
+      resizeStage();
+      resetHeroSequenceState({ resetScroll: false });
+      dispatchSiteEntered();
+      window.LucianSectionFlow?.jumpToSection?.(initialDeepLinkTarget, {
+        updateHash: false,
+        source: "initial-hash",
+      });
+      window.setTimeout(() => {
+        document.body.classList.remove("is-deep-link-entry");
+      }, 520);
+    });
+
+    return true;
+  };
+
   const enterSite = () => {
     if (runtime.isEntered()) return;
+    if (quickEnterFromDeepLink()) return;
+
     resetHeroSequenceState({ resetScroll: true });
     runtime.setEntered(true);
     lockEntryTransitionScroll(true);
@@ -466,7 +511,9 @@
     if (!runtime.isEntered()) enterSite();
   });
 
-  if (document.body.classList.contains("entry-key-ready") && !runtime.isEntered()) {
+  if (initialDeepLinkTarget && !runtime.isEntered()) {
+    requestAnimationFrame(quickEnterFromDeepLink);
+  } else if (document.body.classList.contains("entry-key-ready") && !runtime.isEntered()) {
     requestAnimationFrame(enterSite);
   }
 

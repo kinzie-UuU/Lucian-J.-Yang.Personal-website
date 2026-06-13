@@ -23,6 +23,7 @@
   let circularCurrentIndex = 0;
   const circularImageCache = new Map();
   let circularPrewarmStarted = false;
+  const transparentPixel = "data:image/gif;base64,R0lGODlhAQABAAAAACw=";
 
   const getCurrentLang = () => runtime?.getCurrentLang?.() || "zh";
   const isCircularGallery = () => workGallery?.classList.contains("is-circular");
@@ -190,6 +191,7 @@
     let columns = [];
     let columnCount = 3;
     let metrics = { width: 1, height: 1, cardWidth: 320, gap: 30 };
+    let lazyImageObserver = null;
     const startedAt = performance.now();
 
     const getLoopIndex = (index) => {
@@ -220,7 +222,27 @@
       openProjectDetail(index);
     };
 
-    const makeCard = (item, index) => {
+    const loadCardImage = (image) => {
+      if (!image?.dataset?.src) return;
+      image.src = image.dataset.src;
+      image.removeAttribute("data-src");
+      image.classList.add("is-loading");
+      image.decode?.()
+        .then(() => image.classList.remove("is-loading"))
+        .catch(() => image.classList.remove("is-loading"));
+    };
+
+    const observeLazyImage = (image, eager = false) => {
+      if (!image) return;
+      if (eager || !lazyImageObserver) {
+        loadCardImage(image);
+        return;
+      }
+      lazyImageObserver.observe(image);
+    };
+
+    const makeCard = (item, index, options = {}) => {
+      const eager = Boolean(options.eager);
       const card = document.createElement("button");
       card.className = "work-waterfall-card";
       if (item.isProject) card.classList.add("is-project-card");
@@ -231,11 +253,20 @@
       const imageCountLabel = getCurrentLang() === "zh" ? `${imageCount} 张图片` : `${imageCount} IMAGES`;
       card.innerHTML = `
         <span class="work-waterfall-image">
-          <img src="${item.src}" alt="" draggable="false" decoding="async">
+          <img
+            src="${eager ? item.src : transparentPixel}"
+            ${eager ? "" : `data-src="${item.src}"`}
+            alt=""
+            draggable="false"
+            decoding="async"
+            loading="${eager ? "eager" : "lazy"}"
+            fetchpriority="${eager ? "high" : "low"}"
+          >
         </span>
         <span class="work-waterfall-title">${getGalleryItemTitle(item, index)}</span>
         ${item.isProject ? `<span class="work-waterfall-count">${imageCountLabel}</span>` : ""}
       `;
+      observeLazyImage(card.querySelector("img"), eager);
       card.addEventListener("click", (event) => {
         if (!isGalleryBrowsingMode()) return;
         if (didDrag || suppressNextClick) {
@@ -258,6 +289,20 @@
     const buildColumns = () => {
       columnCount = getColumnCount();
       root.innerHTML = "";
+      lazyImageObserver?.disconnect();
+      lazyImageObserver = "IntersectionObserver" in window
+        ? new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+            lazyImageObserver?.unobserve(entry.target);
+            loadCardImage(entry.target);
+          });
+        }, {
+          root: workGallery,
+          rootMargin: "140% 0px",
+          threshold: 0.01,
+        })
+        : null;
       const shell = document.createElement("div");
       shell.className = "work-waterfall";
       root.appendChild(shell);
@@ -277,7 +322,9 @@
       repeated.forEach((item, repeatedIndex) => {
         const realIndex = getLoopIndex(repeatedIndex);
         const column = columns[realIndex % columnCount];
-        column.list.appendChild(makeCard(item, realIndex));
+        column.list.appendChild(makeCard(item, realIndex, {
+          eager: repeatedIndex < columnCount * 2,
+        }));
       });
 
       columns.forEach((column) => {
@@ -410,6 +457,8 @@
     circularCleanup = () => {
       disposed = true;
       if (raf) window.cancelAnimationFrame(raf);
+      lazyImageObserver?.disconnect();
+      lazyImageObserver = null;
       window.removeEventListener("resize", resize);
       window.removeEventListener("wheel", onWheel, { capture: true });
       root.removeEventListener("pointerdown", onPointerDown);
@@ -460,17 +509,21 @@
     const runIdle = window.requestIdleCallback || ((callback) => window.setTimeout(callback, 650));
 
     runIdle(() => {
-      const items = getAllWorkGalleryItems();
+      const items = Object.keys(window.workGalleryProjects || {})
+        .flatMap((categoryKey) => getGalleryProjects(categoryKey).slice(0, 2))
+        .slice(0, 10);
       items.forEach((item) => {
-        if (!circularImageCache.has(item.src)) {
+        const src = item.cover || item.src;
+        if (src && !circularImageCache.has(src)) {
           const img = new Image();
           img.decoding = "async";
-          img.src = item.src;
-          circularImageCache.set(item.src, img);
+          img.fetchPriority = "low";
+          img.src = src;
+          circularImageCache.set(src, img);
           if (img.decode) img.decode().catch(() => {});
         }
       });
-    }, { timeout: 1800 });
+    }, { timeout: 2600 });
   };
 
   const renderProjectDetail = (project, index) => {

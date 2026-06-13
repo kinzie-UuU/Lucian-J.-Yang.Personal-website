@@ -545,13 +545,46 @@
     }).catch(() => null);
   };
 
+  const addLionEyeDepth = (material) => {
+    material.onBeforeCompile = (shader) => {
+      shader.vertexShader = shader.vertexShader
+        .replace(
+          "#include <common>",
+          "#include <common>\nvarying vec3 vLjyLocalPosition;"
+        )
+        .replace(
+          "#include <begin_vertex>",
+          "#include <begin_vertex>\nvLjyLocalPosition = transformed;"
+        );
+
+      shader.fragmentShader = shader.fragmentShader
+        .replace(
+          "#include <common>",
+          "#include <common>\nvarying vec3 vLjyLocalPosition;"
+        )
+        .replace(
+          "#include <map_fragment>",
+          `#include <map_fragment>
+          vec2 ljyLeftEye = vec2(-0.048, 0.252);
+          vec2 ljyRightEye = vec2(0.048, 0.252);
+          vec2 ljyEyeScale = vec2(0.030, 0.022);
+          float ljyLeftMask = 1.0 - smoothstep(0.36, 1.08, length((vLjyLocalPosition.xy - ljyLeftEye) / ljyEyeScale));
+          float ljyRightMask = 1.0 - smoothstep(0.36, 1.08, length((vLjyLocalPosition.xy - ljyRightEye) / ljyEyeScale));
+          float ljyEyeMask = max(ljyLeftMask, ljyRightMask);
+          diffuseColor.rgb = mix(diffuseColor.rgb, diffuseColor.rgb * vec3(0.24, 0.22, 0.19), ljyEyeMask * 0.84);`
+        );
+    };
+
+    material.customProgramCacheKey = () => "lion-eye-depth-v2";
+  };
+
   const makeMaterial = (json, buffers, materialDef = {}) => {
     const pbr = materialDef.pbrMetallicRoughness || {};
     const factor = pbr.baseColorFactor || [1, 1, 1, 1];
     const material = new THREE.MeshStandardMaterial({
-      color: new THREE.Color(0x0a0c10),
-      roughness: pbr.roughnessFactor ?? 0.08,
-      metalness: Math.max(pbr.metallicFactor ?? 0, 0.98),
+      color: new THREE.Color(0xf2f0ea),
+      roughness: pbr.roughnessFactor ?? 0.34,
+      metalness: pbr.metallicFactor ?? 0.08,
       transparent: materialDef.alphaMode === "BLEND" || factor[3] < 1,
       opacity: factor[3] ?? 1,
       side: materialDef.doubleSided ? THREE.DoubleSide : THREE.FrontSide,
@@ -577,8 +610,8 @@
         material.roughnessMap = packedMap;
         material.aoMap = packedMap;
         material.aoMapIntensity = 0.72;
-        material.roughness = 0.42;
-        material.metalness = 0.9;
+        material.roughness = 0.38;
+        material.metalness = 0.12;
         material.needsUpdate = true;
       });
     }
@@ -607,7 +640,8 @@
       });
     }
 
-    material.envMapIntensity = 1.6;
+    material.envMapIntensity = 1.28;
+    addLionEyeDepth(material);
     material.needsUpdate = true;
     return material;
   };
@@ -698,6 +732,29 @@
     normalizer.scale.setScalar(1.8 / maxDim);
     normalizer.rotation.set(modelPitch.base, modelYaw.base, -0.03);
     normalizer.userData.pedestalFacesRemoved = pedestalFacesRemoved;
+
+    if (THREE.CircleGeometry) {
+      const eyeMaterial = new THREE.MeshBasicMaterial({
+        color: 0x2f2a23,
+        transparent: true,
+        opacity: 0.24,
+        depthWrite: false,
+        depthTest: true,
+        side: THREE.DoubleSide,
+      });
+      const eyeGeometry = new THREE.CircleGeometry(1, 48);
+      [
+        [-0.047, 0.034, 0.106],
+        [0.051, 0.034, 0.106],
+      ].forEach(([x, y, z]) => {
+        const eyeShade = new THREE.Mesh(eyeGeometry, eyeMaterial);
+        eyeShade.position.set(x, y, z);
+        eyeShade.scale.set(0.010, 0.006, 1);
+        eyeShade.renderOrder = 1;
+        normalizer.add(eyeShade);
+      });
+    }
+
     return { object: normalizer, size, scale: normalizer.scale.x, pedestalFacesRemoved };
   };
 
@@ -1021,8 +1078,27 @@
     animate();
   };
 
-  init().catch((error) => {
-    console.error("Hero GLTF model failed:", error);
-    document.body.classList.add("hero-model-error");
-  });
+  let modelLoadStarted = false;
+  const startHeroModelLoad = () => {
+    if (modelLoadStarted) return;
+    modelLoadStarted = true;
+    init().catch((error) => {
+      console.error("Hero GLTF model failed:", error);
+      document.body.classList.add("hero-model-error");
+    });
+  };
+
+  const scheduleHeroModelLoad = () => {
+    if (document.body.classList.contains("has-entered")) {
+      window.requestAnimationFrame(startHeroModelLoad);
+      return;
+    }
+
+    window.addEventListener("lucian:site-entered", () => {
+      const requestIdle = window.requestIdleCallback || ((callback) => window.setTimeout(callback, 120));
+      requestIdle(startHeroModelLoad, { timeout: 900 });
+    }, { once: true });
+  };
+
+  scheduleHeroModelLoad();
 })();

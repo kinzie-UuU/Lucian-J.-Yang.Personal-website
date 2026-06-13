@@ -5,14 +5,22 @@
 
   const modelUrl = canvas.dataset.modelSrc;
   if (!modelUrl) return;
-  const fallbackEnter = () => {
+
+  let entryReadyDispatched = false;
+  const signalEntryReady = () => {
+    if (entryReadyDispatched) return;
+    entryReadyDispatched = true;
     document.body.classList.add("entry-key-ready");
-    document.getElementById("entry-progress")?.replaceChildren("[100%]");
-    const fill = document.getElementById("entry-progress-fill");
-    if (fill) fill.style.width = "100%";
     window.requestAnimationFrame(() => {
       window.dispatchEvent(new CustomEvent("entry-key-ready"));
     });
+  };
+
+  const fallbackEnter = () => {
+    document.getElementById("entry-progress")?.replaceChildren("[100%]");
+    const fill = document.getElementById("entry-progress-fill");
+    if (fill) fill.style.width = "100%";
+    signalEntryReady();
   };
 
   /* ─── GLB parser (adapted from hero-glb-model.js) ─── */
@@ -283,6 +291,8 @@
   const playProgress = () => {
     if (disposed) return;
     cancelProgress();
+    entryReadyDispatched = false;
+    document.body.classList.remove("entry-key-ready");
     setProgress(0);
     entryProgress = 0;
     unlockStartedAt = 0;
@@ -291,10 +301,7 @@
       model.rotation.z = FRONT_ROTATION_Z;
       if (modelBaseScale) model.scale.setScalar(modelBaseScale);
     }
-    if (!modelLoaded) return;
-
-    document.body.classList.add("entry-key-ready");
-    startAnimation();
+    if (modelLoaded) startAnimation();
 
     const run = ++progressRun;
     const progressStart = performance.now();
@@ -317,7 +324,7 @@
       }
 
       progressRaf = 0;
-      window.dispatchEvent(new CustomEvent("entry-key-ready"));
+      signalEntryReady();
     };
 
     progressRaf = requestAnimationFrame(updateProgress);
@@ -341,12 +348,14 @@
     scene.add(model);
     modelLoaded = true;
 
-    // Signal ready — hide decorations
-    document.body.classList.add("entry-key-ready");
+    // Signal that the decorative model can fade in without unblocking entry timing.
+    document.body.classList.add("entry-key-model-ready");
 
     // Start render loop
-    playProgress();
+    startAnimation();
   };
+
+  playProgress();
 
   init().catch((err) => {
     console.warn("[entry-key-model] Failed:", err.message);

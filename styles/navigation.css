@@ -152,7 +152,6 @@ html[lang="zh-CN"] .nav-paper-label {
 body.nav-transition-active .bottom-nav.pill-nav {
   --pill-bg-active: rgba(247, 244, 238, 0.13);
   --pill-active-text: rgba(247, 244, 238, 0.96);
-  pointer-events: none;
 }
 
 body.nav-transition-active .works-side-rail {
@@ -915,7 +914,7 @@ body .bottom-nav.pill-nav .label-stack {
   z-index: 2;
   display: inline-block;
   height: 1em;
-  overflow: hidden;
+  overflow: visible;
   line-height: 1;
 }
 
@@ -924,25 +923,29 @@ body .bottom-nav.pill-nav .pill-label-hover {
   display: block;
   line-height: 1;
   transform: translate3d(0, 0, 0);
-  transition: transform 520ms cubic-bezier(0.16, 1, 0.3, 1), opacity 360ms ease;
-  will-change: transform, opacity;
+  transition: none;
+  will-change: auto;
 }
 
 body .bottom-nav.pill-nav .pill-label-hover {
-  position: absolute;
-  top: 0;
-  left: 0;
+  display: none;
   color: var(--pill-hover-text);
   opacity: 0;
-  transform: translate3d(0, 125%, 0);
+  transform: none;
 }
 
 body .bottom-nav.pill-nav .pill:hover,
-body .bottom-nav.pill-nav .pill:focus-visible,
+body .bottom-nav.pill-nav .pill:focus-visible {
+  border-color: transparent;
+  background: var(--pill-hover-bg);
+  box-shadow: none;
+  color: var(--pill-hover-text);
+}
+
 body .bottom-nav.pill-nav .pill.is-active {
   border-color: transparent;
   background: var(--pill-bg-active);
-  box-shadow: none;
+  box-shadow: inset 0 0 0 1px rgba(247, 244, 238, 0.16);
   color: var(--pill-active-text);
 }
 
@@ -953,17 +956,18 @@ body .bottom-nav.pill-nav .pill:focus-visible .hover-circle {
 
 body .bottom-nav.pill-nav .pill:hover .pill-label,
 body .bottom-nav.pill-nav .pill:focus-visible .pill-label {
-  transform: translate3d(0, -125%, 0);
+  transform: none;
 }
 
 body .bottom-nav.pill-nav .pill:hover .pill-label-hover,
 body .bottom-nav.pill-nav .pill:focus-visible .pill-label-hover {
-  opacity: 1;
-  transform: translate3d(0, 0, 0);
+  opacity: 0;
+  transform: none;
 }
 
 body .bottom-nav.pill-nav:hover .pill.is-active:not(:hover) {
   background: var(--pill-bg-active);
+  box-shadow: inset 0 0 0 1px rgba(247, 244, 238, 0.16);
   color: var(--pill-active-text);
 }
 
@@ -2135,9 +2139,9 @@ body.nav-transition-active .top-meta-right {
 }
 
 body.hero-about-handoff-active:not(.hero-about-handoff-settled) .top-meta-right {
-  --top-meta-fg: rgba(20, 24, 28, 0.78);
-  --top-meta-fg-muted: rgba(20, 24, 28, 0.62);
-  --top-meta-fg-strong: rgba(20, 24, 28, 0.96);
+  --top-meta-fg: rgba(247, 244, 238, 0.78);
+  --top-meta-fg-muted: rgba(247, 244, 238, 0.64);
+  --top-meta-fg-strong: rgba(255, 255, 255, 0.98);
 }
 
 body .top-meta-line-control,
