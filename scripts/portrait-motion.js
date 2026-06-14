@@ -45,6 +45,8 @@
   const CENTERED_REVEAL_WHEEL_MIN_STEP = 0.34;
   const CENTERED_TURN_START = 0.06;
   const CENTERED_AUTO_COMPLETE_PROGRESS = 0.28;
+  const CENTERED_REVEAL_TOP_LIMIT = 0.62;
+  const CENTERED_REVEAL_ENTRY_TOP = 0.56;
   const VIDEO_FRAME_DURATION = 1 / 60;
   const PORTRAIT_SCRUB_SECONDS = 3;
   let portraitVideoLoadStarted = !video || !video.dataset.src;
@@ -198,7 +200,7 @@
   const isCenteredRevealInRange = () => {
     const rect = section.getBoundingClientRect();
     const vh = window.innerHeight || 1;
-    return rect.top < vh * 0.54 && rect.bottom > vh * 0.34;
+    return rect.top < vh * CENTERED_REVEAL_TOP_LIMIT && rect.bottom > vh * 0.34;
   };
 
   const isCenteredRevealNearTop = () => {
@@ -211,7 +213,7 @@
     const rect = section.getBoundingClientRect();
     const vh = window.innerHeight || 1;
     return (
-      rect.top <= vh * 0.48
+      rect.top <= vh * CENTERED_REVEAL_ENTRY_TOP
       && rect.top > -vh * 0.78
       && rect.bottom > vh * 0.34
       && !document.body.classList.contains("about-services-handoff-active")
@@ -289,7 +291,7 @@
     centeredRevealActive = true;
     centeredRevealCompleted = false;
     const measuredAnchorY = sectionTop();
-    centeredRevealAnchorY = Math.max(0, Math.round(Number.isFinite(measuredAnchorY) ? measuredAnchorY : anchorY));
+    centeredRevealAnchorY = Math.max(0, Math.round(Number.isFinite(anchorY) ? anchorY : measuredAnchorY));
     centeredRevealTarget = clamp01(enter);
     const initialPortraitEnter = centeredRevealTarget > CENTERED_TURN_START
       ? centeredRevealProgress()

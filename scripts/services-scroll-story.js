@@ -240,18 +240,7 @@
     if (document.body.classList.contains("about-services-bridge-active")) return;
     if (mode === "playing") return;
 
-    const y = currentScrollY();
-    const scrollingForward = y > lastScrollY + 8;
-    lastScrollY = y;
-    if (
-      mode === "gate"
-      && scrollingForward
-      && (window.performance?.now?.() || Date.now()) >= suppressBridgeAutoplayUntil
-      && isInGateZone()
-    ) {
-      startSequence();
-      return;
-    }
+    lastScrollY = currentScrollY();
 
     const rect = section.getBoundingClientRect();
     const vh = Math.max(1, window.innerHeight);
@@ -442,12 +431,6 @@
       event.stopPropagation();
       return;
     }
-    if (mode === "gate" && event.deltaY > 0 && isInGateZone()) {
-      event.preventDefault();
-      event.stopPropagation();
-      startSequence();
-      return;
-    }
     requestUpdate();
   }, { passive: false, capture: true });
   window.addEventListener("touchstart", (event) => {
@@ -467,12 +450,6 @@
       event.stopPropagation();
       return;
     }
-    if (mode === "gate" && delta > 10 && isInGateZone()) {
-      event.preventDefault();
-      event.stopPropagation();
-      startSequence();
-      return;
-    }
     requestUpdate();
   }, { passive: false, capture: true });
   window.addEventListener("keydown", (event) => {
@@ -488,12 +465,6 @@
         event.preventDefault();
         event.stopPropagation();
       }
-      return;
-    }
-    if (mode === "gate" && forwardKeys.includes(event.key) && isInGateZone()) {
-      event.preventDefault();
-      event.stopPropagation();
-      startSequence();
       return;
     }
     if (!forwardKeys.includes(event.key) && !backKeys.includes(event.key)) return;

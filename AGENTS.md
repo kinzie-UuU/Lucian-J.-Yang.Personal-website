@@ -59,7 +59,7 @@ node tools/runtime-smoke-check.js
 - Entry: `#entry-screen`, 3D key canvas, progress text/bar, auto-enter, scroll/touch enter, replay from avatar.
 - Hero: water canvas, ripples, wireframe, fixed liquid field, GLB lion-head model, wordmark layers, Hero-to-About curtain.
 - About/Portrait: portrait video/fallback, scroll reveal, video scrub, About-to-Services curtain.
-- Services: sticky title gate, one-scroll locked launch, About handoff cleanup at Services takeover, local WebGL2 black-water PrismaticBurst entry canvas, local WebGL2 time-tunnel canvas, automatic flat in-tunnel service inscription stage.
+- Services: natural scroll-driven sticky title gate, About handoff cleanup at Services takeover, local WebGL2 black-water PrismaticBurst entry canvas, local WebGL2 time-tunnel canvas, flat in-tunnel service inscription stage.
 - Works: five category rows, hover preview, Works side rail, gallery entry.
 - Scroll curtains: Works-to-Contact handoff; Services owns the timed sequence that lands on the Works transition copy screen.
 - Gallery: overlay, category/project browsing, detail page, back/close.
