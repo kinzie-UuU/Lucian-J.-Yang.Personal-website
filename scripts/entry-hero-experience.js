@@ -25,8 +25,11 @@
 
   const HERO_HANDOFF_TRIGGER = 0.10;
   const HERO_HANDOFF_RESET = 0.02;
-  const HERO_HANDOFF_MS = 1550;
+  const HERO_HANDOFF_MS = 1450;
   const HERO_HANDOFF_RELEASE_MS = 180;
+  const HERO_RETURN_TRIGGER = 1.18;
+  const HERO_RETURN_MS = 1450;
+  const HERO_INPUT_DIRECTION_HOLD_MS = 1400;
   const DEEP_LINK_TARGETS = new Set(["about", "services", "works", "contact"]);
 
   let entryTransitionLocked = false;
@@ -39,11 +42,16 @@
   let heroCurtainRaised = false;
   let heroHandoffActive = false;
   let heroHandoffComplete = false;
+  let heroHandoffReturning = false;
   let heroHandoffTimer = 0;
   let heroHandoffReleaseTimer = 0;
+  let heroHandoffReturnTimer = 0;
   let heroHandoffSettleRaf = 0;
   let heroHandoffSettleUntil = 0;
   let heroWasReadyForHandoff = false;
+  let heroInputDirection = 1;
+  let heroInputDirectionUntil = 0;
+  let heroTouchY = 0;
   let postEntryGuardUntil = 0;
   let postEntryGuardTimer = 0;
   let settleGuardUntil = 0;
@@ -240,6 +248,11 @@
     setClass(document.body, "hero-about-handoff-releasing", releasing);
   };
 
+  const setReturningClass = (returning) => {
+    setClass(document.documentElement, "hero-about-handoff-returning", returning);
+    setClass(document.body, "hero-about-handoff-returning", returning);
+  };
+
   const readHeroPast = () => {
     if (!heroSection) return 0;
     const rect = heroSection.getBoundingClientRect();
@@ -287,6 +300,48 @@
 
   const isPostEntryGuardActive = () => performance.now() < postEntryGuardUntil;
   const isSettleGuardActive = () => performance.now() < settleGuardUntil;
+
+  const rememberHeroInputDirection = (direction) => {
+    if (!Number.isFinite(direction) || Math.abs(direction) < 4) return;
+    heroInputDirection = direction > 0 ? 1 : -1;
+    heroInputDirectionUntil = performance.now() + HERO_INPUT_DIRECTION_HOLD_MS;
+  };
+
+  const isHeroInputScrollingUp = () => (
+    performance.now() < heroInputDirectionUntil
+    && heroInputDirection < 0
+  );
+
+  const rememberHeroWheelDirection = (event) => {
+    rememberHeroInputDirection(event.deltaY);
+  };
+
+  const rememberHeroTouchStart = (event) => {
+    heroTouchY = event.touches[0]?.clientY || heroTouchY;
+  };
+
+  const rememberHeroTouchDirection = (event) => {
+    const y = event.touches[0]?.clientY || heroTouchY;
+    const delta = heroTouchY - y;
+    heroTouchY = y;
+    rememberHeroInputDirection(delta);
+  };
+
+  const rememberHeroKeyDirection = (event) => {
+    if (["ArrowUp", "PageUp", "Home"].includes(event.key)) {
+      rememberHeroInputDirection(-1);
+    } else if (["ArrowDown", "PageDown", "End", " "].includes(event.key)) {
+      rememberHeroInputDirection(1);
+    }
+  };
+
+  const releaseSettleGuardForForwardInput = () => {
+    const hasRecentInput = performance.now() < heroInputDirectionUntil;
+    if (!isSettleGuardActive() || !hasRecentInput || isHeroInputScrollingUp()) return false;
+    settleGuardUntil = 0;
+    stopAboutEntrySettleLock();
+    return true;
+  };
 
   const settleHeroStart = () => {
     forceScrollTop();
@@ -379,7 +434,13 @@
   };
 
   const startHeroAboutHandoff = () => {
-    if (!heroStage || heroHandoffActive || heroHandoffComplete || isBlockedByProgrammaticTransition()) return;
+    if (
+      !heroStage
+      || heroHandoffActive
+      || heroHandoffComplete
+      || heroHandoffReturning
+      || isBlockedByProgrammaticTransition()
+    ) return;
     heroHandoffActive = true;
     heroCurtainRaised = true;
     setHandoffClass(true);
@@ -399,8 +460,10 @@
 
   function resetHeroAboutHandoff() {
     window.clearTimeout(heroHandoffTimer);
+    window.clearTimeout(heroHandoffReturnTimer);
     heroHandoffActive = false;
     heroHandoffComplete = false;
+    heroHandoffReturning = false;
     heroCurtainRaised = false;
     settleGuardUntil = 0;
     settleTargetY = 0;
@@ -408,20 +471,73 @@
     stopAboutEntrySettleLock();
     setHandoffClass(false);
     setReleaseClass(false);
+    setReturningClass(false);
     setSettledClass(false);
     heroStage?.classList.remove("is-curtain-down");
   }
 
+  const finishHeroAboutReturn = () => {
+    heroHandoffReturning = false;
+    heroHandoffComplete = false;
+    heroCurtainRaised = false;
+    setReturningClass(false);
+    setHandoffClass(false);
+    setReleaseClass(false);
+    setSettledClass(false);
+    heroStage?.classList.remove("is-curtain-down");
+    updateHeroAboutHandoff();
+  };
+
+  const startHeroAboutReturn = () => {
+    if (heroHandoffActive || heroHandoffReturning || isBlockedByProgrammaticTransition()) return;
+    const heroCurtain = heroStage?.querySelector(".hero-curtain");
+    heroHandoffReturning = true;
+    heroCurtainRaised = true;
+    setHandoffClass(true);
+    setReturningClass(true);
+    if (heroCurtain) {
+      heroCurtain.style.transition = "none";
+      heroCurtain.style.transform = "translate3d(0, 0, 0)";
+      heroCurtain.getBoundingClientRect();
+    }
+    heroStage?.classList.add("is-curtain-down");
+    window.clearTimeout(heroHandoffReturnTimer);
+    window.clearTimeout(heroHandoffReleaseTimer);
+    settleHeroStart();
+
+    if (reducedMotion) {
+      heroCurtain?.style.removeProperty("transition");
+      heroCurtain?.style.removeProperty("transform");
+      finishHeroAboutReturn();
+      return;
+    }
+
+    requestAnimationFrame(() => {
+      setSettledClass(false);
+      requestAnimationFrame(() => {
+        heroHandoffReleaseTimer = window.setTimeout(() => {
+          heroCurtain?.style.removeProperty("transition");
+          heroCurtain?.style.removeProperty("transform");
+          heroStage?.classList.remove("is-curtain-down");
+          heroHandoffReturnTimer = window.setTimeout(finishHeroAboutReturn, HERO_RETURN_MS);
+        }, HERO_HANDOFF_RELEASE_MS);
+      });
+    });
+  };
+
   const updateHeroAboutHandoff = () => {
     if (!heroStage || !heroSection || !aboutSection || !syncHeroReadyState()) return;
     if (isSettleGuardActive()) {
+      if (releaseSettleGuardForForwardInput()) {
+        return;
+      }
       if (Math.abs(window.scrollY - settleTargetY) > 2) settleAboutEntry();
       return;
     }
     if (isPostEntryGuardActive()) {
       return;
     }
-    if (isBlockedByProgrammaticTransition() && !heroHandoffActive) return;
+    if (isBlockedByProgrammaticTransition() && !heroHandoffActive && !heroHandoffReturning) return;
     const past = readHeroPast();
 
     if (reducedMotion) {
@@ -430,7 +546,18 @@
       return;
     }
 
-    const canStartHandoff = isHeroHandoffZone();
+    const scrollingUp = isHeroInputScrollingUp();
+    if (
+      heroHandoffComplete
+      && !heroHandoffReturning
+      && scrollingUp
+      && past < HERO_RETURN_TRIGGER
+    ) {
+      startHeroAboutReturn();
+      return;
+    }
+
+    const canStartHandoff = isHeroHandoffZone() && !scrollingUp;
     if (!heroCurtainRaised && past > HERO_HANDOFF_TRIGGER && canStartHandoff) {
       startHeroAboutHandoff();
     } else if (!canStartHandoff && !heroHandoffActive) {
@@ -458,7 +585,8 @@
   };
 
   const blockInputDuringHeroHandoff = (event) => {
-    if (!heroHandoffActive && !isSettleGuardActive()) return;
+    if (!heroHandoffActive && !heroHandoffReturning && !isSettleGuardActive()) return;
+    if (releaseSettleGuardForForwardInput()) return;
     event.preventDefault();
     event.stopPropagation();
     if (isSettleGuardActive()) requestAnimationFrame(settleAboutEntry);
@@ -467,7 +595,10 @@
 
   const blockKeysDuringHeroHandoff = (event) => {
     const blockedKeys = ["ArrowDown", "ArrowUp", "PageDown", "PageUp", "Home", "End", " "];
-    if ((!heroHandoffActive && !isSettleGuardActive()) || !blockedKeys.includes(event.key)) return;
+    if (
+      (!heroHandoffActive && !heroHandoffReturning && !isSettleGuardActive())
+      || !blockedKeys.includes(event.key)
+    ) return;
     event.preventDefault();
     event.stopPropagation();
     if (isSettleGuardActive()) requestAnimationFrame(settleAboutEntry);
@@ -494,6 +625,10 @@
 
   document.getElementById("pixel-avatar")?.addEventListener("click", resetToEntry);
 
+  window.addEventListener("wheel", rememberHeroWheelDirection, { passive: true, capture: true });
+  window.addEventListener("touchstart", rememberHeroTouchStart, { passive: true, capture: true });
+  window.addEventListener("touchmove", rememberHeroTouchDirection, { passive: true, capture: true });
+  window.addEventListener("keydown", rememberHeroKeyDirection, { capture: true });
   window.addEventListener("wheel", blockEntryScroll, { passive: false, capture: true });
   window.addEventListener("touchmove", blockEntryScroll, { passive: false, capture: true });
   window.addEventListener("wheel", blockInputDuringHeroHandoff, { passive: false, capture: true });
@@ -528,9 +663,15 @@
     window.clearTimeout(postEntryGuardTimer);
     window.clearTimeout(heroHandoffTimer);
     window.clearTimeout(heroHandoffReleaseTimer);
+    window.clearTimeout(heroHandoffReturnTimer);
     stopAboutEntrySettleLock();
     setHandoffClass(false);
     setReleaseClass(false);
+    setReturningClass(false);
+    window.removeEventListener("wheel", rememberHeroWheelDirection, { capture: true });
+    window.removeEventListener("touchstart", rememberHeroTouchStart, { capture: true });
+    window.removeEventListener("touchmove", rememberHeroTouchDirection, { capture: true });
+    window.removeEventListener("keydown", rememberHeroKeyDirection, { capture: true });
     window.removeEventListener("scroll", onHeroScroll);
     window.removeEventListener("resize", updateHeroAboutHandoff);
   }, { once: true });
