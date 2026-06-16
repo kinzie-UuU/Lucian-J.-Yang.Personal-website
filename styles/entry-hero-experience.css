@@ -199,6 +199,19 @@ body.hero-about-handoff-active .hero-curtain {
   transform: translate3d(0, 0, 0);
 }
 
+body.hero-about-handoff-returning .hero-section,
+body.hero-about-handoff-returning .hero-stage {
+  position: fixed;
+  inset: 0;
+  z-index: 9990;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow: hidden;
+}
+
 body.hero-about-handoff-releasing .hero-section,
 body.hero-about-handoff-releasing .hero-stage,
 body.hero-about-handoff-settled .hero-section,

@@ -194,6 +194,26 @@ const assert = (condition, message) => {
   if (!condition) throw new Error(message);
 };
 
+const waitForState = async (read, predicate, {
+  timeoutMs = 3600,
+  intervalMs = 80,
+  message = "State did not settle.",
+} = {}) => {
+  const startedAt = Date.now();
+  let snapshot = await read();
+
+  while (!predicate(snapshot)) {
+    if (Date.now() - startedAt >= timeoutMs) {
+      const renderedMessage = typeof message === "function" ? await message(snapshot) : message;
+      throw new Error(`${renderedMessage}: ${JSON.stringify(snapshot)}`);
+    }
+    await delay(intervalMs);
+    snapshot = await read();
+  }
+
+  return snapshot;
+};
+
 const main = async () => {
   const chrome = chromeCandidates.find((candidate) => fs.existsSync(candidate));
   assert(chrome, "Chrome or Edge was not found. Set CHROME_BIN to run this check.");
@@ -354,9 +374,69 @@ const main = async () => {
       deltaY: 120,
       deltaX: 0,
     });
-    await delay(450);
-    const afterWheel = await evaluate(client, "Math.round(window.scrollY)");
-    assert(afterWheel > beforeWheel, `Hero wheel did not scroll the page: before=${beforeWheel}, after=${afterWheel}`);
+    await delay(160);
+    const heroHandoffStart = await evaluate(client, `(() => ({
+      scrollY: Math.round(window.scrollY),
+      handoffActive: document.body.classList.contains('hero-about-handoff-active'),
+      curtainDown: document.querySelector('.hero-stage')?.classList.contains('is-curtain-down') || false
+    }))()`);
+    assert(heroHandoffStart.scrollY === beforeWheel, `Hero wheel should lock natural scroll before the curtain: ${JSON.stringify(heroHandoffStart)}`);
+    assert(heroHandoffStart.handoffActive && heroHandoffStart.curtainDown, `Hero wheel did not start the black curtain: ${JSON.stringify(heroHandoffStart)}`);
+
+    const readHeroHandoffEnd = () => evaluate(client, `(() => ({
+      scrollY: Math.round(window.scrollY),
+      handoffActive: document.body.classList.contains('hero-about-handoff-active'),
+      handoffSettled: document.body.classList.contains('hero-about-handoff-settled'),
+      aboutTop: Math.round(document.querySelector('#about')?.getBoundingClientRect().top || 0)
+    }))()`);
+    const heroHandoffEnd = await waitForState(
+      readHeroHandoffEnd,
+      (state) => state.scrollY > beforeWheel && !state.handoffActive && state.handoffSettled,
+      {
+        timeoutMs: 4200,
+        message: `Hero handoff did not settle after curtain release; start=${JSON.stringify(heroHandoffStart)}`,
+      }
+    );
+    assert(heroHandoffEnd.scrollY > beforeWheel, `Hero handoff did not land beyond the locked Hero: ${JSON.stringify(heroHandoffEnd)}`);
+    assert(!heroHandoffEnd.handoffActive && heroHandoffEnd.handoffSettled, `Hero handoff did not settle after curtain release: ${JSON.stringify(heroHandoffEnd)}`);
+
+    await client.send("Input.dispatchMouseEvent", {
+      type: "mouseWheel",
+      x: viewport.x,
+      y: viewport.y,
+      deltaY: -120,
+      deltaX: 0,
+    });
+    await delay(160);
+    const heroReturnStart = await evaluate(client, `(() => ({
+      scrollY: Math.round(window.scrollY),
+      handoffActive: document.body.classList.contains('hero-about-handoff-active'),
+      returning: document.body.classList.contains('hero-about-handoff-returning'),
+      curtainDown: document.querySelector('.hero-stage')?.classList.contains('is-curtain-down') || false,
+      curtainRect: (() => {
+        const rect = document.querySelector('.hero-curtain')?.getBoundingClientRect();
+        return rect ? {
+          top: Math.round(rect.top),
+          bottom: Math.round(rect.bottom),
+          height: Math.round(rect.height)
+        } : null;
+      })()
+    }))()`);
+    assert(heroReturnStart.handoffActive && heroReturnStart.returning && heroReturnStart.curtainDown, `About upward wheel did not start the return curtain: ${JSON.stringify(heroReturnStart)}`);
+    assert(heroReturnStart.curtainRect && heroReturnStart.curtainRect.top <= 1, `Return curtain should cover the viewport top: ${JSON.stringify(heroReturnStart)}`);
+
+    const readHeroReturnEnd = () => evaluate(client, `(() => ({
+      scrollY: Math.round(window.scrollY),
+      returning: document.body.classList.contains('hero-about-handoff-returning'),
+      heroTop: Math.round(document.querySelector('.hero-section')?.getBoundingClientRect().top || 0),
+      aboutTop: Math.round(document.querySelector('#about')?.getBoundingClientRect().top || 0)
+    }))()`);
+    const heroReturnEnd = await waitForState(
+      readHeroReturnEnd,
+      (state) => state.scrollY === beforeWheel && !state.returning && state.heroTop === 0,
+      { timeoutMs: 4200, message: "Hero return did not settle at the locked Hero" }
+    );
+    assert(heroReturnEnd.scrollY === beforeWheel && !heroReturnEnd.returning && heroReturnEnd.heroTop === 0, `Hero return did not settle at the locked Hero: ${JSON.stringify(heroReturnEnd)}`);
 
     const navSettleBudgetMs = 900;
     const clickBottomNav = async (href) => {

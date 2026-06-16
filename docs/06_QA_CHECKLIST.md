@@ -31,7 +31,7 @@
 - [ ] Hero lion model loads from `/models/lion_head/lion_head_2k.gltf`.
 - [ ] Hero wordmark and model are visible and centered on desktop/mobile.
 - [ ] Pointer movement can nudge/orbit the lion without breaking the layout.
-- [ ] Hero-to-About black curtain triggers on scroll.
+- [ ] Hero-to-About and About-to-Hero both lock the current stage first; downward/upward wheel, touch, or key input starts the black curtain, then lands on the target stage.
 
 ## About / Portrait
 
