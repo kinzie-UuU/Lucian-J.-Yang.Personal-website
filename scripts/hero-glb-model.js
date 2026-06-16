@@ -1054,7 +1054,19 @@
     };
 
     let animationStart = null;
+    let frameId = 0;
+    let visible = true;
+    let lastRenderedAt = 0;
+    const compactPointer = window.matchMedia?.("(hover: none), (pointer: coarse)")?.matches;
+    const targetFrameMs = compactPointer ? 1000 / 24 : 1000 / 36;
     const animate = (time = 0) => {
+      frameId = 0;
+      if (!visible || document.hidden) return;
+      if (lastRenderedAt && time - lastRenderedAt < targetFrameMs) {
+        frameId = window.requestAnimationFrame(animate);
+        return;
+      }
+      lastRenderedAt = time;
       resize();
       if (animationStart === null) animationStart = time;
       const t = Math.max(0, (time - animationStart) * 0.001);
@@ -1071,11 +1083,38 @@
       const autoPitch = Math.sin(t * 0.38) * modelPitch.idleAmplitude * idleFade;
       model.rotation.x = clamp(modelPitch.base + autoPitch + orbit.x, modelPitch.min, modelPitch.max);
       renderer.render(scene, camera);
-      window.requestAnimationFrame(animate);
+      frameId = window.requestAnimationFrame(animate);
+    };
+
+    const start = () => {
+      if (frameId || !visible || document.hidden) return;
+      frameId = window.requestAnimationFrame(animate);
+    };
+
+    const stop = () => {
+      if (!frameId) return;
+      window.cancelAnimationFrame(frameId);
+      frameId = 0;
     };
 
     window.addEventListener("resize", resize, { passive: true });
-    animate();
+    const observer = new IntersectionObserver(([entry]) => {
+      visible = Boolean(entry?.isIntersecting);
+      if (visible) start();
+      else stop();
+    }, { rootMargin: "42% 0px", threshold: 0.01 });
+    observer.observe(host);
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) stop();
+      else start();
+    });
+    window.addEventListener("pagehide", () => {
+      stop();
+      observer.disconnect();
+      window.removeEventListener("resize", resize);
+      renderer.dispose();
+    }, { once: true });
+    start();
   };
 
   let modelLoadStarted = false;

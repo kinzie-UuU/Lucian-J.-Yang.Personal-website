@@ -1,0 +1,12 @@
+# Source raster files have WebP runtime equivalents.
+images/**/*.png
+images/**/*.jpg
+images/**/*.jpeg
+!images/favicons/*.png
+
+# Large local fonts that are not required at runtime.
+fonts/MiSans/
+fonts/空心晴宋体-v2.00/SkyHeartClearSerifSC-Regular.ttf
+
+# Original lion textures are kept locally; the glTF uses the 1K versions.
+models/lion_head/textures/*_2k.jpg

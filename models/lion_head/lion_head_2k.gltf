@@ -69,17 +69,17 @@
     {
       "mimeType": "image/jpeg",
       "name": "lion_head_nor_gl",
-      "uri": "textures/lion_head_nor_gl_2k.jpg"
+      "uri": "textures/lion_head_nor_gl_1k.jpg"
     },
     {
       "mimeType": "image/jpeg",
       "name": "lion_head_diff",
-      "uri": "textures/lion_head_diff_2k.jpg"
+      "uri": "textures/lion_head_diff_1k.jpg"
     },
     {
       "mimeType": "image/jpeg",
       "name": "lion_head_metal-lion_head_rough",
-      "uri": "textures/lion_head_arm_2k.jpg"
+      "uri": "textures/lion_head_arm_1k.jpg"
     }
   ],
   "accessors": [

@@ -259,6 +259,7 @@ html[lang="en"] .services-entry-title {
   --service-panel-scale: 0.82;
   --service-panel-engrave: 0;
   --service-panel-blur: 12px;
+  --service-panel-depth: 0;
   position: relative;
   grid-area: 1 / 1;
   display: grid;
@@ -268,7 +269,7 @@ html[lang="en"] .services-entry-title {
   width: min(860px, 78vw);
   max-width: 860px;
   color: #f3efe7;
-  opacity: calc(var(--service-panel-progress) * (1 - var(--services-outro)));
+  opacity: calc(var(--service-panel-progress) * var(--service-panel-depth) * (1 - var(--services-outro)));
   transform:
     translate3d(0, var(--service-panel-y), 0)
     scale(var(--service-panel-scale));
@@ -277,6 +278,7 @@ html[lang="en"] .services-entry-title {
   pointer-events: none;
   mix-blend-mode: normal;
   transition: none;
+  will-change: opacity, transform, filter;
 }
 
 .service-text-index {
@@ -358,7 +360,7 @@ html[lang="en"] .service-text-body {
     grid-template-columns: 1fr;
     row-gap: 12px;
     transform:
-      translate3d(0, calc(var(--service-panel-offset) * -18px + (1 - var(--service-panel-progress)) * 34px), 0)
+      translate3d(0, var(--service-panel-y), 0)
       scale(calc(0.98 + var(--service-panel-progress) * 0.02));
   }
 

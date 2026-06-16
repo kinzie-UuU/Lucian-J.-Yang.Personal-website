@@ -9,15 +9,15 @@
   const reducedMotion = runtime?.reducedMotion
     || window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
   const AUTO_DURATION = 46000;
-  const MANUAL_SEQUENCE_START_PROGRESS = 0.13;
-  const BRIDGE_SEQUENCE_START_PROGRESS = 0.09;
-  const SERVICES_TITLE_HOLD_PROGRESS = 0.16;
-  const PRISMATIC_WINDOW_START = 0.16;
-  const PRISMATIC_WINDOW_END = 0.30;
-  const PRISMATIC_EXPAND_END = 0.46;
-  const SERVICE_STATION_START = 0.32;
-  const SERVICE_STATION_END = 0.84;
-  const SERVICE_STATION_DWELL_EDGE = 0.34;
+  const MANUAL_SEQUENCE_START_PROGRESS = 0.11;
+  const BRIDGE_SEQUENCE_START_PROGRESS = 0.08;
+  const SERVICES_TITLE_HOLD_PROGRESS = 0.03;
+  const PRISMATIC_WINDOW_START = 0.00;
+  const PRISMATIC_WINDOW_END = 0.06;
+  const PRISMATIC_EXPAND_END = 0.12;
+  const SERVICE_STATION_START = 0.10;
+  const SERVICE_STATION_END = 0.78;
+  const SERVICE_STATION_DWELL_EDGE = 0.18;
   const SERVICE_OUTRO_START = 0.965;
   const SEQUENCE_SCROLL_HOLD_PROGRESS = 0.82;
   const SEQUENCE_SCROLL_RELEASE_START = 0.965;
@@ -156,15 +156,15 @@
     const portalGlow = 18 + portalExpand * 46;
     const portalAura = (0.45 + portalReveal * 0.55) * 42;
     const portalStrokeOpacity = 0.06 * (1 - portalExpand);
-    const titleProgress = smooth(clamp01((progress - 0.30) / 0.16));
+    const titleProgress = smooth(clamp01((progress - 0.06) / 0.12));
     const tunnelProgress = smooth(clamp01((progress - PRISMATIC_WINDOW_START) / (PRISMATIC_EXPAND_END - PRISMATIC_WINDOW_START)));
     const tunnelEnter = portalReveal;
     const tunnelExit = smooth(clamp01(postPortalProgress / 0.12));
-    const timeProgress = smooth(clamp01((postPortalProgress - 0.1) / 0.16));
-    const cardProgress = smooth(clamp01((postPortalProgress - 0.26) / 0.14));
+    const timeProgress = smooth(clamp01((postPortalProgress - 0.04) / 0.14));
+    const cardProgress = smooth(clamp01((postPortalProgress - 0.02) / 0.14));
     const stationProgress = smooth(clamp01((postPortalProgress - SERVICE_STATION_START) / (SERVICE_STATION_END - SERVICE_STATION_START)));
     const outro = smooth(clamp01((postPortalProgress - SERVICE_OUTRO_START) / (1 - SERVICE_OUTRO_START)));
-    const titleOpacity = reducedMotion ? 1 : clamp01(1 - smooth(clamp01((progress - 0.32) / 0.14)));
+    const titleOpacity = reducedMotion ? 1 : clamp01(1 - smooth(clamp01((progress - 0.07) / 0.12)));
     const cardOpacity = reducedMotion ? 1 : clamp01(cardProgress * (1 - outro));
     const tunnelOpacity = reducedMotion ? 0 : clamp01((0.9 + portalReveal * 0.1) * (1 - tunnelExit * 0.26) * (1 - cardProgress * 0.34));
     const timeOpacity = reducedMotion ? 0 : clamp01(timeProgress * (1 - cardProgress * 0.04) * (1 - outro));
@@ -200,17 +200,20 @@
     panels.forEach((panel, index) => {
       const signedDistance = index - stationPosition;
       const distance = Math.abs(signedDistance);
-      const panelProgress = reducedMotion ? 1 : smooth(clamp01(1 - distance / 0.62));
+      const panelProgress = reducedMotion ? 1 : smooth(clamp01(1 - distance / 1.02));
       const engraveProgress = reducedMotion ? 1 : panelProgress;
-      const panelBlur = reducedMotion ? 0 : Math.min(12, distance * 5.8 + (1 - panelProgress) * 2.6 + outro * 8);
-      const panelY = reducedMotion ? 0 : signedDistance * -5.6 + (1 - panelProgress) * 3.8;
-      const panelScale = reducedMotion ? 1 : 0.82 + panelProgress * 0.18;
+      const panelBlur = reducedMotion ? 0 : Math.min(10, distance * 2.8 + (1 - panelProgress) * 1.4 + outro * 8);
+      const panelY = reducedMotion ? 0 : signedDistance * 8.4;
+      const panelScale = reducedMotion ? 1 : 0.9 + panelProgress * 0.1;
+      const panelDepth = reducedMotion ? 1 : clamp01(1 - distance / 1.42);
       panel.style.setProperty("--service-panel-progress", panelProgress.toFixed(4));
       panel.style.setProperty("--service-panel-offset", signedDistance.toFixed(4));
       panel.style.setProperty("--service-panel-y", `${panelY.toFixed(3)}svh`);
       panel.style.setProperty("--service-panel-scale", panelScale.toFixed(4));
       panel.style.setProperty("--service-panel-engrave", engraveProgress.toFixed(4));
       panel.style.setProperty("--service-panel-blur", `${panelBlur.toFixed(3)}px`);
+      panel.style.setProperty("--service-panel-depth", panelDepth.toFixed(4));
+      panel.style.zIndex = String(Math.round(panelDepth * 100));
     });
 
     window.LucianServicesPrismatic?.setProgress?.({

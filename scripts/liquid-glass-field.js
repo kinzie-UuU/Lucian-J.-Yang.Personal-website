@@ -4,6 +4,7 @@
   if (!THREE || reducedMotion) return;
   const stage = document.querySelector("#hero-stage");
   if (!stage) return;
+  const isCompactPointer = window.matchMedia?.("(hover: none), (pointer: coarse)")?.matches;
 
   const initHeroFluidOrbit = () => {
     const canvas = document.createElement("canvas");
@@ -20,11 +21,11 @@
 
     const { gl, ext, isWebGL2 } = glState;
     const config = {
-      textureDownsample: 1,
+      textureDownsample: isCompactPointer ? 2 : 1,
       densityDissipation: 0.962,
       velocityDissipation: 0.986,
       pressureDissipation: 0.86,
-      pressureIterations: 26,
+      pressureIterations: isCompactPointer ? 14 : 20,
       curl: 5,
       pointerRadius: 0.00165,
       orbitRadius: 0.0026,
@@ -42,6 +43,8 @@
     let imageRatio = 1;
     let raf = 0;
     let lastTime = performance.now();
+    let lastRenderedAt = 0;
+    let isVisible = true;
     let frame = 0;
     let disposed = false;
     let width = 1;
@@ -850,7 +853,16 @@
 
     const animate = (time) => {
       if (disposed) return;
+      if (!isVisible || document.hidden) {
+        raf = 0;
+        document.body.classList.remove("liquid-glass-moving");
+        return;
+      }
+
       raf = window.requestAnimationFrame(animate);
+      const targetFrameMs = isCompactPointer ? 1000 / 24 : 1000 / 36;
+      if (lastRenderedAt && time - lastRenderedAt < targetFrameMs) return;
+      lastRenderedAt = time;
       resize();
 
       const dt = Math.min(0.016, Math.max(0.001, (time - lastTime) / 1000));
@@ -874,13 +886,37 @@
     document.body.classList.add("liquid-glass-ready");
     window.addEventListener("resize", resize, { passive: true });
     window.addEventListener("pointermove", updatePointer, { passive: true });
-    raf = window.requestAnimationFrame(animate);
+    const start = () => {
+      if (disposed || raf || !isVisible || document.hidden) return;
+      lastTime = performance.now();
+      raf = window.requestAnimationFrame(animate);
+    };
+    const stop = () => {
+      if (!raf) return;
+      window.cancelAnimationFrame(raf);
+      raf = 0;
+      document.body.classList.remove("liquid-glass-moving");
+    };
+
+    const observer = new IntersectionObserver(([entry]) => {
+      isVisible = Boolean(entry?.isIntersecting);
+      if (isVisible) start();
+      else stop();
+    }, { rootMargin: "42% 0px", threshold: 0.01 });
+    observer.observe(stage);
+
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) stop();
+      else start();
+    });
+    start();
 
     const cleanup = () => {
       disposed = true;
       window.cancelAnimationFrame(raf);
       window.removeEventListener("resize", resize);
       window.removeEventListener("pointermove", updatePointer);
+      observer.disconnect();
       canvas.remove();
       document.body.classList.remove("liquid-glass-ready", "liquid-glass-moving");
     };

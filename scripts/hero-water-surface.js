@@ -457,9 +457,20 @@ window.initHeroWaterSurface = (canvas, { reducedMotion = false, getScrollProgres
   // Render loop.
   let frame = 0;
   let raf;
+  let visible = true;
+  let lastRenderedAt = 0;
+  const compactPointer = window.matchMedia?.("(hover: none), (pointer: coarse)")?.matches;
+  const targetFrameMs = compactPointer ? 1000 / 24 : 1000 / 36;
 
   const animate = () => {
+    if (!visible || document.hidden) {
+      raf = 0;
+      return;
+    }
     raf = requestAnimationFrame(animate);
+    const now = performance.now();
+    if (lastRenderedAt && now - lastRenderedAt < targetFrameMs) return;
+    lastRenderedAt = now;
     const sp = getScrollProgress();
 
     // auto-resize when canvas becomes visible after has-entered
@@ -490,7 +501,7 @@ window.initHeroWaterSurface = (canvas, { reducedMotion = false, getScrollProgres
     gl.uniform1f(uSim.speed,     4.0);
     gl.uniform1f(uSim.size,      1.85);
     gl.uniform1i(uSim.frame,     frame);
-    gl.uniform1f(uSim.time,      performance.now() * 0.001);
+    gl.uniform1f(uSim.time,      now * 0.001);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 
     const tmp = read; read = write; write = tmp;
@@ -515,7 +526,7 @@ window.initHeroWaterSurface = (canvas, { reducedMotion = false, getScrollProgres
     gl.uniform1f(uRender.disp,    36.0);
     gl.uniform1f(uRender.light,   11.0);
     gl.uniform1f(uRender.shadow,  4.5);
-    gl.uniform1f(uRender.time,    performance.now() * 0.001);
+    gl.uniform1f(uRender.time,    now * 0.001);
 
     gl.activeTexture(gl.TEXTURE1);
     gl.bindTexture(gl.TEXTURE_2D, titleTex);
@@ -525,10 +536,33 @@ window.initHeroWaterSurface = (canvas, { reducedMotion = false, getScrollProgres
 
     frame++;
   };
-  animate();
+  const start = () => {
+    if (raf || !visible || document.hidden) return;
+    raf = requestAnimationFrame(animate);
+  };
+
+  const stop = () => {
+    if (!raf) return;
+    cancelAnimationFrame(raf);
+    raf = 0;
+  };
+
+  const observer = new IntersectionObserver(([entry]) => {
+    visible = Boolean(entry?.isIntersecting);
+    if (visible) start();
+    else stop();
+  }, { rootMargin: "42% 0px", threshold: 0.01 });
+  observer.observe(canvas);
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) stop();
+    else start();
+  });
+  start();
 
   const cleanup = () => {
-    cancelAnimationFrame(raf);
+    stop();
+    observer.disconnect();
     window.removeEventListener("pointermove", onPointer);
     window.removeEventListener("resize", resize);
   };
