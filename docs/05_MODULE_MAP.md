@@ -17,7 +17,7 @@
 | 11 | `styles/clients.css` | Clients section |
 | 12 | `styles/work-gallery.css` | Gallery overlay |
 | 13 | `styles/contact.css` | Contact |
-| 14 | `styles/navigation.css` | Top controls, bottom nav, Works rail |
+| 14 | `styles/navigation.css` | Top controls and bottom nav |
 | 15 | `styles/responsive.css` | Responsive overrides |
 | 16 | `styles/shared-motion.css` | Reveal and scroll curtain helpers |
 
@@ -46,7 +46,6 @@ This list mirrors the current `index.html` order.
 | 16 | `scripts/services-prismatic-burst.js` | Services black-water PrismaticBurst entry canvas and progress bridge |
 | 17 | `scripts/services-time-tunnel-shader.js` | Services local WebGL2 time-tunnel layer |
 | 18 | `scripts/work-gallery.js` | Work gallery |
-| 19 | `scripts/works-side-rail.js` | Works side rail |
 | 20 | `scripts/scrambled-text.js` | Scrambled text |
 | 21 | `scripts/header-controls.js` | Sound/fullscreen/top controls |
 | 22 | `scripts/language-controls.js` | Language buttons |
@@ -76,12 +75,12 @@ This list mirrors the current `index.html` order.
 - Hero: `index.html`, `styles/home.css`, `styles/entry-hero-experience.css`, `styles/liquid-glass.css`, `scripts/hero-*.js`, `scripts/entry-hero-experience.js`, `scripts/liquid-glass-field.js`, `models/lion_head/`.
 - About/Portrait: `index.html`, `styles/about.css`, `scripts/portrait-motion.js`, `scripts/about-curtain.js`, `videos/Video 8.mp4`, `images/9999.png`.
 - Services: `index.html`, `styles/services.css`, `scripts/about-curtain.js`, `scripts/services-scroll-story.js`, `scripts/services-prismatic-burst.js`, `scripts/services-time-tunnel-shader.js`, `site-data.js`; current rebuild has a Hero-style timed About-to-Services bridge that previews the real Services stage instead of injecting a duplicate title, black-water PrismaticBurst title gate that yields to a local WebGL2 time-tunnel layer, natural-scroll autoplay after the bridge, direct-nav suppression at the title gate, slower automatic six-step flat in-tunnel service inscriptions without adjacent ghost carryover, residue lines, or auxiliary progress rail, Services-owned suppression so About does not re-trigger after playback, and a final jump to the Works transition copy screen.
-- Works: `index.html`, `styles/works.css`, `scripts/works-hover-preview.js`, `scripts/works-transition-motion.js`, `scripts/works-side-rail.js`, `scripts/section-flow.js`, `site-data.js`.
+- Works: `index.html`, `styles/works.css`, `scripts/works-hover-preview.js`, `scripts/works-transition-motion.js`, `scripts/section-flow.js`, `site-data.js`.
 - Scroll curtains: `index.html`, `styles/shared-motion.css`, `scripts/scroll-curtain-transitions.js`, GSAP vendor files; natural mouse-wheel handoffs are separate from bottom-nav click transitions.
 - Gallery: `index.html`, `styles/work-gallery.css`, `scripts/work-gallery.js`, `site-data.js`, `images/works/`.
 - Clients: `index.html`, `styles/clients.css`, `scripts/clients-marquee.js`, `scripts/clients-title-interaction.js`.
 - Contact: `index.html`, `styles/contact.css`, `scripts/contact-interactions.js`, `images/wechat-qr.jpg`.
-- Navigation: `index.html`, `styles/navigation.css`, `scripts/section-flow.js`, `scripts/bottom-nav-scroll-spy.js`, `scripts/works-side-rail.js`, `scripts/header-controls.js`; current bottom nav exposes About, Services, and Contact, while Works uses scroll/Services completion and the upper-left Works rail.
+- Navigation: `index.html`, `styles/navigation.css`, `scripts/section-flow.js`, `scripts/bottom-nav-scroll-spy.js`, `scripts/header-controls.js`; current bottom nav is an avatar dock that expands to About, Services, Works, and Contact; Works also uses scroll/Services completion and Works rows.
 
 ## High-Risk Edit Zones
 

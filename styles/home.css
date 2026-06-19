@@ -138,16 +138,16 @@ body.entry-key-model-ready .entry-key-canvas {
 .hero-footer-meta {
   position: absolute;
   left: 0;
-  right: 0;
-  bottom: 34px;
+  right: auto;
+  top: clamp(22px, 3vw, 42px);
   z-index: 18;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: flex-start;
   gap: clamp(20px, 3.8vw, 68px);
   min-height: 44px;
   padding: 0 clamp(28px, 5.2vw, 92px);
-  color: rgba(20, 20, 20, 0.46);
+  color: rgba(20, 20, 20, 0.66);
   font-family: "Satoshi", "MiSans", system-ui, sans-serif;
   font-size: clamp(0.62rem, 0.64vw, 0.78rem);
   font-weight: 500;
@@ -168,7 +168,7 @@ body.entry-key-model-ready .entry-key-canvas {
 }
 
 .hero-footer-clock {
-  justify-content: flex-end;
+  justify-content: flex-start;
   gap: clamp(10px, 1.05vw, 18px);
   text-align: right;
 }
@@ -179,17 +179,17 @@ body.entry-key-model-ready .entry-key-canvas {
   height: 4px;
   border: 1px solid currentColor;
   border-radius: 50%;
-  opacity: 0.26;
+  opacity: 0.46;
 }
 
 .hero-footer-time {
   min-width: 7.7ch;
-  justify-content: flex-end;
+  justify-content: flex-start;
 }
 
 .hero-footer-date {
   min-width: 9.4ch;
-  justify-content: flex-end;
+  justify-content: flex-start;
 }
 
 .hero-footer-meta .top-meta-period {
@@ -200,9 +200,9 @@ body.entry-key-model-ready .entry-key-canvas {
 
 @media (max-width: 760px) {
   .hero-footer-meta {
-    bottom: calc(18px + 44px + 10px);
+    top: max(18px, env(safe-area-inset-top));
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     min-height: 20px;
     padding: 0 18px;
     font-size: 0.58rem;
@@ -281,8 +281,13 @@ body.entry-key-model-ready .entry-key-canvas {
   pointer-events: none;
 }
 
-body.hero-model-ready .hero-model-scene {
+body.hero-model-ready .hero-model-scene,
+body.hero-model-error .hero-model-scene {
   opacity: 1;
+}
+
+body.hero-model-error .hero-model-canvas {
+  display: none;
 }
 
 .hero-model-canvas {

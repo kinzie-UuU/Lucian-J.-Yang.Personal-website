@@ -11,7 +11,6 @@ Works is the portfolio index. It renders category rows, hover preview, side rail
 - `styles/work-gallery.css`
 - `scripts/works-hover-preview.js`
 - `scripts/works-transition-motion.js`
-- `scripts/works-side-rail.js`
 - `scripts/work-gallery.js`
 - `scripts/section-flow.js`
 - `site-data.js`
@@ -22,7 +21,7 @@ Works is the portfolio index. It renders category rows, hover preview, side rail
 - `#works`
 - Works category rows and their data attributes
 - Works hover preview root
-- Works side rail root/toggle/items
+- Bottom-nav Works entry root/toggle/items
 - Gallery overlay root
 - Gallery category/project/detail containers
 - Gallery back and close controls
@@ -57,7 +56,7 @@ Category ids must stay aligned across Works rows, side rail targets, image data,
 ## QA
 
 - Works rows with `data-project-index` open the matching project detail directly.
-- Category-only entries, such as the Works side rail, open the category project index first.
+- Category-only entries, such as Works rows, open the category project index first.
 - Side rail opens expected categories/projects.
 - Hover preview follows rows and does not cover controls.
 - Gallery close/back/detail flows work.

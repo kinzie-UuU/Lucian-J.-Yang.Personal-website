@@ -81,7 +81,7 @@ Each change should target only one system:
 - Hero: `hero-*` scripts, `liquid-glass-field.js`, hero markup, hero styles in `home.css`, `models/lion_head/`.
 - About: `portrait-motion.js`, `about-curtain.js`, about markup, `about.css`.
 - Services: `services-scroll-story.js`, `section-flow.js`, service markup, `services.css`.
-- Works/Gallery: `work-gallery.js`, `works-side-rail.js`, `works-hover-preview.js`, `works-transition-motion.js`, works markup, `works.css`, `work-gallery.css`.
+- Works/Gallery: `work-gallery.js`, `works-hover-preview.js`, `works-transition-motion.js`, works markup, `works.css`, `work-gallery.css`.
 - Scroll curtains: `scroll-curtain-transitions.js`, `styles/shared-motion.css`, GSAP vendor load order, related transition markup.
 - Contact: `contact-interactions.js`, contact markup, `contact.css`.
 

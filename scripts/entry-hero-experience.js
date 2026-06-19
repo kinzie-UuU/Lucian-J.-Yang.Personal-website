@@ -21,7 +21,6 @@
   const ENTRY_CURTAIN_PREPAINT_MS = 160;
   const ENTRY_CURTAIN_MS = 2000;
   const ENTRY_CURTAIN_HOLD_MS = 180;
-  const ENTRY_REPLAY_TOP_LOCK_MS = 5200;
 
   const HERO_HANDOFF_RESET = 0.02;
   const HERO_HANDOFF_MS = 1450;
@@ -34,8 +33,6 @@
   let entryTransitionLocked = false;
   let entryTransitionReleaseTimer = 0;
   let siteEnteredDispatched = false;
-  let entryReplayTopRaf = 0;
-  let entryReplayTopUntil = 0;
   let entryScrollTouchY = 0;
 
   let heroCurtainRaised = false;
@@ -85,30 +82,6 @@
     if (locked) forceScrollTop();
   };
 
-  const stopEntryReplayTopLock = () => {
-    if (entryReplayTopRaf) cancelAnimationFrame(entryReplayTopRaf);
-    entryReplayTopRaf = 0;
-    entryReplayTopUntil = 0;
-    document.body.classList.remove("is-entry-replaying");
-  };
-
-  const startEntryReplayTopLock = (duration = ENTRY_REPLAY_TOP_LOCK_MS) => {
-    stopEntryReplayTopLock();
-    entryReplayTopUntil = performance.now() + duration;
-    document.body.classList.add("is-entry-replaying");
-
-    const keepAtTop = () => {
-      forceScrollTop();
-      if (document.body.classList.contains("has-entered") || performance.now() >= entryReplayTopUntil) {
-        stopEntryReplayTopLock();
-        return;
-      }
-      entryReplayTopRaf = requestAnimationFrame(keepAtTop);
-    };
-
-    keepAtTop();
-  };
-
   const releaseEntryTransitionScroll = () => {
     lockEntryTransitionScroll(false);
     forceScrollTop();
@@ -124,7 +97,6 @@
   const completeEntryTransition = () => {
     document.body.classList.remove("is-entering");
     document.body.classList.add("has-entered");
-    stopEntryReplayTopLock();
     forceScrollTop();
     requestAnimationFrame(() => {
       forceScrollTop();
@@ -140,7 +112,6 @@
     runtime.setEntered(true);
     entryTransitionLocked = false;
     window.clearTimeout(entryTransitionReleaseTimer);
-    stopEntryReplayTopLock();
     document.body.classList.remove(
       "is-entering",
       "is-unfolding",
@@ -185,7 +156,6 @@
     if (reducedMotion) {
       document.body.classList.add("has-entered");
       document.body.classList.remove("is-key-unlocking");
-      stopEntryReplayTopLock();
       requestAnimationFrame(() => {
         forceScrollTop();
         resizeStage();
@@ -211,31 +181,6 @@
     }, ENTRY_UNFOLD_MS);
   };
 
-  const resetToEntry = () => {
-    if (!document.body.classList.contains("has-entered")) return;
-    runtime.closeWorkGallery?.();
-    window.dispatchEvent(new CustomEvent("lucian:return-to-entry"));
-    entryScreen?.style.removeProperty("display");
-    document.body.classList.remove(
-      "has-entered",
-      "is-entering",
-      "is-unfolding",
-      "is-entry-curtain-ready",
-      "is-entry-scroll-locked",
-      "is-key-unlocking"
-    );
-    runtime.setEntered(false);
-    entryTransitionLocked = false;
-    siteEnteredDispatched = false;
-    window.clearTimeout(entryTransitionReleaseTimer);
-    window.clearTimeout(postEntryGuardTimer);
-    postEntryGuardTimer = 0;
-    postEntryGuardUntil = 0;
-    resetHeroAboutHandoff({ force: true });
-    resetHeroSequenceState({ resetScroll: true });
-    startEntryReplayTopLock();
-    window.LucianEntryKey?.replay?.();
-  };
 
   const setHandoffClass = (active) => {
     setClass(document.documentElement, "hero-about-handoff-active", active);
@@ -702,6 +647,12 @@
     });
   };
 
+  const handleProgrammaticSectionJump = (event) => {
+    if (event.detail?.targetId !== "hero") return;
+    resetHeroAboutHandoff({ force: true });
+    settleHeroStart({ holdMs: 900 });
+  };
+
   const blockEntryScroll = (event) => {
     if (!entryTransitionLocked) return;
     event.preventDefault();
@@ -788,9 +739,6 @@
     event.preventDefault();
     enterSite();
   }, { passive: false });
-
-  document.getElementById("pixel-avatar")?.addEventListener("click", resetToEntry);
-
   window.addEventListener("wheel", rememberHeroWheelDirection, { passive: true, capture: true });
   window.addEventListener("touchstart", rememberHeroTouchStart, { passive: true, capture: true });
   window.addEventListener("touchmove", rememberHeroTouchDirection, { passive: true, capture: true });
@@ -802,6 +750,7 @@
   window.addEventListener("keydown", blockKeysDuringHeroHandoff, { capture: true });
   window.addEventListener("scroll", onHeroScroll, { passive: true });
   window.addEventListener("resize", updateHeroAboutHandoff);
+  window.addEventListener("lucian:programmatic-section-jump", handleProgrammaticSectionJump);
 
   window.addEventListener("pageshow", () => {
     if (document.body.classList.contains("has-entered")) return;
@@ -841,5 +790,6 @@
     window.removeEventListener("keydown", rememberHeroKeyDirection, { capture: true });
     window.removeEventListener("scroll", onHeroScroll);
     window.removeEventListener("resize", updateHeroAboutHandoff);
+    window.removeEventListener("lucian:programmatic-section-jump", handleProgrammaticSectionJump);
   }, { once: true });
 })();

@@ -40,6 +40,7 @@
   const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
   const resolveAssetUrl = (uri) => new URL(uri, new URL(modelUrl, window.location.href)).href;
   const trimLionPedestal = /lion_head/i.test(modelUrl);
+  const useBlackLionMaterial = trimLionPedestal;
 
   const pointToSegmentDistance = (pointX, pointY, startX, startY, endX, endY) => {
     const segmentX = endX - startX;
@@ -582,9 +583,9 @@
     const pbr = materialDef.pbrMetallicRoughness || {};
     const factor = pbr.baseColorFactor || [1, 1, 1, 1];
     const material = new THREE.MeshStandardMaterial({
-      color: new THREE.Color(0xf2f0ea),
-      roughness: pbr.roughnessFactor ?? 0.34,
-      metalness: pbr.metallicFactor ?? 0.08,
+      color: new THREE.Color(useBlackLionMaterial ? 0x080807 : 0xf2f0ea),
+      roughness: useBlackLionMaterial ? 0.52 : (pbr.roughnessFactor ?? 0.34),
+      metalness: useBlackLionMaterial ? 0.18 : (pbr.metallicFactor ?? 0.08),
       transparent: materialDef.alphaMode === "BLEND" || factor[3] < 1,
       opacity: factor[3] ?? 1,
       side: materialDef.doubleSided ? THREE.DoubleSide : THREE.FrontSide,
@@ -609,9 +610,9 @@
       applyTexture(loadTexture(json, buffers, pbr.metallicRoughnessTexture), (packedMap) => {
         material.roughnessMap = packedMap;
         material.aoMap = packedMap;
-        material.aoMapIntensity = 0.72;
-        material.roughness = 0.38;
-        material.metalness = 0.12;
+        material.aoMapIntensity = useBlackLionMaterial ? 0.9 : 0.72;
+        material.roughness = useBlackLionMaterial ? 0.52 : 0.38;
+        material.metalness = useBlackLionMaterial ? 0.18 : 0.12;
         material.needsUpdate = true;
       });
     }
@@ -640,7 +641,7 @@
       });
     }
 
-    material.envMapIntensity = 1.28;
+    material.envMapIntensity = useBlackLionMaterial ? 1.85 : 1.28;
     addLionEyeDepth(material);
     material.needsUpdate = true;
     return material;

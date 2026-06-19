@@ -22,7 +22,7 @@ Critical order:
 7. `script.js`
 8. liquid field and Hero model
 9. Services scripts
-10. Gallery and Works side rail
+10. Gallery and Works navigation
 11. UI controls, contact, reveal, cursor, Works hover/transition, clock/nav, clients
 12. portrait/about curtain/ripples
 13. GSAP vendor and `scroll-curtain-transitions.js`
@@ -43,8 +43,8 @@ High-value ids and selectors used across modules:
 - Hero: `#hero-stage`, `#hero-kinetic-canvas`, `#hero-ripple-canvas`, `#hero-wireframe`, `#hero-model-scene`, `#hero-model-canvas`.
 - About: `#about`, `#portrait-video`, `.portrait-about-wrapper`, `.portrait-canvas`, `.about-curtain`.
 - Services: `#services`, `#services-prismatic-canvas`, `#services-time-canvas`, `.services-title-stage`, `.services-card-stage`, `.service-text-panel`.
-- Works/Gallery: `#works`, Works row data attributes, Gallery overlay root, Gallery back/close controls, Works side rail controls.
-- Navigation/Header: `#sound-toggle`, `#fullscreen-toggle`, `.lang-button`, bottom nav anchors for About/Services/Contact, `#precision-cursor`, `#precision-guides`.
+- Works/Gallery: `#works`, Works row data attributes, Gallery overlay root and Gallery back/close controls.
+- Navigation/Header: `#sound-toggle`, `#fullscreen-toggle`, `.lang-button`, bottom avatar dock plus anchors for About/Services/Works/Contact, `#precision-cursor`, `#precision-guides`.
 
 If an id/class/data attribute is used by JavaScript, changing it is a behavior change, not a styling-only change.
 
@@ -87,7 +87,7 @@ Known custom events:
 
 - `entry-key-ready`: entry key model reports readiness.
 - `lucian:site-entered`: entry has completed and the page is in the entered state.
-- `lucian:return-to-entry`: replay returns to entry; dependent systems should reset.
+- `lucian:return-to-entry`: legacy reset signal; dependent systems reset if a future flow dispatches it.
 - `lucian:hero-about-handoff`: Hero hands off into About.
 - `lucian:about-services-bridge-complete`: About-to-Services bridge finished; Services may schedule autoplay.
 - `lucian:services-sequence-start`: Services automatic sequence begins.
@@ -150,7 +150,7 @@ Only one system should own scroll locking or forced scroll position at a time.
 - About owns the timed bridge into Services.
 - Services owns its automatic sequence and release.
 - Works-to-Contact curtain owns its transition lock.
-- `section-flow.js` owns programmatic jumps and announces them with `lucian:programmatic-section-jump`. The current bottom nav exposes About, Services, and Contact only; Works access is handled by scroll, Services completion, Works rows, and the upper-left Works rail.
+- `section-flow.js` owns programmatic jumps and announces them with `lucian:programmatic-section-jump`. The current bottom nav is an avatar dock that expands to About, Services, Works, and Contact; Works access is also handled by scroll, Services completion, and Works rows.
 
 If a new flow needs to lock scroll, document what releases it and what resets it on `pagehide`, `pageshow`, `lucian:return-to-entry`, and `lucian:programmatic-section-jump`.
 

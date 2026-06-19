@@ -56,16 +56,16 @@ node tools/runtime-smoke-check.js
 ## Current Page Systems
 
 - Top meta header: identity, Beijing clock, language switch, sound, fullscreen, contact arrow.
-- Entry: `#entry-screen`, 3D key canvas, progress text/bar, auto-enter, scroll/touch enter, replay from avatar.
+- Entry: `#entry-screen`, 3D key canvas, progress text/bar, auto-enter, scroll/touch enter, Hero return from avatar.
 - Hero: water canvas, ripples, wireframe, fixed liquid field, GLB lion-head model, wordmark layers, Hero-to-About curtain.
 - About/Portrait: portrait video/fallback, scroll reveal, video scrub, About-to-Services curtain.
 - Services: natural scroll-driven sticky title gate, About handoff cleanup at Services takeover, local WebGL2 black-water PrismaticBurst entry canvas, local WebGL2 time-tunnel canvas, flat in-tunnel service inscription stage.
-- Works: five category rows, hover preview, Works side rail, gallery entry.
+- Works: five category rows, hover preview, bottom-nav Works entry, gallery entry.
 - Scroll curtains: Works-to-Contact handoff; Services owns the timed sequence that lands on the Works transition copy screen.
 - Gallery: overlay, category/project browsing, detail page, back/close.
 - Contact: Gmail compose form, social links, WeChat QR modal, toast.
 - Clients: selected-client marquee and credibility copy.
-- Bottom nav: About / Services / Contact. Works is reached through natural scroll/Services completion and the upper-left Works rail, not a bottom-nav item.
+- Bottom nav: collapsed avatar dock that expands on hover/click to About / Services / Works / Contact. Works is also reached through natural scroll and Services completion.
 
 ## CSS Modules
 
@@ -82,7 +82,7 @@ node tools/runtime-smoke-check.js
 - `styles/clients.css`: Clients.
 - `styles/work-gallery.css`: Gallery.
 - `styles/contact.css`: Contact.
-- `styles/navigation.css`: top controls, bottom nav, Works side rail.
+- `styles/navigation.css`: top controls and bottom nav.
 - `styles/responsive.css`: cross-section responsive corrections.
 - `styles/shared-motion.css`: reveal helpers and scroll curtain styles.
 
@@ -103,7 +103,7 @@ Keep the order in `index.html` unless the dependency chain is re-audited. Key or
 7. `script.js`
 8. liquid field and Hero model
 9. Services scripts
-10. Gallery and Works side rail
+10. Gallery and Works navigation
 11. UI controls, contact, reveal, cursor, Works hover/transition, clock/nav, clients
 12. portrait/about curtain/ripples
 13. GSAP vendor and `scroll-curtain-transitions.js`

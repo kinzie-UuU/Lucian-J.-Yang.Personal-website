@@ -16,7 +16,7 @@ Create a high-trust personal portfolio for Lucian J. Yang that communicates pack
 
 Entry -> Hero impression -> About/Services credibility -> Works/Gallery proof -> Contact inquiry -> Clients trust signal by scroll.
 
-Secondary path: Works side rail or Works rows -> matching gallery category/project -> Contact.
+Secondary path: Bottom-nav Works or Works rows -> matching gallery category/project -> Contact.
 
 ## Page Structure
 
@@ -32,7 +32,7 @@ Secondary path: Works side rail or Works rows -> matching gallery category/proje
 - Contact
 - Clients
 - Top meta controls
-- Works side rail
+- Bottom-nav Works entry
 - Bottom primary navigation for About, Services, and Contact
 
 ## Entry Requirements
@@ -42,7 +42,7 @@ Secondary path: Works side rail or Works rows -> matching gallery category/proje
 - Auto-enter should trigger when the key progress reaches 100%.
 - Scroll/touch should also be able to enter.
 - Entry-to-Hero should use the horizontal stage curtain transition.
-- Pixel avatar must return to entry after the user has entered and replay the key sequence.
+- Bottom avatar dock starts collapsed and expands on hover or click to reveal the main navigation.
 - Entry should still work with reduced motion.
 
 ## Hero Requirements
@@ -71,7 +71,7 @@ Secondary path: Works side rail or Works rows -> matching gallery category/proje
 
 ## Works / Gallery Requirements
 
-- Keep five main work categories in the Works list and Works side rail.
+- Keep five main work categories in the Works list and Gallery category entry.
 - Works rows and rail items must open the correct gallery category.
 - Gallery must support category browsing, project cards, detail view, back/close, progress, and language refresh.
 - Gallery should keep keyboard accessibility for opening rows and closing overlays.
@@ -80,7 +80,7 @@ Secondary path: Works side rail or Works rows -> matching gallery category/proje
 ## Clients Requirements
 
 - Clients section remains a trust signal.
-- It should not appear in bottom navigation.
+- It should appear in bottom navigation as the primary Works entry.
 - It should show selected client names and short credibility copy.
 - It should remain reachable through natural scroll.
 
@@ -88,7 +88,7 @@ Secondary path: Works side rail or Works rows -> matching gallery category/proje
 
 - Contact remains a dedicated inquiry section.
 - Top-right arrow and bottom nav Contact navigate to Contact.
-- Works is intentionally not a bottom-nav item; visitors reach it through the Services sequence, natural scroll, Works rows, or the upper-left Works rail.
+- Works is a bottom-nav item; visitors also reach it through the Services sequence, natural scroll, and Works rows.
 - Gmail compose flow should use form fields to build subject/body.
 - Social links and WeChat QR modal remain available.
 - Contact copy should ask for project type, timing, and budget range.
@@ -103,7 +103,7 @@ Secondary path: Works side rail or Works rows -> matching gallery category/proje
 
 - Site must remain scrollable and readable on mobile.
 - Large hero/about/contact/clients type must not overflow horizontally.
-- Bottom navigation must fit its three current items within the viewport.
+- Bottom avatar dock must fit its four expanded items within the viewport.
 - Contact form and social links must stack cleanly.
 - Heavy effects should degrade acceptably under reduced motion.
 

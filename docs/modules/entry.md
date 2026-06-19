@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Entry is the site's opening gate. It renders the 3D key model, progress readout, auto-enter path, scroll/touch enter path, and replay path back from the avatar control.
+Entry is the site's opening gate. It renders the 3D key model, progress readout, auto-enter path, scroll/touch enter path, and Hero return path from the avatar control.
 
 ## Owned Files
 
@@ -28,7 +28,7 @@ Entry is the site's opening gate. It renders the 3D key model, progress readout,
 - Defines `window.LucianEntryKey`.
 - Produces `entry-key-ready` when the model is ready.
 - Produces `lucian:site-entered` when the entry transition completes.
-- Produces `lucian:return-to-entry` on replay/reset.
+- Entry replay from avatar has been removed; `lucian:return-to-entry` is kept only as a legacy reset signal for listeners.
 
 ## Change Checklist
 
@@ -36,7 +36,7 @@ Entry is the site's opening gate. It renders the 3D key model, progress readout,
 - Check both auto-enter and user-triggered enter.
 - If model path changes, update HTML and asset QA.
 - If entry timing changes, check Hero reveal and scroll release.
-- If replay changes, check systems that reset on `lucian:return-to-entry`.
+- If Entry reset is reintroduced, check systems that reset on `lucian:return-to-entry`.
 
 ## QA
 
@@ -44,4 +44,4 @@ Entry is the site's opening gate. It renders the 3D key model, progress readout,
 - Progress reaches completion.
 - Auto-enter works.
 - Wheel/touch enter works.
-- Replay returns to entry and then enters Hero cleanly.
+- Bottom avatar dock expands without replaying Entry.

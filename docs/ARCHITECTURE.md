@@ -46,7 +46,7 @@ The DOM is organized as a single scroll story:
 - Gallery overlay: category browsing, project detail, back/close controls.
 - Clients: selected-client marquee and title interaction.
 - `#contact`: Gmail compose form, social links, WeChat QR modal, toast.
-- Bottom navigation: three primary anchors for About, Services, and Contact, with active state and paper transition behavior. Works is reached through scroll, Services completion, Works rows, and the upper-left Works rail rather than a bottom-nav item.
+- Bottom navigation: collapsed avatar dock that expands to four primary anchors for About, Services, Works, and Contact, with active state and paper transition behavior. Works is also reached through scroll, Services completion, and Works rows.
 
 ## CSS Architecture
 
@@ -65,7 +65,7 @@ CSS is loaded in modules, but it is still global CSS. Selectors must preserve ex
 - `styles/clients.css`: Clients.
 - `styles/work-gallery.css`: Gallery.
 - `styles/contact.css`: Contact.
-- `styles/navigation.css`: top controls, bottom nav, Works rail.
+- `styles/navigation.css`: top controls and bottom avatar dock navigation.
 - `styles/responsive.css`: cross-section responsive corrections.
 - `styles/shared-motion.css`: reveal helpers and scroll curtains.
 

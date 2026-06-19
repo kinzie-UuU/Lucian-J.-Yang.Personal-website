@@ -228,6 +228,33 @@
     return true;
   };
 
+  const jumpToHero = ({ updateHash = true, source = "section-flow" } = {}) => {
+    clearPendingHashTimers();
+    clearJumpSettleTimers();
+    pendingHashTarget = "";
+    setHashJumpPending(false);
+    resetTransitionLayers({ removeNodes: true });
+    runtime?.closeWorkGallery?.();
+    document.documentElement.classList.add("nav-jump-instant");
+    applyJumpTop(0);
+
+    if (updateHash && window.location.hash) {
+      window.history.pushState(null, "", `${window.location.pathname}${window.location.search}`);
+    }
+
+    setActiveNavTarget("hero");
+    window.dispatchEvent(new CustomEvent("lucian:programmatic-section-jump", {
+      detail: { targetId: "hero", source },
+    }));
+
+    window.requestAnimationFrame(() => {
+      document.documentElement.classList.remove("nav-jump-instant");
+      setActiveNavTarget("hero");
+    });
+
+    return true;
+  };
+
   const jumpToSection = (id, options = {}) => {
     if (!sections.has(id)) return false;
 
@@ -277,11 +304,14 @@
   };
 
   const setStageClasses = (active) => {
+    const heroActive = active === "hero" || isHeroTopSurfaceActive();
     const warmActive = ["clients", "contact"].some((id) => intersects(id, 0.58, 0.08));
     const darkActive = !isHeroTopSurfaceActive()
       && (["about", "services", "works"].includes(active) || intersects("works-transition", 0.68, 0.08));
+    document.documentElement.classList.toggle("is-hero-stage", heroActive);
     document.documentElement.classList.toggle("is-warm-stage", warmActive);
     document.documentElement.classList.toggle("is-dark-stage", darkActive && !warmActive);
+    document.body.classList.toggle("is-hero-stage", heroActive);
     document.body.classList.toggle("is-warm-stage", warmActive);
     document.body.classList.toggle("is-dark-stage", darkActive && !warmActive);
   };
@@ -381,13 +411,14 @@
       window.history.replaceState(null, "", `${window.location.pathname}${window.location.search}`);
     }
     navItems.forEach((item) => item.classList.remove("is-active"));
-    document.documentElement.classList.remove("is-warm-stage", "is-dark-stage");
-    document.body.classList.remove("is-warm-stage", "is-dark-stage");
+    document.documentElement.classList.remove("is-hero-stage", "is-warm-stage", "is-dark-stage");
+    document.body.classList.remove("is-hero-stage", "is-warm-stage", "is-dark-stage");
   };
 
   anchors.forEach((anchor) => anchor.addEventListener("click", handleAnchorClick));
 
   window.LucianSectionFlow = {
+    jumpToHero,
     jumpToSection,
     refresh,
     getActiveSection() {

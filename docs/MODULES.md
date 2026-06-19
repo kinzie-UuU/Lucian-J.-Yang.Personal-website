@@ -64,7 +64,7 @@ Owned files:
 Responsibilities:
 
 - Render the entry screen, 3D key model, progress text/bar, auto-enter, and scroll/touch entry.
-- Replay entry from the avatar control.
+- Bottom avatar dock expansion for main navigation.
 - Dispatch the site-entered state and coordinate Entry-to-Hero curtains.
 
 Contracts:
@@ -79,7 +79,7 @@ QA:
 - Entry key renders.
 - Auto-enter works.
 - Scroll/touch enter works.
-- Replay returns to entry and re-enters cleanly.
+- Bottom avatar dock expands without replaying Entry.
 
 ## Hero
 
@@ -191,7 +191,6 @@ Owned files:
 - `styles/work-gallery.css`
 - `scripts/works-hover-preview.js`
 - `scripts/works-transition-motion.js`
-- `scripts/works-side-rail.js`
 - `scripts/work-gallery.js`
 - `scripts/section-flow.js`
 - `site-data.js`
@@ -199,13 +198,13 @@ Owned files:
 
 Responsibilities:
 
-- Render Works category rows, hover preview, Works side rail, Works transition copy, Gallery overlay, category browsing, and project detail pages.
+- Render Works category rows, hover preview, Works transition copy, Gallery overlay, category browsing, and project detail pages.
 - Keep gallery language refreshed when language changes.
 - Support Works section state around scroll, Services completion, row/rail gallery entry, and non-bottom-nav access.
 
 Contracts:
 
-- DOM: `#works`, Works row data attributes, Gallery overlay root, Gallery back/close controls, Works side rail nodes.
+- DOM: `#works`, Works row data attributes, Gallery overlay root and Gallery back/close controls.
 - Data: `worksData`, `workGalleryImages`, `workGalleryProjects`, `galleryText`.
 - Global: `window.LucianWorkGallery`.
 - Events consumed: `lucian:return-to-entry`, `lucian:programmatic-section-jump`, `lucian:site-entered`.
@@ -260,12 +259,12 @@ Owned files:
 Responsibilities:
 
 - Top meta controls: sound, language, fullscreen, Beijing clock.
-- Bottom nav: three-item section jumps for About, Services, and Contact, active state, paper transition behavior.
+- Bottom nav: avatar-triggered section jumps for About, Services, Works, and Contact, active state, paper transition behavior.
 - Precision cursor and guide state during entry.
 
 Contracts:
 
-- DOM: `#sound-toggle`, `#fullscreen-toggle`, `.lang-button`, bottom nav anchors for About/Services/Contact, `#precision-cursor`, `#precision-guides`.
+- DOM: `#sound-toggle`, `#fullscreen-toggle`, `.lang-button`, bottom nav anchors for About/Services/Works/Contact, `#precision-cursor`, `#precision-guides`.
 - Runtime: uses `window.LucianRuntime`.
 - Event produced by section flow: `lucian:programmatic-section-jump`.
 - Events consumed by scroll spy: `lucian:programmatic-section-jump`, `lucian:site-entered`.
@@ -276,7 +275,7 @@ QA:
 - Sound state persists and can resume after user gesture.
 - Fullscreen button state reflects browser fullscreen.
 - Bottom-nav paper transition settles under the browser smoke budget without leaving overlay nodes.
-- Bottom nav active state follows the current three nav targets and programmatic jumps.
+- Bottom nav active state follows the current four nav targets and programmatic jumps.
 
 ## Language And Text Effects
 

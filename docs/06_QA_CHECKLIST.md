@@ -20,8 +20,8 @@
 - [ ] With a user scroll/touch/click gesture and sound enabled, the unlock click lands near the key insertion.
 - [ ] Scroll/touch on entry can also enter the site.
 - [ ] Entry curtain transition completes and `body.has-entered` is applied.
-- [ ] Pixel avatar returns to entry.
-- [ ] Returning to entry closes Works rail and gallery state.
+- [ ] Bottom avatar dock expands on hover/click without replaying Entry.
+- [ ] Returning to entry closes gallery state.
 - [ ] Entry key replay starts again and auto-enters again.
 
 ## Hero
@@ -58,7 +58,7 @@
 - [ ] Hover preview does not block clicking.
 - [ ] Keyboard activation opens a works row.
 - [ ] Mouse/touch click opens a works row.
-- [ ] Works side rail opens, closes, and launches categories.
+- [ ] Bottom-nav Works reaches the Works section; Works rows launch categories.
 - [ ] Gallery opens with items.
 - [ ] Gallery back button works.
 - [ ] Gallery close button works.
@@ -77,8 +77,8 @@
 - [ ] Contact section appears after Works/Gallery overlay markup.
 - [ ] Top-right arrow reaches Contact.
 - [ ] Bottom nav Contact reaches Contact.
-- [ ] Bottom nav shows the current three primary items: About, Services, Contact.
-- [ ] Works is reachable through Services completion, natural scroll, Works rows, or the upper-left Works rail.
+- [ ] Bottom nav dock expands to show About, Services, Works, Contact.
+- [ ] Works is reachable through the bottom nav, Services completion, natural scroll, and Works rows.
 - [ ] Contact form fields are usable.
 - [ ] Submit opens Gmail compose or expected compose target.
 - [ ] WeChat QR trigger opens modal.
@@ -99,7 +99,7 @@
 ## Mobile
 
 - [ ] Entry is usable.
-- [ ] Bottom nav fits three items.
+- [ ] Expanded bottom nav fits four items.
 - [ ] Top controls do not overlap.
 - [ ] Hero model/water/wordmark fit without horizontal overflow.
 - [ ] About text does not overflow.

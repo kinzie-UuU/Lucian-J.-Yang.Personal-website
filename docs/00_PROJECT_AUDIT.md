@@ -20,8 +20,8 @@ It is not a React, Vue, Vite, Next, or bundled app. Runtime state is coordinated
 - Work gallery overlay: `#work-gallery`, category/project gallery, detail view, back/close/progress chrome.
 - Contact: `#contact`, contact copy, Gmail compose form, social links, WeChat QR modal, toast.
 - Clients: `#clients`, title band, selected-client marquee, intro copy.
-- Works side rail: `#works-side-rail`, avatar replay and category quick-open.
-- Bottom navigation: `.bottom-nav`, three anchors: About, Services, Contact; full Works remains in the upper-left Works rail.
+- Works navigation: bottom-nav Works anchor plus Works rows and Gallery category entry.
+- Bottom navigation: `#bottom-nav-dock`, collapsed avatar trigger plus four anchors: About, Services, Works, Contact.
 
 ## CSS Responsibility Map
 
@@ -40,7 +40,7 @@ It is not a React, Vue, Vite, Next, or bundled app. Runtime state is coordinated
 - About: `portrait-motion.js`, `about-curtain.js`.
 - Scroll curtains: `scroll-curtain-transitions.js` plus GSAP vendor files for natural scroll handoffs.
 - Services/section flow: `services-scroll-story.js`, `services-prismatic-burst.js`, `services-time-tunnel-shader.js`, and `section-flow.js` for sticky progress, canvas stages, hash handling, and bottom-nav paper transitions.
-- Works/gallery: `work-gallery.js`, `works-side-rail.js`, `works-hover-preview.js`, `works-transition-motion.js`.
+- Works/gallery: `work-gallery.js`, `works-hover-preview.js`, `works-transition-motion.js`.
 - UI/language/effects: runtime bridge, app bootstrap, language/static text modules, header controls, bottom nav, cursor, reveal/text effects, clients, contact, audio.
 
 ## Load Order Analysis
@@ -80,7 +80,7 @@ Do not reorder scripts unless the dependency chain is re-audited.
 7. Hero and About curtains depend on scroll geometry and sticky section heights.
 8. Services sticky scroll can regress if progress variables, section height, and active nav thresholds drift.
 9. Mobile text/model/water layers can overflow because of large display typography and canvases.
-10. WeChat modal, work gallery, and Works rail overlay states can conflict if Escape/body states change.
+10. WeChat modal and work gallery overlay states can conflict if Escape/body states change.
 
 ## Next Recommendations
 

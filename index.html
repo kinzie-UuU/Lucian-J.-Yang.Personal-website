@@ -92,8 +92,6 @@
   <div class="precision-guides" id="precision-guides" aria-hidden="true"></div>
   <header class="top-meta" aria-label="Site meta">
     <div class="top-meta-inner">
-      <div class="top-meta-left">
-      </div>
       <div class="top-meta-right">
         <span class="top-meta-group top-meta-tools">
           <button class="top-meta-toggle top-meta-sound-toggle top-meta-line-control" id="sound-toggle" type="button" aria-label="Mute site sound" aria-pressed="true">
@@ -140,7 +138,7 @@
       <div class="entry-center">
         <div class="entry-box-wrap">
           <canvas class="entry-key-canvas" id="entry-key-canvas" aria-hidden="true"
-                  data-model-src="/models/entry-key.glb"
+                  data-model-src="models/entry-key.glb"
                   data-auto-enter-delay="2400"></canvas>
         </div>
       </div>
@@ -165,7 +163,7 @@
 
         <svg class="hero-wireframe" id="hero-wireframe" aria-hidden="true"></svg>
 
-        <div class="hero-model-scene" id="hero-model-scene" data-model-src="/models/lion_head/lion_head_2k.gltf?v=20260615-lion-1k" aria-label="Floating Lion Head sculpture showcase">
+        <div class="hero-model-scene" id="hero-model-scene" data-model-src="models/lion_head/lion_head_2k.gltf?v=20260615-lion-1k" aria-label="Floating Lion Head sculpture showcase">
           <p class="hero-model-wordmark" aria-hidden="true">LUCIAN J. YANG</p>
           <canvas class="hero-model-canvas" id="hero-model-canvas" aria-hidden="true"></canvas>
           <p class="hero-model-wordmark hero-model-wordmark-intersection" aria-hidden="true">LUCIAN J. YANG</p>
@@ -521,61 +519,12 @@
     </section>
   </main>
 
-  <aside class="works-side-rail" id="works-side-rail" aria-label="Works navigation">
-    <div class="works-side-rail-trigger">
-      <button class="pixel-avatar works-side-rail-avatar" id="pixel-avatar" type="button" aria-label="Return to entry" aria-hidden="false">
-        <img src="images/头像.webp" alt="" draggable="false">
-      </button>
-      <span class="works-side-rail-label">WORK</span>
-      <button class="works-side-rail-toggle" id="works-side-rail-toggle" type="button" aria-expanded="false" aria-controls="works-side-rail-panel" aria-label="Open works menu">
-        <span class="works-side-rail-cue" aria-hidden="true"></span>
-      </button>
-    </div>
-    <div class="works-side-rail-panel" id="works-side-rail-panel">
-      <div class="works-side-rail-panel-head">
-        <p class="works-side-rail-kicker">WORK</p>
-        <button class="works-side-rail-close" type="button" aria-label="关闭作品菜单">
-          <span aria-hidden="true"></span>
-        </button>
-      </div>
-      <ul class="works-side-rail-list">
-        <li>
-          <button class="works-side-rail-item" type="button" data-category="oem">
-            <span class="works-side-rail-index">01</span>
-            <span class="works-side-rail-name" data-i18n="work_row_category_1_name">包装设计</span>
-          </button>
-        </li>
-        <li>
-          <button class="works-side-rail-item" type="button" data-category="gift">
-            <span class="works-side-rail-index">02</span>
-            <span class="works-side-rail-name" data-i18n="work_row_category_2_name">节礼包装设计</span>
-          </button>
-        </li>
-        <li>
-          <button class="works-side-rail-item" type="button" data-category="brand">
-            <span class="works-side-rail-index">03</span>
-            <span class="works-side-rail-name" data-i18n="work_row_category_3_name">品牌与字体设计</span>
-          </button>
-        </li>
-        <li>
-          <button class="works-side-rail-item" type="button" data-category="aigc">
-            <span class="works-side-rail-index">04</span>
-            <span class="works-side-rail-name" data-i18n="work_row_category_4_name">AIGC工作流</span>
-          </button>
-        </li>
-        <li>
-          <button class="works-side-rail-item" type="button" data-category="aigc-video">
-            <span class="works-side-rail-index">05</span>
-            <span class="works-side-rail-name" data-i18n="work_row_category_5_name">AIGC视频</span>
-          </button>
-        </li>
-      </ul>
-      <p class="works-side-rail-signature" data-i18n="meta_name">©杨钦鹏</p>
-    </div>
-  </aside>
-
-  <nav class="bottom-nav pill-nav" aria-label="Main navigation">
-    <ul class="pill-list">
+  <div class="bottom-nav-dock" id="bottom-nav-dock">
+    <button class="bottom-nav-avatar" id="bottom-nav-avatar" type="button" aria-label="Back to Hero" aria-expanded="false" aria-controls="bottom-nav-menu">
+      <img src="images/头像.webp" alt="" draggable="false">
+    </button>
+    <nav class="bottom-nav pill-nav" id="bottom-nav-menu" aria-label="Main navigation">
+<ul class="pill-list">
       <li>
         <a class="bottom-nav-item pill" href="#about" data-i18n="nav_about" aria-label="About">
           <span class="hover-circle" aria-hidden="true"></span>
@@ -589,13 +538,20 @@
         </a>
       </li>
       <li>
+        <a class="bottom-nav-item pill" href="#works" data-i18n="nav_works" aria-label="Works">
+          <span class="hover-circle" aria-hidden="true"></span>
+          <span class="label-stack"><span class="pill-label">Works</span><span class="pill-label-hover" aria-hidden="true">Works</span></span>
+        </a>
+      </li>
+      <li>
         <a class="bottom-nav-item pill" href="#contact" data-i18n="nav_contact" aria-label="Contact">
           <span class="hover-circle" aria-hidden="true"></span>
           <span class="label-stack"><span class="pill-label">Contact</span><span class="pill-label-hover" aria-hidden="true">Contact</span></span>
         </a>
       </li>
     </ul>
-  </nav>
+    </nav>
+  </div>
 
   <script src="site-data.js?v=20260615-webp-assets1"></script>
   <script src="scripts/audio-feedback.js?v=20260528-entry-key-unlock1"></script>
@@ -615,7 +571,6 @@
   <script src="scripts/services-prismatic-burst.js?v=20260613-services-light-init1"></script>
   <script src="scripts/services-time-tunnel-shader.js?v=20260613-services-light-init1"></script>
   <script src="scripts/work-gallery.js?v=20260613-gallery-lazy-images1"></script>
-  <script src="scripts/works-side-rail.js?v=20260521-rail-close-return3"></script>
   <script src="scripts/scrambled-text.js"></script>
   <script src="scripts/header-controls.js?v=20260515-bgm1"></script>
   <script src="scripts/language-controls.js"></script>
