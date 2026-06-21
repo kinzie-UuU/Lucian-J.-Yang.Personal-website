@@ -94,8 +94,8 @@ The baseline automated checks are necessary but not enough for visual systems. A
 
 - Entry: key render, enter, replay.
 - Hero: water, liquid, CRT video, scroll and handoff.
-- About: portrait fallback/video scrub and Services bridge.
-- Services: PrismaticBurst portal, time tunnel, flat in tunnel service inscriptions, scroll story.
+- About: portrait fallback/video scrub.
+- Services: statement block, language refresh, and gradient accordion.
 - Works/Gallery: rows, side rail, gallery open/close/detail/back.
 - Copy/language: `zh-CN` / `en` switching and open Gallery refresh.
   Layout: desktop/mobile horizontal overflow.

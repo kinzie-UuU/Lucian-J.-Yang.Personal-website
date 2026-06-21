@@ -41,8 +41,8 @@ High-value ids and selectors used across modules:
 
 - Entry: `#entry-screen`, `#entry-progress`, `#entry-progress-fill`, `#entry-progress-bar`, `#entry-year-marquee-track`.
 - Hero: `#hero-stage`, `#hero-broadcast-scene`, `#hero-tv-video`.
-- About: `#about`, `#portrait-video`, `.portrait-about-wrapper`, `.portrait-canvas`, `.about-curtain`.
-- Services: `#services`, `#services-prismatic-canvas`, `#services-time-canvas`, `.services-title-stage`, `.services-card-stage`, `.service-text-panel`.
+- About: `#about`, `#portrait-video`, `.portrait-about-wrapper`, `.portrait-canvas`.
+- Services: `#services`, `.services-card-stage`, `.services-overview`, `.services-accordion`, `.services-accordion-item`.
 - Works/Gallery: `#works`, Works row data attributes, Gallery overlay root and Gallery back/close controls.
 - Navigation/Header: `#sound-toggle`, `#fullscreen-toggle`, `.lang-button`, bottom avatar dock plus anchors for About/Services/Works/Contact, `#precision-cursor`, `#precision-guides`.
 
@@ -88,9 +88,6 @@ Known custom events:
 - `lucian:site-entered`: entry has completed and the page is in the entered state.
 - `lucian:return-to-entry`: legacy reset signal; dependent systems reset if a future flow dispatches it.
 - `lucian:hero-about-handoff`: Hero hands off into About.
-- `lucian:about-services-bridge-complete`: About-to-Services bridge finished; Services may schedule autoplay.
-- `lucian:services-sequence-start`: Services automatic sequence begins.
-- `lucian:services-sequence-complete`: Services automatic sequence finishes and lands on the Works transition copy screen.
 - `lucian:programmatic-section-jump`: section flow performed a controlled jump; scroll-driven systems should reset or refresh.
 
 When adding an event, document the producer, consumers, detail payload, and whether it may fire more than once per visit.
@@ -104,7 +101,6 @@ Common state purposes:
 - entered vs entry state
 - input/scroll lock state
 - active handoff/curtain state
-- Services playback/release suppression
 - Gallery open state
 - cursor visibility state
 
@@ -146,8 +142,8 @@ Only one system should own scroll locking or forced scroll position at a time.
 - Entry owns scroll blocking before the site is entered.
 - Hero owns Hero-to-About handoff locking.
 - Hero-to-About uses `hero-about-handoff-active`, `hero-about-handoff-releasing`, and `hero-about-handoff-settled`; the releasing state keeps the screen covered after About has been primed so intermediate Hero/About geometry is not exposed.
-- About owns the timed bridge into Services.
-- Services owns its automatic sequence and release.
+- About and Services are adjacent natural sections; no timed bridge is active.
+- Services owns text rebuild and accordion state, not scroll locking.
 - Works-to-Contact curtain owns its transition lock.
 - `section-flow.js` owns programmatic jumps and announces them with `lucian:programmatic-section-jump`. The current bottom nav is an avatar dock that expands to About, Services, Works, and Contact; Works access is also handled by scroll, Services completion, and Works rows.
 

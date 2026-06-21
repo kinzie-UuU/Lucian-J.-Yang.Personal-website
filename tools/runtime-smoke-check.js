@@ -514,16 +514,37 @@ const main = async () => {
     );
     await evaluate(client, "document.querySelector('.works-row[data-category=\"oem\"]')?.click(); true;");
     await delay(300);
-    const worksShowcase = await evaluate(client, `(() => ({
+    const servicesAccordion = await evaluate(client, `(() => ({
       galleryOpen: document.body.classList.contains('work-gallery-open'),
+      overviewTitle: document.querySelector('.services-overview-title')?.textContent?.trim() || null,
+      overviewBody: document.querySelector('.services-overview-body')?.textContent?.trim() || null,
+      cardCount: document.querySelectorAll('.services-accordion-item').length,
+      activeCardTitle: document.querySelector('.services-accordion-item.is-active .services-accordion-title')?.textContent?.trim() || null,
+      activeCardBody: document.querySelector('.services-accordion-item.is-active .services-accordion-body')?.textContent?.trim() || null
+    }))()`);
+    assert(
+      !servicesAccordion.galleryOpen
+        && servicesAccordion.overviewTitle
+        && servicesAccordion.overviewBody
+        && servicesAccordion.cardCount === 6
+        && servicesAccordion.activeCardTitle
+        && servicesAccordion.activeCardBody,
+      `Services accordion content failed: ${JSON.stringify(servicesAccordion)}`
+    );
+    const worksInfinite = await evaluate(client, `(() => ({
       canvas: Boolean(document.querySelector('#works-infinite-canvas')),
+      section: Boolean(document.querySelector('#works-infinite')),
       runtime: Boolean(window.LucianWorkInfiniteGallery),
       title: document.querySelector('#works-infinite-title')?.textContent?.trim() || null,
       description: document.querySelector('#works-infinite-description')?.textContent?.trim() || null
     }))()`);
     assert(
-      !worksShowcase.galleryOpen && worksShowcase.canvas && worksShowcase.runtime && worksShowcase.title && worksShowcase.description,
-      `Works two-stage gallery flow failed: ${JSON.stringify(worksShowcase)}`
+      worksInfinite.section
+        && worksInfinite.canvas
+        && worksInfinite.runtime
+        && worksInfinite.title
+        && worksInfinite.description,
+      `Works infinite gallery failed: ${JSON.stringify(worksInfinite)}`
     );
 
     await evaluate(client, "window.LucianWorkGallery?.close?.(); true;");

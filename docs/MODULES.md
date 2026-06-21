@@ -113,27 +113,26 @@ Owned files:
 - `index.html`
 - `styles/about.css`
 - `scripts/portrait-motion.js`
-- `scripts/about-curtain.js`
 - `videos/portrait-scrub-60fps.mp4`
 - `images/9999.png`
 
 Responsibilities:
 
-- Render portrait media, fallback image, About copy reveal, wheel-controlled portrait video scrub, and About-to-Services bridge.
+- Render portrait media, fallback image, About copy reveal, and wheel-controlled portrait video scrub.
 - Clean up legacy bridge state on entry, page show/hide, and programmatic jumps.
 
 Contracts:
 
-- DOM: `#about`, `.portrait-about-wrapper`, `.portrait-canvas`, `#portrait-video`, `.about-curtain`.
+- DOM: `#about`, `.portrait-about-wrapper`, `.portrait-canvas`, `#portrait-video`.
 - Globals: `window.LucianAboutMotion`, `window.LucianAboutScrollReveal`.
 - Events consumed: `lucian:programmatic-section-jump`, `lucian:site-entered`.
-- Event produced by the bridge: `lucian:about-services-bridge-complete`.
+- Legacy bridge classes are cleared but no About-to-Services visual bridge is produced.
 
 QA:
 
 - Portrait fallback appears before video readiness.
 - Wheel down scrubs the portrait from side to front; wheel up reverses from front to side without using pointer position.
-- Natural scroll to Services runs the bridge once.
+- Natural scroll moves directly into Services.
 - Direct nav does not leave black-curtain residue.
 
 ## Services
@@ -143,33 +142,26 @@ Owned files:
 - `index.html`
 - `styles/services.css`
 - `scripts/services-scroll-story.js`
-- `scripts/services-prismatic-burst.js`
-- `scripts/services-time-tunnel-shader.js`
 - `site-data.js`
 
 Responsibilities:
 
-- Render Services sticky title gate.
-- Run PrismaticBurst entry canvas and local WebGL2 time-tunnel canvas.
-- Own the locked automatic service inscription sequence, including held reading beats for each service message.
-- Land on the Works transition copy screen after the Services sequence completes.
+- Render the Services overview statement and interactive gradient accordion as a normal page section.
+- Keep service titles/body copy synced with i18n data.
 
 Contracts:
 
-- DOM: `#services`, `.services-sticky`, `#services-prismatic-canvas`, `#services-time-canvas`, `.services-title-stage`, `.services-card-stage`.
+- DOM: `#services`, `.services-card-stage`, `.services-overview`, `.services-accordion`, `.services-accordion-item`.
 - Data: service title/body text comes from `site-data.js` through i18n keys and the Services text rebuild path.
-- Events consumed: `lucian:about-services-bridge-complete`, `lucian:programmatic-section-jump`, `lucian:site-entered`.
-- Events produced: `lucian:services-sequence-start`, `lucian:services-sequence-complete`.
-- Services owns playback/release suppression while its sequence is active.
+- Events consumed: `lucian:programmatic-section-jump`, `lucian:site-entered`.
+- Services does not own scroll locking, autoplay, or sequence completion events in the current flow.
 
 QA:
 
-- Title gate appears on direct nav.
-- Natural About handoff starts Services autoplay after the bridge.
-- PrismaticBurst yields to time tunnel.
-- Six service messages play slowly enough to read, with held beats and no adjacent ghost carryover.
-- Message 06 remains readable through its final hold before the sequence releases to Works.
-- Sequence lands on Works transition copy.
+- Direct nav lands on the visible Services overview and accordion.
+- About scrolls directly into Services with no bridge transition.
+- Gradient accordion renders all six cards; hover/focus/click changes the active card.
+- Mobile layout has no horizontal overflow.
 
 ## Works And Gallery
 
@@ -179,7 +171,6 @@ Owned files:
 - `styles/works.css`
 - `styles/work-gallery.css`
 - `scripts/works-hover-preview.js`
-- `scripts/works-transition-motion.js`
 - `scripts/work-gallery.js`
 - `scripts/section-flow.js`
 - `site-data.js`

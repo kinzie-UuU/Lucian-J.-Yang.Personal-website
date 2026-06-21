@@ -7,8 +7,8 @@ These files are the detailed, update as you build notes for each feature system.
 - `core-runtime.md`: app bootstrap, runtime bridge, script order, core state.
 - `entry.md`: entry screen, 3D key, progress, enter/replay.
 - `hero.md`: Hero CRT video broadcast, wordmark, Hero-to-About handoff.
-- `about-portrait.md`: portrait video scrub, About reveal, About to Services bridge.
-- `services.md`: Services title gate, PrismaticBurst, time tunnel, service sequence.
+- `about-portrait.md`: portrait video scrub and About reveal.
+- `services.md`: Services statement block and interactive accordion.
 - `works-gallery.md`: Works rows, hover preview, side rail, gallery overlay/detail.
 - `scroll-curtains.md`: Works to Contact GSAP/MorphSVG curtain.
 - `navigation-header.md`: top controls, bottom nav, clock, cursor.

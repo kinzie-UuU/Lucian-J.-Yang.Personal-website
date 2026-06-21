@@ -39,17 +39,16 @@
 - [ ] Video scrub follows scroll without obvious jumps.
 - [ ] About text becomes readable after portrait reveal.
 - [ ] Toolkit tags wrap without overflow.
-- [ ] About-to-Services curtain triggers near the end of the section.
+- [ ] About scrolls directly into Services.
 
 ## Services
 
 - [ ] Services section appears after About.
-- [ ] PrismaticBurst entry canvas is visible during the Services title/portal stage.
-- [ ] Time-tunnel canvas takes over after the portal stage.
-- [ ] Flat in-tunnel service inscriptions stay readable through the automatic sequence.
-- [ ] Scroll story progresses through Services and releases scroll afterward.
+- [ ] Services statement block is visible.
+- [ ] Gradient accordion renders all six services.
+- [ ] Hover/focus/click updates the active service card.
 - [ ] Service copy rebuilds after language switch.
-- [ ] Services automatic sequence lands on Works transition copy without scroll lock.
+- [ ] Scrolling continues naturally from Services into Works.
 
 ## Works / Gallery
 

@@ -203,12 +203,6 @@
     return rect.top < vh * CENTERED_REVEAL_TOP_LIMIT && rect.bottom > vh * 0.34;
   };
 
-  const isCenteredRevealNearTop = () => {
-    const rect = section.getBoundingClientRect();
-    const vh = window.innerHeight || 1;
-    return rect.top > -vh * 0.14 && rect.top < vh * 0.18;
-  };
-
   const isCenteredRevealEntryGate = () => {
     const rect = section.getBoundingClientRect();
     const vh = window.innerHeight || 1;
@@ -653,7 +647,6 @@
         anchorY,
         enter: initialEnter,
       });
-      currentEnter = Math.min(currentEnter, centeredRevealTarget);
     },
     primeEntry: (progress = 0.08) => {
       ensurePortraitVideoLoaded();
@@ -711,17 +704,6 @@
       event.preventDefault();
       event.stopPropagation();
       return;
-    }
-    if (!centeredRevealActive && centeredRevealCompleted && event.deltaY < 0 && isCenteredRevealNearTop()) {
-      activateCenteredReveal({
-        anchorY: sectionTop(),
-        enter: CENTERED_REVEAL_DONE,
-      });
-      centeredTurnLocked = false;
-      advanceCenteredReveal(event.deltaY || 0, {
-        allowBeforeArmed: true,
-        source: "wheel",
-      });
     }
     if (!centeredRevealActive) return;
     if (shouldLetNaturalScrollResume(event.deltaY || 0)) {

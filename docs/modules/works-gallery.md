@@ -10,7 +10,6 @@ Works is the portfolio index. It renders category rows, hover preview, side rail
 - `styles/works.css`
 - `styles/work-gallery.css`
 - `scripts/works-hover-preview.js`
-- `scripts/works-transition-motion.js`
 - `scripts/work-gallery.js`
 - `scripts/section-flow.js`
 - `site-data.js`
@@ -34,7 +33,7 @@ Works is the portfolio index. It renders category rows, hover preview, side rail
 - Consumes `lucian:site-entered`.
 - Language runtime calls Gallery refresh after language changes.
 - Gallery runtime modes are category project browsing and project detail; Works rows with project indexes skip the category browsing screen.
-- `#works-transition` uses a paired two-line statement reveal; keep both headline lines synchronized and out of per-glyph scroll splitting for smoother handoff.
+- `#works-transition` is a zero-height anchor for Services/section flow compatibility.
 
 ## Data Contracts
 

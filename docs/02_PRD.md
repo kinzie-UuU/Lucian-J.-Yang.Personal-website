@@ -64,8 +64,8 @@ Secondary path: Bottom-nav Works or Works rows -> matching gallery category/proj
 ## Services Requirements
 
 - Explain why to work with the designer.
-- Start with a full-screen `为何选择我` title stage before any service station appears.
-- Use local WebGL canvas stages for the Services title and time-tunnel sequence; scroll-story interaction must remain natural and readable.
+- Present `为何选择我` inside the Services statement block.
+- Keep Services as a normal page section with no transition gate, scroll lock, or WebGL tunnel.
 - Copy should emphasize packaging judgment within price, process, delivery, and channel constraints.
 - Service copy should refresh after language switch.
 
@@ -88,7 +88,7 @@ Secondary path: Bottom-nav Works or Works rows -> matching gallery category/proj
 
 - Contact remains a dedicated inquiry section.
 - Top-right arrow and bottom nav Contact navigate to Contact.
-- Works is a bottom-nav item; visitors also reach it through the Services sequence, natural scroll, and Works rows.
+- Works is a bottom-nav item; visitors also reach it through natural scroll and Works rows.
 - Gmail compose flow should use form fields to build subject/body.
 - Social links and WeChat QR modal remain available.
 - Contact copy should ask for project type, timing, and budget range.

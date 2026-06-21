@@ -217,6 +217,26 @@
     const clone = element.cloneNode(true);
     clone.removeAttribute("id");
     clone.classList.add("is-visible");
+
+    const sourceCanvases = Array.from(element.querySelectorAll("canvas"));
+    clone.querySelectorAll("canvas").forEach((canvas, index) => {
+      const sourceCanvas = sourceCanvases[index];
+      if (!sourceCanvas) return;
+
+      try {
+        const image = new Image();
+        image.className = canvas.className;
+        image.alt = "";
+        image.decoding = "async";
+        image.src = sourceCanvas.toDataURL("image/png");
+        image.style.cssText = canvas.style.cssText;
+        image.setAttribute("aria-hidden", "true");
+        canvas.replaceWith(image);
+      } catch (error) {
+        canvas.remove();
+      }
+    });
+
     clone.querySelectorAll("[id]").forEach((node) => node.removeAttribute("id"));
     clone.querySelectorAll("[data-reveal]").forEach((node) => node.classList.add("is-revealed"));
     clone.querySelectorAll("video").forEach((video) => {

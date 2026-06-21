@@ -30,8 +30,8 @@ The architecture is intentionally simple at the platform level and more complex 
 
 4. Transition systems
    - Entry-to-Hero and Hero-to-About are owned by `entry-hero-experience.js`.
-   - About-to-Services is owned by `about-curtain.js` plus Services autoplay hooks in `services-scroll-story.js`.
-   - Services-to-Works is owned by the Services sequence, which lands on the Works transition copy screen.
+   - About flows directly into Services as adjacent page sections.
+   - Services flows directly into Works through normal page scrolling.
    - Works-to-Contact is owned by `scroll-curtain-transitions.js` with GSAP/MorphSVG.
 
 ## Page Sections
@@ -40,13 +40,13 @@ The DOM is organized as a single scroll story:
 
 - `#entry-screen`: entry gate, 3D key, progress, auto-enter, scroll/touch enter.
 - `.hero-section` and `#hero-stage`: Hero CRT video broadcast, wordmark, Hero-to-About handoff.
-- `#about`: portrait video/image scrub, About text reveal, About-to-Services bridge.
-- `#services`: sticky Services title gate, PrismaticBurst canvas, time-tunnel canvas, automatic service message stage.
-- `#works`: work categories, hover preview, side rail, transition copy, gallery entry.
+- `#about`: portrait video/image scrub and About text reveal.
+- `#services`: services statement block and interactive gradient accordion.
+- `#works`: featured work rows, hover preview, infinite gallery, and gallery entry.
 - Gallery overlay: category browsing, project detail, back/close controls.
 - Clients: selected-client marquee and title interaction.
 - `#contact`: Gmail compose form, social links, WeChat QR modal, toast.
-- Bottom navigation: collapsed avatar dock that expands to four primary anchors for About, Services, Works, and Contact, with active state and paper transition behavior. Works is also reached through scroll, Services completion, and Works rows.
+- Bottom navigation: collapsed avatar dock that expands to four primary anchors for About, Services, Works, and Contact, with active state and paper transition behavior. Works is also reached through natural scroll and Works rows.
 
 ## CSS Architecture
 

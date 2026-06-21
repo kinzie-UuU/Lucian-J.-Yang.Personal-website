@@ -205,6 +205,8 @@
     return (-rect.top) / vh;
   };
 
+  const currentScrollY = () => window.scrollY || window.pageYOffset || 0;
+
   const isHeroHandoffZone = () => {
     if (!heroSection) return false;
     const rect = heroSection.getBoundingClientRect();
@@ -212,13 +214,8 @@
     return rect.top < vh * 0.08 && rect.bottom > vh * 0.35;
   };
 
-  const targetAboutEntryTop = () => {
+  const stableAboutEntryTop = () => {
     if (!aboutSection) return 0;
-    const currentY = window.scrollY || window.pageYOffset || 0;
-    const rect = aboutSection.getBoundingClientRect();
-    const measuredTop = Math.max(0, Math.round(currentY + rect.top));
-    if (measuredTop > 2) return measuredTop;
-
     const offsetTop = Math.round(aboutSection.offsetTop || 0);
     if (offsetTop > 2) return offsetTop;
 
@@ -226,6 +223,19 @@
       const heroBottom = Math.round((heroSection.offsetTop || 0) + (heroSection.offsetHeight || 0));
       if (heroBottom > 2) return heroBottom;
     }
+
+    return 0;
+  };
+
+  const targetAboutEntryTop = () => {
+    if (!aboutSection) return 0;
+    const currentY = currentScrollY();
+    const rect = aboutSection.getBoundingClientRect();
+    const measuredTop = Math.max(0, Math.round(currentY + rect.top));
+    if (measuredTop > 2) return measuredTop;
+
+    const stableTop = stableAboutEntryTop();
+    if (stableTop > 2) return stableTop;
 
     const vhFallback = Math.round((window.innerHeight || 1) * 1.32);
     return Math.max(measuredTop, vhFallback);
@@ -294,7 +304,13 @@
 
   const releaseSettleGuardForForwardInput = () => {
     const hasRecentInput = performance.now() < heroInputDirectionUntil;
-    if (!heroHandoffComplete || !isSettleGuardActive() || !hasRecentInput || isHeroInputScrollingUp()) return false;
+    if (
+      !heroHandoffComplete
+      || !isSettleGuardActive()
+      || performance.now() < postForwardReturnGuardUntil
+      || !hasRecentInput
+      || isHeroInputScrollingUp()
+    ) return false;
     settleGuardUntil = 0;
     stopAboutEntrySettleLock();
     return true;
@@ -311,12 +327,31 @@
     && !isBlockedByProgrammaticTransition()
   );
 
+  const heroReturnIntentThreshold = () => {
+    const vh = window.innerHeight || 1;
+    return Math.max(28, Math.min(96, vh * 0.06));
+  };
+
+  const hasScrolledAboveAboutEntryBy = (threshold) => {
+    const aboutEntryY = stableAboutEntryTop();
+    return Boolean(
+      aboutEntryY > 2
+      && performance.now() > postForwardReturnGuardUntil
+      && currentScrollY() < aboutEntryY - threshold
+    );
+  };
+
+  const hasHeroReturnIntentDrift = () => (
+    hasScrolledAboveAboutEntryBy(heroReturnIntentThreshold())
+  );
+
   const shouldStartHeroReturnFromInput = (direction = -1) => (
     direction < 0
     && heroHandoffComplete
     && !heroHandoffActive
     && !heroHandoffReturning
     && isHeroReadyForHandoff()
+    && hasHeroReturnIntentDrift()
     && readHeroPast() < HERO_RETURN_TRIGGER
     && !isBlockedByProgrammaticTransition()
   );
@@ -426,12 +461,34 @@
     settleTargetY = targetY;
     setReleaseClass(true);
     settleGuardUntil = performance.now() + HERO_HANDOFF_RELEASE_MS + 360;
+    lockHeroInstantTop();
     window.scrollTo({ top: targetY, left: 0, behavior: "auto" });
     document.documentElement.scrollTop = targetY;
     document.body.scrollTop = targetY;
     startAboutEntrySettleLock();
 
+    let releaseCompleted = false;
+    let aboutEntryPrimed = false;
+    const primeAboutEntry = () => {
+      if (aboutEntryPrimed) return;
+      aboutEntryPrimed = true;
+      if (window.LucianAboutMotion?.startCenteredReveal) {
+        window.LucianAboutMotion.startCenteredReveal({
+          anchorY: settleTargetY || targetY,
+          initialEnter: 0.12,
+        });
+      } else {
+        window.LucianAboutMotion?.primeEntry?.(0.04);
+      }
+    };
+
     const completeRelease = () => {
+      if (releaseCompleted) return;
+      releaseCompleted = true;
+      window.clearTimeout(heroHandoffReleaseTimer);
+      stopHeroReturnTopLock();
+      window.clearTimeout(heroInstantTopReleaseTimer);
+      lockHeroInstantTop();
       const safeTargetY = targetY > 2
         ? targetY
         : Math.round((window.innerHeight || 1) * 1.32);
@@ -447,33 +504,27 @@
       heroHandoffComplete = true;
       heroForwardHandoffLocked = false;
       postForwardReturnGuardUntil = performance.now() + HERO_HANDOFF_RELEASE_MS + 900;
-      window.requestAnimationFrame(() => {
-        setReleaseClass(false);
-      });
+      setReleaseClass(false);
+      window.requestAnimationFrame(primeAboutEntry);
+      heroInstantTopReleaseTimer = window.setTimeout(() => {
+        unlockHeroInstantTop();
+      }, HERO_HANDOFF_RELEASE_MS + 620);
       window.dispatchEvent(new CustomEvent("lucian:hero-about-handoff", {
         detail: { complete: true, targetY: safeTargetY },
       }));
     };
 
-    const primeAboutEntry = () => {
-      if (window.LucianAboutMotion?.startCenteredReveal) {
-        window.LucianAboutMotion.startCenteredReveal({
-          anchorY: targetY,
-          initialEnter: 0.12,
-        });
-      } else {
-        window.LucianAboutMotion?.primeEntry?.(0.04);
-      }
-    };
-
-    window.requestAnimationFrame(() => {
+    if (reducedMotion) {
       primeAboutEntry();
+      completeRelease();
+      return;
+    }
+
+    window.clearTimeout(heroHandoffReleaseTimer);
+    heroHandoffReleaseTimer = window.setTimeout(completeRelease, HERO_HANDOFF_RELEASE_MS + 480);
+    window.requestAnimationFrame(() => {
       window.requestAnimationFrame(() => {
         window.clearTimeout(heroHandoffReleaseTimer);
-        if (reducedMotion) {
-          completeRelease();
-          return;
-        }
         heroHandoffReleaseTimer = window.setTimeout(completeRelease, HERO_HANDOFF_RELEASE_MS);
       });
     });
@@ -603,18 +654,14 @@
     }
 
     const scrollingUp = isHeroInputScrollingUp();
-    const currentY = window.scrollY || window.pageYOffset || 0;
-    const returnDriftThreshold = Math.max(80, (window.innerHeight || 1) * 0.22);
-    const hasScrolledAboveAboutEntry = Boolean(
-      heroHandoffComplete
-      && settleTargetY
-      && performance.now() > postForwardReturnGuardUntil
-      && currentY < settleTargetY - returnDriftThreshold
-    );
+    const aboutRevealActive = document.body.classList.contains("about-centered-reveal-active");
+    const hasReturnIntentDrift = hasHeroReturnIntentDrift();
     if (
       heroHandoffComplete
       && !heroHandoffReturning
-      && (scrollingUp || hasScrolledAboveAboutEntry)
+      && scrollingUp
+      && !aboutRevealActive
+      && hasReturnIntentDrift
       && past < HERO_RETURN_TRIGGER
     ) {
       startHeroAboutReturn();

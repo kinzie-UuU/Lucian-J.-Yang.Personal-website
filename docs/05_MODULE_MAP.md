@@ -11,7 +11,7 @@
 | 6 | `styles/home.css` | Entry and Hero base layout, CRT broadcast, and wordmark |
 | 7 | `styles/entry-hero-experience.css` | Entry key collapse, Hero reveal curtains, and Hero-to-About black curtain |
 | 8 | `styles/about.css` | Portrait reveal and About curtain |
-| 9 | `styles/services.css` | Services sticky narrative |
+| 9 | `styles/services.css` | Services natural section and accordion |
 | 10 | `styles/works.css` | Works rows and works transition |
 | 11 | `styles/clients.css` | Clients section |
 | 12 | `styles/work-gallery.css` | Gallery overlay |
@@ -37,9 +37,7 @@ This list mirrors the current `index.html` order.
 | 8 | `scripts/language-runtime.js` | Language orchestration |
 | 9 | `scripts/flip-text.js` | Flip text |
 | 10 | `script.js` | Calls app init |
-| 12 | `scripts/services-scroll-story.js` | Services title gate, bridge preview/autoplay guard, About handoff cleanup, locked automatic service sequence, start/complete events, and flat in-tunnel inscription |
-| 13 | `scripts/services-prismatic-burst.js` | Services black-water PrismaticBurst entry canvas and progress bridge |
-| 14 | `scripts/services-time-tunnel-shader.js` | Services local WebGL2 time-tunnel layer |
+| 12 | `scripts/services-scroll-story.js` | Services i18n text rebuild and accordion activation |
 | 15 | `scripts/work-gallery.js` | Work gallery |
 | 16 | `scripts/scrambled-text.js` | Scrambled text |
 | 17 | `scripts/header-controls.js` | Sound/fullscreen/top controls |
@@ -49,14 +47,12 @@ This list mirrors the current `index.html` order.
 | 21 | `scripts/reveal-effects.js` | Reveals |
 | 22 | `scripts/precision-cursor.js` | Precision cursor |
 | 23 | `scripts/works-hover-preview.js` | Works hover preview |
-| 24 | `scripts/works-transition-motion.js` | Works transition motion |
 | 25 | `scripts/section-flow.js` | Section jumps, hash handling, active nav, three-item bottom-nav paper transition |
 | 26 | `scripts/site-clock.js` | Beijing clock |
 | 27 | `scripts/bottom-nav-scroll-spy.js` | Section flow refresh bridge |
 | 28 | `scripts/clients-marquee.js` | Client marquee |
 | 29 | `scripts/clients-title-interaction.js` | Client title interaction |
 | 30 | `scripts/portrait-motion.js` | About portrait reveal/scrub |
-| 31 | `scripts/about-curtain.js` | Hero-style About-to-Services timed bridge with black curtain marker, real Services stage preview, input lock, completion event, and Services playback/release suppression |
 | 32 | `scripts/vendor/gsap/gsap.min.js` | GSAP runtime |
 | 33 | `scripts/vendor/gsap/MorphSVGPlugin.min.js` | GSAP MorphSVG plugin |
 | 34 | `scripts/scroll-curtain-transitions.js` | Works-to-Contact curtain |
@@ -67,14 +63,14 @@ This list mirrors the current `index.html` order.
 
 - Entry: `index.html`, `styles/home.css`, `styles/entry-hero-experience.css`, `scripts/entry-key-model.js`, `scripts/entry-hero-experience.js`.
 - Hero: `index.html`, `styles/home.css`, `styles/entry-hero-experience.css`, `scripts/hero-state-runtime.js`, `scripts/hero-sequence-runtime.js`, `scripts/hero-tv-controls.js`, `scripts/entry-hero-experience.js`, `images/works/aigc-video/莉栗说新年篇.mp4`.
-- About/Portrait: `index.html`, `styles/about.css`, `scripts/portrait-motion.js`, `scripts/about-curtain.js`, `videos/portrait-scrub-60fps.mp4`, `images/9999.webp`.
-- Services: `index.html`, `styles/services.css`, `scripts/about-curtain.js`, `scripts/services-scroll-story.js`, `scripts/services-prismatic-burst.js`, `scripts/services-time-tunnel-shader.js`, `site-data.js`; current rebuild has a Hero-style timed About-to-Services bridge that previews the real Services stage instead of injecting a duplicate title, black-water PrismaticBurst title gate that yields to a local WebGL2 time-tunnel layer, natural-scroll autoplay after the bridge, direct-nav suppression at the title gate, slower automatic six-step flat in-tunnel service inscriptions without adjacent ghost carryover, residue lines, or auxiliary progress rail, Services-owned suppression so About does not re-trigger after playback, and a final jump to the Works transition copy screen.
-- Works: `index.html`, `styles/works.css`, `scripts/works-hover-preview.js`, `scripts/works-transition-motion.js`, `scripts/section-flow.js`, `site-data.js`.
+- About/Portrait: `index.html`, `styles/about.css`, `scripts/portrait-motion.js`, `videos/portrait-scrub-60fps.mp4`, `images/9999.webp`.
+- Services: `index.html`, `styles/services.css`, `scripts/services-scroll-story.js`, `site-data.js`; current rebuild connects directly after About as a normal page section with a left "Why Work With Me" statement block and right interactive service cards.
+- Works: `index.html`, `styles/works.css`, `scripts/works-hover-preview.js`, `scripts/section-flow.js`, `site-data.js`.
 - Scroll curtains: `index.html`, `styles/shared-motion.css`, `scripts/scroll-curtain-transitions.js`, GSAP vendor files; natural mouse-wheel handoffs are separate from bottom-nav click transitions.
 - Gallery: `index.html`, `styles/work-gallery.css`, `scripts/work-gallery.js`, `site-data.js`, `images/works/`.
 - Clients: `index.html`, `styles/clients.css`, `scripts/clients-marquee.js`, `scripts/clients-title-interaction.js`.
 - Contact: `index.html`, `styles/contact.css`, `scripts/contact-interactions.js`, `images/wechat-qr.jpg`.
-- Navigation: `index.html`, `styles/navigation.css`, `scripts/section-flow.js`, `scripts/bottom-nav-scroll-spy.js`, `scripts/header-controls.js`; current bottom nav is an avatar dock that expands to About, Services, Works, and Contact; Works also uses scroll/Services completion and Works rows.
+- Navigation: `index.html`, `styles/navigation.css`, `scripts/section-flow.js`, `scripts/bottom-nav-scroll-spy.js`, `scripts/header-controls.js`; current bottom nav is an avatar dock that expands to About, Services, Works, and Contact; Works also uses natural scroll and Works rows.
 
 ## High-Risk Edit Zones
 
@@ -82,7 +78,7 @@ This list mirrors the current `index.html` order.
 - `site-data.js` data schema and asset references.
 - `scripts/work-gallery.js`.
 - Hero CRT/video/entry scripts.
-- Services scroll and section-flow scripts.
+- Services and section-flow scripts.
 - `styles/home.css`, `styles/services.css`, `styles/work-gallery.css`, `styles/navigation.css`.
 - `three.min.js` and vendor files.
 

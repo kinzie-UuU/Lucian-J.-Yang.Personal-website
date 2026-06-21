@@ -39,7 +39,6 @@ body:not(.has-entered):not(.is-entry-curtain-ready):not(.is-entering):not(.is-un
 body:not(.has-entered) .portrait-about-wrapper,
 body:not(.has-entered) .services-section,
 body:not(.has-entered) .services-scroll-story,
-body:not(.has-entered) .service-work-transition,
 body:not(.has-entered) .works-section,
 body:not(.has-entered) .clients-section,
 body:not(.has-entered) .contact-section {

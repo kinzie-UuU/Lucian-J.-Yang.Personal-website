@@ -126,25 +126,6 @@ body:not(.about-centered-reveal-active):not(.hero-about-handoff-settled) .portra
   pointer-events: none;
 }
 
-.about-curtain {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 100%;
-  z-index: 12;
-  pointer-events: none;
-  background: #000;
-  transform: translateY(108%);
-  opacity: 1;
-  transition: transform 1650ms cubic-bezier(0.62, 0, 0.24, 1);
-  will-change: transform;
-}
-
-.portrait-canvas.is-about-curtain-down .about-curtain {
-  transform: translateY(0);
-}
-
 .about-layout {
   display: grid;
   grid-template-columns: minmax(330px, 0.72fr) minmax(460px, 0.58fr);

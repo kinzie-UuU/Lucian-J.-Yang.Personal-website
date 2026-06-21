@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Services is a controlled scroll story. It starts with a title gate, displays six service inscriptions beside an interactive image accordion, then lands on the Works transition copy screen.
+Services is a normal page section connected directly after About. It shows a left statement block and a right interactive gradient accordion whose active card contains the service index, title, and body copy.
 
 ## Owned Files
 
@@ -14,22 +14,17 @@ Services is a controlled scroll story. It starts with a title gate, displays six
 ## DOM Contracts
 
 - `#services`
-- `.services-sticky`
-- `.services-title-stage`
 - `.services-card-stage`
-- `.services-text-track`
-- `.service-text-panel`
+- `.services-overview`
 - `.services-accordion`
 - `.services-accordion-item`
+- `.services-accordion-content`
 
 ## Runtime Contracts
 
-- Consumes `lucian:about-services-bridge-complete`.
 - Consumes `lucian:programmatic-section-jump`.
 - Consumes `lucian:site-entered`.
-- Produces `lucian:services-sequence-start`.
-- Produces `lucian:services-sequence-complete`.
-- Owns playback/release suppression while active.
+- Does not own scroll locking, autoplay, or About-to-Services transition playback.
 
 ## Data Contracts
 
@@ -37,16 +32,14 @@ Service titles and body copy are driven by `site-data.js` i18n keys. Keep both l
 
 ## Change Checklist
 
-- Direct navigation should land on the title gate without accidental autoplay.
-- Natural About handoff should schedule autoplay only after the bridge completes.
-- Scroll locking must release after the sequence.
-- Image accordion labels must stay aligned with service i18n keys.
+- Direct navigation should land on the services-system stage without accidental autoplay.
+- About should scroll directly into Services with no bridge transition or scroll lock.
+- The services overview and accordion card content must stay aligned with service i18n keys.
 - If service count changes, update text rebuild logic, timing, and QA notes.
 - If final landing changes, update Works/section-flow docs.
 
 ## QA
 
-- Title gate appears on direct nav.
-- Service inscriptions are readable and do not ghost.
-- Image accordion renders, hover/focus activation works, and mobile horizontal overflow remains controlled.
-- Sequence completes and lands on Works transition copy.
+- About and Services appear as adjacent natural sections.
+- Services overview carries the packaging statement in the left block.
+- Gradient accordion renders, active cards show index/title/body, hover/focus activation works, and mobile horizontal overflow remains controlled.

@@ -11,11 +11,11 @@ It is not a React, Vue, Vite, Next, or bundled app. Runtime state is coordinated
 - Top meta header: identity, Beijing clock, language buttons, fullscreen, sound, contact arrow.
 - Entry screen: `#entry-screen`, 3D key canvas, progress text/bar, atmosphere layers.
 - Hero: `.hero-section`, `#hero-stage`, CRT AIGC video broadcast, Hero wordmark, Hero curtain.
-- About: `#about`, portrait video/image, darkroom-style reveal, bio copy, toolkit tags, About curtain.
-- Services: `#services`, full-screen title gate, black-water PrismaticBurst portal canvas, local time-tunnel stage, and automatic flat in-tunnel service inscriptions.
-- Services-to-Works handoff: Services owns the automatic sequence and lands directly on `#works-transition`.
-- Works transition: `#works-transition`, scroll-linked statement/progress visual.
-- Works: `#works`, five category rows, hover preview, clients link.
+- About: `#about`, portrait video/image, darkroom-style reveal, bio copy, toolkit tags.
+- Services: `#services`, statement block and interactive gradient accordion.
+- Services-to-Works handoff: normal page scroll.
+- Works transition: `#works-transition`, zero-height anchor for section flow compatibility.
+- Works: `#works`, five featured rows, hover preview, infinite gallery, clients link.
 - Works-to-Contact curtain: `#curtain-works-contact`.
 - Work gallery overlay: `#work-gallery`, category/project gallery, detail view, back/close/progress chrome.
 - Contact: `#contact`, contact copy, Gmail compose form, social links, WeChat QR modal, toast.
@@ -27,9 +27,9 @@ It is not a React, Vue, Vite, Next, or bundled app. Runtime state is coordinated
 
 - `styles/home.css`: entry screen, Hero base layout, CRT video broadcast, and wordmark.
 - `styles/entry-hero-experience.css`: Entry key collapse, Hero reveal curtains, and Hero-to-About black curtain.
-- `styles/about.css`: portrait reveal, About text, About-to-Services curtain.
-- `styles/services.css`: services tunnel title stage, deferred service station stage, progress rail, and responsive layout.
-- `styles/works.css`: works transition, category rows, hover preview.
+- `styles/about.css`: portrait reveal and About text.
+- `styles/services.css`: services statement, accordion, and responsive layout.
+- `styles/works.css`: featured rows, hover preview, and infinite gallery.
 - `styles/shared-motion.css`: reveal helpers and scroll curtain transition styles.
 - Other CSS modules keep their section-specific responsibilities as named.
 
@@ -37,10 +37,10 @@ It is not a React, Vue, Vite, Next, or bundled app. Runtime state is coordinated
 
 - Entry: `scripts/entry-key-model.js`, `scripts/entry-hero-experience.js`.
 - Hero: `hero-state-runtime.js`, `hero-sequence-runtime.js`, `hero-tv-controls.js`, `entry-hero-experience.js`.
-- About: `portrait-motion.js`, `about-curtain.js`.
+- About: `portrait-motion.js`.
 - Scroll curtains: `scroll-curtain-transitions.js` plus GSAP vendor files for natural scroll handoffs.
-- Services/section flow: `services-scroll-story.js`, `services-prismatic-burst.js`, `services-time-tunnel-shader.js`, and `section-flow.js` for sticky progress, canvas stages, hash handling, and bottom-nav paper transitions.
-- Works/gallery: `work-gallery.js`, `works-hover-preview.js`, `works-transition-motion.js`.
+- Services/section flow: `services-scroll-story.js` and `section-flow.js` for accordion text refresh, hash handling, and bottom-nav paper transitions.
+- Works/gallery: `work-gallery.js`, `works-hover-preview.js`, `work-infinite-gallery.js`.
 - UI/language/effects: runtime bridge, app bootstrap, language/static text modules, header controls, bottom nav, cursor, reveal/text effects, clients, contact, audio.
 
 ## Load Order Analysis

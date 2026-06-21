@@ -206,7 +206,9 @@ html[lang="zh-CN"] .scroll-curtain-transition__page-preview--contact .contact-ti
 }
 
 .scroll-curtain-transition__page-preview > .contact-section,
-.scroll-curtain-transition__page-preview > .works-section {
+.scroll-curtain-transition__page-preview > .works-section,
+.scroll-curtain-transition__page-preview > .works-infinite-section,
+.scroll-curtain-transition__page-preview > .works-category-showcase {
   margin: 0 !important;
   width: 100% !important;
   min-height: 100svh !important;

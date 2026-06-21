@@ -79,9 +79,9 @@ Each change should target only one system:
 
 - Entry/Hero experience: `entry-hero-experience.js`, `entry-key-model.js`, entry/Hero markup, base styles in `home.css`, transition styles in `entry-hero-experience.css`.
 - Hero: `hero-*` scripts, CRT video markup, Hero wordmark, hero styles in `home.css`, `images/works/aigc-video/莉栗说新年篇.mp4`.
-- About: `portrait-motion.js`, `about-curtain.js`, about markup, `about.css`.
+- About: `portrait-motion.js`, about markup, `about.css`.
 - Services: `services-scroll-story.js`, `section-flow.js`, service markup, `services.css`.
-- Works/Gallery: `work-gallery.js`, `works-hover-preview.js`, `works-transition-motion.js`, works markup, `works.css`, `work-gallery.css`.
+- Works/Gallery: `work-gallery.js`, `works-hover-preview.js`, `work-infinite-gallery.js`, works markup, `works.css`, `work-gallery.css`.
 - Scroll curtains: `scroll-curtain-transitions.js`, `styles/shared-motion.css`, GSAP vendor load order, related transition markup.
 - Contact: `contact-interactions.js`, contact markup, `contact.css`.
 ## File Modification Rules

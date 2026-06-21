@@ -7,17 +7,17 @@
 
   if (!section || !canvas || !window.THREE) return;
 
-  const categoryKeys = ["oem", "gift", "brand", "aigc", "aigc-video"];
+  const categoryKeys = ["oem"];
   const categoryLabels = {
     zh: {
-      oem: "品牌包装",
+      oem: "OEM包装",
       gift: "礼品福利",
       brand: "品牌字体",
       aigc: "AIGC流",
       "aigc-video": "视频创作",
     },
     en: {
-      oem: "Brand Packaging",
+      oem: "OEM Packaging",
       gift: "Gifting",
       brand: "Brand Type",
       aigc: "AIGC Flow",
@@ -240,10 +240,13 @@
     activeCategory = category;
     if (titleEl) titleEl.textContent = getCategoryLabel(category);
     if (descriptionEl) descriptionEl.textContent = getCategoryDescription(category);
-    if (indexEl) {
-      const categoryIndex = Math.max(0, categoryKeys.indexOf(category));
-      indexEl.textContent = `${String(categoryIndex + 1).padStart(2, "0")} / ${String(categoryKeys.length).padStart(2, "0")}`;
-    }
+  };
+
+  const updateIndex = () => {
+    if (!indexEl) return;
+    const itemCount = categoryPools[0]?.items?.length || 1;
+    const imageIndex = mod(Math.round(scrollPosition), itemCount);
+    indexEl.textContent = `OEM / ${String(imageIndex + 1).padStart(2, "0")}`;
   };
 
   const refreshLanguage = () => {
@@ -339,6 +342,7 @@
     });
 
     updateCopy(activePool.categoryKey);
+    updateIndex();
     renderer.render(scene, camera);
     rafId = window.requestAnimationFrame(render);
   };

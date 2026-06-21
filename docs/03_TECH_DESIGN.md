@@ -33,10 +33,10 @@
 
 - Entry uses `models/entry-key.glb`, progress text/bar, auto-enter, scroll/touch enter, horizontal stage curtains, and avatar Hero return. Entry interaction, Hero reveal curtains, and the Hero-to-About black curtain are coordinated by `scripts/entry-hero-experience.js`.
 - Hero uses dark CRT AIGC video broadcast, Hero wordmark layer, and Hero-to-About curtain.
-- About uses portrait video/image reveal, scroll-scrubbed video time, text reveal, and a Hero-style About-to-Services curtain that briefly locks input, lets the black sheet cover, then fades the real Services stage into the viewport before Services owns the scroll position.
-- Services uses a full-screen title gate, a local WebGL2 PrismaticBurst entry canvas adapted from the React Bits shader, a local WebGL2 time-tunnel canvas, and a Services-owned handoff sequence. Natural scroll from About completes the timed bridge using the real Services title and background, then Services auto-starts the locked automatic timeline after a short beat; direct navigation to Services still lands on the title gate without autoplay. The sequence clears the old About handoff, suppresses the About bridge while Services owns playback/release, the title fully clears, the entry burst yields to the time tunnel, the tunnel runs without service text, six service messages play more slowly as flat centered in-tunnel inscriptions without local panel underlay, marker lines, card-stage scan-line backing, residue lines, auxiliary progress rail, or adjacent-card ghost carryover, and the sequence ends by landing on the Works transition copy screen.
+- About uses portrait video/image reveal, scroll-scrubbed video time, and text reveal. It flows directly into Services.
+- Services uses a normal page section with a left statement block and a right interactive gradient accordion. It does not own scroll locking, autoplay, or transition stages.
 - Works/Gallery uses category rows, bottom-nav Works entry, hover preview, gallery overlay, detail view, and language refresh.
-- Scroll curtains use GSAP + MorphSVG for the Works-to-Contact visual handoff; Services-to-Works is handled by the Services-owned automatic sequence landing on the Works transition copy screen. Works is not exposed as a bottom-nav item in the current markup.
+- Scroll curtains use GSAP + MorphSVG for the Works-to-Contact visual handoff. Services-to-Works is normal page scrolling.
 - Contact uses Gmail compose form fields, social links, QR modal, and toast.
 
 ## `site-data.js` Responsibilities
@@ -54,7 +54,7 @@ Visible copy changes should start here unless a text node is intentionally hardc
 - `three.min.js` must load before Three.js-dependent scripts.
 - `site-data.js` must load before language, gallery, services text rebuild, and works UI modules.
 - `runtime-bridge.js` must install `window.LucianRuntime` before most UI modules run.
-- `about-curtain.js` owns the Hero-style About-to-Services timed bridge, input lock, real Services stage preview, Services settle point, bridge completion event, and Services-owned playback/release suppression; `services-scroll-story.js` owns the Services title gate, bridge preview/autoplay guard for natural scroll, About handoff cleanup at Services takeover, locked automatic sequence, in-tunnel service inscription timing, start/complete events, and progress bridges to the Services canvas layers; `section-flow.js` owns hash jumps and active nav after Works transition motion loads.
+- `services-scroll-story.js` owns Services text refresh and accordion activation; `section-flow.js` owns hash jumps and active nav.
 - GSAP and MorphSVG must load before `scroll-curtain-transitions.js`.
 - Entry key model and the Entry-to-Hero experience controller load last so the rest of the runtime exists before entry completes, replays, or hands off from Hero to About.
 
@@ -65,7 +65,7 @@ Visible copy changes should start here unless a text node is intentionally hardc
 - `scripts/work-gallery.js`.
 - `scripts/hero-state-runtime.js` and `scripts/hero-sequence-runtime.js`.
 - Hero CRT video uses static HTML/CSS and local video assets.
-- `scripts/entry-hero-experience.js`, `scripts/about-curtain.js`, `scripts/scroll-curtain-transitions.js`.
+- `scripts/entry-hero-experience.js`, `scripts/scroll-curtain-transitions.js`.
 - `scripts/runtime-bridge.js`, `scripts/app-bootstrap.js`.
 - `scripts/services-scroll-story.js`, `scripts/section-flow.js`.
 - `styles/home.css`, `styles/about.css`, `styles/services.css`, `styles/work-gallery.css`, `styles/navigation.css`, `styles/shared-motion.css`.
