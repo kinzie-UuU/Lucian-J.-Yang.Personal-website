@@ -165,7 +165,7 @@
   height: var(--circle-size);
   border-radius: 50%;
   color: rgba(248, 245, 239, 0.54);
-  font-family: "Major Mono Display", "Satoshi", monospace;
+  font-family: var(--font-en-sans);
   font-size: clamp(0.46rem, 0.52vw, 0.62rem);
   font-weight: 800;
   letter-spacing: 0.08em;
@@ -224,7 +224,7 @@
   --flip-hover-color: #ff6268;
   margin: 0;
   max-width: 8ch;
-  font-family: "Satoshi", "Cabinet Grotesk", "MiSans", Arial, sans-serif;
+  font-family: var(--font-sans);
   font-size: clamp(5.8rem, 16vw, 17.5rem);
   font-weight: 900;
   line-height: 0.9;
@@ -283,7 +283,7 @@
 
 html[lang="zh-CN"] .contact-title {
   max-width: 5ch;
-  font-family: "SkyHeart Clear Serif SC", "Songti SC", SimSun, serif;
+  font-family: var(--font-serif);
   font-size: clamp(5rem, 13vw, 13.5rem);
   font-weight: 400;
   letter-spacing: -0.04em;
@@ -322,7 +322,7 @@ html[lang="zh-CN"] .contact-title {
 }
 
 html[lang="zh-CN"] .contact-headline {
-  font-family: "SkyHeart Clear Serif SC", "Songti SC", SimSun, serif;
+  font-family: var(--font-serif);
   font-weight: 400;
   letter-spacing: 0.08em;
 }

@@ -47,9 +47,9 @@ Secondary path: Bottom-nav Works or Works rows -> matching gallery category/proj
 
 ## Hero Requirements
 
-- Maintain Hero water surface, ripples, wireframe, liquid glass field, lion-head GLB model, and large wordmark.
-- Lion model should load from `/models/lion_head/lion_head_2k.gltf`.
-- Pointer interaction should nudge/orbit the lion without breaking layout.
+- Maintain Hero CRT AIGC video broadcast and restrained wordmark.
+- Hero CRT screen should play local `images/works/aigc-video/莉栗说新年篇.mp4` muted, looping, and inline.
+- CRT video broadcast should remain centered without breaking Hero layout.
 - Hero-to-About should use the black vertical curtain handoff.
 - Hero must not depend on the old five-card sequence.
 
@@ -128,7 +128,7 @@ Secondary path: Bottom-nav Works or Works rows -> matching gallery category/proj
 
 - `index.html` opens locally through a static server.
 - Entry key appears and enters the site.
-- Hero water, liquid field, and lion model render.
+- Hero CRT video renders.
 - About, Services, Works, Contact, and Clients sections are reachable through their current paths; Works does not require a bottom-nav anchor.
 - Works rows and side rail open Gallery.
 - Gallery detail/back/close paths work.

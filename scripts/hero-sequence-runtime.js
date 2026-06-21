@@ -31,7 +31,6 @@ window.initHeroSequenceRuntime = ({
     document.documentElement.classList.remove("snap-active");
     heroStage?.style.setProperty("--hero-scroll-progress", "0");
     heroStage?.style.setProperty("--hero-intro-progress", "0");
-    heroStage?.style.setProperty("--hero-water-progress", "0");
     heroStage?.style.setProperty("--hero-tail-fade", "1");
 
     resizeStage();

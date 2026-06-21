@@ -77,14 +77,13 @@ Each change should target only one system:
 
 ## Main System Boundaries
 
-- Entry/Hero experience: `entry-hero-experience.js`, `entry-key-model.js`, entry/Hero markup, base styles in `home.css`, transition styles in `entry-hero-experience.css`, `models/entry-key.glb`.
-- Hero: `hero-*` scripts, `liquid-glass-field.js`, hero markup, hero styles in `home.css`, `models/lion_head/`.
+- Entry/Hero experience: `entry-hero-experience.js`, `entry-key-model.js`, entry/Hero markup, base styles in `home.css`, transition styles in `entry-hero-experience.css`.
+- Hero: `hero-*` scripts, CRT video markup, Hero wordmark, hero styles in `home.css`, `images/works/aigc-video/莉栗说新年篇.mp4`.
 - About: `portrait-motion.js`, `about-curtain.js`, about markup, `about.css`.
 - Services: `services-scroll-story.js`, `section-flow.js`, service markup, `services.css`.
 - Works/Gallery: `work-gallery.js`, `works-hover-preview.js`, `works-transition-motion.js`, works markup, `works.css`, `work-gallery.css`.
 - Scroll curtains: `scroll-curtain-transitions.js`, `styles/shared-motion.css`, GSAP vendor load order, related transition markup.
 - Contact: `contact-interactions.js`, contact markup, `contact.css`.
-
 ## File Modification Rules
 
 - Prefer the smallest scoped file change.
@@ -132,7 +131,7 @@ Each change should target only one system:
 - No missing CSS or JS references.
 - Page opens locally.
 - Entry key enters and replays if Entry was touched.
-- Hero water/liquid/model work if Hero was touched.
+- Hero CRT/wordmark work if Hero was touched.
 - Services canvases work if Services was touched.
 - Works gallery opens if Works/Gallery was touched.
 - Language switching works if copy/i18n was touched.

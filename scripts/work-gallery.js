@@ -46,6 +46,12 @@
     (workGalleryImages[categoryKey] || []).map((item, categoryIndex) => ({ ...item, categoryKey, categoryIndex }))
   );
 
+  const getCategoryBrowseItems = (categoryKey) => {
+    const imageItems = getCategoryWorkGalleryItems(categoryKey);
+    if (imageItems.length) return imageItems;
+    return getGalleryProjects(categoryKey);
+  };
+
   const getGalleryProjects = (categoryKey) => {
     const projectItems = window.workGalleryProjects?.[categoryKey];
     if (projectItems?.length) {
@@ -139,6 +145,7 @@
     if (!circularCleanup) return;
     circularCleanup();
     circularCleanup = null;
+    workGallery?.classList.remove("is-depth-gallery");
   };
 
   const teardownProjectDetailMotion = () => {
@@ -648,7 +655,7 @@
 
   const openCategory = (category = "oem", title = getCategoryTitle(category)) => {
     if (!workGallery || !workGalleryTrack) return;
-    const projects = getGalleryProjects(category);
+    const browseItems = getCategoryBrowseItems(category);
     const initialIndex = 0;
     galleryCategory = category;
     galleryMode = "projects";
@@ -659,12 +666,13 @@
     workGallery.classList.remove("is-project-detail");
     if (workDetail) workDetail.innerHTML = "";
     updateGalleryChromeText();
-    updateGalleryHeader(projects[initialIndex], initialIndex, title);
-    buildGalleryItems(projects, { defer: true });
+    updateGalleryHeader(browseItems[initialIndex], initialIndex, title);
+    buildGalleryItems(browseItems, { defer: true });
     showGallery();
   };
 
   const openWorkGallery = (row) => {
+    if (row.dataset.featuredOnly === "true") return;
     const category = row.dataset.category || "oem";
     const title = row.querySelector(".works-row-name")?.textContent.trim() || getCategoryTitle(category);
     if (row.dataset.projectIndex) {
@@ -730,6 +738,7 @@
   };
 
   worksRows.forEach((row) => {
+    if (row.dataset.featuredOnly === "true") return;
     row.addEventListener("click", () => openWorkGallery(row));
     row.addEventListener("keydown", (event) => {
       if (event.key !== "Enter" && event.key !== " ") return;

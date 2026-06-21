@@ -34,7 +34,7 @@ Owned files:
 Responsibilities:
 
 - Preserve page section structure and script/CSS load order.
-- Initialize app state, reduced-motion detection, language controller, Hero state, Hero sequence controller, Hero water, and Hero wireframe.
+- Initialize app state, reduced-motion detection, language controller, Hero state, and Hero sequence controller.
 - Install `window.LucianRuntime` as the shared bridge for audio, language, gallery closing, cursor state, field pointer state, and Hero reset/resize helpers.
 
 Contracts:
@@ -59,24 +59,22 @@ Owned files:
 - `styles/entry-hero-experience.css`
 - `scripts/entry-key-model.js`
 - `scripts/entry-hero-experience.js`
-- `models/entry-key.glb`
 
 Responsibilities:
 
-- Render the entry screen, 3D key model, progress text/bar, auto-enter, and scroll/touch entry.
+- Render the entry screen, archive year marquee, progress text/bar, auto-enter, and scroll/touch entry.
 - Bottom avatar dock expansion for main navigation.
 - Dispatch the site-entered state and coordinate Entry-to-Hero curtains.
 
 Contracts:
 
-- DOM: `#entry-screen`, `#entry-key-canvas`, `#entry-progress`, `#entry-progress-fill`, `#entry-progress-bar`.
-- Asset: `data-model-src="/models/entry-key.glb"`.
+- DOM: `#entry-screen`, `#entry-progress`, `#entry-progress-fill`, `#entry-progress-bar`, `#entry-year-marquee-track`.
 - Global: `window.LucianEntryKey`.
 - Events: `entry-key-ready`, `lucian:site-entered`, `lucian:return-to-entry`.
 
 QA:
 
-- Entry key renders.
+- Entry progress line renders.
 - Auto-enter works.
 - Scroll/touch enter works.
 - Bottom avatar dock expands without replaying Entry.
@@ -88,35 +86,26 @@ Owned files:
 - `index.html`
 - `styles/home.css`
 - `styles/entry-hero-experience.css`
-- `styles/liquid-glass.css`
-- `scripts/hero-wireframe.js`
-- `scripts/hero-water-surface.js`
-- `scripts/hero-glb-model.js`
-- `scripts/hero-ripples.js`
-- `scripts/liquid-glass-field.js`
 - `scripts/entry-hero-experience.js`
-- `models/lion_head/`
+- `images/works/aigc-video/莉栗说新年篇.mp4`
 
 Responsibilities:
 
-- Render water canvas, ripple canvas, SVG wireframe, fixed liquid field, floating lion-head model, and layered wordmark.
+- Render CRT AIGC video broadcast, and layered wordmark.
 - Manage Hero scroll progress and Hero-to-About black-curtain handoff.
 
 Contracts:
 
-- DOM: `#hero-stage`, `#hero-kinetic-canvas`, `#hero-ripple-canvas`, `#hero-wireframe`, `#hero-model-scene`, `#hero-model-canvas`.
-- Asset: `data-model-src="/models/lion_head/lion_head_2k.gltf"`.
-- Globals: `window.initHeroWireframe`, `window.initHeroWaterSurface`, `window.LucianHeroModel`, `window.LucianLiquidField`.
+- DOM: `#hero-stage`, `#hero-broadcast-scene`, `#hero-tv-video`.
+- Asset: `images/works/aigc-video/莉栗说新年篇.mp4`.
 - Event: `lucian:hero-about-handoff`.
 
 QA:
 
-- Water and ripples render.
 - Liquid field is visible and responsive.
-- Lion model loads and orbits/interacts.
+- CRT video loads and plays inside the screen.
 - First wheel after Entry release scrolls Hero instead of being swallowed by the post-entry guard.
 - Hero-to-About handoff lands correctly.
-
 ## About And Portrait
 
 Owned files:

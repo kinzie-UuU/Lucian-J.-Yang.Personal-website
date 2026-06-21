@@ -2,55 +2,40 @@
 
 ## Purpose
 
-Hero is the main visual stage after entry. It combines WebGL water, pointer ripples, SVG wireframe, fixed liquid field, a GLTF lion-head model, layered wordmark, and the Hero-to-About handoff.
+Hero is the main visual stage after entry. It combines a dark CRT AIGC video broadcast, a layered English word-chip lockup using SkyHeart Clear Serif and Major Mono Display, and the Hero-to-About handoff.
 
 ## Owned Files
 
 - `index.html`
 - `styles/home.css`
 - `styles/entry-hero-experience.css`
-- `styles/liquid-glass.css`
-- `scripts/hero-wireframe.js`
-- `scripts/hero-water-surface.js`
-- `scripts/hero-glb-model.js`
-- `scripts/hero-ripples.js`
-- `scripts/liquid-glass-field.js`
 - `scripts/entry-hero-experience.js`
-- `models/lion_head/`
+- `scripts/hero-tv-controls.js`
+- `images/works/aigc-video/莉栗说新年篇.mp4`
 
 ## DOM Contracts
 
 - `#hero-stage`
-- `#hero-kinetic-canvas`
-- `#hero-ripple-canvas`
-- `#hero-wireframe`
-- `#hero-model-scene`
-- `#hero-model-canvas`
-- `data-model-src="/models/lion_head/lion_head_2k.gltf"`
+- `#hero-broadcast-scene`
+- `#hero-tv-video`
+- `#hero-tv-sound-toggle`
+- `#hero-tv-replay-toggle`
 
 ## Runtime Contracts
 
-- `window.initHeroWireframe`
-- `window.initHeroWaterSurface`
-- `window.LucianHeroModel`
-- `window.LucianLiquidField`
-- consumes `window.LucianRuntime.heroRipples`
 - produces `lucian:hero-about-handoff`
 - `entry-hero-experience.js` owns the black-curtain cover, primes About while covered, keeps a short `hero-about-handoff-releasing` hold, then releases after the About scroll target has settled.
 
 ## Change Checklist
 
-- Keep Three.js available before model/liquid scripts run.
-- Keep model textures and buffers relative to the GLTF.
+- Keep the Hero video local, initially muted for autoplay, looping, and playable without external services. The TV sound knob may unmute it only after a user click.
 - Check reduced-motion behavior for animated surfaces.
 - If Hero scroll math changes, check About landing and curtain timing.
-- If pointer behavior changes, verify water, ripples, model drag, and liquid field do not fight each other.
+- If pointer behavior changes, verify CRT video controls still receive interaction.
 
 ## QA
 
-- Water canvas is nonblank.
-- Ripple canvas responds to pointer/click.
-- Liquid field renders and resizes.
-- Lion model loads, renders, and responds to interaction.
+- CRT video loads and plays inside the screen.
+- TV sound knob toggles the video track after user interaction; replay knob restarts the broadcast.
 - Hero-to-About transition covers, lands, and releases scroll.
 - During Hero-to-About release, About stays aligned instead of flashing a partial intermediate position.

@@ -9,7 +9,7 @@ window.LucianStaticText = {
 
       const pillLabel = node.querySelector?.(".label-stack");
       if (pillLabel) {
-        pillLabel.querySelectorAll(".pill-label, .pill-label-hover").forEach((span) => {
+        pillLabel.querySelectorAll(".pill-label").forEach((span) => {
           span.textContent = value;
         });
         node.setAttribute("aria-label", value);

@@ -31,6 +31,8 @@
   const getRowText = (row) => row.querySelector(".works-row-name")?.textContent?.trim() || "";
 
   const getRowImage = (row) => {
+    if (row.dataset.featuredSrc) return row.dataset.featuredSrc;
+
     const category = row.dataset.category || "oem";
     const projectIndex = Number.parseInt(row.dataset.projectIndex || "", 10);
     const project = Number.isFinite(projectIndex)
@@ -118,8 +120,8 @@
   };
 
   worksRows.forEach((row) => {
-    row.setAttribute("role", "button");
-    row.setAttribute("tabindex", "0");
+    row.removeAttribute("role");
+    if (!row.hasAttribute("tabindex")) row.setAttribute("tabindex", "0");
 
     row.addEventListener("mouseenter", (event) => {
       hideWorksPreview();
@@ -128,6 +130,15 @@
 
     row.addEventListener("mouseleave", (event) => {
       hideFlowingMenu(row, getClosestVerticalEdge(event, row));
+    });
+
+    row.addEventListener("focus", () => {
+      hideWorksPreview();
+      showFlowingMenu(row, "bottom");
+    });
+
+    row.addEventListener("blur", () => {
+      hideFlowingMenu(row, "bottom");
     });
   });
 })();

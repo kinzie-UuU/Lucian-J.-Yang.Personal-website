@@ -10,7 +10,7 @@ It is not a React, Vue, Vite, Next, or bundled app. Runtime state is coordinated
 
 - Top meta header: identity, Beijing clock, language buttons, fullscreen, sound, contact arrow.
 - Entry screen: `#entry-screen`, 3D key canvas, progress text/bar, atmosphere layers.
-- Hero: `.hero-section`, `#hero-stage`, WebGL water, SVG wireframe, fixed liquid field, GLB lion-head model, Hero wordmark, Hero curtain.
+- Hero: `.hero-section`, `#hero-stage`, CRT AIGC video broadcast, Hero wordmark, Hero curtain.
 - About: `#about`, portrait video/image, darkroom-style reveal, bio copy, toolkit tags, About curtain.
 - Services: `#services`, full-screen title gate, black-water PrismaticBurst portal canvas, local time-tunnel stage, and automatic flat in-tunnel service inscriptions.
 - Services-to-Works handoff: Services owns the automatic sequence and lands directly on `#works-transition`.
@@ -25,7 +25,7 @@ It is not a React, Vue, Vite, Next, or bundled app. Runtime state is coordinated
 
 ## CSS Responsibility Map
 
-- `styles/home.css`: entry screen and Hero base layout, lion model, and water surface.
+- `styles/home.css`: entry screen, Hero base layout, CRT video broadcast, and wordmark.
 - `styles/entry-hero-experience.css`: Entry key collapse, Hero reveal curtains, and Hero-to-About black curtain.
 - `styles/about.css`: portrait reveal, About text, About-to-Services curtain.
 - `styles/services.css`: services tunnel title stage, deferred service station stage, progress rail, and responsive layout.
@@ -36,7 +36,7 @@ It is not a React, Vue, Vite, Next, or bundled app. Runtime state is coordinated
 ## JS Responsibility Map
 
 - Entry: `scripts/entry-key-model.js`, `scripts/entry-hero-experience.js`.
-- Hero: `hero-state-runtime.js`, `hero-sequence-runtime.js`, `hero-water-surface.js`, `entry-hero-experience.js`, `liquid-glass-field.js`, `hero-glb-model.js`, `hero-ripples.js`, `hero-wireframe.js`.
+- Hero: `hero-state-runtime.js`, `hero-sequence-runtime.js`, `hero-tv-controls.js`, `entry-hero-experience.js`.
 - About: `portrait-motion.js`, `about-curtain.js`.
 - Scroll curtains: `scroll-curtain-transitions.js` plus GSAP vendor files for natural scroll handoffs.
 - Services/section flow: `services-scroll-story.js`, `services-prismatic-burst.js`, `services-time-tunnel-shader.js`, and `section-flow.js` for sticky progress, canvas stages, hash handling, and bottom-nav paper transitions.
@@ -51,7 +51,7 @@ JavaScript order is intentional:
 
 1. `three.min.js` loads in the head.
 2. `site-data.js` loads before any data-driven UI.
-3. Hero water/state/sequence load before runtime bridge and app bootstrap.
+3. Hero state/sequence load before runtime bridge and app bootstrap.
 4. `services-scroll-story.js` loads before Gallery/Works UI; `section-flow.js` loads after Works transition motion and owns hash/navigation jumps plus bottom-nav paper transitions.
 5. Gallery and UI modules load after bootstrap/runtime bridge.
 6. Portrait/About, GSAP, scroll curtains, entry key, and the Entry-to-Hero experience controller load near the end.
@@ -63,7 +63,7 @@ Do not reorder scripts unless the dependency chain is re-audited.
 - `index.html`: load order, page section order, IDs, global DOM contracts.
 - `site-data.js`: i18n/data/gallery file; text and asset references are coupled to runtime.
 - `scripts/work-gallery.js`: gallery modes, detail views, language refresh, body state.
-- Hero WebGL/model/liquid scripts.
+- Hero CRT/video/entry scripts.
 - Curtain scripts and `styles/shared-motion.css`.
 - Services scroll and section-flow scripts.
 - Large visual CSS systems: `styles/home.css`, `styles/about.css`, `styles/services.css`, `styles/work-gallery.css`, `styles/navigation.css`.

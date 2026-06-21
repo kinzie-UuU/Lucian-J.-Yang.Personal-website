@@ -56,8 +56,8 @@ node tools/runtime-smoke-check.js
 ## Current Page Systems
 
 - Top meta header: identity, Beijing clock, language switch, sound, fullscreen, contact arrow.
-- Entry: `#entry-screen`, 3D key canvas, progress text/bar, auto-enter, scroll/touch enter, Hero return from avatar.
-- Hero: water canvas, ripples, wireframe, fixed liquid field, GLB lion-head model, wordmark layers, Hero-to-About curtain.
+- Entry: `#entry-screen`, archive year marquee, progress text/bar, auto-enter, scroll/touch enter, Hero return from avatar.
+- Hero: dark CRT AIGC video broadcast, wordmark layer, Hero-to-About curtain.
 - About/Portrait: portrait video/fallback, scroll reveal, video scrub, About-to-Services curtain.
 - Services: natural scroll-driven sticky title gate, About handoff cleanup at Services takeover, local WebGL2 black-water PrismaticBurst entry canvas, local WebGL2 time-tunnel canvas, flat in-tunnel service inscription stage.
 - Works: five category rows, hover preview, bottom-nav Works entry, gallery entry.
@@ -71,7 +71,6 @@ node tools/runtime-smoke-check.js
 
 - `styles/fonts.css`: local font declarations.
 - `styles.css`: global tokens, reset, body/page states.
-- `styles/liquid-glass.css`: fixed liquid field layer.
 - `styles/cursor.css`: precision cursor.
 - `styles/typography.css`: shared type and section styles.
 - `styles/home.css`: Entry and Hero base layout.
@@ -96,16 +95,16 @@ Keep the order in `index.html` unless the dependency chain is re-audited. Key or
 
 1. `three.min.js`
 2. `site-data.js`
-3. Hero water/curtain/state/sequence scripts
+3. Hero curtain/state/sequence scripts
 4. `runtime-bridge.js`
 5. `app-bootstrap.js`
 6. language/static text/effect helpers
 7. `script.js`
-8. liquid field and Hero model
+8. Hero visual/runtime scripts
 9. Services scripts
 10. Gallery and Works navigation
 11. UI controls, contact, reveal, cursor, Works hover/transition, clock/nav, clients
-12. portrait/about curtain/ripples
+12. portrait/about curtain
 13. GSAP vendor and `scroll-curtain-transitions.js`
 14. `entry-key-model.js`
 15. `entry-hero-experience.js`
@@ -115,7 +114,7 @@ Keep the order in `index.html` unless the dependency chain is re-audited. Key or
 - `index.html` structure, IDs, and script order.
 - `site-data.js` data schema and image paths.
 - `scripts/work-gallery.js`.
-- Hero WebGL/model/liquid scripts.
+- Hero CRT/video/entry scripts.
 - Curtain scripts: `entry-hero-experience.js`, `about-curtain.js`, `scroll-curtain-transitions.js`.
 - Services WebGL/scroll scripts.
 - Large visual CSS modules: `home.css`, `about.css`, `services.css`, `work-gallery.css`, `navigation.css`, `shared-motion.css`.
@@ -146,7 +145,7 @@ Keep the order in `index.html` unless the dependency chain is re-audited. Key or
 - Page opens through a local server.
 - Entry key enters and replays.
 - Console has no site errors.
-- If Hero changed, verify water/liquid/lion model/scroll.
+- If Hero changed, verify CRT video/scroll.
 - If Services changed, verify the PrismaticBurst entry canvas, time-tunnel canvas, flat in-tunnel service inscription stage, and scroll story.
 - If Works/Gallery changed, verify Works rows, side rail, Gallery open/close/detail/back.
 - If copy/language changed, verify `zh-CN` / `en` switching and open Gallery text refresh.

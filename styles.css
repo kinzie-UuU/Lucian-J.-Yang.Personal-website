@@ -41,12 +41,16 @@
   --matte-border-soft: rgba(255, 255, 255, 0.045);
   --matte-highlight: rgba(255, 255, 255, 0.05);
   --matte-shadow: 0 24px 56px rgba(0, 0, 0, 0.24);
-  --grain-opacity-strong: 0.16;
-  --grain-opacity-soft: 0.08;
   --cursor-x: 50vw;
   --cursor-y: 50vh;
   --site-top-safe: clamp(56px, 8svh, 84px);
   --bottom-nav-safe: clamp(104px, 14svh, 140px);
+  --font-zh-serif: "SkyHeart Clear Serif SC", "Songti SC", "STSong", SimSun, "Noto Serif CJK SC", serif;
+  --font-zh-sans: "MiSans", "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
+  --font-en-serif: "Instrument Serif", Georgia, "Times New Roman", serif;
+  --font-en-sans: "Inter", Arial, Helvetica, sans-serif;
+  --font-serif: var(--font-zh-serif);
+  --font-sans: var(--font-zh-sans);
 }
 
 * {
@@ -78,6 +82,11 @@ body:not(.has-entered) {
   overflow: hidden;
 }
 
+
+html[lang="en"] {
+  --font-serif: var(--font-en-serif);
+  --font-sans: var(--font-en-sans);
+}
 html.nav-jump-instant {
   scroll-behavior: auto !important;
 }
@@ -89,7 +98,7 @@ html.snap-active {
 body {
   margin: 0;
   min-height: 100vh;
-  font-family: "Satoshi", "MiSans", "PingFang SC", "Microsoft YaHei", sans-serif;
+  font-family: var(--font-sans);
   color: rgba(20, 24, 28, 0.88);
   background: #f8f6f2;
   overflow-x: clip;
@@ -118,36 +127,6 @@ body.is-entering {
   height: 0;
   overflow: hidden;
   pointer-events: none;
-}
-
-body::before,
-body::after {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 200;
-}
-
-body::before {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220' viewBox='0 0 220 220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.15' numOctaves='2' stitchTiles='stitch'/%3E%3C/filters%3E%3Crect width='220' height='220' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
-  background-size: 220px 220px;
-  opacity: var(--grain-opacity-strong);
-  mix-blend-mode: soft-light;
-}
-
-body::after {
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.026), rgba(255, 255, 255, 0.008)),
-    repeating-linear-gradient(
-      0deg,
-      rgba(255, 255, 255, 0.008) 0px,
-      rgba(255, 255, 255, 0.008) 1px,
-      transparent 1px,
-      transparent 4px
-    );
-  opacity: 0.1;
-  mix-blend-mode: overlay;
 }
 
 body:not(.has-entered) {

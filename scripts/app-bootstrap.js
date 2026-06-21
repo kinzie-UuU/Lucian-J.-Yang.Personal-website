@@ -1,7 +1,6 @@
 window.initLucianApp = () => {
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  let heroWireframeController = null;
   let languageController = null;
   let heroSequenceController = null;
   let runtimeBridge = null;
@@ -13,7 +12,6 @@ window.initLucianApp = () => {
   const precisionGuides = document.querySelector("#precision-guides");
   const langButtons = Array.from(document.querySelectorAll(".lang-button"));
   const heroStage = document.querySelector("#hero-stage");
-  const heroWireframe = document.querySelector("#hero-wireframe");
   const entryScreen = document.querySelector("#entry-screen");
 
   if ("scrollRestoration" in window.history) {
@@ -66,14 +64,6 @@ window.initLucianApp = () => {
   heroSequenceController?.resizeStage?.();
   heroSequenceController?.resetHeroSequenceState?.({ resetScroll: true });
 
-  heroWireframeController = window.initHeroWireframe?.(heroWireframe, { reducedMotion }) || null;
-  window.initHeroWaterSurface?.(document.getElementById("hero-kinetic-canvas"), {
-    reducedMotion,
-    getScrollProgress() {
-      return parseFloat(heroStage?.style.getPropertyValue("--hero-scroll-progress") || "0");
-    },
-  });
-
   return {
     heroState,
     fieldPointer,
@@ -83,9 +73,6 @@ window.initLucianApp = () => {
     },
     get heroSequenceController() {
       return heroSequenceController;
-    },
-    get heroWireframeController() {
-      return heroWireframeController;
     },
   };
 };

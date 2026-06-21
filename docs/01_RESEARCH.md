@@ -28,7 +28,7 @@ Likely audiences:
 ## Current Page Narrative
 
 1. Entry creates a deliberate archive/opening ritual through a 3D key and progress sequence.
-2. Hero establishes taste and technical fluency through water, liquid glass, lion-head model, and brand wordmark.
+2. Hero establishes taste and technical fluency through CRT AIGC video broadcast and brand wordmark.
 3. About explains the designer identity and toolkit with a portrait reveal.
 4. Services explains method and decision value.
 5. Works moves into project categories and gallery browsing.

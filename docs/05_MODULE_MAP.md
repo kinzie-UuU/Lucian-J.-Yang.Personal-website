@@ -6,10 +6,9 @@
 |---:|---|---|
 | 1 | `styles/fonts.css` | Local font faces |
 | 2 | `styles.css` | Tokens, reset, global states |
-| 3 | `styles/liquid-glass.css` | Fixed liquid glass field |
 | 4 | `styles/cursor.css` | Precision cursor |
 | 5 | `styles/typography.css` | Shared typography |
-| 6 | `styles/home.css` | Entry and Hero base layout, key/model/water surfaces |
+| 6 | `styles/home.css` | Entry and Hero base layout, CRT broadcast, and wordmark |
 | 7 | `styles/entry-hero-experience.css` | Entry key collapse, Hero reveal curtains, and Hero-to-About black curtain |
 | 8 | `styles/about.css` | Portrait reveal and About curtain |
 | 9 | `styles/services.css` | Services sticky narrative |
@@ -30,50 +29,45 @@ This list mirrors the current `index.html` order.
 | 0 | `three.min.js` | Local Three.js dependency |
 | 1 | `site-data.js` | Copy/data |
 | 2 | `scripts/audio-feedback.js` | Audio and background music |
-| 3 | `scripts/hero-wireframe.js` | Hero SVG wireframe |
-| 4 | `scripts/hero-water-surface.js` | Hero WebGL water |
-| 5 | `scripts/hero-state-runtime.js` | Hero state |
-| 6 | `scripts/hero-sequence-runtime.js` | Hero sequence reset/init |
-| 7 | `scripts/runtime-bridge.js` | Shared runtime bridge |
-| 8 | `scripts/app-bootstrap.js` | App startup |
-| 9 | `scripts/static-text-runtime.js` | Static i18n text |
-| 10 | `scripts/language-runtime.js` | Language orchestration |
-| 11 | `scripts/flip-text.js` | Flip text |
-| 12 | `script.js` | Calls app init |
-| 13 | `scripts/liquid-glass-field.js` | Full-viewport liquid field |
-| 14 | `scripts/hero-glb-model.js` | Hero GLB lion model |
-| 15 | `scripts/services-scroll-story.js` | Services title gate, bridge preview/autoplay guard, About handoff cleanup, locked automatic service sequence, start/complete events, and flat in-tunnel inscription |
-| 16 | `scripts/services-prismatic-burst.js` | Services black-water PrismaticBurst entry canvas and progress bridge |
-| 17 | `scripts/services-time-tunnel-shader.js` | Services local WebGL2 time-tunnel layer |
-| 18 | `scripts/work-gallery.js` | Work gallery |
-| 20 | `scripts/scrambled-text.js` | Scrambled text |
-| 21 | `scripts/header-controls.js` | Sound/fullscreen/top controls |
-| 22 | `scripts/language-controls.js` | Language buttons |
-| 23 | `scripts/contact-interactions.js` | Contact form/modal |
-| 24 | `scripts/scroll-type-effects.js` | Scroll type |
-| 25 | `scripts/reveal-effects.js` | Reveals |
-| 26 | `scripts/precision-cursor.js` | Precision cursor |
-| 27 | `scripts/works-hover-preview.js` | Works hover preview |
-| 28 | `scripts/works-transition-motion.js` | Works transition motion |
-| 29 | `scripts/section-flow.js` | Section jumps, hash handling, active nav, three-item bottom-nav paper transition |
-| 30 | `scripts/site-clock.js` | Beijing clock |
-| 31 | `scripts/bottom-nav-scroll-spy.js` | Section flow refresh bridge |
-| 32 | `scripts/clients-marquee.js` | Client marquee |
-| 33 | `scripts/clients-title-interaction.js` | Client title interaction |
-| 34 | `scripts/portrait-motion.js` | About portrait reveal/scrub |
-| 35 | `scripts/about-curtain.js` | Hero-style About-to-Services timed bridge with black curtain marker, real Services stage preview, input lock, completion event, and Services playback/release suppression |
-| 36 | `scripts/hero-ripples.js` | Hero ripple effects |
-| 37 | `scripts/vendor/gsap/gsap.min.js` | GSAP runtime |
-| 38 | `scripts/vendor/gsap/MorphSVGPlugin.min.js` | GSAP MorphSVG plugin |
-| 39 | `scripts/scroll-curtain-transitions.js` | Works-to-Contact curtain |
-| 40 | `scripts/entry-key-model.js` | 3D key model and progress |
-| 41 | `scripts/entry-hero-experience.js` | Entry interactions/replay, Hero reveal curtains, and Hero-to-About black-curtain handoff |
+| 3 | `scripts/hero-state-runtime.js` | Hero state |
+| 4 | `scripts/hero-sequence-runtime.js` | Hero sequence reset/init |
+| 5 | `scripts/runtime-bridge.js` | Shared runtime bridge |
+| 6 | `scripts/app-bootstrap.js` | App startup |
+| 7 | `scripts/static-text-runtime.js` | Static i18n text |
+| 8 | `scripts/language-runtime.js` | Language orchestration |
+| 9 | `scripts/flip-text.js` | Flip text |
+| 10 | `script.js` | Calls app init |
+| 12 | `scripts/services-scroll-story.js` | Services title gate, bridge preview/autoplay guard, About handoff cleanup, locked automatic service sequence, start/complete events, and flat in-tunnel inscription |
+| 13 | `scripts/services-prismatic-burst.js` | Services black-water PrismaticBurst entry canvas and progress bridge |
+| 14 | `scripts/services-time-tunnel-shader.js` | Services local WebGL2 time-tunnel layer |
+| 15 | `scripts/work-gallery.js` | Work gallery |
+| 16 | `scripts/scrambled-text.js` | Scrambled text |
+| 17 | `scripts/header-controls.js` | Sound/fullscreen/top controls |
+| 18 | `scripts/language-controls.js` | Language buttons |
+| 19 | `scripts/contact-interactions.js` | Contact form/modal |
+| 20 | `scripts/scroll-type-effects.js` | Scroll type |
+| 21 | `scripts/reveal-effects.js` | Reveals |
+| 22 | `scripts/precision-cursor.js` | Precision cursor |
+| 23 | `scripts/works-hover-preview.js` | Works hover preview |
+| 24 | `scripts/works-transition-motion.js` | Works transition motion |
+| 25 | `scripts/section-flow.js` | Section jumps, hash handling, active nav, three-item bottom-nav paper transition |
+| 26 | `scripts/site-clock.js` | Beijing clock |
+| 27 | `scripts/bottom-nav-scroll-spy.js` | Section flow refresh bridge |
+| 28 | `scripts/clients-marquee.js` | Client marquee |
+| 29 | `scripts/clients-title-interaction.js` | Client title interaction |
+| 30 | `scripts/portrait-motion.js` | About portrait reveal/scrub |
+| 31 | `scripts/about-curtain.js` | Hero-style About-to-Services timed bridge with black curtain marker, real Services stage preview, input lock, completion event, and Services playback/release suppression |
+| 32 | `scripts/vendor/gsap/gsap.min.js` | GSAP runtime |
+| 33 | `scripts/vendor/gsap/MorphSVGPlugin.min.js` | GSAP MorphSVG plugin |
+| 34 | `scripts/scroll-curtain-transitions.js` | Works-to-Contact curtain |
+| 35 | `scripts/entry-key-model.js` | Entry archive marquee and progress loader |
+| 36 | `scripts/entry-hero-experience.js` | Entry interactions/replay, Hero reveal curtains, and Hero-to-About black-curtain handoff |
 
 ## Page System to File Mapping
 
-- Entry: `index.html`, `styles/home.css`, `styles/entry-hero-experience.css`, `scripts/entry-key-model.js`, `scripts/entry-hero-experience.js`, `models/entry-key.glb`.
-- Hero: `index.html`, `styles/home.css`, `styles/entry-hero-experience.css`, `styles/liquid-glass.css`, `scripts/hero-*.js`, `scripts/entry-hero-experience.js`, `scripts/liquid-glass-field.js`, `models/lion_head/`.
-- About/Portrait: `index.html`, `styles/about.css`, `scripts/portrait-motion.js`, `scripts/about-curtain.js`, `videos/Video 8.mp4`, `images/9999.png`.
+- Entry: `index.html`, `styles/home.css`, `styles/entry-hero-experience.css`, `scripts/entry-key-model.js`, `scripts/entry-hero-experience.js`.
+- Hero: `index.html`, `styles/home.css`, `styles/entry-hero-experience.css`, `scripts/hero-state-runtime.js`, `scripts/hero-sequence-runtime.js`, `scripts/hero-tv-controls.js`, `scripts/entry-hero-experience.js`, `images/works/aigc-video/莉栗说新年篇.mp4`.
+- About/Portrait: `index.html`, `styles/about.css`, `scripts/portrait-motion.js`, `scripts/about-curtain.js`, `videos/portrait-scrub-60fps.mp4`, `images/9999.webp`.
 - Services: `index.html`, `styles/services.css`, `scripts/about-curtain.js`, `scripts/services-scroll-story.js`, `scripts/services-prismatic-burst.js`, `scripts/services-time-tunnel-shader.js`, `site-data.js`; current rebuild has a Hero-style timed About-to-Services bridge that previews the real Services stage instead of injecting a duplicate title, black-water PrismaticBurst title gate that yields to a local WebGL2 time-tunnel layer, natural-scroll autoplay after the bridge, direct-nav suppression at the title gate, slower automatic six-step flat in-tunnel service inscriptions without adjacent ghost carryover, residue lines, or auxiliary progress rail, Services-owned suppression so About does not re-trigger after playback, and a final jump to the Works transition copy screen.
 - Works: `index.html`, `styles/works.css`, `scripts/works-hover-preview.js`, `scripts/works-transition-motion.js`, `scripts/section-flow.js`, `site-data.js`.
 - Scroll curtains: `index.html`, `styles/shared-motion.css`, `scripts/scroll-curtain-transitions.js`, GSAP vendor files; natural mouse-wheel handoffs are separate from bottom-nav click transitions.
@@ -87,7 +81,7 @@ This list mirrors the current `index.html` order.
 - `index.html` structure and script order.
 - `site-data.js` data schema and asset references.
 - `scripts/work-gallery.js`.
-- Hero WebGL/model/liquid scripts.
+- Hero CRT/video/entry scripts.
 - Services scroll and section-flow scripts.
 - `styles/home.css`, `styles/services.css`, `styles/work-gallery.css`, `styles/navigation.css`.
 - `three.min.js` and vendor files.

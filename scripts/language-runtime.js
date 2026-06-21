@@ -16,6 +16,7 @@ window.initLanguageRuntime = ({
     window.rebuildServicesStoryText?.();
     onChange?.(currentLang);
     window.LucianWorkGallery?.refreshLanguage?.();
+    window.LucianWorkInfiniteGallery?.refreshLanguage?.();
   };
 
   return {

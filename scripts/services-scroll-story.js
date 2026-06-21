@@ -3,6 +3,7 @@
   const sticky = section?.querySelector(".services-sticky");
   const titleNode = section?.querySelector(".services-entry-title");
   const panels = Array.from(section?.querySelectorAll(".service-text-panel") || []);
+  const accordionItems = Array.from(section?.querySelectorAll(".services-accordion-item") || []);
   if (!section || !sticky || !panels.length) return;
 
   const runtime = window.LucianRuntime;
@@ -58,6 +59,8 @@
   let lastScrollY = window.scrollY || window.pageYOffset || 0;
   let rebuildingTitle = false;
   let titleRebuildFrame = 0;
+  let accordionHoverIndex = null;
+  let accordionActiveIndex = -1;
 
   const clearAboutHandoff = () => {
     document.querySelector(".portrait-canvas")?.classList.remove("is-about-curtain-down");
@@ -84,6 +87,18 @@
   ) ? "en" : "zh";
 
   const textFor = (key) => window.i18n?.[currentLang()]?.[key] || "";
+
+  const setAccordionActive = (index) => {
+    if (!accordionItems.length) return;
+    const nextIndex = Math.max(0, Math.min(accordionItems.length - 1, Math.round(index)));
+    if (nextIndex === accordionActiveIndex) return;
+    accordionActiveIndex = nextIndex;
+    accordionItems.forEach((item, itemIndex) => {
+      const isActive = itemIndex === nextIndex;
+      item.classList.toggle("is-active", isActive);
+      item.setAttribute("aria-expanded", isActive ? "true" : "false");
+    });
+  };
 
   const titleIsSplit = () => (
     titleNode?.querySelectorAll(".services-title-part").length === 2
@@ -141,6 +156,13 @@
       if (title && titleText) title.textContent = titleText;
       if (body && bodyText) body.textContent = bodyText;
     });
+
+    accordionItems.forEach((item) => {
+      const label = item.querySelector(".services-accordion-label");
+      const titleText = textFor(item.dataset.serviceTitle);
+      if (label && titleText) label.textContent = titleText;
+      if (titleText) item.setAttribute("aria-label", titleText);
+    });
   };
 
   const writeProgress = (progress) => {
@@ -171,6 +193,7 @@
     const blackoutOpacity = reducedMotion ? 0 : clamp01(tunnelExit * (1 - cardProgress * 0.58) * (1 - outro * 0.85));
     const stationCount = Math.max(1, panels.length - 1);
     const stationPosition = stationPositionFromProgress(stationProgress, stationCount);
+    const accordionIndex = accordionHoverIndex ?? stationPosition;
 
     section.style.setProperty("--services-portal-reveal", portalReveal.toFixed(4));
     section.style.setProperty("--services-portal-expand", portalExpand.toFixed(4));
@@ -215,6 +238,8 @@
       panel.style.setProperty("--service-panel-depth", panelDepth.toFixed(4));
       panel.style.zIndex = String(Math.round(panelDepth * 100));
     });
+
+    setAccordionActive(accordionIndex);
 
     window.LucianServicesPrismatic?.setProgress?.({
       progress: storyProgress,
@@ -403,6 +428,25 @@
   rebuildServicesStoryText();
   window.requestAnimationFrame(rebuildServicesStoryText);
   readProgress();
+
+  accordionItems.forEach((item, index) => {
+    item.addEventListener("pointerenter", () => {
+      accordionHoverIndex = index;
+      setAccordionActive(index);
+    });
+    item.addEventListener("focus", () => {
+      accordionHoverIndex = index;
+      setAccordionActive(index);
+    });
+    item.addEventListener("click", () => {
+      accordionHoverIndex = index;
+      setAccordionActive(index);
+    });
+  });
+  section.querySelector(".services-accordion")?.addEventListener("pointerleave", () => {
+    accordionHoverIndex = null;
+    requestUpdate();
+  });
 
   window.addEventListener("scroll", requestUpdate, { passive: true });
   window.addEventListener("resize", requestUpdate, { passive: true });

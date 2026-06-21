@@ -2,7 +2,7 @@
 
 ## Current Project State
 
-The site is a working pure static portfolio with modular CSS/JS, 3D key entry, Hero water/liquid/GLB model systems, portrait reveal, services scroll story, works/gallery browsing, client trust section, contact flow, and bilingual data. It has no framework, no package manager, and no build step.
+The site is a working pure static portfolio with modular CSS/JS, 3D key entry, Hero CRT video system, portrait reveal, services scroll story, works/gallery browsing, client trust section, contact flow, and bilingual data. It has no framework, no package manager, and no build step.
 
 ## P0: Stabilize Baseline
 

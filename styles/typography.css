@@ -1,6 +1,6 @@
 /* Shared typography and section headings */
 .section-head h2 {
-  font-family: "Satoshi", "Cabinet Grotesk", "MiSans", Georgia, serif;
+  font-family: var(--font-serif);
   font-weight: 800;
 }
 
@@ -56,7 +56,7 @@ html[lang="zh-CN"] .section-head h2 {
   margin-inline: auto;
   justify-self: center;
   text-align: center;
-  font-family: "MiSans", "PingFang SC", "Microsoft YaHei", sans-serif;
+  font-family: var(--font-sans);
   font-weight: 600;
   font-size: clamp(2.2rem, 3.6vw, 4rem);
   line-height: 1.2;

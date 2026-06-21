@@ -275,12 +275,12 @@ const main = async () => {
       lang: document.documentElement.lang,
       navAbout: document.querySelector('[data-i18n="nav_about"] .pill-label')?.textContent?.trim()
         || document.querySelector('[data-i18n="nav_about"]')?.textContent?.trim(),
-      firstWork: document.querySelector('[data-i18n="work_row_1_name"]')?.textContent?.trim(),
+      firstWork: document.querySelector('.works-row[data-category="oem"] .works-row-name')?.textContent?.trim(),
       clientsFooterExists: Boolean(document.querySelector('.clients-footer-meta'))
     }))()`);
     assert(localizedText.lang === "zh-CN", `Chinese locale was not applied: ${JSON.stringify(localizedText)}`);
     assert(localizedText.navAbout === "关于", `Chinese nav text was not applied: ${JSON.stringify(localizedText)}`);
-    assert(localizedText.firstWork === "23 年端午", `Chinese work text was not applied: ${JSON.stringify(localizedText)}`);
+    assert(localizedText.firstWork === "23 年端午", `Chinese featured work text was not applied: ${JSON.stringify(localizedText)}`);
     assert(!localizedText.clientsFooterExists, `Clients footer should be removed: ${JSON.stringify(localizedText)}`);
 
     const readEntryState = () => evaluate(client, `(() => {
@@ -307,7 +307,7 @@ const main = async () => {
 
     let entryState = await readEntryState();
     assert(entryState.keyCanvasExists, `3D key entry canvas was not found: ${JSON.stringify(entryState)}`);
-    assert(entryState.keyModelSource.includes("/models/entry-key.glb"), `3D key model source is wrong: ${JSON.stringify(entryState)}`);
+    assert(entryState.keyModelSource.includes("models/entry-key.glb"), `3D key model source is wrong: ${JSON.stringify(entryState)}`);
     assert(entryState.keyCanvasWidth > 0 && entryState.keyCanvasHeight > 0, `3D key canvas is not visible: ${JSON.stringify(entryState)}`);
 
     for (let attempt = 0; attempt < 120 && (!entryState.entered || entryState.entryScrollLocked); attempt += 1) {
@@ -493,38 +493,38 @@ const main = async () => {
 
     const contactNav = navSequence["#contact"];
 
-    await evaluate(client, "document.querySelector('#works-side-rail-toggle')?.click(); true;");
-    await delay(250);
-    const railOpen = await evaluate(client, `(() => ({
-      open: document.querySelector('#works-side-rail')?.classList.contains('is-open'),
-      expanded: document.querySelector('#works-side-rail-toggle')?.getAttribute('aria-expanded')
-    }))()`);
-    assert(railOpen.open && railOpen.expanded === "true", `Works rail did not open: ${JSON.stringify(railOpen)}`);
-
-    await client.send("Input.dispatchKeyEvent", {
-      type: "keyDown",
-      key: "Escape",
-      code: "Escape",
-      windowsVirtualKeyCode: 27,
-      nativeVirtualKeyCode: 27,
-    });
-    await delay(250);
-    const railClosed = await evaluate(client, `(() => ({
-      open: document.querySelector('#works-side-rail')?.classList.contains('is-open'),
-      expanded: document.querySelector('#works-side-rail-toggle')?.getAttribute('aria-expanded')
-    }))()`);
-    assert(!railClosed.open && railClosed.expanded === "false", `Works rail did not close: ${JSON.stringify(railClosed)}`);
-
-    await evaluate(client, "document.querySelector('#works-side-rail-toggle')?.click(); true;");
-    await delay(200);
-    await evaluate(client, "document.querySelector('.works-side-rail-item[data-category=\"gift\"]')?.click(); true;");
-    await delay(700);
-    const gallery = await evaluate(client, `(() => ({
+    const worksCategories = await evaluate(client, `(() => [...document.querySelectorAll('.works-row')].map((row) => ({
+      category: row.dataset.category || '',
+      mode: row.dataset.galleryMode || '',
+      title: row.querySelector('.works-row-name')?.textContent?.trim() || '',
+      featuredOnly: row.dataset.featuredOnly || ''
+    })))()`);
+    const expectedCategories = ["oem", "gift", "brand", "aigc", "aigc-video"];
+    assert(
+      expectedCategories.every((category) => worksCategories.some((row) => row.category === category)),
+      `Works categories are incomplete: ${JSON.stringify(worksCategories)}`
+    );
+    assert(
+      worksCategories.every((row) => row.featuredOnly === "true"),
+      `Works showcase rows should be featured-only: ${JSON.stringify(worksCategories)}`
+    );
+    assert(
+      ["23 年端午", "23 顺丰端午", "TYPE FIELD", "PROMPT BOARD", "AIGC VIDEO 01"].every((title) => worksCategories.some((row) => row.title === title)),
+      `Works featured titles are incomplete: ${JSON.stringify(worksCategories)}`
+    );
+    await evaluate(client, "document.querySelector('.works-row[data-category=\"oem\"]')?.click(); true;");
+    await delay(300);
+    const worksShowcase = await evaluate(client, `(() => ({
       galleryOpen: document.body.classList.contains('work-gallery-open'),
-      railOpen: document.querySelector('#works-side-rail')?.classList.contains('is-open'),
-      title: document.querySelector('#work-gallery-title')?.textContent?.trim() || null
+      canvas: Boolean(document.querySelector('#works-infinite-canvas')),
+      runtime: Boolean(window.LucianWorkInfiniteGallery),
+      title: document.querySelector('#works-infinite-title')?.textContent?.trim() || null,
+      description: document.querySelector('#works-infinite-description')?.textContent?.trim() || null
     }))()`);
-    assert(gallery.galleryOpen && !gallery.railOpen, `Works gallery flow failed: ${JSON.stringify(gallery)}`);
+    assert(
+      !worksShowcase.galleryOpen && worksShowcase.canvas && worksShowcase.runtime && worksShowcase.title && worksShowcase.description,
+      `Works two-stage gallery flow failed: ${JSON.stringify(worksShowcase)}`
+    );
 
     await evaluate(client, "window.LucianWorkGallery?.close?.(); true;");
     await delay(300);
@@ -534,11 +534,11 @@ const main = async () => {
     let replayState = await readEntryState();
     const replayStarted = {
       ...replayState,
-      railOpen: await evaluate(client, "document.querySelector('#works-side-rail')?.classList.contains('is-open') || false"),
+      galleryOpen: await evaluate(client, "document.body.classList.contains('work-gallery-open')"),
     };
     assert(!replayStarted.entered, `Avatar did not return to the entry screen: ${JSON.stringify(replayStarted)}`);
     assert(replayStarted.screenVisible, `Entry screen was not visible after avatar click: ${JSON.stringify(replayStarted)}`);
-    assert(!replayStarted.railOpen, `Works rail stayed open after avatar reset: ${JSON.stringify(replayStarted)}`);
+    assert(!replayStarted.galleryOpen, `Works gallery stayed open after avatar reset: ${JSON.stringify(replayStarted)}`);
     assert(replayStarted.progressText !== "[100%]", `Entry key progress did not restart after avatar click: ${JSON.stringify(replayStarted)}`);
 
     for (let attempt = 0; attempt < 120 && (!replayState.entered || replayState.entryScrollLocked); attempt += 1) {

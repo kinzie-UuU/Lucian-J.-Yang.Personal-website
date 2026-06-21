@@ -1,4 +1,4 @@
-﻿/* Services section ---------------------------------------------------------- */
+/* Services section ---------------------------------------------------------- */
 .services-section {
   --services-title-opacity: 1;
   --services-title-y: 0svh;
@@ -187,7 +187,7 @@ html[lang="en"] .services-section {
   max-width: calc(100vw - 72px);
   margin: 0;
   color: rgba(255, 255, 255, 0.94);
-  font-family: "SkyHeart Clear Serif SC", "Songti SC", "STSong", SimSun, "Noto Serif CJK SC", serif;
+  font-family: var(--font-serif);
   font-size: clamp(4.2rem, 8vw, 10rem);
   font-weight: 400;
   line-height: 1;
@@ -220,7 +220,7 @@ html[lang="en"] .services-entry-title {
   width: min(92vw, 1520px);
   max-width: calc(100vw - 72px);
   grid-template-columns: minmax(0, max-content) clamp(300px, 30vw, 520px) minmax(0, max-content);
-  font-family: "Outfit", "Satoshi", system-ui, sans-serif;
+  font-family: var(--font-sans);
   font-style: normal;
   font-size: clamp(2.6rem, 5.2vw, 7.6rem);
   font-weight: 520;
@@ -231,6 +231,8 @@ html[lang="en"] .services-entry-title {
 .services-card-stage {
   min-height: 100svh;
   display: grid;
+  grid-template-columns: minmax(300px, 0.92fr) minmax(420px, 1.08fr);
+  gap: clamp(30px, 5vw, 86px);
   align-items: center;
   padding: clamp(82px, 10svh, 132px) clamp(28px, 7vw, 116px) clamp(94px, 11svh, 148px);
   opacity: var(--services-card-opacity);
@@ -245,11 +247,11 @@ html[lang="en"] .services-entry-title {
 .services-text-track {
   position: relative;
   z-index: 2;
-  width: min(980px, 100%);
+  width: min(720px, 100%);
   min-height: min(62svh, 680px);
   display: grid;
   align-items: center;
-  margin: 0 auto;
+  margin: 0;
 }
 
 .service-text-panel {
@@ -281,9 +283,116 @@ html[lang="en"] .services-entry-title {
   will-change: opacity, transform, filter;
 }
 
+.services-accordion {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: clamp(8px, 1vw, 14px);
+  width: min(100%, 720px);
+  min-height: clamp(360px, 56svh, 540px);
+  margin-left: auto;
+  pointer-events: auto;
+}
+
+.services-accordion-item {
+  position: relative;
+  flex: 0 0 clamp(54px, 4.4vw, 68px);
+  height: clamp(340px, 52svh, 500px);
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid rgba(246, 240, 228, 0.12);
+  border-radius: 8px;
+  padding: 0;
+  background: #111;
+  color: #fff;
+  cursor: pointer;
+  opacity: 0.72;
+  transform: translate3d(0, calc((1 - var(--services-card-progress)) * 18px), 0);
+  transition:
+    flex-basis 680ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 280ms ease,
+    border-color 280ms ease,
+    transform 680ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.services-accordion-item::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.18) 34%, rgba(0, 0, 0, 0.72)),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.48), transparent 42% 78%, rgba(0, 0, 0, 0.42));
+  pointer-events: none;
+}
+
+.services-accordion-item img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1.08);
+  transition:
+    transform 720ms cubic-bezier(0.22, 1, 0.36, 1),
+    filter 420ms ease;
+  filter: saturate(0.78) contrast(1.04) brightness(0.82);
+}
+
+.services-accordion-label {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(64px, 8svh, 92px);
+  z-index: 1;
+  display: block;
+  width: max-content;
+  max-width: 260px;
+  color: rgba(255, 252, 244, 0.92);
+  font-family: var(--font-sans);
+  font-size: clamp(0.82rem, 0.92vw, 1rem);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: 0;
+  white-space: nowrap;
+  transform: translateX(-50%) rotate(90deg);
+  transform-origin: 50% 50%;
+  transition:
+    bottom 420ms ease,
+    color 280ms ease,
+    transform 420ms ease;
+  pointer-events: none;
+}
+
+.services-accordion-item.is-active,
+.services-accordion-item[aria-expanded="true"] {
+  flex-basis: clamp(260px, 30vw, 430px);
+  border-color: rgba(247, 241, 228, 0.36);
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+.services-accordion-item.is-active img,
+.services-accordion-item[aria-expanded="true"] img {
+  transform: scale(1.01);
+  filter: saturate(0.96) contrast(1.02) brightness(0.96);
+}
+
+.services-accordion-item.is-active .services-accordion-label,
+.services-accordion-item[aria-expanded="true"] .services-accordion-label {
+  bottom: clamp(22px, 4svh, 34px);
+  color: #fffaf0;
+  transform: translateX(-50%) rotate(0deg);
+}
+
+.services-accordion-item:focus-visible {
+  outline: 2px solid rgba(94, 219, 205, 0.82);
+  outline-offset: 4px;
+}
+
 .service-text-index {
   color: rgba(93, 198, 191, calc(0.18 + var(--service-panel-engrave) * 0.54));
-  font-family: "Major Mono Display", "MiSans", monospace;
+  font-family: var(--font-en-sans);
   font-size: clamp(3.2rem, 8.4vw, 9.8rem);
   line-height: 0.82;
 }
@@ -291,7 +400,7 @@ html[lang="en"] .services-entry-title {
 .service-text-title {
   margin: 0;
   color: rgba(248, 245, 239, calc(0.42 + var(--service-panel-engrave) * 0.52));
-  font-family: "SkyHeart Clear Serif SC", "SimSun", "Songti SC", "STSong", "Noto Serif CJK SC", serif;
+  font-family: var(--font-serif);
   font-size: clamp(2.9rem, 5.9vw, 7.4rem);
   font-weight: 400;
   line-height: 0.95;
@@ -300,7 +409,7 @@ html[lang="en"] .services-entry-title {
 }
 
 html[lang="en"] .service-text-title {
-  font-family: "Playfair Display", "Times New Roman", serif;
+  font-family: var(--font-en-serif);
   font-style: italic;
   font-size: clamp(2.6rem, 5.1vw, 6.4rem);
 }
@@ -310,13 +419,13 @@ html[lang="en"] .service-text-title {
   max-width: 48ch;
   margin: clamp(20px, 3.2svh, 34px) 0 0;
   color: rgba(238, 233, 223, calc(0.1 + var(--service-panel-progress) * 0.76));
-  font-family: "MiSans", "PingFang SC", "Microsoft YaHei", sans-serif;
+  font-family: var(--font-sans);
   font-size: clamp(0.92rem, 1vw, 1.08rem);
   line-height: 1.86;
 }
 
 html[lang="en"] .service-text-body {
-  font-family: "Outfit", "Satoshi", system-ui, sans-serif;
+  font-family: var(--font-sans);
   line-height: 1.72;
 }
 
@@ -349,11 +458,15 @@ html[lang="en"] .service-text-body {
   }
 
   .services-card-stage {
+    grid-template-columns: 1fr;
+    align-content: center;
+    gap: clamp(24px, 4svh, 38px);
     padding: clamp(72px, 10svh, 102px) 22px clamp(104px, 13svh, 138px);
   }
 
   .services-text-track {
-    min-height: 48svh;
+    width: 100%;
+    min-height: 34svh;
   }
 
   .service-text-panel {
@@ -382,6 +495,27 @@ html[lang="en"] .service-text-body {
     font-size: 0.92rem;
   }
 
+  .services-accordion {
+    justify-content: flex-start;
+    width: calc(100vw - 44px);
+    min-height: clamp(300px, 42svh, 420px);
+    margin: 0;
+    overflow-x: auto;
+    padding: 4px 2px 12px;
+    scroll-snap-type: x proximity;
+  }
+
+  .services-accordion-item {
+    flex-basis: 52px;
+    height: clamp(280px, 40svh, 380px);
+    scroll-snap-align: center;
+  }
+
+  .services-accordion-item.is-active,
+  .services-accordion-item[aria-expanded="true"] {
+    flex-basis: min(68vw, 300px);
+  }
+
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -403,6 +537,7 @@ html[lang="en"] .service-text-body {
   }
 
   .services-card-stage {
+    display: grid;
     min-height: auto;
     opacity: 1;
     transform: none;
@@ -422,6 +557,16 @@ html[lang="en"] .service-text-body {
     transform: none;
     filter: none;
     pointer-events: auto;
+  }
+
+  .services-accordion {
+    min-height: auto;
+  }
+
+  .services-accordion-item {
+    height: min(58svh, 420px);
+    transform: none;
+    transition: none;
   }
 
 }

@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Entry is the site's opening gate. It renders the 3D key model, progress readout, auto-enter path, scroll/touch enter path, and Hero return path from the avatar control.
+Entry is the site's opening gate. It renders the vertical archive year marquee, progress readout/bar, auto-enter path, scroll/touch enter path, and Hero return path from the avatar control.
 
 ## Owned Files
 
@@ -11,22 +11,20 @@ Entry is the site's opening gate. It renders the 3D key model, progress readout,
 - `styles/entry-hero-experience.css`
 - `scripts/entry-key-model.js`
 - `scripts/entry-hero-experience.js`
-- `models/entry-key.glb`
 
 ## DOM Contracts
 
 - `#entry-screen`
-- `#entry-key-canvas`
 - `#entry-progress`
 - `#entry-progress-fill`
 - `#entry-progress-bar`
-- `data-model-src="/models/entry-key.glb"`
+- `#entry-year-marquee-track`
 - `data-auto-enter-delay`
 
 ## Runtime Contracts
 
-- Defines `window.LucianEntryKey`.
-- Produces `entry-key-ready` when the model is ready.
+- Defines `window.LucianEntryKey` as a lightweight loader compatibility API.
+- Produces `entry-key-ready` after progress completes and the archive year marquee has stopped on `2026`.
 - Produces `lucian:site-entered` when the entry transition completes.
 - Entry replay from avatar has been removed; `lucian:return-to-entry` is kept only as a legacy reset signal for listeners.
 
@@ -34,14 +32,13 @@ Entry is the site's opening gate. It renders the 3D key model, progress readout,
 
 - Keep entry ids stable unless all consumers are updated.
 - Check both auto-enter and user-triggered enter.
-- If model path changes, update HTML and asset QA.
 - If entry timing changes, check Hero reveal and scroll release.
 - If Entry reset is reintroduced, check systems that reset on `lucian:return-to-entry`.
 
 ## QA
 
-- Key model renders.
-- Progress reaches completion.
+- Progress line reaches completion.
+- Archive year marquee scrolls from `2017` to `2026` before auto-enter.
 - Auto-enter works.
 - Wheel/touch enter works.
 - Bottom avatar dock expands without replaying Entry.

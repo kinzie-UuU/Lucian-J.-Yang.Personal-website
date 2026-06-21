@@ -15,16 +15,16 @@ Critical order:
 
 1. `three.min.js`
 2. `site-data.js`
-3. Hero water/curtain/state/sequence initializers
+3. Hero curtain/state/sequence initializers
 4. `runtime-bridge.js`
 5. `app-bootstrap.js`
 6. language/static text/effect helpers
 7. `script.js`
-8. liquid field and Hero model
+8. Hero visual/runtime scripts
 9. Services scripts
 10. Gallery and Works navigation
 11. UI controls, contact, reveal, cursor, Works hover/transition, clock/nav, clients
-12. portrait/about curtain/ripples
+12. portrait/about curtain
 13. GSAP vendor and `scroll-curtain-transitions.js`
 14. `entry-key-model.js`
 15. `entry-hero-experience.js`
@@ -39,8 +39,8 @@ Global/token files load before section modules. `responsive.css` and `shared-mot
 
 High-value ids and selectors used across modules:
 
-- Entry: `#entry-screen`, `#entry-key-canvas`, `#entry-progress`, `#entry-progress-fill`, `#entry-progress-bar`.
-- Hero: `#hero-stage`, `#hero-kinetic-canvas`, `#hero-ripple-canvas`, `#hero-wireframe`, `#hero-model-scene`, `#hero-model-canvas`.
+- Entry: `#entry-screen`, `#entry-progress`, `#entry-progress-fill`, `#entry-progress-bar`, `#entry-year-marquee-track`.
+- Hero: `#hero-stage`, `#hero-broadcast-scene`, `#hero-tv-video`.
 - About: `#about`, `#portrait-video`, `.portrait-about-wrapper`, `.portrait-canvas`, `.about-curtain`.
 - Services: `#services`, `#services-prismatic-canvas`, `#services-time-canvas`, `.services-title-stage`, `.services-card-stage`, `.service-text-panel`.
 - Works/Gallery: `#works`, Works row data attributes, Gallery overlay root and Gallery back/close controls.
@@ -65,7 +65,6 @@ Feature globals:
 - `window.LucianAudio`
 - `window.LucianEntryKey`
 - `window.LucianHeroModel`
-- `window.LucianLiquidField`
 - `window.LucianAboutMotion`
 - `window.LucianAboutScrollReveal`
 - `window.LucianWorkGallery`
@@ -77,7 +76,7 @@ Initializer-style globals should be defined before the file that calls them. Fea
 
 Entry-specific feature contracts:
 
-- `window.LucianEntryKey.unlock()`: starts the 940ms key unlock pose. The key should already be loaded and progressing toward its front-facing pose; callers should treat this as a fire-and-forget visual cue.
+- `window.LucianEntryKey.unlock()`: completes the Entry progress/readiness state during manual entry; callers should treat this as a fire-and-forget compatibility cue.
 - `window.LucianAudio.playUnlockTone({ delayMs })`: schedules the short lock-opening tone on the active Web Audio clock and resolves to `true` when scheduled. It may resolve/return `false` when sound is disabled, the browser has not unlocked audio, or the call is throttled.
 - `window.LucianRuntime.playUnlockTone(options)`: runtime bridge wrapper for the audio method above. Entry uses `{ delayMs: 520 }` so the click lands near the key insertion.
 
@@ -85,7 +84,7 @@ Entry-specific feature contracts:
 
 Known custom events:
 
-- `entry-key-ready`: entry key model reports readiness.
+- `entry-key-ready`: entry loader reports readiness after the progress line completes and the year marquee stops on `2026`.
 - `lucian:site-entered`: entry has completed and the page is in the entered state.
 - `lucian:return-to-entry`: legacy reset signal; dependent systems reset if a future flow dispatches it.
 - `lucian:hero-about-handoff`: Hero hands off into About.
@@ -127,10 +126,10 @@ Rules:
 
 Asset references can come from:
 
-- HTML attributes such as `src`, `poster`, `href`, `data-model-src`.
+- HTML attributes such as `src`, `poster`, and `href`.
 - CSS `url(...)`.
 - `site-data.js` string fields.
-- GLTF files that reference buffers/textures relative to the model file.
+- Local video files referenced directly from Hero/About media.
 
 After asset path changes, run:
 

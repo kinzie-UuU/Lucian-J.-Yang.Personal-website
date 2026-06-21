@@ -26,11 +26,10 @@
 
 ## Hero
 
-- [ ] Water canvas is visible and nonblank.
 - [ ] Liquid glass field is visible after entry and does not block interaction.
-- [ ] Hero lion model loads from `/models/lion_head/lion_head_2k.gltf`.
-- [ ] Hero wordmark and model are visible and centered on desktop/mobile.
-- [ ] Pointer movement can nudge/orbit the lion without breaking the layout.
+- [ ] Hero CRT video loads from `images/works/aigc-video/莉栗说新年篇.mp4`.
+- [ ] Hero wordmark and CRT broadcast are visible and balanced on desktop/mobile.
+- [ ] Hero CRT video stays centered and does not break the layout.
 - [ ] Hero-to-About and About-to-Hero both lock the current stage first; downward/upward wheel, touch, or key input starts the black curtain, then lands on the target stage.
 
 ## About / Portrait

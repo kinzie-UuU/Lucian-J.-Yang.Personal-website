@@ -117,7 +117,6 @@
       "is-unfolding",
       "is-entry-curtain-ready",
       "is-entry-scroll-locked",
-      "is-key-unlocking",
       "is-entry-replaying"
     );
     document.body.classList.add("has-entered", "is-deep-link-entry");
@@ -147,7 +146,6 @@
     resetHeroSequenceState({ resetScroll: true });
     runtime.setEntered(true);
     lockEntryTransitionScroll(true);
-    document.body.classList.add("is-key-unlocking");
     window.LucianEntryKey?.unlock?.();
     if (runtime.playUnlockTone) runtime.playUnlockTone({ delayMs: 520 }).catch(() => false);
     else playUiTone("click");
@@ -155,7 +153,6 @@
 
     if (reducedMotion) {
       document.body.classList.add("has-entered");
-      document.body.classList.remove("is-key-unlocking");
       requestAnimationFrame(() => {
         forceScrollTop();
         resizeStage();
@@ -170,7 +167,6 @@
 
     window.setTimeout(() => {
       document.body.classList.remove("is-unfolding");
-      document.body.classList.remove("is-key-unlocking");
       document.body.classList.add("is-entry-curtain-ready");
 
       window.setTimeout(() => {

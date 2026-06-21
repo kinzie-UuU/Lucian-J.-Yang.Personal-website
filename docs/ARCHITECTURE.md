@@ -21,7 +21,7 @@ The architecture is intentionally simple at the platform level and more complex 
 2. Data and bootstrap
    - `site-data.js` exposes content globals.
    - `runtime-bridge.js` creates `window.LucianRuntime`.
-   - `app-bootstrap.js` initializes core runtime state, language, Hero sequence state, Hero wireframe, and Hero water.
+   - `app-bootstrap.js` initializes core runtime state, language, and Hero sequence state.
    - `script.js` calls `window.initLucianApp?.()` and stores the return value on `window.LucianApp`.
 
 3. Section and visual systems
@@ -39,7 +39,7 @@ The architecture is intentionally simple at the platform level and more complex 
 The DOM is organized as a single scroll story:
 
 - `#entry-screen`: entry gate, 3D key, progress, auto-enter, scroll/touch enter.
-- `.hero-section` and `#hero-stage`: Hero water, wireframe, liquid field, lion model, wordmark, ripples, Hero-to-About handoff.
+- `.hero-section` and `#hero-stage`: Hero CRT video broadcast, wordmark, Hero-to-About handoff.
 - `#about`: portrait video/image scrub, About text reveal, About-to-Services bridge.
 - `#services`: sticky Services title gate, PrismaticBurst canvas, time-tunnel canvas, automatic service message stage.
 - `#works`: work categories, hover preview, side rail, transition copy, gallery entry.
@@ -54,7 +54,6 @@ CSS is loaded in modules, but it is still global CSS. Selectors must preserve ex
 
 - `styles/fonts.css`: local font declarations.
 - `styles.css`: tokens, reset, body states, base elements.
-- `styles/liquid-glass.css`: fixed liquid field layer.
 - `styles/cursor.css`: precision cursor.
 - `styles/typography.css`: shared type and section styles.
 - `styles/home.css`: Entry and Hero base layout.
@@ -100,7 +99,7 @@ Visible copy should start in `site-data.js` unless it must be hardcoded for firs
 All runtime assets are local:
 
 - `images/`: favicons, portrait fallback, QR, works images, and related READMEs.
-- `models/`: entry key GLB and Hero lion-head GLTF assets.
+- `models/`: entry key GLB assets.
 - `videos/`: portrait/about video.
 - `audio/`: site sound/music.
 - `fonts/`: local web fonts.

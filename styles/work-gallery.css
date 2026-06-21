@@ -126,7 +126,7 @@ body.work-gallery-open .work-gallery * {
   display: none;
   grid-column: 2;
   padding-top: 0.28em;
-  font-family: "Major Mono Display", "Satoshi", monospace;
+  font-family: var(--font-en-sans);
   font-size: clamp(0.68rem, 0.7vw, 0.82rem);
   letter-spacing: 0.08em;
   color: rgba(16, 17, 20, 0.38);
@@ -211,7 +211,7 @@ body.work-gallery-open .work-gallery-back {
 
 .work-gallery-close-label {
   color: #ff6268;
-  font-family: "Outfit", "MiSans", system-ui, sans-serif;
+  font-family: var(--font-sans);
   font-size: 0.92rem;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -473,7 +473,7 @@ body.work-gallery-open .work-gallery-back {
   max-width: min(44ch, calc(100% - 28px));
   margin: 0;
   color: rgba(244, 242, 237, 0.78);
-  font-family: "MiSans", "Satoshi", system-ui, sans-serif;
+  font-family: var(--font-sans);
   font-size: clamp(0.66rem, 0.7vw, 0.84rem);
   font-weight: 600;
   line-height: 1.2;
@@ -831,7 +831,7 @@ body.work-gallery-open .work-gallery-back {
   display: block;
   padding-left: 2px;
   color: rgba(244, 242, 237, 0.74);
-  font-family: "MiSans", "Satoshi", system-ui, sans-serif;
+  font-family: var(--font-sans);
   font-size: clamp(0.68rem, 0.64vw, 0.78rem);
   font-weight: 600;
   line-height: 1.25;
@@ -845,7 +845,7 @@ body.work-gallery-open .work-gallery-back {
   display: block;
   margin-top: -6px;
   color: rgba(244, 242, 237, 0.42);
-  font-family: "Major Mono Display", "Satoshi", monospace;
+  font-family: var(--font-en-sans);
   font-size: clamp(0.52rem, 0.52vw, 0.62rem);
   letter-spacing: 0.08em;
   line-height: 1;

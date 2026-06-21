@@ -4,12 +4,14 @@
 
   const dock = document.getElementById("bottom-nav-dock");
   const avatar = document.getElementById("bottom-nav-avatar");
+  const directory = document.getElementById("bottom-nav-directory");
   const navItems = Array.from(document.querySelectorAll(".bottom-nav-item"));
 
   const setDockOpen = (open) => {
-    if (!dock || !avatar) return;
+    if (!dock) return;
     dock.classList.toggle("is-open", open);
-    avatar.setAttribute("aria-expanded", open ? "true" : "false");
+    directory?.setAttribute("aria-expanded", open ? "true" : "false");
+    directory?.setAttribute("aria-label", open ? "Close directory" : "Open directory");
   };
 
   const jumpToHero = () => {
@@ -22,6 +24,12 @@
     event.preventDefault();
     event.stopPropagation();
     jumpToHero();
+  });
+
+  directory?.addEventListener("click", (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    setDockOpen(!dock?.classList.contains("is-open"));
   });
 
   navItems.forEach((item) => {
