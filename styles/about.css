@@ -87,8 +87,8 @@ body.about-centered-reveal-active .portrait-image {
     scale(calc(1.012 - var(--portrait-enter) * 0.012 - var(--portrait-exit) * 0.012));
 }
 
-body:not(.about-centered-reveal-active) .portrait-about-wrapper:not(.is-portrait-reveal-armed):not(.is-portrait-reveal-complete) .portrait-video,
-body:not(.about-centered-reveal-active) .portrait-about-wrapper:not(.is-portrait-reveal-armed):not(.is-portrait-reveal-complete) .portrait-image {
+body:not(.about-centered-reveal-active):not(.hero-about-handoff-settled) .portrait-about-wrapper:not(.is-portrait-reveal-armed):not(.is-portrait-reveal-complete) .portrait-video,
+body:not(.about-centered-reveal-active):not(.hero-about-handoff-settled) .portrait-about-wrapper:not(.is-portrait-reveal-armed):not(.is-portrait-reveal-complete) .portrait-image {
   opacity: 0 !important;
 }
 
