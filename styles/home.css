@@ -244,20 +244,19 @@ body.has-entered .hero-broadcast-scene {
 
 .hero-word-chip-name {
   position: absolute;
-  left: 0;
-  right: 0;
+  left: 50%;
   bottom: clamp(-20px, -1.25svh, -8px);
   justify-self: center;
   justify-content: center;
-  width: 100%;
+  width: min(100%, calc(100vw - clamp(48px, 6vw, 112px)));
   color: rgba(238, 242, 235, 0.28);
   font-family: var(--font-en-sans);
-  font-size: clamp(7.4rem, 15.4vw, 20rem);
+  font-size: clamp(6.8rem, 11.55vw, 42rem);
   font-weight: 480;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.055em;
   line-height: 0.74;
   text-align: center;
-  transform: none;
+  transform: translate3d(-50%, 0, 0);
 }
 
 .hero-word-chip-packaging,
