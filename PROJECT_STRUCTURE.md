@@ -9,6 +9,7 @@ This is a pure static personal packaging-design portfolio. It keeps `index.html`
 - `script.js`: one-line application entry that calls `window.initLucianApp()`.
 - `site-data.js`: bilingual text, work taxonomy, gallery image data, project data, and gallery copy.
 - `three.min.js`: local Three.js dependency.
+- `vercel.json`: Vercel static asset cache headers.
 
 ## Asset Directories
 

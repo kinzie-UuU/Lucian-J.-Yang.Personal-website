@@ -46,7 +46,7 @@
   --site-top-safe: clamp(56px, 8svh, 84px);
   --bottom-nav-safe: clamp(104px, 14svh, 140px);
   --font-zh-serif: "SkyHeart Clear Serif SC", "Songti SC", "STSong", SimSun, "Noto Serif CJK SC", serif;
-  --font-zh-sans: "MiSans", "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
+  --font-zh-sans: "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
   --font-en-serif: "Instrument Serif", Georgia, "Times New Roman", serif;
   --font-en-sans: "Inter", Arial, Helvetica, sans-serif;
   --font-serif: var(--font-zh-serif);

@@ -4,7 +4,7 @@ images/**/*.jpg
 images/**/*.jpeg
 !images/favicons/*.png
 
-# Large local fonts that are not required at runtime.
+# Large local fonts excluded from runtime; CSS falls back to system sans fonts.
 fonts/MiSans/
 fonts/空心晴宋体-v2.00/SkyHeartClearSerifSC-Regular.ttf
 
