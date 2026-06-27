@@ -102,6 +102,15 @@
     };
 
     progressRaf = requestAnimationFrame(tick);
+
+    // Fallback: RAF can be paused in background tabs. Fire signalEntryReady
+    // via setTimeout so the entry always completes even if the user opens the
+    // page while the tab is not in the foreground.
+    window.setTimeout(() => {
+      if (disposed || run !== progressRun) return;
+      setProgress(100);
+      signalEntryReady();
+    }, entryDelay + marqueeDuration + 500);
   };
 
   marqueeTrack?.addEventListener("animationend", completeEntryMarquee);

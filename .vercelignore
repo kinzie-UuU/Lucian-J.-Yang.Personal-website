@@ -7,6 +7,16 @@ images/**/*.jpeg
 # Large local fonts excluded from runtime; CSS falls back to system sans fonts.
 fonts/MiSans/
 fonts/空心晴宋体-v2.00/SkyHeartClearSerifSC-Regular.ttf
+# Unused font families (not referenced in fonts.css)
+fonts/CabinetGrotesk/
+fonts/Satoshi/
+fonts/Outfit_Complete/
+fonts/TrenchSlab_Complete/
+fonts/Major_Mono_Display,Playfair_Display/
+
+# Stale video files not referenced by index.html
+videos/portrait-scrub.mp4
+videos/Video 8.mp4
 
 # Original lion textures are kept locally; the glTF uses the 1K versions.
 models/lion_head/textures/*_2k.jpg

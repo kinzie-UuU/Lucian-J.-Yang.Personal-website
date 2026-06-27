@@ -13,3 +13,6 @@ _archive_not_used_by_index_*/
 public/
 models/house.glb
 models/nexus_studios-candle-111.glb
+
+# Removed from git: content merged into images/works/aigc-video/
+images/works/aigc/

@@ -1204,20 +1204,20 @@ var workGalleryImages = {
   "aigc": [
     {
       "title": "PROMPT BOARD",
-      "src": "images/works/aigc/01.webp",
+      "src": "images/works/aigc-video/01.webp",
       "position": "center",
       "size": "wide"
     },
     {
       "title": "OPTION COMPARE",
-      "src": "images/works/aigc/02.webp",
+      "src": "images/works/aigc-video/02.webp",
       "position": "center",
       "size": "small",
       "bg": "#cbcbd2"
     },
     {
       "title": "DRAFT FILTER",
-      "src": "images/works/aigc/03.webp",
+      "src": "images/works/aigc-video/03.webp",
       "position": "center",
       "size": "small",
       "bg": "#d7d5ce"
