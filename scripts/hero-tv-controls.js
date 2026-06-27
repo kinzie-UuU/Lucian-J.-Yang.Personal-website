@@ -3,7 +3,7 @@
   const cabinet = document.querySelector(".hero-tv-cabinet");
   const soundToggle = document.querySelector("#hero-tv-sound-toggle");
   const replayToggle = document.querySelector("#hero-tv-replay-toggle");
-  if (!video || !soundToggle || !replayToggle) return;
+  if (!video || !(video instanceof HTMLVideoElement) || !soundToggle || !replayToggle) return;
 
   const TV_VOLUME = 0.86;
 
