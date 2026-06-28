@@ -1,11 +1,11 @@
 /* Local font faces — served via jsDelivr CDN (China nodes) */
 :root {
-  --cdn: "https://cdn.jsdelivr.net/gh/kinzie-UuU/Lucian-J.-Yang.Personal-website@master";
+  --cdn: "https://cdn.jsdelivr.net/gh/kinzie-UuU/Lucian-J.-Yang.Personal-website@b842d35ec3d8bdb753d922450266dd4ef9401933";
 }
 
 @font-face {
   font-family: "SkyHeart Clear Serif SC";
-  src: url("https://cdn.jsdelivr.net/gh/kinzie-UuU/Lucian-J.-Yang.Personal-website@master/fonts/%E7%A9%BA%E5%BF%83%E6%99%B4%E5%AE%8B%E4%BD%93-v2.00/SkyHeartClearSerifSC-Subset.woff2") format("woff2");
+  src: url("https://cdn.jsdelivr.net/gh/kinzie-UuU/Lucian-J.-Yang.Personal-website@b842d35ec3d8bdb753d922450266dd4ef9401933/fonts/%E7%A9%BA%E5%BF%83%E6%99%B4%E5%AE%8B%E4%BD%93-v2.00/SkyHeartClearSerifSC-Subset.woff2") format("woff2");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -13,7 +13,7 @@
 
 @font-face {
   font-family: "Instrument Serif";
-  src: url("https://cdn.jsdelivr.net/gh/kinzie-UuU/Lucian-J.-Yang.Personal-website@master/fonts/Instrument_Serif/InstrumentSerif-Regular.woff2") format("woff2");
+  src: url("https://cdn.jsdelivr.net/gh/kinzie-UuU/Lucian-J.-Yang.Personal-website@b842d35ec3d8bdb753d922450266dd4ef9401933/fonts/Instrument_Serif/InstrumentSerif-Regular.woff2") format("woff2");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -21,7 +21,7 @@
 
 @font-face {
   font-family: "Instrument Serif";
-  src: url("https://cdn.jsdelivr.net/gh/kinzie-UuU/Lucian-J.-Yang.Personal-website@master/fonts/Instrument_Serif/InstrumentSerif-Italic.woff2") format("woff2");
+  src: url("https://cdn.jsdelivr.net/gh/kinzie-UuU/Lucian-J.-Yang.Personal-website@b842d35ec3d8bdb753d922450266dd4ef9401933/fonts/Instrument_Serif/InstrumentSerif-Italic.woff2") format("woff2");
   font-weight: 400;
   font-style: italic;
   font-display: swap;
@@ -29,7 +29,7 @@
 
 @font-face {
   font-family: "Inter";
-  src: url("https://cdn.jsdelivr.net/gh/kinzie-UuU/Lucian-J.-Yang.Personal-website@master/fonts/Inter/Inter-VariableFont_opsz,wght.woff2") format("woff2");
+  src: url("https://cdn.jsdelivr.net/gh/kinzie-UuU/Lucian-J.-Yang.Personal-website@b842d35ec3d8bdb753d922450266dd4ef9401933/fonts/Inter/Inter-VariableFont_opsz,wght.woff2") format("woff2");
   font-weight: 100 900;
   font-style: normal;
   font-display: swap;
@@ -37,7 +37,7 @@
 
 @font-face {
   font-family: "Inter";
-  src: url("https://cdn.jsdelivr.net/gh/kinzie-UuU/Lucian-J.-Yang.Personal-website@master/fonts/Inter/Inter-Italic-VariableFont_opsz,wght.woff2") format("woff2");
+  src: url("https://cdn.jsdelivr.net/gh/kinzie-UuU/Lucian-J.-Yang.Personal-website@b842d35ec3d8bdb753d922450266dd4ef9401933/fonts/Inter/Inter-Italic-VariableFont_opsz,wght.woff2") format("woff2");
   font-weight: 100 900;
   font-style: italic;
   font-display: swap;
