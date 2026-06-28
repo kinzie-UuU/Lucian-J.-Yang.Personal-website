@@ -1,9 +1,11 @@
 #!/usr/bin/env node
 /**
  * Simple concatenation bundler.
- * Merges app scripts + vendor scripts into two output files:
- *   dist/vendor.js  — three.min.js + GSAP (heavy libs, rarely change)
- *   dist/bundle.js  — all app scripts in exact HTML load order
+ * Merges app scripts + vendor scripts into two JS files,
+ * and all stylesheets into one CSS file:
+ *   dist/vendor.js   — three.min.js + GSAP (heavy libs, rarely change)
+ *   dist/bundle.js   — all app scripts in exact HTML load order
+ *   dist/bundle.css  — all stylesheets in exact HTML load order
  *
  * Run: node tools/build.js
  */
@@ -82,21 +84,50 @@ const appFiles = [
   "scripts/entry-hero-experience.js",
 ];
 
+// ── CSS bundle ────────────────────────────────────────────────────────────
+const cssFiles = [
+  "styles/fonts.css",
+  "styles.css",
+  "styles/cursor.css",
+  "styles/typography.css",
+  "styles/home.css",
+  "styles/entry-hero-experience.css",
+  "styles/about.css",
+  "styles/services.css",
+  "styles/works.css",
+  "styles/clients.css",
+  "styles/work-gallery.css",
+  "styles/work-case.css",
+  "styles/contact.css",
+  "styles/navigation.css",
+  "styles/responsive.css",
+  "styles/shared-motion.css",
+];
+
 console.log("\nBuilding bundles…");
 
 const vendor = concat(vendorFiles, "vendor.js");
 const app    = concat(appFiles,    "bundle.js");
+const css    = concat(cssFiles,    "bundle.css");
 
-fs.writeFileSync(path.join(DIST, "vendor.js"), vendor.result, "utf8");
-fs.writeFileSync(path.join(DIST, "bundle.js"), app.result,    "utf8");
+fs.writeFileSync(path.join(DIST, "vendor.js"),  vendor.result, "utf8");
+fs.writeFileSync(path.join(DIST, "bundle.js"),  app.result,    "utf8");
+fs.writeFileSync(path.join(DIST, "bundle.css"), css.result,    "utf8");
 
 // Write a manifest so index.html can reference versioned files
-const manifest = { vendor: vendor.hash, bundle: app.hash, built: new Date().toISOString() };
+const manifest = {
+  vendor: vendor.hash,
+  bundle: app.hash,
+  css:    css.hash,
+  built:  new Date().toISOString(),
+};
 fs.writeFileSync(path.join(DIST, "manifest.json"), JSON.stringify(manifest, null, 2), "utf8");
 
 console.log("\n✓ dist/vendor.js");
 console.log("✓ dist/bundle.js");
+console.log("✓ dist/bundle.css");
 console.log("✓ dist/manifest.json");
 console.log("\nHashes — update index.html ?v= accordingly:");
 console.log(`  vendor: ${vendor.hash}`);
-console.log(`  bundle: ${app.hash}\n`);
+console.log(`  bundle: ${app.hash}`);
+console.log(`  css:    ${css.hash}\n`);

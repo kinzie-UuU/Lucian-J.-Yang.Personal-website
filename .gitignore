@@ -16,3 +16,5 @@ models/nexus_studios-candle-111.glb
 
 # Removed from git: content merged into images/works/aigc-video/
 images/works/aigc/
+
+node_modules/
