@@ -6354,7 +6354,7 @@ window.workCaseData = {
   const track = document.querySelector("#works-category-track");
   if (!track) return;
 
-  // gift merged into main works list; aigc-video merged into aigc card
+  // gift merged into main works list (v2); aigc-video merged into aigc card
   const categories = ["brand", "aigc"];
   const labels = {
     zh: {
