@@ -340,6 +340,11 @@ body.work-case-open {
   color: var(--case-faint);
 }
 
+body.work-case-open .precision-cursor,
+body.work-case-open .precision-guides {
+  z-index: 1210;
+}
+
 @media (max-width: 760px) {
   .work-case-series-row,
   .work-case-series-row.rev {
