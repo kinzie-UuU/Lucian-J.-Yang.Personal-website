@@ -7,11 +7,11 @@
 
   if (!section || !canvas || !window.THREE) return;
 
-  const categoryKeys = ["oem"];
+  const categoryKeys = ["oem", "gift"];
   const categoryLabels = {
     zh: {
       oem: "包装设计",
-      gift: "礼品福利",
+      gift: "包装设计",
       brand: "品牌字体",
       aigc: "AIGC流",
       "aigc-video": "视频创作",
@@ -244,9 +244,12 @@
 
   const updateIndex = () => {
     if (!indexEl) return;
-    const itemCount = categoryPools[0]?.items?.length || 1;
+    const sectionProgress = getSectionProgress();
+    const catPos = Math.min(categoryPools.length - 0.0001, sectionProgress * categoryPools.length);
+    const pool = categoryPools[clamp(Math.floor(catPos), 0, categoryPools.length - 1)] || categoryPools[0];
+    const itemCount = pool?.items?.length || 1;
     const imageIndex = mod(Math.round(scrollPosition), itemCount);
-    indexEl.textContent = `OEM / ${String(imageIndex + 1).padStart(2, "0")}`;
+    indexEl.textContent = `PACKAGING / ${String(imageIndex + 1).padStart(2, "0")}`;
   };
 
   const refreshLanguage = () => {
