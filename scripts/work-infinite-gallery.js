@@ -10,14 +10,14 @@
   const categoryKeys = ["oem"];
   const categoryLabels = {
     zh: {
-      oem: "OEM包装",
+      oem: "包装设计",
       gift: "礼品福利",
       brand: "品牌字体",
       aigc: "AIGC流",
       "aigc-video": "视频创作",
     },
     en: {
-      oem: "OEM Packaging",
+      oem: "Packaging",
       gift: "Gifting",
       brand: "Brand Type",
       aigc: "AIGC Flow",
