@@ -2,19 +2,16 @@
   const track = document.querySelector("#works-category-track");
   if (!track) return;
 
-  const categories = ["gift", "brand", "aigc", "aigc-video"];
+  // gift merged into main works list; aigc-video merged into aigc card
+  const categories = ["brand", "aigc"];
   const labels = {
     zh: {
-      gift: "礼品福利",
-      brand: "品牌字体",
-      aigc: "AIGC流",
-      "aigc-video": "视频创作",
+      brand: "品牌与字体",
+      aigc: "AI 工作流",
     },
     en: {
-      gift: "Gifting",
-      brand: "Brand Type",
-      aigc: "AIGC Flow",
-      "aigc-video": "Video",
+      brand: "Brand & Type",
+      aigc: "AI Workflow",
     },
   };
 
@@ -79,7 +76,7 @@
     });
 
     const heading = document.querySelector(".works-category-title");
-    if (heading) heading.textContent = lang === "en" ? "Other Directions" : "其余方向";
+    if (heading) heading.textContent = lang === "en" ? "Extended Skills" : "延展能力";
   };
 
   render();

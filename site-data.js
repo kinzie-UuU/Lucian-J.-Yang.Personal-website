@@ -2951,16 +2951,14 @@ var galleryText = {
     "categoryTitles": {
       "oem": "OEM 包装项目",
       "gift": "礼品项目",
-      "brand": "品牌辅助项目",
-      "aigc": "AIGC 流程项目",
-      "aigc-video": "AIGC视频"
+      "brand": "品牌与字体项目",
+      "aigc": "AI 工作流"
     },
     "categoryDescriptions": {
       "oem": "贴牌、系列包装与渠道交付，重点处理结构、识别和量产可行性。",
       "gift": "面向节礼、福利与礼赠渠道，把场景、预算和交付节奏放进包装判断。",
-      "brand": "补强品牌、字体与视觉系统，让包装识别和系列延展更完整。",
-      "aigc": "用 AIGC 做方向探索、提案比较和流程提效，帮助方案更快进入判断。",
-      "aigc-video": "以动态影像补充包装叙事，让提案、展示和传播更有连续性。"
+      "brand": "品牌、字体与视觉系统补强，让包装识别和系列延展更完整。",
+      "aigc": "用 AI 工具做方向探索、提案比较和视频内容创作，提高效率，但判断本身不外包。"
     },
     "tags": [
       "包装",
@@ -2981,16 +2979,14 @@ var galleryText = {
     "categoryTitles": {
       "oem": "OEM Packaging Project",
       "gift": "Gift Project",
-      "brand": "Brand Support Project",
-      "aigc": "AIGC Workflow Project",
-      "aigc-video": "AIGC Video"
+      "brand": "Brand & Type",
+      "aigc": "AI Workflow"
     },
     "categoryDescriptions": {
       "oem": "Private-label and series packaging focused on structure, recognition, and production-ready delivery.",
       "gift": "Gift and welfare-channel packaging shaped around occasion, budget, and delivery rhythm.",
       "brand": "Brand, type, and visual-system support that makes packaging recognition more complete.",
-      "aigc": "AIGC-assisted exploration, proposal comparison, and workflow acceleration for faster design judgment.",
-      "aigc-video": "Motion work that extends packaging stories across proposals, presentation, and communication."
+      "aigc": "AI tools for direction exploration, proposal comparison, and video content — accelerating the process while keeping judgment in-house."
     },
     "tags": [
       "PACKAGING",
