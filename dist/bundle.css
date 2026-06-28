@@ -220,53 +220,19 @@ main > section {
 
 
 /* --- styles/cursor.css --- */
-/* Precision cursor and guide overlay */
-body.cursor-active,
-body.cursor-active a,
-body.cursor-active button {
-  cursor: none;
-}
-
-body.cursor-active .work-gallery,
-body.cursor-active .work-gallery * {
-  cursor: none !important;
-}
+/* Precision cursor — minimal version */
 
 body.has-entered,
 body.has-entered * {
   cursor: none !important;
 }
 
-body.has-entered .precision-guides {
-  opacity: 0 !important;
-}
-
-body.is-hero-stage .precision-guides {
-  opacity: 0 !important;
-}
-
 body.is-unfolding .precision-cursor,
-body.is-unfolding .precision-guides,
-body.is-entering .precision-cursor,
-body.is-entering .precision-guides {
+body.is-entering .precision-cursor {
   opacity: 0 !important;
-  transition: opacity 120ms ease;
 }
 
-.precision-cursor {
-  position: fixed;
-  left: 0;
-  top: 0;
-  z-index: 260;
-  width: 36px;
-  height: 36px;
-  pointer-events: none;
-  opacity: 0;
-  transform: translate(-50%, -50%);
-  transition: opacity 180ms ease, width 220ms ease, height 220ms ease;
-  will-change: transform;
-}
-
+/* guide crosshair lines */
 .precision-guides {
   position: fixed;
   inset: 0;
@@ -275,136 +241,89 @@ body.is-entering .precision-guides {
   opacity: 0;
   transition: opacity 180ms ease;
 }
-
-.precision-guides::before,
-.precision-guides::after {
+.precision-guides::before {
   content: "";
   position: absolute;
-}
-
-.precision-guides::before {
-  left: 0;
-  right: 0;
+  left: 0; right: 0;
   top: var(--cursor-y);
   height: 1px;
   transform: translateY(-0.5px);
-  background: rgba(242, 240, 236, 0.28);
+  background: rgba(242, 240, 236, 0.22);
 }
-
 .precision-guides::after {
-  top: 0;
-  bottom: 0;
+  content: "";
+  position: absolute;
+  top: 0; bottom: 0;
   left: var(--cursor-x);
   width: 1px;
   transform: translateX(-0.5px);
-  background: rgba(242, 240, 236, 0.18);
+  background: rgba(242, 240, 236, 0.14);
 }
 
-.precision-guides.is-visible {
-  opacity: 1;
+/* cursor box */
+.precision-cursor {
+  position: fixed;
+  left: 0; top: 0;
+  z-index: 740;
+  width: 18px; height: 18px;
+  pointer-events: none;
+  opacity: 0;
+  transform: translate(-50%, -50%);
+  transition: opacity 120ms ease, scale 150ms ease;
+  will-change: transform;
 }
 
-/* viewfinder: four corner L-brackets */
+/* border frame */
 .precision-cursor::before {
   content: "";
   position: absolute;
   inset: 0;
-  /* top-left H, top-left V, top-right H, top-right V,
-     bottom-left H, bottom-left V, bottom-right H, bottom-right V */
-  background:
-    linear-gradient(90deg, rgba(242,240,236,0.9), rgba(242,240,236,0.9))
-      0 0 / 10px 1px no-repeat,
-    linear-gradient(rgba(242,240,236,0.9), rgba(242,240,236,0.9))
-      0 0 / 1px 10px no-repeat,
-    linear-gradient(90deg, rgba(242,240,236,0.9), rgba(242,240,236,0.9))
-      100% 0 / 10px 1px no-repeat,
-    linear-gradient(rgba(242,240,236,0.9), rgba(242,240,236,0.9))
-      100% 0 / 1px 10px no-repeat,
-    linear-gradient(90deg, rgba(242,240,236,0.9), rgba(242,240,236,0.9))
-      0 100% / 10px 1px no-repeat,
-    linear-gradient(rgba(242,240,236,0.9), rgba(242,240,236,0.9))
-      0 100% / 1px 10px no-repeat,
-    linear-gradient(90deg, rgba(242,240,236,0.9), rgba(242,240,236,0.9))
-      100% 100% / 10px 1px no-repeat,
-    linear-gradient(rgba(242,240,236,0.9), rgba(242,240,236,0.9))
-      100% 100% / 1px 10px no-repeat;
+  border: 1px solid rgba(244, 242, 237, 0.88);
 }
 
 /* center dot */
 .precision-cursor::after {
   content: "";
   position: absolute;
-  left: 50%;
-  top: 50%;
+  left: 50%; top: 50%;
   transform: translate(-50%, -50%);
-  width: 3px;
-  height: 3px;
-  background: rgba(242,240,236,0.6);
+  width: 3px; height: 3px;
   border-radius: 50%;
+  background: rgba(244, 242, 237, 0.72);
 }
 
 .precision-cursor.is-visible {
   opacity: 1;
 }
 
-body.has-entered .precision-cursor {
-  z-index: 740;
-  width: 16px;
-  height: 16px;
-  opacity: 0;
-  transform: translate(-50%, -50%);
-  mix-blend-mode: difference;
-  transition: opacity 120ms ease, scale 180ms ease, width 160ms ease, height 160ms ease;
+.precision-cursor.is-pressing {
+  scale: 0.85;
 }
 
-body.has-entered .precision-cursor::before {
-  display: block;
-  inset: 0;
-  border: 1.2px solid var(--cursor-frame-color, #f4f2ed);
-  background: transparent;
-  box-shadow: none;
+/* case overlay: cursor stays on top */
+body.work-case-open .precision-cursor,
+body.work-case-open .precision-guides {
+  z-index: 1210;
 }
 
-body.has-entered .precision-cursor::after {
-  display: block;
-  width: 3px;
-  height: 3px;
-  background: var(--cursor-frame-color, #f4f2ed);
-  opacity: 0.92;
-}
-
-body.has-entered .precision-cursor.is-visible {
-  opacity: 1;
-}
-
-body.has-entered .precision-cursor.is-pressing {
-  scale: 0.9;
-}
-
+/* gallery overlay: hide cursor */
 body.work-gallery-open,
-body.work-gallery-open a,
-body.work-gallery-open button,
-body.work-gallery-open .work-gallery,
-body.work-gallery-open .work-gallery * {
+body.work-gallery-open * {
   cursor: auto !important;
 }
-
 body.work-gallery-open .precision-cursor {
   opacity: 0 !important;
 }
 
+/* touch / mobile: hide entirely */
 @media (pointer: coarse), (max-width: 768px), (prefers-reduced-motion: reduce) {
   body.has-entered,
-  body.has-entered a,
-  body.has-entered button,
-  body.has-entered input,
-  body.has-entered textarea,
-  body.has-entered select {
+  body.has-entered * {
     cursor: auto !important;
   }
-
-  body.has-entered .precision-cursor {
-    display: none;
+  .precision-cursor,
+  .precision-guides {
+    display: none !important;
   }
 }
 
