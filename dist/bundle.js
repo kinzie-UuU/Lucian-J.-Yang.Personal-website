@@ -6320,6 +6320,8 @@ window.workCaseData = {
   let activeCategory = "";
   let isPointerDown = false;
   let lastPointerY = 0;
+  let pointerDownX = 0;
+  let pointerDownY = 0;
   let pointerX = 0;
   let pointerY = 0;
   let hoverMesh = null;
@@ -6445,6 +6447,7 @@ window.workCaseData = {
         mesh.userData.itemIndex = itemIndex;
         mesh.userData.itemKey = itemKey;
         mesh.userData.categoryKey = item.categoryKey;
+        mesh.userData.itemSrc = item.src || "";
         material.uniforms.map.value = textureRecord.texture;
         material.uniforms.texelSize.value.set(
           1 / (textureRecord.texture.image?.width || 1),
@@ -6469,6 +6472,9 @@ window.workCaseData = {
 
     updateCopy(activePool.categoryKey);
     updateIndex();
+    // Cursor: pointer when hovering a clickable image, grab otherwise
+    const hoverHasCase = hoverMesh && !!caseLookup[hoverMesh.userData.itemSrc];
+    canvas.style.cursor = isPointerDown ? "grabbing" : hoverHasCase ? "pointer" : "grab";
     renderer.render(scene, camera);
     rafId = window.requestAnimationFrame(render);
   };
@@ -6514,9 +6520,37 @@ window.workCaseData = {
     markInteraction();
   };
 
+  // Build src → caseKey lookup from workCaseData
+  const buildCaseLookup = () => {
+    const map = {};
+    const cd = window.workCaseData || {};
+    Object.entries(cd).forEach(([key, c]) => {
+      if (c.hero?.src) map[c.hero.src] = key;
+      (c.series || []).forEach((block) => {
+        if (block.src) map[block.src] = key;
+        (block.items || []).forEach((it) => { if (it.src) map[it.src] = key; });
+      });
+    });
+    return map;
+  };
+  const caseLookup = buildCaseLookup();
+
+  const handleGalleryClick = () => {
+    if (!hoverMesh) return;
+    const src = hoverMesh.userData.itemSrc;
+    if (!src) return;
+    const caseKey = caseLookup[src];
+    if (!caseKey) return;
+    const [cat, idx] = caseKey.split(":");
+    const row = document.querySelector(`.works-row[data-category="${cat}"][data-project-index="${idx}"]`);
+    if (row) row.click();
+  };
+
   const onPointerDown = (event) => {
     isPointerDown = true;
     lastPointerY = event.clientY;
+    pointerDownX = event.clientX;
+    pointerDownY = event.clientY;
     canvas.classList.add("is-dragging");
     canvas.setPointerCapture?.(event.pointerId);
     markInteraction();
@@ -6526,6 +6560,10 @@ window.workCaseData = {
     isPointerDown = false;
     canvas.classList.remove("is-dragging");
     canvas.releasePointerCapture?.(event.pointerId);
+    // Click = small movement (<8px)
+    const dx = event.clientX - pointerDownX;
+    const dy = event.clientY - pointerDownY;
+    if (Math.hypot(dx, dy) < 8) handleGalleryClick();
   };
 
   window.addEventListener("resize", resize);
