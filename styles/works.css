@@ -412,29 +412,26 @@ html[lang="en"] .works-flowing-menu-text {
   justify-items: center;
   width: min(980px, calc(100vw - 36px));
   pointer-events: none;
+  mix-blend-mode: difference;
 }
 
 .works-infinite-index {
   margin: 0 0 clamp(10px, 1.8vw, 20px);
-  color: rgba(247, 244, 238, 0.52);
+  color: rgba(247, 244, 238, 0.62);
   font-family: var(--font-en-sans);
   font-size: clamp(0.58rem, 0.8vw, 0.82rem);
   letter-spacing: 0.18em;
-  text-shadow: 0 1px 12px rgba(0,0,0,0.6);
 }
 
 .works-infinite-title {
   margin: 0;
-  color: rgba(247, 244, 238, 0.92);
+  color: #f7f4ee;
   font-family: var(--font-serif);
   font-size: clamp(4rem, 11vw, 11rem);
   font-weight: 400;
   line-height: 0.92;
   letter-spacing: 0;
   text-align: center;
-  text-shadow:
-    0 2px 32px rgba(0,0,0,0.7),
-    0 0 80px rgba(0,0,0,0.4);
 }
 
 html[lang="en"] .works-infinite-title {
@@ -446,12 +443,11 @@ html[lang="en"] .works-infinite-title {
 .works-infinite-description {
   max-width: min(46ch, 78vw);
   margin: clamp(14px, 2.2vw, 28px) 0 0;
-  color: rgba(247, 244, 238, 0.62);
+  color: rgba(247, 244, 238, 0.68);
   font-family: var(--font-sans);
   font-size: clamp(0.86rem, 1vw, 1.02rem);
   line-height: 1.8;
   text-align: center;
-  text-shadow: 0 1px 16px rgba(0,0,0,0.8);
 }
 
 .works-infinite-hint {
