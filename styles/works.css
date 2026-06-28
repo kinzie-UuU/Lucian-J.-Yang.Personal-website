@@ -242,6 +242,52 @@ html[lang="en"] .works-flowing-menu-text {
   }
 }
 
+/* Secondary rows (延展能力) — same works-list, visually softer ------------- */
+.works-row--secondary {
+  opacity: 0.72;
+  transition: opacity 200ms ease;
+}
+.works-row--secondary:hover,
+.works-row--secondary:focus-visible {
+  opacity: 1;
+}
+/* Faint separator + label before first secondary row */
+.works-row--secondary:first-of-type {
+  position: relative;
+}
+.works-row--secondary:first-of-type::before {
+  content: "";
+  position: absolute;
+  inset-block: auto;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, rgba(238,233,223,0.28) 20%, rgba(238,233,223,0.28) 80%, transparent 100%);
+  pointer-events: none;
+  z-index: 3;
+}
+/* "延展" label that floats above the separator line */
+.works-row--secondary:first-of-type .works-row-index::before {
+  content: "—";
+  color: rgba(238,233,223,0.22);
+  margin-right: 8px;
+  font-size: 0.6em;
+}
+.works-row--secondary .works-row-name {
+  font-size: clamp(2.4rem, 4.8vw, 6.2rem);
+  opacity: 0.82;
+}
+.works-row--secondary:hover .works-row-name,
+.works-row--secondary:focus-visible .works-row-name {
+  opacity: 1;
+}
+
+/* Secondary works category showcase — hidden (merged into main list) ------- */
+.works-category-showcase {
+  display: none;
+}
+
 /* Hover preview kept for gallery compatibility ----------------------------- */
 .works-hover-preview {
   position: fixed;
