@@ -128,6 +128,13 @@
     const inView = rect.top < window.innerHeight * 0.7 && rect.bottom > window.innerHeight * 0.3;
     if (!inView) return;
 
+    const goingDown = e.deltaY > 0;
+    const goingUp   = e.deltaY < 0;
+
+    // At boundaries: release and let page scroll naturally
+    if (goingDown && active >= n - 1) return;
+    if (goingUp   && active <= 0)     return;
+
     e.preventDefault();
     wheelAcc += e.deltaY;
     clearTimeout(wheelTimer);
