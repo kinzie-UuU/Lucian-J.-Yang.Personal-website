@@ -48,6 +48,13 @@
   const CARD_W = () => cardEls[0]?.offsetWidth || 280;
   const GAP = 24;
 
+  // x so that the active card is centered in the stage
+  const centeredX = (idx) => {
+    const stageW = section.querySelector(".wc-stage")?.offsetWidth || window.innerWidth;
+    const cw = CARD_W();
+    return stageW / 2 - idx * (cw + GAP) - cw / 2;
+  };
+
   /* ── Animate ───────────────────────────────────────────────────────── */
   const update = (idx, instant = false) => {
     active = idx;
@@ -55,9 +62,8 @@
     const ease = instant ? "none" : "elastic.out(1, 0.2)";
     const slideEase = instant ? "none" : "power2.out";
 
-    // Translate strip so active card is centered
-    const stripOffset = -(active * (CARD_W() + GAP));
-    gsap.to(strip, { x: stripOffset, duration: dur, ease: slideEase });
+    // Translate strip so active card is centered in stage
+    gsap.to(strip, { x: centeredX(active), duration: dur, ease: slideEase });
 
     // Rotate + scale each card
     cardEls.forEach((el, i) => {

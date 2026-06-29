@@ -20,15 +20,17 @@
   overflow: visible;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
+  position: relative;
 }
 
-/* strip — scrolls horizontally via GSAP */
+/* strip — JS controls x via GSAP (centeredX formula) */
 .wc-strip {
   display: flex;
   gap: 24px;
   align-items: center;
   will-change: transform;
+  flex: none;
 }
 
 /* perspective wrapper per card */
