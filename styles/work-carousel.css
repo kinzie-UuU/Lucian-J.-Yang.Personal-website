@@ -1,0 +1,204 @@
+/* ============================================================================
+   Work Carousel — rotateY fan gallery
+   Dark editorial, matches works-section aesthetic.
+   ============================================================================ */
+.work-carousel-section {
+  position: relative;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #020303;
+  overflow: hidden;
+  padding: clamp(60px, 8svh, 100px) 0 clamp(80px, 10svh, 120px);
+}
+
+/* stage */
+.wc-stage {
+  width: 100%;
+  overflow: visible;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* strip — scrolls horizontally via GSAP */
+.wc-strip {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  will-change: transform;
+}
+
+/* perspective wrapper per card */
+.wc-perspective {
+  perspective: 900px;
+  perspective-origin: 50% 50%;
+  flex: none;
+}
+
+/* card */
+.wc-card {
+  width: clamp(220px, 22vw, 300px);
+  aspect-ratio: 3 / 4;
+  border-radius: 6px;
+  overflow: hidden;
+  cursor: pointer;
+  position: relative;
+  will-change: transform;
+  transform-origin: center center;
+  transform-style: preserve-3d;
+}
+
+.wc-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  pointer-events: none;
+  filter: saturate(0.9) contrast(1.05);
+}
+
+.wc-card-overlay {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  padding: 20px 18px 18px;
+  background: linear-gradient(transparent, rgba(0,0,0,0.82));
+  pointer-events: none;
+}
+
+.wc-card-name {
+  font-family: var(--font-serif);
+  font-size: clamp(1.1rem, 1.8vw, 1.5rem);
+  font-weight: 400;
+  color: rgba(247, 244, 238, 0.92);
+  line-height: 1.2;
+}
+
+.wc-card-tag {
+  font-family: var(--font-en-sans);
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  color: rgba(238, 233, 223, 0.52);
+  margin-top: 4px;
+  text-transform: uppercase;
+}
+
+.wc-card-cta {
+  font-family: var(--font-en-sans);
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  color: #b89a5e;
+  margin-top: 10px;
+  opacity: 0;
+  text-transform: uppercase;
+}
+
+/* copy — title + sub below strip */
+.wc-copy {
+  margin-top: clamp(28px, 4svh, 44px);
+  text-align: center;
+  pointer-events: none;
+}
+
+.wc-index {
+  font-family: var(--font-en-sans);
+  font-size: 0.68rem;
+  letter-spacing: 0.22em;
+  color: rgba(238, 233, 223, 0.36);
+  margin-bottom: 10px;
+}
+
+.wc-title {
+  font-family: var(--font-serif);
+  font-size: clamp(2.2rem, 5vw, 4.4rem);
+  font-weight: 400;
+  color: rgba(247, 244, 238, 0.9);
+  line-height: 1.0;
+  letter-spacing: 0;
+}
+
+.wc-sub {
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  color: rgba(238, 233, 223, 0.44);
+  margin-top: 8px;
+  letter-spacing: 0.04em;
+}
+
+/* controls */
+.wc-controls {
+  margin-top: clamp(24px, 3.5svh, 36px);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.wc-prev,
+.wc-next {
+  width: 38px;
+  height: 38px;
+  border: 1px solid rgba(238, 233, 223, 0.2);
+  border-radius: 50%;
+  background: transparent;
+  color: rgba(238, 233, 223, 0.52);
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.wc-prev:hover,
+.wc-next:hover {
+  border-color: rgba(247, 244, 238, 0.8);
+  color: #f7f4ee;
+}
+
+.wc-dots {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.wc-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(238, 233, 223, 0.2);
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.3s, width 0.3s;
+}
+
+.wc-dot.is-active {
+  background: rgba(247, 244, 238, 0.8);
+  width: 22px;
+  border-radius: 3px;
+}
+
+/* hint */
+.wc-hint {
+  position: absolute;
+  bottom: clamp(18px, 3svh, 28px);
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-en-sans);
+  font-size: 0.6rem;
+  letter-spacing: 0.18em;
+  color: rgba(238, 233, 223, 0.28);
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .wc-card {
+    width: clamp(180px, 60vw, 240px);
+  }
+  .wc-strip {
+    gap: 16px;
+  }
+}
