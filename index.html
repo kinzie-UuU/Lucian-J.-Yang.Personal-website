@@ -60,7 +60,7 @@
     })();
   </script>
   <link rel="stylesheet" href="dist/bundle.css?v=1dcdb922">
-  <link rel="stylesheet" href="styles/work-carousel.css?v=20260629-carousel3">
+  <link rel="stylesheet" href="styles/work-carousel.css?v=20260629-carousel4">
 </head>
 <body>
   <svg class="site-svg-filters" aria-hidden="true" focusable="false">
@@ -290,13 +290,20 @@
     <section class="works-transition-anchor" id="works-transition" aria-hidden="true"></section>
 
     <section class="work-carousel-section reveal" id="works-infinite" aria-label="Works carousel gallery">
-      <div class="wc-stage">
-        <div class="wc-strip" id="wc-strip"></div>
+      <!-- Large image display -->
+      <div class="wc-hero" id="wc-hero" aria-hidden="true">
+        <img class="wc-hero-img" id="wc-hero-img" src="" alt="" draggable="false">
+        <div class="wc-hero-overlay"></div>
       </div>
+      <!-- Title row -->
       <div class="wc-copy">
         <p class="wc-index" id="wc-index">01 / 06</p>
         <h2 class="wc-title" id="wc-title">包装设计</h2>
         <p class="wc-sub" id="wc-sub">节令礼盒 · OEM</p>
+      </div>
+      <!-- Fan carousel strip -->
+      <div class="wc-stage">
+        <div class="wc-strip" id="wc-strip"></div>
       </div>
       <div class="wc-controls">
         <button class="wc-prev" aria-label="Previous">←</button>
@@ -606,6 +613,6 @@
 
   <script src="dist/vendor.js?v=9cbbd702"></script>
   <script src="dist/bundle.js?v=da942f3a"></script>
-  <script src="scripts/work-carousel.js?v=20260629-carousel3"></script>
+  <script src="scripts/work-carousel.js?v=20260629-carousel4"></script>
 </body>
 </html>

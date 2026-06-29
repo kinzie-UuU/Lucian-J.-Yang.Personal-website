@@ -28,6 +28,7 @@
   const titleEl = section.querySelector("#wc-title");
   const subEl = section.querySelector("#wc-sub");
   const indexEl = section.querySelector("#wc-index");
+  const heroImg = section.querySelector("#wc-hero-img");
 
   CARDS.forEach((card, i) => {
     const wrapper = document.createElement("div");
@@ -85,6 +86,19 @@
     if (subEl) subEl.textContent = CARDS[active].sub;
     if (indexEl) indexEl.textContent =
       String(active + 1).padStart(2, "0") + " / " + String(n).padStart(2, "0");
+
+    // Update large hero image with crossfade
+    if (heroImg) {
+      const newSrc = CARDS[active].src;
+      if (heroImg.getAttribute("src") !== newSrc) {
+        heroImg.classList.add("is-changing");
+        setTimeout(() => {
+          heroImg.src = newSrc;
+          heroImg.alt = CARDS[active].title;
+          heroImg.classList.remove("is-changing");
+        }, instant ? 0 : 260);
+      }
+    }
 
     // Dots
     section.querySelectorAll(".wc-dot").forEach((d, i) => {
